@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0..3.20 FATAL_ERROR)
 
 set(This Game)
 
@@ -8,15 +8,9 @@ project(${This}
 )
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(Headers
-    # include/include.hpp
-)
-
-set(Sources
-    src/main.cpp
-)
-
-add_executable(${This} ${Sources} ${Headers})
+add_subdirectory(vendor)
+add_subdirectory(Gear)
+add_subdirectory(GearBox)
