@@ -4,10 +4,12 @@ set(This Gear)
 
 set(Headers
     include/${This}/Window.hpp
+    include/${This}/Core.hpp
 )
 
 set(Sources
     src/Window.cpp
+    src/Core.cpp
 )
 
 add_library(${This} STATIC ${Sources} ${Headers})
