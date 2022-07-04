@@ -16,7 +16,16 @@ namespace Gear {
       return (bool)glfwWindowShouldClose(this->window);
   }
 
-  void Window::pollEvents() {
+  void Window::update() {
     glfwPollEvents();
+    glfwSwapBuffers(this->window);
+  }
+
+  Window::~Window() {
+    glfwDestroyWindow(this->window);
+  }
+
+  void Window::setShouldClose() {
+    glfwSetWindowShouldClose(this->window, true);
   }
 }

@@ -1,20 +1,26 @@
 #include <iostream>
 
-#include <Gear/Window.hpp>
+#include <Gear/Gear.hpp>
+
+class Example : public Gear::Application {
+public:
+  Example() {}
+
+  virtual void onUpdate() override {
+
+  }
+};
 
 int main() {
   std::cout << "Initializing..." << std::endl;
   Gear::Initialize();
   std::cout << "Initialized" << std::endl;
-  
-  std::cout << "Creating a window!" << std::endl;
-  auto window = Gear::Window("Hello", 500, 500);
 
-  while (!window.shouldClose()) {
-    window.pollEvents();
-  }
+  auto example = Example();
+  example.start();
 
   std::cout << "Terminating..." << std::endl;
   Gear::Terminate();
   std::cout << "Terminated" << std::endl;
+
 }
