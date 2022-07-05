@@ -1,5 +1,5 @@
 #include <Gear/Application.hpp>
-#include <Gear/Core.hpp>
+#include <Gear/Core/Log.hpp>
 
 #include <GLFW/glfw3.h>
 

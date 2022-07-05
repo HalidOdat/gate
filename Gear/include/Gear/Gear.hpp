@@ -1,7 +1,8 @@
 #pragma once
 
+// Core
 #include <Gear/Core/Type.hpp>
-#include <Gear/Core.hpp>
+#include <Gear/Core/Log.hpp>
 
 #include <Gear/Window.hpp>
 
