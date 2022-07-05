@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <Gear/Gear.hpp>
+#include <Gear/Core/Assert.hpp>
 
 class ExampleApplication : public Gear::Application {
 public:

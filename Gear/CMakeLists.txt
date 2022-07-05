@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.0..3.20 FATAL_ERROR)
 set(This Gear)
 
 set(Headers
-    include/${This}/Core/Type.hpp
+    include/${This}/Core/Assert.hpp
     include/${This}/Core/Log.hpp
-    include/${This}/KeyCode.hpp
+    include/${This}/Core/Type.hpp
+    include/${This}/Core/KeyCode.hpp
     include/${This}/Window.hpp
     include/${This}/Application.hpp
 )
