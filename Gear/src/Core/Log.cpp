@@ -5,6 +5,15 @@
 
 namespace Gear {
 
+  void Logger::trace(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    fprintf(stdout, "[Trace ]: ");
+    vfprintf(stdout, format, args);
+    fprintf(stdout, "\n");
+    va_end(args);
+  }
+
   void Logger::info(const char *format, ...) {
     va_list args;
     va_start(args, format);

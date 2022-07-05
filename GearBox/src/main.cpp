@@ -2,16 +2,16 @@
 
 #include <Gear/Gear.hpp>
 
-class Example : public Gear::Application {
+class ExampleApplication : public Gear::Application {
 public:
-  Example() {}
+  ExampleApplication() {}
 
   virtual void onCreate() override {
     Gear::Logger::info("onCreate was called");
   }
 
   virtual void onUpdate() override {
-    Gear::Logger::warn("onUpdate");
+    // Gear::Logger::warn("onUpdate");
   }
 
   virtual void onDestroy() override {
@@ -20,15 +20,5 @@ public:
 };
 
 int main() {
-  std::cout << "Initializing..." << std::endl;
-  Gear::Initialize();
-  std::cout << "Initialized" << std::endl;
-
-  auto example = Example();
-  example.start();
-
-  std::cout << "Terminating..." << std::endl;
-  Gear::Terminate();
-  std::cout << "Terminated" << std::endl;
-
+  ExampleApplication().start();
 }

@@ -2,13 +2,13 @@
 
 #include <Gear/Window.hpp>
 
+#include <memory>
+
 namespace Gear {
   class Application {
   protected:
-    Application(const char* title = "Game Title", const u32 width = 800, const u32 height = 600)
-      : window{title, width, height}
-    {
-    }
+    Application(const char* title = "Game Title", const u32 width = 800, const u32 height = 600);
+    ~Application();
 
   public:
     void start();
@@ -19,6 +19,6 @@ namespace Gear {
     virtual void onDestroy() {};
 
   private:
-    Window window;
+    std::unique_ptr<Window> window = nullptr;
   };
 }

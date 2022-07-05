@@ -2,6 +2,8 @@
 
 #include <Gear/Core/Type.hpp>
 
+#include <memory>
+
 // Forward declare
 struct GLFWwindow;
 
@@ -9,12 +11,14 @@ namespace Gear {
 
   class Window {
   public:
-    Window(const char* title, u32 width, u32 height);
+    static std::unique_ptr<Window> create(const char* title, const u32 width, const u32 height);
+    Window(GLFWwindow* window)
+            : window{ window }
+    {}
     ~Window();
 
     bool shouldClose();
     void setShouldClose();
-
     void update();
 
   private:
