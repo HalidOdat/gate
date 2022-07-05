@@ -4,6 +4,7 @@ set(This Gear)
 
 set(Headers
     include/${This}/Core/Type.hpp
+    include/${This}/Core/Log.hpp
     include/${This}/Core.hpp
     include/${This}/KeyCode.hpp
     include/${This}/Window.hpp
@@ -11,6 +12,7 @@ set(Headers
 )
 
 set(Sources
+    src/Core/Log.cpp
     src/Core.cpp
     src/Window.cpp
     src/Application.cpp

@@ -6,8 +6,16 @@ class Example : public Gear::Application {
 public:
   Example() {}
 
-  virtual void onUpdate() override {
+  virtual void onCreate() override {
+    Gear::Logger::info("onCreate was called");
+  }
 
+  virtual void onUpdate() override {
+    Gear::Logger::warn("onUpdate");
+  }
+
+  virtual void onDestroy() override {
+    Gear::Logger::info("onDestroy was called");
   }
 };
 
