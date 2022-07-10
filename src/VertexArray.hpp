@@ -25,6 +25,7 @@ namespace Game {
 
   private:
     u32 id;
+    u32 vertexAttributeIndex = 0;
     std::vector<Ref<VertexBuffer>> buffers;
   };
 

@@ -17,7 +17,11 @@ public:
     };
 
     this->triangle = Game::VertexArray::Create();
-    this->triangle->addVertexBuffer(Game::VertexBuffer::Create(positions, sizeof(positions)));
+    auto buffer = Game::VertexBuffer::Create(positions, sizeof(positions));
+    buffer->setLayout({
+      { Game::BufferElement::Type::Float2 }
+    });
+    this->triangle->addVertexBuffer(buffer);
   }
 
   virtual void onUpdate() override {

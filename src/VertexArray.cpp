@@ -1,6 +1,8 @@
-#include "VertexArray.hpp"
+#include <cassert>
 
 #include <glad/glad.h>
+
+#include "VertexArray.hpp"
 
 namespace Game {
   
@@ -24,9 +26,41 @@ namespace Game {
     this->bind();
     buffer->bind();
 
-    // Assume that 2 position float x and y
-    glEnableVertexAttribArray(0);
-	  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    const auto layout = buffer->getLayout();
+    for (const auto& element : layout.getElements()) {
+      switch (element.getType()) {
+        case BufferElement::Type::Float:
+        case BufferElement::Type::Float2:
+        case BufferElement::Type::Float3:
+        case BufferElement::Type::Float4:
+          glEnableVertexAttribArray(this->vertexAttributeIndex);
+	        glVertexAttribPointer(
+            this->vertexAttributeIndex,
+            (GLint)element.getComponentCount(),
+            GL_FLOAT,
+            element.isNormalized() ? GL_TRUE : GL_FALSE,
+            (GLsizei)layout.getStride(),
+            (const void*)element.getOffset()
+          );
+          this->vertexAttributeIndex++;
+          break;
+        case BufferElement::Type::Int:
+        case BufferElement::Type::Int2:
+        case BufferElement::Type::Int3:
+        case BufferElement::Type::Int4:
+        case BufferElement::Type::Bool:
+          glEnableVertexAttribArray(this->vertexAttributeIndex);
+	        glVertexAttribIPointer(
+            this->vertexAttributeIndex,
+            (GLint)element.getComponentCount(),
+            element.getType() == BufferElement::Type::Bool ? GL_BOOL : GL_INT,
+            (GLsizei)layout.getStride(),
+            (const void*)element.getOffset()
+          );
+          this->vertexAttributeIndex++;
+          break;
+      }
+    }
 
     this->buffers.push_back(buffer);
   }
