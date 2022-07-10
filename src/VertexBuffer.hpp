@@ -106,7 +106,7 @@ namespace Game {
   public:
     DISALLOW_COPY_AND_ASSIGN(VertexBuffer);
 
-    VertexBuffer(void* data, usize length);
+    VertexBuffer(Slice<void> slice);
     ~VertexBuffer();
 
     void bind();

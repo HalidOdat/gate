@@ -17,7 +17,7 @@ public:
     };
 
     this->triangle = Game::VertexArray::Create();
-    auto buffer = Game::VertexBuffer::Create(positions, sizeof(positions));
+    auto buffer = Game::VertexBuffer::Create(positions);
     buffer->setLayout({
       { Game::BufferElement::Type::Float2 }
     });

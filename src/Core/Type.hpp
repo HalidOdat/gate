@@ -46,4 +46,46 @@ namespace Game {
     }
   };
 
+
+  template<typename T>
+  class Slice {
+  public:
+    template <typename U = T, usize N, std::enable_if_t<!std::is_same<U, void>::value && std::is_same<U, T>::value, bool> = true>
+    inline constexpr Slice(U (&array)[N])
+      : _data{array}, _size{N}
+    {
+    }
+
+    template <typename U = T, usize N, std::enable_if_t<!std::is_same<U, void>::value && !std::is_same<U, T>::value, bool> = true>
+    inline constexpr Slice(U (&array)[N])
+      : _data{array}, _size{N * sizeof(U)}
+    {
+    }
+
+    inline constexpr Slice(T* data, usize length)
+      : _data{data}, _size{length}
+    {
+    }
+
+    inline constexpr const T* data()   const { return this->_data; }
+    inline constexpr T* data() { return this->_data; }
+    inline constexpr usize size() const { return this->_size; }
+    
+    template <typename U = T, std::enable_if_t<!std::is_same<U, void>::value, bool> = true>
+    inline constexpr usize sizeInBytes() const { return sizeof(U) * this->_size; }
+
+    template <typename U = T, std::enable_if_t<std::is_same<U, void>::value, bool> = true>
+    inline constexpr usize sizeInBytes() const { return this->_size; }
+    
+
+    T* begin() { return _data; }
+    T* end()   { return _data + _size; }
+    const T* cbegin() const { return _data; }
+    const T* cend()   const { return _data + _size; }
+
+  private:
+    T*    _data;
+    usize _size;
+  };
+
 } // namespace Game

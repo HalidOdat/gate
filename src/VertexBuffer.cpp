@@ -5,10 +5,10 @@
 
 namespace Game {
 
-  VertexBuffer::VertexBuffer(void *data, usize length) {
+  VertexBuffer::VertexBuffer(Slice<void> slice) {
     glGenBuffers(1, &this->id);
     glBindBuffer(GL_ARRAY_BUFFER, this->id);
-    glBufferData(GL_ARRAY_BUFFER, length, data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, slice.sizeInBytes(), slice.data(), GL_STATIC_DRAW);
   }
 
   VertexBuffer::~VertexBuffer() {
