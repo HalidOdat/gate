@@ -37,5 +37,6 @@ cmake-build-release/
 build/
 build-win/
 
-# IDE (clion)
+# IDE
+.vscode/
 .idea/

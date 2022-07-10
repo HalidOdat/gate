@@ -1,13 +1,13 @@
 #pragma once
 
-#include <Gear/Core/Type.hpp>
+#include "Core/Type.hpp"
 
 #include <memory>
 
 // Forward declare
 struct GLFWwindow;
 
-namespace Gear {
+namespace Game {
 
   class Window {
   public:
@@ -25,4 +25,4 @@ namespace Gear {
     GLFWwindow* window;
   };
 
-} // namespace Gear
+} // namespace Game

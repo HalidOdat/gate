@@ -1,19 +1,25 @@
-#include <Gear/Application.hpp>
-#include <Gear/Core/Log.hpp>
-
-#include <GLFW/glfw3.h>
-
 #include <cstdlib>
 
-namespace Gear {
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include "Application.hpp"
+#include "Core/Log.hpp"
+#include "Core/Assert.hpp"
+
+namespace Game {
 
   Application::Application(const char *title, const u32 width, const u32 height) {
     Logger::trace("Gear Game Engine Initializing...");
+    Logger::info("GLFW Version: %s", glfwGetVersionString());
     if (!glfwInit()) {
-      const char* description;
+      const char* description = nullptr;
       glfwGetError(&description);
+      GAME_DEBUG_ASSERT(description != nullptr);
       Logger::error("Could not initialize GLFW: '%s'", description);
       std::exit(EXIT_FAILURE);
+    } else {
+      Logger::trace("GLFW initialized!");
     }
 
     this->window = Window::create(title, width, height);
@@ -41,6 +47,9 @@ namespace Gear {
     this->onCreate();
 
     while (!this->window->shouldClose()) {
+      glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+      glClear(GL_COLOR_BUFFER_BIT);
+
       this->onUpdate();
 
       this->window->update();
@@ -53,4 +62,4 @@ namespace Gear {
     this->window->setShouldClose();
   }
 
-} // namespace Gear
+} // namespace Game

@@ -1,9 +1,9 @@
-#include <Gear/Core/Log.hpp>
-
 #include <cstdarg>
 #include <cstdio>
 
-namespace Gear {
+#include "Core/Log.hpp"
+
+namespace Game {
 
   void Logger::trace(const char *format, ...) {
     va_list args;
@@ -41,4 +41,4 @@ namespace Gear {
     va_end(args);
   }
 
-} // namespace Gear
+} // namespace Game

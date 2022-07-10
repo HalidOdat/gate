@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Gear {
+namespace Game {
 
   enum class Key {
 

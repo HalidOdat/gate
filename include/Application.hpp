@@ -1,10 +1,11 @@
 #pragma once
 
-#include <Gear/Window.hpp>
+#include "Window.hpp"
 
 #include <memory>
 
-namespace Gear {
+namespace Game {
+
   class Application {
   protected:
     Application(const char* title = "Game Title", const u32 width = 800, const u32 height = 600);
@@ -21,4 +22,5 @@ namespace Gear {
   private:
     std::unique_ptr<Window> window = nullptr;
   };
+  
 }

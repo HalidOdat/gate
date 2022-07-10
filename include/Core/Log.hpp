@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Gear {
+namespace Game {
 
   class Logger {
   public:
@@ -10,4 +10,4 @@ namespace Gear {
     static void error(const char* format, ...);
   };
 
-} // namespace Gear
+} // namespace Game
