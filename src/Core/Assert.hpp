@@ -20,3 +20,16 @@
 
 #define GAME_UNREACHABLE(msg) do { fprintf(stderr, "Unreachable %s:%d: %s\n", __FILE__, __LINE__, msg); std::exit(1); } while(false)
 #define GAME_TODO(msg)        do { fprintf(stderr, "Todo %s:%d: %s\n", __FILE__, __LINE__, msg); std::exit(1); } while(false)
+
+namespace Game {
+    void CheckOpenGLError(const char* stmt, const char* fname, u32 line);
+} // namespace Game
+
+#ifdef GAME_DEBUG_MODE
+    #define GAME_GL_CHECK(stmt) do { \
+            stmt; \
+            Game::CheckOpenGLError(#stmt, __FILE__, __LINE__); \
+        } while (0)
+#else
+    #define GAME_GL_CHECK(stmt) stmt
+#endif

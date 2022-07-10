@@ -7,19 +7,19 @@
 namespace Game {
   
   VertexArray::VertexArray() {
-    glCreateVertexArrays(1, &this->id);
+    GAME_GL_CHECK(glCreateVertexArrays(1, &this->id));
   }
 
   VertexArray::~VertexArray() {
-    glDeleteVertexArrays(1, &this->id);
+    GAME_GL_CHECK(glDeleteVertexArrays(1, &this->id));
   }
 
   void VertexArray::bind() {
-    glBindVertexArray(this->id);
+    GAME_GL_CHECK(glBindVertexArray(this->id));
   }
 
   void VertexArray::unbind() {
-    glBindVertexArray(0);
+    GAME_GL_CHECK(glBindVertexArray(0));
   }
 
   void VertexArray::addVertexBuffer(Ref<VertexBuffer> buffer) {
@@ -33,15 +33,15 @@ namespace Game {
         case BufferElement::Type::Float2:
         case BufferElement::Type::Float3:
         case BufferElement::Type::Float4:
-          glEnableVertexAttribArray(this->vertexAttributeIndex);
-	        glVertexAttribPointer(
+          GAME_GL_CHECK(glEnableVertexAttribArray(this->vertexAttributeIndex));
+	        GAME_GL_CHECK(glVertexAttribPointer(
             this->vertexAttributeIndex,
             (GLint)element.getComponentCount(),
             GL_FLOAT,
             element.isNormalized() ? GL_TRUE : GL_FALSE,
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
-          );
+          ));
           this->vertexAttributeIndex++;
           break;
         case BufferElement::Type::Int:
@@ -49,14 +49,14 @@ namespace Game {
         case BufferElement::Type::Int3:
         case BufferElement::Type::Int4:
         case BufferElement::Type::Bool:
-          glEnableVertexAttribArray(this->vertexAttributeIndex);
-	        glVertexAttribIPointer(
+          GAME_GL_CHECK(glEnableVertexAttribArray(this->vertexAttributeIndex));
+	        GAME_GL_CHECK(glVertexAttribIPointer(
             this->vertexAttributeIndex,
             (GLint)element.getComponentCount(),
             element.getType() == BufferElement::Type::Bool ? GL_BOOL : GL_INT,
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
-          );
+          ));
           this->vertexAttributeIndex++;
           break;
       }
@@ -74,9 +74,9 @@ namespace Game {
   void VertexArray::draw() {
     this->bind();
     if (this->indexBuffer) {
-      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      GAME_GL_CHECK(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
     } else {
-      glDrawArrays(GL_TRIANGLES, 0, 3);
+      GAME_GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, 3));
     }
   }
 

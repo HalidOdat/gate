@@ -14,6 +14,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(Sources
   src/Core/Type.hpp
   src/Core/Assert.hpp
+  src/Core/Assert.cpp
   src/Core/Log.hpp
   src/Core/Log.cpp
   src/Core/KeyCode.hpp
