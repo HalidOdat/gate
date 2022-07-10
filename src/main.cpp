@@ -16,20 +16,19 @@ public:
       0.0f,   0.5f,
     };
 
-    this->triangle = Game::VertexArray();
-    auto buffer = Game::VertexBuffer(positions, sizeof(positions));
-    this->triangle.addVertexBuffer(std::move(buffer));
+    this->triangle = Game::VertexArray::Create();
+    this->triangle->addVertexBuffer(Game::VertexBuffer::Create(positions, sizeof(positions)));
   }
 
   virtual void onUpdate() override {
-    this->triangle.draw();
+    this->triangle->draw();
   }
 
   virtual void onDestroy() override {
     Game::Logger::info("onDestroy was called");
   }
 private:
-  Game::VertexArray triangle;
+  Game::Ref<Game::VertexArray> triangle;
 };
 
 int main() {

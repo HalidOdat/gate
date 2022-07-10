@@ -6,8 +6,10 @@
 
 namespace Game {
 
-  class VertexBuffer {
+  class VertexBuffer : public CreateObject<VertexBuffer> {
   public:
+    DISALLOW_COPY_AND_ASSIGN(VertexBuffer);
+    
     VertexBuffer(void* data, usize length);
     ~VertexBuffer();
 

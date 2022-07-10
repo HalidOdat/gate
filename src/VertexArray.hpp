@@ -7,15 +7,17 @@
 
 namespace Game {
 
-  class VertexArray {
+  class VertexArray : public CreateObject<VertexArray> {
   public:
     VertexArray();
     ~VertexArray();
 
+    DISALLOW_MOVE_AND_COPY(VertexArray);
+
     void bind();
     void unbind();
 
-    void addVertexBuffer(VertexBuffer&& buffer);
+    void addVertexBuffer(Ref<VertexBuffer> buffer);
 
     inline u32 getId() { return id; }
 
@@ -23,6 +25,7 @@ namespace Game {
 
   private:
     u32 id;
+    std::vector<Ref<VertexBuffer>> buffers;
   };
 
 } // namespace Game

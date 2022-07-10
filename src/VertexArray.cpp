@@ -9,7 +9,7 @@ namespace Game {
   }
 
   VertexArray::~VertexArray() {
-    // glDeleteVertexArrays(1, &this->id);
+    glDeleteVertexArrays(1, &this->id);
   }
 
   void VertexArray::bind() {
@@ -20,13 +20,15 @@ namespace Game {
     glBindVertexArray(0);
   }
 
-  void VertexArray::addVertexBuffer(VertexBuffer&& buffer) {
+  void VertexArray::addVertexBuffer(Ref<VertexBuffer> buffer) {
     this->bind();
-    buffer.bind();
+    buffer->bind();
 
     // Assume that 2 position float x and y
     glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+	  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    this->buffers.push_back(buffer);
   }
 
   void VertexArray::draw() {

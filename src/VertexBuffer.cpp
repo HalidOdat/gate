@@ -1,3 +1,4 @@
+#include "Core/Log.hpp"
 #include "VertexBuffer.hpp"
 
 #include <glad/glad.h>
@@ -11,7 +12,7 @@ namespace Game {
   }
 
   VertexBuffer::~VertexBuffer() {
-    // glDeleteBuffers(1, &this->id);
+    glDeleteBuffers(1, &this->id);
   }
 
   void VertexBuffer::bind() {
