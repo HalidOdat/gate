@@ -65,9 +65,19 @@ namespace Game {
     this->buffers.push_back(buffer);
   }
 
+  void VertexArray::setIndexBuffer(Ref<IndexBuffer> buffer) {
+    this->bind();
+    buffer->bind();
+    this->indexBuffer = buffer;
+  }
+
   void VertexArray::draw() {
     this->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    if (this->indexBuffer) {
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    } else {
+      glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
   }
 
 } // namespace Game

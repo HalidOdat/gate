@@ -4,6 +4,7 @@
 
 #include "Core/Type.hpp"
 #include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 namespace Game {
 
@@ -18,6 +19,7 @@ namespace Game {
     void unbind();
 
     void addVertexBuffer(Ref<VertexBuffer> buffer);
+    void setIndexBuffer(Ref<IndexBuffer> buffer);
 
     inline u32 getId() { return id; }
 
@@ -27,6 +29,7 @@ namespace Game {
     u32 id;
     u32 vertexAttributeIndex = 0;
     std::vector<Ref<VertexBuffer>> buffers;
+    Ref<IndexBuffer> indexBuffer;
   };
 
 } // namespace Game

@@ -19,6 +19,8 @@ set(Sources
   src/Core/KeyCode.hpp
   src/VertexBuffer.hpp
   src/VertexBuffer.cpp
+  src/IndexBuffer.hpp
+  src/IndexBuffer.cpp
   src/VertexArray.hpp
   src/VertexArray.cpp
   src/Window.hpp

@@ -56,7 +56,7 @@ namespace Game {
     {
     }
 
-    template <typename U = T, usize N, std::enable_if_t<!std::is_same<U, void>::value && !std::is_same<U, T>::value, bool> = true>
+    template <typename U = T, usize N, std::enable_if_t<!std::is_same<U, void>::value && std::is_same<T, void>::value, bool> = true>
     inline constexpr Slice(U (&array)[N])
       : _data{array}, _size{N * sizeof(U)}
     {
@@ -78,10 +78,10 @@ namespace Game {
     inline constexpr usize sizeInBytes() const { return this->_size; }
     
 
-    T* begin() { return _data; }
-    T* end()   { return _data + _size; }
-    const T* cbegin() const { return _data; }
-    const T* cend()   const { return _data + _size; }
+    inline constexpr T* begin() { return _data; }
+    inline constexpr T* end()   { return _data + _size; }
+    inline constexpr const T* cbegin() const { return _data; }
+    inline constexpr const T* cend()   const { return _data + _size; }
 
   private:
     T*    _data;
