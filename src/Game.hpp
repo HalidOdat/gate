@@ -5,7 +5,9 @@
 #include "Core/Log.hpp"
 
 #include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
+#include "Shader.hpp"
 
 #include "Window.hpp"
 

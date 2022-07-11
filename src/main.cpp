@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 
 #include "Game.hpp"
 #include "Core/Assert.hpp"
@@ -30,9 +31,12 @@ public:
     auto indexBuffer = Game::IndexBuffer::Create(indices);
     this->square->setIndexBuffer(indexBuffer);
     this->square->unbind();
+    
+    this->shader = Game::Shader::Create("./res/shaders/FlatColor.vs", "./res/shaders/FlatColor.fs");
   }
 
   virtual void onUpdate() override {
+    this->shader->bind();
     this->square->draw();
   }
 
@@ -41,6 +45,7 @@ public:
   }
 private:
   Game::Ref<Game::VertexArray> square;
+  Game::Ref<Game::Shader> shader;
 };
 
 int main() {

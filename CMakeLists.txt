@@ -24,6 +24,8 @@ set(Sources
   src/IndexBuffer.cpp
   src/VertexArray.hpp
   src/VertexArray.cpp
+  src/Shader.hpp
+  src/Shader.cpp
   src/Window.hpp
   src/Window.cpp
   src/Application.hpp

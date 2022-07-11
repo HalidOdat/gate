@@ -22,7 +22,7 @@
 #define GAME_TODO(msg)        do { fprintf(stderr, "Todo %s:%d: %s\n", __FILE__, __LINE__, msg); std::exit(1); } while(false)
 
 namespace Game {
-    void CheckOpenGLError(const char* stmt, const char* fname, u32 line);
+    void CheckOpenGLError(const char* stmt, const char* fname, int line);
 } // namespace Game
 
 #ifdef GAME_DEBUG_MODE
