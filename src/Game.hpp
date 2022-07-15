@@ -7,6 +7,7 @@
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
+#include "Texture.hpp"
 #include "Shader.hpp"
 
 #include "Window.hpp"

@@ -27,6 +27,8 @@ namespace Game {
       std::exit(EXIT_FAILURE);
     }
 
+    glEnable(GL_BLEND);
+
     Logger::info("Gear Game Engine Initialized!");
   }
 

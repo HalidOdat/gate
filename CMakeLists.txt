@@ -26,6 +26,8 @@ set(Sources
   src/VertexArray.cpp
   src/Shader.hpp
   src/Shader.cpp
+  src/Texture.hpp
+  src/Texture.cpp
   src/Window.hpp
   src/Window.cpp
   src/Application.hpp
