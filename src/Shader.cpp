@@ -1,5 +1,7 @@
 #include <fstream>
 #include <sstream>
+#include <string>
+#include <optional>
 
 #include <glad/glad.h>
 
@@ -29,8 +31,22 @@ namespace Game {
     return 0;
   }
 
+  std::optional<std::string> fileToString(const char* filepath) {
+    std::ifstream file;
+    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try {
+      file.open(filepath);
+      std::stringstream stream;
+      stream << file.rdbuf();
+      file.close();
+      return stream.str();
+    } catch (std::ifstream::failure e) {
+      Logger::error("Couldn't load file '%s': %s", filepath, e.what());
+      return std::nullopt;
+    }
+  }
+
   u32 Shader::compile(Type type, const char* source) noexcept {
-    printf("%s\n", source);
     u32 id;
     GAME_GL_CHECK(id = glCreateShader(shaderTypeToOpenGLType(type)));
     GAME_GL_CHECK(glShaderSource(id, 1, &source, NULL));
@@ -50,34 +66,22 @@ namespace Game {
   }
 
   Ref<Shader> Shader::Create(const char* vFilepath, const char* fFilepath) noexcept {
-    std::ifstream t(vFilepath);
-    t.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    std::stringstream buffer;
-
-    try {
-      buffer << t.rdbuf();
-    } catch (std::exception& e) {
-      Logger::error("could not load file '%s': %s", vFilepath, e.what());
+    const auto vertexShaderSourceString = fileToString(vFilepath);
+    if (!vertexShaderSourceString) {
       return nullptr;
     }
-    const auto vertexShaderSourceString = buffer.str();
-    u32 vertexShader = Shader::compile(Type::Vertex, vertexShaderSourceString.c_str());
+    u32 vertexShader = Shader::compile(Type::Vertex, vertexShaderSourceString->c_str());
     if (!vertexShader) {
       return nullptr;
     }
 
     // fragment shader
-    std::ifstream tF(fFilepath);
-    std::stringstream bufferF;
-    tF.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    try {
-      bufferF << tF.rdbuf();
-    } catch (std::exception& e) {
-      Logger::error("could not load file '%s': %s", vFilepath, e.what());
+    const auto fragmentShaderSourceString = fileToString(fFilepath);
+    if (!fragmentShaderSourceString) {
+      GAME_GL_CHECK(glDeleteShader(vertexShader));
       return nullptr;
     }
-    const auto fragmentShaderSourceString = bufferF.str();
-    u32 fragmentShader = Shader::compile(Type::Fragment, fragmentShaderSourceString.c_str());
+    u32 fragmentShader = Shader::compile(Type::Fragment, fragmentShaderSourceString->c_str());
     if (!fragmentShader) {
       return nullptr;
     }
@@ -101,10 +105,15 @@ namespace Game {
     GAME_GL_CHECK(glDeleteShader(vertexShader));
     GAME_GL_CHECK(glDeleteShader(fragmentShader));
 
+    if (!success) {
+      glDeleteProgram(shaderProgram);
+      return nullptr;
+    }
+
     return Ref<Shader>( new Shader(shaderProgram));
   }
 
-  Shader::~Shader() {
+  Shader::~Shader() noexcept {
     GAME_GL_CHECK(glDeleteProgram(this->id));
   }
 
