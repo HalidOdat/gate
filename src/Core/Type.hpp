@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 
+#include <string_view>
 #include <memory>
 
 namespace Game {
@@ -46,6 +47,7 @@ namespace Game {
     }
   };
 
+  using StringView = std::string_view;
 
   template<typename T>
   class Slice {
