@@ -3,9 +3,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Application.hpp"
-#include "Core/Log.hpp"
 #include "Core/Assert.hpp"
+#include "Core/Log.hpp"
+#include "Application.hpp"
 
 namespace Game {
 

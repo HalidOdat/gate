@@ -7,7 +7,7 @@
 
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
-#include "Shader.hpp"
+#include "Renderer/Shader.hpp"
 
 namespace Game {
 

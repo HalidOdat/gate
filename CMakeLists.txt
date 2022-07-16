@@ -18,22 +18,25 @@ set(Sources
   src/Core/Log.hpp
   src/Core/Log.cpp
   src/Core/KeyCode.hpp
-  src/VertexBuffer.hpp
-  src/VertexBuffer.cpp
-  src/IndexBuffer.hpp
-  src/IndexBuffer.cpp
-  src/VertexArray.hpp
-  src/VertexArray.cpp
-  src/Shader.hpp
-  src/Shader.cpp
-  src/Texture.hpp
-  src/Texture.cpp
+
+  src/Renderer/VertexBuffer.hpp
+  src/Renderer/VertexBuffer.cpp
+  src/Renderer/IndexBuffer.hpp
+  src/Renderer/IndexBuffer.cpp
+  src/Renderer/VertexArray.hpp
+  src/Renderer/VertexArray.cpp
+  src/Renderer/Shader.hpp
+  src/Renderer/Shader.cpp
+  src/Renderer/Texture.hpp
+  src/Renderer/Texture.cpp
+  
   src/Window.hpp
   src/Window.cpp
   src/Application.hpp
   src/Application.cpp
   src/Game.hpp
   src/Game.cpp
+  
   src/main.cpp
 )
 

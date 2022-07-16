@@ -3,8 +3,8 @@
 #include <vector>
 
 #include "Core/Type.hpp"
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
+#include "Renderer/VertexBuffer.hpp"
+#include "Renderer/IndexBuffer.hpp"
 
 namespace Game {
 

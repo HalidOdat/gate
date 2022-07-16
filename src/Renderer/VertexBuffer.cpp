@@ -1,7 +1,7 @@
-#include "Core/Log.hpp"
-#include "VertexBuffer.hpp"
-
 #include <glad/glad.h>
+
+#include "Core/Log.hpp"
+#include "Renderer/VertexBuffer.hpp"
 
 namespace Game {
 

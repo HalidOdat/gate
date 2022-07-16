@@ -2,9 +2,9 @@
 #include <stb_image.h>
 #include <glad/glad.h>
 
-#include "Texture.hpp"
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
+#include "Renderer/Texture.hpp"
 
 namespace Game {
 

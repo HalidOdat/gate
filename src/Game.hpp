@@ -4,11 +4,11 @@
 #include "Core/Type.hpp"
 #include "Core/Log.hpp"
 
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
-#include "VertexArray.hpp"
-#include "Texture.hpp"
-#include "Shader.hpp"
+#include "Renderer/VertexBuffer.hpp"
+#include "Renderer/IndexBuffer.hpp"
+#include "Renderer/VertexArray.hpp"
+#include "Renderer/Texture.hpp"
+#include "Renderer/Shader.hpp"
 
 #include "Window.hpp"
 

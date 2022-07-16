@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 
 #include "Core/Assert.hpp"
-#include "IndexBuffer.hpp"
+#include "Renderer/IndexBuffer.hpp"
 
 namespace Game {
   IndexBuffer::IndexBuffer(Slice<u32> slice) {

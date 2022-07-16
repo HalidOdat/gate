@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-#include "VertexArray.hpp"
+#include "Renderer/VertexArray.hpp"
 
 namespace Game {
   
