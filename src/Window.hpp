@@ -24,6 +24,7 @@ namespace Game {
     void setShouldClose();
     void update();
 
+    void setVSync(bool enable);
     void setEventCallback(EventCallback callback);
 
     inline u32 getWidth()  const { return this->data.width; }

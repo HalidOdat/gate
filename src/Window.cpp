@@ -49,6 +49,8 @@ namespace Game {
 
     Logger::info("OpenGL Version: %s", glGetString(GL_VERSION));
 
+    glfwSwapInterval(1);
+
     glfwSetWindowUserPointer(result->data.window, &result->data);
 
     glfwSetWindowSizeCallback(result->data.window, [](GLFWwindow* window, int width, int height) {
@@ -133,6 +135,14 @@ namespace Game {
 
   void Window::setShouldClose() {
     glfwSetWindowShouldClose(this->data.window, true);
+  }
+
+  void Window::setVSync(bool enable) {
+    if (enable) {
+      glfwSwapInterval(1);
+    } else {
+      glfwSwapInterval(0);
+    }
   }
 
   void Window::setEventCallback(EventCallback callback) {
