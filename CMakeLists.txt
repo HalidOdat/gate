@@ -19,6 +19,12 @@ set(Sources
   src/Core/Log.cpp
   src/Core/KeyCode.hpp
 
+  src/Events/Event.hpp
+  src/Events/Event.cpp
+  src/Events/KeyEvent.hpp
+  src/Events/MouseEvent.hpp
+  src/Events/WindowEvent.hpp
+  
   src/Renderer/VertexBuffer.hpp
   src/Renderer/VertexBuffer.cpp
   src/Renderer/IndexBuffer.hpp

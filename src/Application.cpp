@@ -5,6 +5,7 @@
 
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
+#include "Events/KeyEvent.hpp"
 #include "Application.hpp"
 
 namespace Game {
@@ -26,6 +27,10 @@ namespace Game {
     if (!this->window) {
       std::exit(EXIT_FAILURE);
     }
+
+    this->window->setEventCallback(
+      [this](const Event& event) { this->onEvent(event); }
+    );
 
     glEnable(GL_BLEND);
 
@@ -62,6 +67,10 @@ namespace Game {
 
   void Application::quit() {
     this->window->setShouldClose();
+  }
+
+  void Application::onEvent(const Event& event) {
+    Logger::info("Event: %s", event.getName());
   }
 
 } // namespace Game

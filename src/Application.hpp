@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Window.hpp"
-
-#include <memory>
+#include "Events/KeyEvent.hpp"
 
 namespace Game {
 
   class Application {
   protected:
     Application(const char* title = "Game Title", const u32 width = 800, const u32 height = 600);
+    DISALLOW_MOVE_AND_COPY(Application);
     ~Application();
 
   public:
@@ -20,7 +20,10 @@ namespace Game {
     virtual void onDestroy() {};
 
   private:
-    std::unique_ptr<Window> window = nullptr;
+    void onEvent(const Event& event);
+
+  private:
+    Ref<Window> window = nullptr;
   };
   
 }
