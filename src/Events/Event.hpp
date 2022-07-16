@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 namespace Game {
 
   class Event {
@@ -19,6 +17,15 @@ namespace Game {
     bool dispatch(void (U::*fn)(const T&), U* self) const {
       if (this->getType() == T::TYPE) {
         (self->*fn)(*(T*)this);
+        return true;
+      }
+      return false;
+    }
+
+    template<typename T, typename F>
+    bool dispatch(F fn) const {
+      if (this->getType() == T::TYPE) {
+        fn(*(T*)this);
         return true;
       }
       return false;

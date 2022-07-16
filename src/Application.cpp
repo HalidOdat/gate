@@ -5,7 +5,7 @@
 
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
-#include "Events/KeyEvent.hpp"
+#include "Events/WindowEvent.hpp"
 #include "Application.hpp"
 
 namespace Game {
@@ -70,6 +70,9 @@ namespace Game {
   }
 
   void Application::onEvent(const Event& event) {
+    event.dispatch<WindowResizeEvent>([this](const WindowResizeEvent& event) {
+      glViewport(0, 0, event.getWidth(), event.getHeight());
+    });
     Logger::info("Event: %s", event.getName());
   }
 

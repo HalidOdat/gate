@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <cstdlib>
 
 // FIXME: always on debug mode
 #define GAME_DEBUG_MODE
@@ -18,8 +19,8 @@
 #define GAME_ASSERT(cond)                         GAME_ASSERT_IMPL("Assert", cond, "", "")
 #define GAME_ASSERT_WITH_MESSAGE(cond, msg)       GAME_ASSERT_IMPL("Assert", cond, ": ", msg)
 
-#define GAME_UNREACHABLE(msg) do { fprintf(stderr, "Unreachable %s:%d: %s\n", __FILE__, __LINE__, (msg)); std::exit(1); } while(false)
-#define GAME_TODO(msg)        do { fprintf(stderr, "Todo %s:%d: %s\n", __FILE__, __LINE__, (msg)); std::exit(1); } while(false)
+#define GAME_UNREACHABLE(msg) do { fprintf(stderr, "Unreachable %s:%d: %s\n", __FILE__, __LINE__, (msg)); exit(1); } while(false)
+#define GAME_TODO(msg)        do { fprintf(stderr, "Todo %s:%d: %s\n", __FILE__, __LINE__, (msg)); exit(1); } while(false)
 
 namespace Game {
     void CheckOpenGLError(const char* stmt, const char* fname, int line);
