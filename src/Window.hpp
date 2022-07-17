@@ -11,7 +11,7 @@ struct GLFWwindow;
 
 namespace Game {
 
-  class Window {
+  class Window final {
   public:
     using EventCallback = std::function<void(const Event&)>;
 
@@ -38,10 +38,14 @@ namespace Game {
       EventCallback eventCallback;
     };
 
-  protected:
+  private:
     Window(Data data)
       : data{ data }
     {}
+
+    static u32 windowCount;
+    static void initializeWindowSystem();
+    static void deinitializeWindowSystem();
 
   private:
     Data data;

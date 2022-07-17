@@ -11,17 +11,7 @@
 namespace Game {
 
   Application::Application(const char *title, const u32 width, const u32 height) {
-    Logger::trace("Gear Game Engine Initializing...");
-    Logger::info("GLFW Version: %s", glfwGetVersionString());
-    if (!glfwInit()) {
-      const char* description = nullptr;
-      glfwGetError(&description);
-      GAME_DEBUG_ASSERT(description != nullptr);
-      Logger::error("Could not initialize GLFW: '%s'", description);
-      std::exit(EXIT_FAILURE);
-    } else {
-      Logger::trace("GLFW initialized!");
-    }
+    Logger::trace("Game Engine Initializing...");
 
     this->window = Window::create(title, width, height);
     if (!this->window) {
@@ -32,24 +22,16 @@ namespace Game {
       [this](const Event& event) { this->onEvent(event); }
     );
 
-    glEnable(GL_BLEND);
-
-    Logger::info("Gear Game Engine Initialized!");
+    Logger::info("Game Engine Initialized!");
   }
 
   Application::~Application() {
-    Logger::trace("Gear Game Engine Terminating...");
+    Logger::trace("Game Engine Terminating...");
 
     this->layerStack.clear();
+    this->window.reset();
 
-    glfwTerminate();
-    const char* description = nullptr;
-    glfwGetError(&description);
-    if (description) {
-      Logger::warn("Could not terminate GLFW: '%s'", description);
-    }
-
-    Logger::info("Gear Game Engine Terminated!");
+    Logger::info("Game Engine Terminated!");
   }
 
   void Application::start() {

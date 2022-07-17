@@ -11,7 +11,41 @@
 #include "Window.hpp"
 
 namespace Game {
+
+  static void GLFWErrorCallback(int error, const char* description) {
+    Logger::error("GLFW Error (%d): %s", error, description);
+  }
+
+  u32 Window::windowCount = 0;
+
+  void Window::initializeWindowSystem() {
+    if (windowCount == 0) {
+      glfwSetErrorCallback(GLFWErrorCallback);
+
+      Logger::info("GLFW Version: %s", glfwGetVersionString());
+      if (!glfwInit()) {
+        std::exit(EXIT_FAILURE);
+      } else {
+        Logger::trace("GLFW initialized!");
+      }
+    }
+    
+    windowCount++;
+  }
+
+  void Window::deinitializeWindowSystem() {
+    GAME_ASSERT_WITH_MESSAGE(windowCount >= 1, "Should not call deinit before init");
+    windowCount--;
+    if (windowCount == 0) {
+      glfwTerminate();
+      Logger::trace("GLFW Terminated!");
+    }    
+  }
+
+
   Ref<Window> Window::create(const char* title, u32 width, u32 height) {
+    initializeWindowSystem();
+
     Logger::trace("Creating window...");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -31,9 +65,6 @@ namespace Game {
 
     data.window = glfwCreateWindow(width, height, title, nullptr, nullptr);
     if (!data.window) {
-      const char* description;
-      glfwGetError(&description);
-      Logger::error("could not create GLFW window: '%s'", description);
       return nullptr;
     }
     auto result = Ref<Window>( new Window(data) );
@@ -131,6 +162,7 @@ namespace Game {
 
   Window::~Window() {
     glfwDestroyWindow(this->data.window);
+    deinitializeWindowSystem();
   }
 
   void Window::setShouldClose() {
