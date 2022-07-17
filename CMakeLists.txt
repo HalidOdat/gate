@@ -17,8 +17,8 @@ set(Sources
   src/Core/Assert.cpp
   src/Core/Log.hpp
   src/Core/Log.cpp
-  src/Core/KeyCode.hpp
-
+  
+  src/Events/KeyCode.hpp
   src/Events/Event.hpp
   src/Events/Event.cpp
   src/Events/KeyEvent.hpp
@@ -35,6 +35,12 @@ set(Sources
   src/Renderer/Shader.cpp
   src/Renderer/Texture.hpp
   src/Renderer/Texture.cpp
+  
+  src/Layers/Layer.hpp
+  src/Layers/ExampleLayer.hpp
+  src/Layers/ExampleLayer.cpp
+  src/Layers/LayerStack.hpp
+  src/Layers/LayerStack.cpp
   
   src/Window.hpp
   src/Window.cpp

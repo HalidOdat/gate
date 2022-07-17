@@ -40,6 +40,8 @@ namespace Game {
   Application::~Application() {
     Logger::trace("Gear Game Engine Terminating...");
 
+    this->layerStack.clear();
+
     glfwTerminate();
     const char* description = nullptr;
     glfwGetError(&description);
@@ -51,18 +53,14 @@ namespace Game {
   }
 
   void Application::start() {
-    this->onCreate();
-
-    while (!this->window->shouldClose()) {
+    while (running) {
       GAME_GL_CHECK(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
       GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-      this->onUpdate();
+      this->layerStack.onUpdate();
 
       this->window->update();
     }
-
-    this->onDestroy();
   }
 
   void Application::quit() {
@@ -70,10 +68,27 @@ namespace Game {
   }
 
   void Application::onEvent(const Event& event) {
-    event.dispatch<WindowResizeEvent>([this](const WindowResizeEvent& event) {
-      glViewport(0, 0, event.getWidth(), event.getHeight());
-    });
+    event.dispatch<WindowResizeEvent>(&Application::onWindowResizeEvent, this);
+    event.dispatch<WindowCloseEvent>(&Application::onWindowCloseEvent, this);
+    
     Logger::info("Event: %s", event.getName());
+
+    this->layerStack.onEvent(event);
+  }
+
+  bool Application::onWindowCloseEvent(const WindowCloseEvent& event) {
+    this->running = false;
+    return true;
+  }
+
+  bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
+    glViewport(0, 0, event.getWidth(), event.getHeight());
+    return false;
+  }
+
+
+  void Application::pushLayer(Layer* layer) {
+    this->layerStack.push(layer);
   }
 
 } // namespace Game

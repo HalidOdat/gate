@@ -1,10 +1,13 @@
 #pragma once
 
+#include "Core/Assert.hpp"
+#include "Core/Type.hpp"
+
 namespace Game {
 
   class Event {
   public:
-    enum class Type {
+    enum class Type : u8 {
       KeyPressed, KeyReleased,
       MouseMove, MouseScroll, MouseButtonPressed, MouseButtonReleased,
       WindowResize, WindowClose,
@@ -14,9 +17,10 @@ namespace Game {
     inline Type getType() const { return this->type; }
 
     template<typename T, typename U>
-    bool dispatch(void (U::*fn)(const T&), U* self) const {
+    bool dispatch(bool (U::*fn)(const T&), U* self) const {
       if (this->getType() == T::TYPE) {
-        (self->*fn)(*(T*)this);
+        GAME_DEBUG_ASSERT_WITH_MESSAGE(!this->handled, "Trying to handle an already handled event");
+        this->handled = (self->*fn)(*(T*)this);
         return true;
       }
       return false;
@@ -25,12 +29,14 @@ namespace Game {
     template<typename T, typename F>
     bool dispatch(F fn) const {
       if (this->getType() == T::TYPE) {
-        fn(*(T*)this);
+        GAME_DEBUG_ASSERT_WITH_MESSAGE(!this->handled, "Trying to handle an already handled event");
+        this->handled = fn(*(T*)this);
         return true;
       }
       return false;
     }
 
+    inline bool isHandled() const { return this->handled; }
     const char* getName() const;
 
   protected:
@@ -38,8 +44,10 @@ namespace Game {
       : type{type}
     {}
 
+
   private:
     Type type;
+    mutable bool handled = false;
   };
 
 } // namespace Game

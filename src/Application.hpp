@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Window.hpp"
-#include "Events/KeyEvent.hpp"
+#include "Events/WindowEvent.hpp"
+#include "Layers/LayerStack.hpp"
 
 namespace Game {
 
@@ -15,15 +16,17 @@ namespace Game {
     void start();
     void quit();
 
-    virtual void onCreate() {};
-    virtual void onUpdate() = 0;
-    virtual void onDestroy() {};
+    void pushLayer(Layer* layer);
 
   private:
     void onEvent(const Event& event);
+    bool onWindowCloseEvent(const WindowCloseEvent& event);
+    bool onWindowResizeEvent(const WindowResizeEvent& event);
 
   private:
+    bool running = true;
     Ref<Window> window = nullptr;
+    LayerStack layerStack;
   };
   
 }
