@@ -1,66 +1,51 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
+#include "Core/Math.hpp"
 
 namespace Game {
   
-  class PerspectiveCamera {
+  class Camera {
   public:
-    PerspectiveCamera(glm::vec3 position, f32 fov, f32 aspect, f32 zNear, f32 zFar)
-      : position{position},
-      forward{0.0f, 0.0f, 1.0f},
-      up{0.0f, 1.0f, 0.0f},
-      projection{glm::perspective(fov, aspect, zNear, zFar)}
-    {
-    }
-
-    inline glm::mat4 getViewProjection() const {
-      return this->projection * glm::lookAt(this->position, this->position + this->forward, this->up);
-    }
+    inline const Mat4& getProjectionViewMatrix() const { return this->projectionViewMatrix; }
 
   protected:
-    glm::vec3 position;
-    glm::vec3 forward;
-    glm::vec3 up;
+    Camera() = default;
 
-    glm::mat4 projection;
+  protected:
+    Mat4 projectionViewMatrix;
   };
 
-  class OrthographicCamera {
+  class PerspectiveCamera : public Camera {
   public:
-    OrthographicCamera(f32 left, f32 right, f32 bottom, f32 top, f32 zNear = -1.0f, f32 zFar = 1.0f)
-      : projection{glm::ortho(left, right, bottom, top, zNear, zFar)}, view{1.0f}
-    {}
+    PerspectiveCamera(Vec3 position, f32 fov, f32 aspect, f32 zNear, f32 zFar);
 
-    void offsetPosition(const glm::vec3& offset) {
-      this->setPosition(this->position + offset);
-    }
+  private:
+    Vec3 position;
+    Vec3 forward;
+    Vec3 up;
 
-    void setPosition(const glm::vec3& position) {
-      this->position = position;
-      glm::mat4 transform = glm::translate(
-        glm::mat4(1.0f),
-        this->position
-      ) * glm::rotate(
-        glm::mat4(1.0f),
-        glm::radians(this->rotation),
-        glm::vec3(0, 0, 1)
-      );
+    Mat4 projection;
+  };
 
-      this->view = glm::inverse(transform);
-    }
+  class OrthographicCamera : public Camera {
+  public:
+    OrthographicCamera(f32 left, f32 right, f32 bottom, f32 top, f32 zNear = -1.0f, f32 zFar = 1.0f);
 
-    inline glm::mat4 getProjectionView() const {
-      return this->projection * this->view;
-    }
+    inline void offsetPosition(const Vec3& offset) { this->setPosition(this->position + offset); }
+    inline void offsetRotation(const f32   offset) { this->setRotation(this->rotation + offset); }
 
-  protected:
-    glm::mat4 projection;
-    glm::mat4 view;
+    void setPosition(const Vec3& position);
+    void setRotation(const f32 rotation);
 
-    glm::vec3 position = {0.0f, 0.0f, 0.0f};
-    f32       rotation = 0.0f;
+  private:
+    void recalculateProjectionViewMatrix();
+
+  private:
+    Mat4 projection;
+    Mat4 view;
+
+    Vec3 position = {0.0f, 0.0f, 0.0f};
+    f32  rotation = 0.0f; // rotation on the z-axis
   };
 
 } // namespace Game

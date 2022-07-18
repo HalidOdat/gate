@@ -17,6 +17,7 @@ set(Sources
   src/Core/Assert.cpp
   src/Core/Log.hpp
   src/Core/Log.cpp
+  src/Core/Math.hpp
   
   src/Events/KeyCode.hpp
   src/Events/Event.hpp

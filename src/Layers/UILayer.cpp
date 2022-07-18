@@ -70,11 +70,12 @@ namespace Game {
 
   bool UILayer::onKeyPressedEvent(const KeyPressedEvent& event) {
     if (event.getKey() == Key::Up) {
-      this->camera.offset(glm::vec3(0.001f, 0.0f, 0.0f));
-
-      this->textureShader->bind();
-      this->textureShader->setMat4("uProjectionView", this->camera.getProjectionView());
+      this->camera.offsetPosition({0.0f, 0.1f, 0.0f});
+    } else if (event.getKey() == Key::Left) {
+      this->camera.offsetRotation(0.1f);
     }
+    this->textureShader->bind();
+    this->textureShader->setMat4("uProjectionView", this->camera.getProjectionViewMatrix());
     return false;
   }
 

@@ -1,3 +1,5 @@
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <glad/glad.h>
 
 
@@ -64,7 +66,7 @@ namespace Game {
 
   bool ExampleLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
     if (event.getKey() == Key::R) {
-      this->transform = glm::rotate(this->transform, glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+      this->transform = glm::rotate(this->transform, glm::radians(15.0f), Vec3(0.0f, 0.0f, 1.0f));
 
       this->textureShader->bind();
       this->textureShader->setMat4("uTransform", this->transform);

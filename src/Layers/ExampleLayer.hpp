@@ -29,7 +29,7 @@ namespace Game {
     Ref<Shader> textureShader;
     Ref<Texture2D> texture;
 
-    glm::mat4 transform = glm::mat4(1.0f);
+    Mat4 transform = Mat4(1.0f);
   };
 
 } // namespace Game

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
-#include "Core/Type.hpp"
+#include "Core/Math.hpp"
 
 namespace Game {
   
@@ -26,12 +24,12 @@ namespace Game {
     void unbind() noexcept;
 
     void setFloat(StringView name, const f32 value);
-    void setVec2(StringView name,  const glm::vec2& value);
-    void setVec3(StringView name,  const glm::vec3& value);
-    void setVec4(StringView name,  const glm::vec4& value);
-    void setMat2(StringView name,  const glm::mat2& value);
-    void setMat3(StringView name,  const glm::mat3& value);
-    void setMat4(StringView name,  const glm::mat4& value);
+    void setVec2(StringView name,  const Vec2& value);
+    void setVec3(StringView name,  const Vec3& value);
+    void setVec4(StringView name,  const Vec4& value);
+    void setMat2(StringView name,  const Mat2& value);
+    void setMat3(StringView name,  const Mat3& value);
+    void setMat4(StringView name,  const Mat4& value);
     void setInt(StringView name,   const i32 value);
 
   protected:
