@@ -1,6 +1,9 @@
 # TODO
 
-- [x] Implement Events
+- [ ] Better shader compilation
 - [ ] Implement Camera class
-- [ ] Move rendering stuff to renderer directory
-- [ ] Implement Layers
+- [ ] Renderer Primitives
+- [ ] Implement Entity Component System
+- [x] Implement Events
+- [x] Move rendering stuff to renderer directory
+- [x] Implement Layers

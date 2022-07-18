@@ -35,12 +35,16 @@ set(Sources
   src/Renderer/Shader.cpp
   src/Renderer/Texture.hpp
   src/Renderer/Texture.cpp
+  src/Renderer/Camera.hpp
+  src/Renderer/Camera.cpp
   
   src/Layers/Layer.hpp
-  src/Layers/ExampleLayer.hpp
-  src/Layers/ExampleLayer.cpp
   src/Layers/LayerStack.hpp
   src/Layers/LayerStack.cpp
+  src/Layers/UILayer.hpp
+  src/Layers/UILayer.cpp
+  src/Layers/ExampleLayer.hpp
+  src/Layers/ExampleLayer.cpp
   
   src/Window.hpp
   src/Window.cpp

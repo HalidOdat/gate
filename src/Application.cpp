@@ -37,7 +37,7 @@ namespace Game {
   void Application::start() {
     while (running) {
       GAME_GL_CHECK(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
-      GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+      GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
       this->layerStack.onUpdate();
 
@@ -50,10 +50,10 @@ namespace Game {
   }
 
   void Application::onEvent(const Event& event) {
+    // Logger::info("Event: %s", event.getName());
+    
     event.dispatch<WindowResizeEvent>(&Application::onWindowResizeEvent, this);
     event.dispatch<WindowCloseEvent>(&Application::onWindowCloseEvent, this);
-    
-    Logger::info("Event: %s", event.getName());
 
     this->layerStack.onEvent(event);
   }

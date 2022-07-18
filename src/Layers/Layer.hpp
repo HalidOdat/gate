@@ -3,6 +3,8 @@
 #include "Core/Type.hpp"
 #include "Events/Event.hpp"
 
+#include "REnderer/Camera.hpp"
+
 namespace Game {
   
   class Layer {

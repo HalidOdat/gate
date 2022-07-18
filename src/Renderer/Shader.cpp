@@ -125,49 +125,49 @@ namespace Game {
     GAME_GL_CHECK(glUseProgram(NULL_SHADER));
   }
 
-  void Shader::setFloat(StringView name, f32 value) {
+  void Shader::setFloat(StringView name, const f32 value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniform1f(uniform_id, value));
   }
 
-  void Shader::setVec2(StringView name, glm::vec2 value) {
+  void Shader::setVec2(StringView name, const glm::vec2& value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniform2f(uniform_id, value.x, value.y));
   }
 
-  void Shader::setVec3(StringView name, glm::vec3 value) {
+  void Shader::setVec3(StringView name, const glm::vec3& value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniform3f(uniform_id, value.x, value.y, value.z));
   }
 
-  void Shader::setVec4(StringView name, glm::vec4 value) {
+  void Shader::setVec4(StringView name, const glm::vec4& value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniform4f(uniform_id, value.x, value.y, value.z, value.w));
   }
 
-  void Shader::setMat2(StringView name, glm::mat2 value) {
+  void Shader::setMat2(StringView name, const glm::mat2& value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniformMatrix2fv(uniform_id, 1, GL_FALSE, &value[0][0]));
   }
 
-  void Shader::setMat3(StringView name, glm::mat3 value) {
+  void Shader::setMat3(StringView name, const glm::mat3& value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniformMatrix3fv(uniform_id, 1, GL_FALSE, &value[0][0]));
   }
 
-  void Shader::setMat4(StringView name, glm::mat4 value) {
+  void Shader::setMat4(StringView name, const glm::mat4& value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniformMatrix4fv(uniform_id, 1, GL_FALSE, &value[0][0]));
   }
 
-  void Shader::setInt(StringView name, i32 value) {
+  void Shader::setInt(StringView name, const i32 value) {
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
     GAME_GL_CHECK(glUniform1i(uniform_id, value));

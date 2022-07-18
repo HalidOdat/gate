@@ -25,14 +25,14 @@ namespace Game {
     void bind() noexcept;
     void unbind() noexcept;
 
-    void setFloat(StringView name, f32 value);
-    void setVec2(StringView name, glm::vec2 value);
-    void setVec3(StringView name, glm::vec3 value);
-    void setVec4(StringView name, glm::vec4 value);
-    void setMat2(StringView name, glm::mat2 value);
-    void setMat3(StringView name, glm::mat3 value);
-    void setMat4(StringView name, glm::mat4 value);
-    void setInt(StringView name, i32 value);
+    void setFloat(StringView name, const f32 value);
+    void setVec2(StringView name,  const glm::vec2& value);
+    void setVec3(StringView name,  const glm::vec3& value);
+    void setVec4(StringView name,  const glm::vec4& value);
+    void setMat2(StringView name,  const glm::mat2& value);
+    void setMat3(StringView name,  const glm::mat3& value);
+    void setMat4(StringView name,  const glm::mat4& value);
+    void setInt(StringView name,   const i32 value);
 
   protected:
     Shader(u32 id)

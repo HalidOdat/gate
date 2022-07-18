@@ -1,20 +1,18 @@
 #pragma once
 
-#include <glm/mat4x4.hpp>
-
 #include "Layers/Layer.hpp"
-
+#include "Events/WindowEvent.hpp"
+#include "Events/KeyEvent.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Shader.hpp"
 #include "Renderer/Texture.hpp"
-
-#include "Events/KeyEvent.hpp"
+#include "Renderer/Camera.hpp"
 
 namespace Game {
     
-  class ExampleLayer : public Layer {
+  class UILayer : public Layer {
   public:
-    ExampleLayer();
+    UILayer();
 
     virtual void onAttach() override;
     virtual void onDetach() override;
@@ -22,14 +20,15 @@ namespace Game {
     virtual void onEvent(const Event& event) override;
   
   private:
+    bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
 
   private:
+    OrthographicCamera camera;
+
     Ref<VertexArray> square;
     Ref<Shader> textureShader;
     Ref<Texture2D> texture;
-
-    glm::mat4 transform = glm::mat4(1.0f);
   };
 
 } // namespace Game
