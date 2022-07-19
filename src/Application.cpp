@@ -6,6 +6,7 @@
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
 #include "Events/WindowEvent.hpp"
+#include "Renderer/Renderer.hpp"
 #include "Application.hpp"
 
 namespace Game {
@@ -22,6 +23,8 @@ namespace Game {
       [this](const Event& event) { this->onEvent(event); }
     );
 
+    Renderer::Initialize();
+
     Logger::info("Game Engine Initialized!");
   }
 
@@ -29,6 +32,7 @@ namespace Game {
     Logger::trace("Game Engine Terminating...");
 
     this->layerStack.clear();
+    Renderer::Shutdown();
     this->window.reset();
 
     Logger::info("Game Engine Terminated!");

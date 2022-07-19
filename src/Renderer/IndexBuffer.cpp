@@ -4,7 +4,11 @@
 #include "Renderer/IndexBuffer.hpp"
 
 namespace Game {
-  IndexBuffer::IndexBuffer(Slice<u32> slice) {
+  Ref<IndexBuffer> IndexBuffer::create(Slice<const u32> slice) {
+    return Ref<IndexBuffer>(new IndexBuffer(slice));
+  }
+
+  IndexBuffer::IndexBuffer(Slice<const u32> slice) {
     GAME_GL_CHECK(glGenBuffers(1, &this->id));
     GAME_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id));
     GAME_GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, slice.sizeInBytes(), slice.data(), GL_STATIC_DRAW));

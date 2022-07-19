@@ -25,10 +25,6 @@ namespace Game {
 
   private:
     OrthographicCamera camera;
-
-    Ref<VertexArray> square;
-    Ref<Shader> textureShader;
-    Ref<Texture2D> texture;
   };
 
 } // namespace Game

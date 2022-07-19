@@ -65,7 +65,7 @@ namespace Game {
     return id;
   }
 
-  Ref<Shader> Shader::Create(const char* vFilepath, const char* fFilepath) noexcept {
+  Ref<Shader> Shader::create(const char* vFilepath, const char* fFilepath) noexcept {
     const auto vertexShaderSourceString = fileToString(vFilepath);
     if (!vertexShaderSourceString) {
       return nullptr;

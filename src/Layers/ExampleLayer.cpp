@@ -14,20 +14,20 @@ namespace Game {
 
     glEnable(GL_DEPTH_TEST);
 
-    float positions[] = {
+    const float positions[] = {
        0.5f,  0.5f, -0.1f,   1.0f, 1.0f, 1.0f,   1.0f, 1.0f, // top right
        0.5f, -0.5f, -0.1f,   1.0f, 1.0f, 1.0f,   1.0f, 0.0f, // bottom right
       -0.5f, -0.5f, -0.1f,   1.0f, 1.0f, 1.0f,   0.0f, 0.0f, // bottom left
       -0.5f,  0.5f, -0.1f,   1.0f, 1.0f, 1.0f,   0.0f, 1.0f, // top left 
     };
 
-    u32 indices[] = {
+    const u32 indices[] = {
       0, 1, 3,   // first triangle
       1, 2, 3    // second triangle
     };
 
-    this->square = VertexArray::Create();
-    auto vertexBuffer = VertexBuffer::Create(positions);
+    this->square = VertexArray::create();
+    auto vertexBuffer = VertexBuffer::create(positions);
     vertexBuffer->setLayout({
       { BufferElement::Type::Float3 },
       { BufferElement::Type::Float3 },
@@ -35,11 +35,11 @@ namespace Game {
     });
 
     this->square->addVertexBuffer(vertexBuffer);
-    auto indexBuffer = IndexBuffer::Create(indices);
+    auto indexBuffer = IndexBuffer::create(indices);
     this->square->setIndexBuffer(indexBuffer);
     this->square->unbind();
     
-    this->textureShader = Shader::Create("./res/shaders/Texture.vs", "./res/shaders/Texture.fs");
+    this->textureShader = Shader::create("./res/shaders/Texture.vs", "./res/shaders/Texture.fs");
     this->textureShader->bind();
     this->textureShader->setInt("uTexture", 0);
     this->texture = Texture2D::create("res/textures/thinking-emoji.png");

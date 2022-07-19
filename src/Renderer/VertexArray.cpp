@@ -6,6 +6,10 @@
 
 namespace Game {
   
+  Ref<VertexArray> VertexArray::create() {
+    return Ref<VertexArray>(new VertexArray());
+  }
+
   VertexArray::VertexArray() {
     GAME_GL_CHECK(glCreateVertexArrays(1, &this->id));
   }

@@ -8,12 +8,12 @@
 
 namespace Game {
 
-  class VertexArray : public CreateObject<VertexArray> {
+  class VertexArray {
   public:
-    VertexArray();
-    ~VertexArray();
-
+    [[nodiscard]] static Ref<VertexArray> create();
+    
     DISALLOW_MOVE_AND_COPY(VertexArray);
+    ~VertexArray();
 
     void bind();
     void unbind();
@@ -24,6 +24,9 @@ namespace Game {
     inline u32 getId() { return id; }
 
     void draw();
+
+  private:
+    VertexArray();
 
   private:
     u32 id;

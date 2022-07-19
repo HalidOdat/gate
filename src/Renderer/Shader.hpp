@@ -15,7 +15,7 @@ namespace Game {
     static constexpr const u32 NULL_SHADER = 0;
 
   public:
-    [[nodiscard]] static Ref<Shader> Create(const char* vFilepath, const char* fFilepath) noexcept;
+    [[nodiscard]] static Ref<Shader> create(const char* vFilepath, const char* fFilepath) noexcept;
 
     DISALLOW_MOVE_AND_COPY(Shader);
     ~Shader() noexcept;

@@ -52,13 +52,23 @@ namespace Game {
   template<typename T>
   class Slice {
   public:
-    template <typename U = T, usize N, std::enable_if_t<!std::is_same<U, void>::value && std::is_same<U, T>::value, bool> = true>
+    template <typename U = T, usize N,
+      std::enable_if_t<
+        !std::is_same_v<std::remove_cv_t<U>, void> &&
+         std::is_same_v<std::remove_cv_t<U>, std::remove_cv_t<T>>,
+      bool> = true
+    >
     inline constexpr Slice(U (&array)[N])
       : _data{array}, _size{N}
     {
     }
 
-    template <typename U = T, usize N, std::enable_if_t<!std::is_same<U, void>::value && std::is_same<T, void>::value, bool> = true>
+    template <typename U = T, usize N,
+      std::enable_if_t<
+        !std::is_same_v<std::remove_cv_t<U>, void> &&
+         std::is_same_v<std::remove_cv_t<T>, void>,
+      bool> = true
+    >
     inline constexpr Slice(U (&array)[N])
       : _data{array}, _size{N * sizeof(U)}
     {
@@ -73,10 +83,10 @@ namespace Game {
     inline constexpr T* data() { return this->_data; }
     inline constexpr usize size() const { return this->_size; }
     
-    template <typename U = T, std::enable_if_t<!std::is_same<U, void>::value, bool> = true>
+    template <typename U = T, std::enable_if_t<!std::is_same_v<std::remove_cv_t<U>, void>, bool> = true>
     inline constexpr usize sizeInBytes() const { return sizeof(U) * this->_size; }
 
-    template <typename U = T, std::enable_if_t<std::is_same<U, void>::value, bool> = true>
+    template <typename U = T, std::enable_if_t<std::is_same_v<std::remove_cv_t<U>, void>, bool> = true>
     inline constexpr usize sizeInBytes() const { return this->_size; }
     
 
