@@ -38,6 +38,8 @@ set(Sources
   src/Renderer/Texture.cpp
   src/Renderer/Camera.hpp
   src/Renderer/Camera.cpp
+  src/Renderer/Renderer.hpp
+  src/Renderer/Renderer.cpp
   
   src/Layers/Layer.hpp
   src/Layers/LayerStack.hpp

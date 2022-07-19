@@ -4,6 +4,8 @@
 #include "Core/Log.hpp"
 #include "Layers/UILayer.hpp"
 
+#include "Renderer/Renderer.hpp"
+
 namespace Game {
 
   UILayer::UILayer()
@@ -53,9 +55,10 @@ namespace Game {
   }
 
   void UILayer::onUpdate() {
-    this->texture->bind();
-    this->textureShader->bind();
-    this->square->draw();
+    auto renderer = Renderer();
+    renderer.begin(this->camera);
+    renderer.draw(textureShader, square, texture);
+    renderer.end();
   }
 
   void UILayer::onEvent(const Event& event) {
@@ -74,8 +77,6 @@ namespace Game {
     } else if (event.getKey() == Key::Left) {
       this->camera.offsetRotation(0.1f);
     }
-    this->textureShader->bind();
-    this->textureShader->setMat4("uProjectionView", this->camera.getProjectionViewMatrix());
     return false;
   }
 
