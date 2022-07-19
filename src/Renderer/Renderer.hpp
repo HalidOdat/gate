@@ -5,6 +5,7 @@
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Texture.hpp"
 #include "Core/Math.hpp"
+#include "Utils/Color.hpp"
 
 namespace Game {
   
@@ -15,7 +16,7 @@ namespace Game {
     static void Initialize();
     static void Shutdown();
     static void begin(const Camera& camera);
-    static void drawSquare(const Vec2& position, const Vec2& size);
+    static void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
     static void draw(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture);
     static void end();
   };

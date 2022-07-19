@@ -8,16 +8,8 @@
 
 namespace Game {
 
-  Ref<Texture2D> Texture2D::create(const StringView& filepath) {
-    int width, height, channels;
-    stbi_set_flip_vertically_on_load(true);
-    stbi_uc* data = stbi_load(filepath.data(), &width, &height, &channels, 0);
-        
-    if (!data) {
-      Logger::error("couldn't load image file '%s'", filepath.data());
-      return nullptr;
-    }
-
+  Ref<Texture2D> Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels) {
+    GAME_ASSERT_WITH_MESSAGE(channels == 3 || channels == 3, "Unknown channel");
     GLenum internalFormat = 0, dataFormat = 0;
     if (channels == 4) {
       internalFormat = GL_RGBA8;
@@ -38,12 +30,25 @@ namespace Game {
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-    GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data));
+    GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes));
     GAME_GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
 
-    stbi_image_free(data);
-
     return Ref<Texture2D>( new Texture2D(texture, width, height) );
+  }
+
+  Ref<Texture2D> Texture2D::create(const StringView& filepath) {
+    int width, height, channels;
+    stbi_set_flip_vertically_on_load(true);
+    stbi_uc* data = stbi_load(filepath.data(), &width, &height, &channels, 0);
+        
+    if (!data) {
+      Logger::error("couldn't load image file '%s'", filepath.data());
+      return nullptr;
+    }
+
+    const auto result = Texture2D::fromBytes(data, width, height, channels);
+    stbi_image_free(data);
+    return result;
   }
 
   Texture2D::~Texture2D() noexcept {

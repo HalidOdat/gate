@@ -25,8 +25,8 @@ namespace Game {
 
   void UILayer::onUpdate() {
     Renderer::begin(this->camera);
-    Renderer::drawSquare({-0.2f, 0.2f}, {0.2f, 0.2f});
-    Renderer::drawSquare({0.2f, -0.2f}, {0.2f, 0.2f});
+    Renderer::drawQuad({-0.2f, 0.2f}, {0.2f, 0.2f}, Color::RED);
+    Renderer::drawQuad({0.2f, -0.2f}, {0.2f, 0.2f}, Color::GREEN);
     Renderer::end();
   }
 

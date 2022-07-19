@@ -49,6 +49,8 @@ set(Sources
   src/Layers/ExampleLayer.hpp
   src/Layers/ExampleLayer.cpp
   
+  src/Utils/Color.hpp
+
   src/Window.hpp
   src/Window.cpp
   src/Application.hpp
