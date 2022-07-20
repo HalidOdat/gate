@@ -8,7 +8,9 @@ namespace Game {
     return Ref<IndexBuffer>(new IndexBuffer(slice));
   }
 
-  IndexBuffer::IndexBuffer(Slice<const u32> slice) {
+  IndexBuffer::IndexBuffer(Slice<const u32> slice)
+    : count{u32(slice.size())}
+  {
     GAME_GL_CHECK(glGenBuffers(1, &this->id));
     GAME_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id));
     GAME_GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, slice.sizeInBytes(), slice.data(), GL_STATIC_DRAW));
