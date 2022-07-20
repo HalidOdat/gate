@@ -15,9 +15,9 @@ namespace Game {
     this->layers.pop_back();
   }
 
-  void LayerStack::onUpdate() {
+  void LayerStack::onUpdate(Timestep ts) {
     for (auto it = this->begin(); it != this->end(); ++it) {
-      (*it)->onUpdate();
+      (*it)->onUpdate(ts);
     }
   }
 

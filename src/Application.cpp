@@ -42,11 +42,16 @@ namespace Game {
   }
 
   void Application::start() {
+    this->lastFrameTime = (float)glfwGetTime();
     while (running) {
+      float time = (float)glfwGetTime();
+      float dt = time - this->lastFrameTime;
+      this->lastFrameTime = time;
+
       GAME_GL_CHECK(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
       GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-      this->layerStack.onUpdate();
+      this->layerStack.onUpdate(dt);
       this->layerStack.onUiRender(*this->ui);
 
       this->window->update();

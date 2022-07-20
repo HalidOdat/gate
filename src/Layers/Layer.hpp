@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Timestep.hpp"
 #include "Ui/Ui.hpp"
 
 namespace Game {
@@ -11,7 +12,7 @@ namespace Game {
     
     virtual void onAttach() {}
     virtual void onDetach() {}
-    virtual void onUpdate() {}
+    virtual void onUpdate(Timestep ts) {}
     virtual void onUiRender(Ui& ui) {}
     virtual void onEvent(const Event& event) {}
 

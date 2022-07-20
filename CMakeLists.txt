@@ -18,6 +18,7 @@ set(Sources
   src/Core/Log.hpp
   src/Core/Log.cpp
   src/Core/Math.hpp
+  src/Core/Timestep.hpp
   
   src/Events/KeyCode.hpp
   src/Events/Event.hpp

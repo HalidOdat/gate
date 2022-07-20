@@ -29,7 +29,7 @@ namespace Game {
     void push(Layer* layer);
     void pop();
 
-    void onUpdate(); 
+    void onUpdate(Timestep ts); 
     void onUiRender(Ui& ui); 
     void onEvent(const Event& event);
 

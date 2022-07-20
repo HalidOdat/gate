@@ -29,6 +29,7 @@ namespace Game {
     Ref<Window> window = nullptr;
     Ui* ui;
     LayerStack layerStack;
+    f32 lastFrameTime = 0.0f;
   };
   
 }

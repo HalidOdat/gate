@@ -18,7 +18,7 @@ namespace Game {
     Logger::info("ExampleLayer::onDetach was called");
   }
 
-  void ExampleLayer::onUpdate() {
+  void ExampleLayer::onUpdate(Timestep ts) {
 
   }
 

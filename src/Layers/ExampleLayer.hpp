@@ -11,7 +11,7 @@ namespace Game {
 
     virtual void onAttach() override;
     virtual void onDetach() override;
-    virtual void onUpdate() override;
+    virtual void onUpdate(Timestep ts) override;
     virtual void onUiRender(Ui& ui) override;
     virtual void onEvent(const Event& event) override;
   
