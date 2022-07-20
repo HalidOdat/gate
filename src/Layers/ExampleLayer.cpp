@@ -57,7 +57,7 @@ namespace Game {
   void ExampleLayer::onUpdate() {
     this->texture->bind();
     this->textureShader->bind();
-    this->square->draw();
+    this->square->drawIndices(6);
   }
 
   void ExampleLayer::onEvent(const Event& event) {

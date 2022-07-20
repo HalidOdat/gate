@@ -105,17 +105,21 @@ namespace Game {
   class VertexBuffer {
   public:
     [[nodiscard]] static Ref<VertexBuffer> create(Slice<const void> slice);
+    [[nodiscard]] static Ref<VertexBuffer> withSize(const usize size);
     DISALLOW_COPY_AND_ASSIGN(VertexBuffer);
     ~VertexBuffer();
 
     void bind();
     void unbind();
 
+    void set(const Slice<const void> slice);
+
     inline const BufferLayout& getLayout() const { return this->layout; }
     inline void setLayout(BufferLayout layout) { this->layout = std::move(layout); }
 
   private:
     VertexBuffer(Slice<const void> slice);
+    VertexBuffer(const usize size);
 
   private:
     u32 id;

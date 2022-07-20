@@ -2,9 +2,10 @@
 
 
 #include "Core/Log.hpp"
+#include "Renderer/Renderer.hpp"
+#include "Ui/Ui.hpp"
 #include "Layers/UILayer.hpp"
 
-#include "Renderer/Renderer.hpp"
 
 namespace Game {
 
@@ -25,9 +26,17 @@ namespace Game {
 
   void UILayer::onUpdate() {
     Renderer::begin(this->camera);
-    Renderer::drawQuad({-0.2f, 0.2f}, {0.2f, 0.2f}, Color::RED);
-    Renderer::drawQuad({0.2f, -0.2f}, {0.2f, 0.2f}, Color::GREEN);
+      Renderer::drawQuad({-0.5f, -0.5f}, {0.2f, 0.2f}, Color::RED);
+      Renderer::drawQuad({0.5f, -0.5f}, {0.2f, 0.2f}, Color::GREEN);
+      Renderer::drawQuad({0.5f,  0.5f}, {0.2f, 0.2f}, Color::BLACK);
+      Renderer::drawQuad({-0.5f,  0.5f}, {0.2f, 0.2f}, Color::WHITE);
     Renderer::end();
+
+    // Ui::begin({0.0f, 0.0f});
+    // if (Ui::button(Color::GREEN)) {
+    //   Logger::info("Button clicked!!!");
+    // }
+    // Ui::end();
   }
 
   void UILayer::onEvent(const Event& event) {

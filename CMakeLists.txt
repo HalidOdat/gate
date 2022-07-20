@@ -41,6 +41,9 @@ set(Sources
   src/Renderer/Renderer.hpp
   src/Renderer/Renderer.cpp
   
+  src/Ui/Ui.hpp
+  src/Ui/Ui.cpp
+
   src/Layers/Layer.hpp
   src/Layers/LayerStack.hpp
   src/Layers/LayerStack.cpp

@@ -75,13 +75,14 @@ namespace Game {
     this->indexBuffer = buffer;
   }
 
-  void VertexArray::draw() {
+  void VertexArray::drawIndices() {
+    const auto count = this->indexBuffer->getCount();
+    this->drawIndices(count);
+  }
+
+  void VertexArray::drawIndices(const u32 count) {
     this->bind();
-    if (this->indexBuffer) {
-      GAME_GL_CHECK(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
-    } else {
-      GAME_GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, 3));
-    }
+    GAME_GL_CHECK(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
   }
 
 } // namespace Game

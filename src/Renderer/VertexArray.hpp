@@ -23,7 +23,8 @@ namespace Game {
 
     inline u32 getId() { return id; }
 
-    void draw();
+    void drawIndices();
+    void drawIndices(const u32 count);
 
   private:
     VertexArray();
