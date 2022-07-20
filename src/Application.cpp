@@ -25,6 +25,8 @@ namespace Game {
 
     Renderer::Initialize();
 
+    this->ui = new Ui(-1.0f, 1.0f, -1.0f, 1.0f);
+
     Logger::info("Game Engine Initialized!");
   }
 
@@ -32,6 +34,7 @@ namespace Game {
     Logger::trace("Game Engine Terminating...");
 
     this->layerStack.clear();
+    delete this->ui;
     Renderer::Shutdown();
     this->window.reset();
 
@@ -44,6 +47,7 @@ namespace Game {
       GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
       this->layerStack.onUpdate();
+      this->layerStack.onUiRender(*this->ui);
 
       this->window->update();
     }
@@ -54,11 +58,10 @@ namespace Game {
   }
 
   void Application::onEvent(const Event& event) {
-    // Logger::info("Event: %s", event.getName());
-    
     event.dispatch<WindowResizeEvent>(&Application::onWindowResizeEvent, this);
     event.dispatch<WindowCloseEvent>(&Application::onWindowCloseEvent, this);
 
+    this->ui->onEvent(event);
     this->layerStack.onEvent(event);
   }
 

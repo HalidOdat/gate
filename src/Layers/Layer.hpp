@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Core/Type.hpp"
-#include "Events/Event.hpp"
-
-#include "REnderer/Camera.hpp"
+#include "Ui/Ui.hpp"
 
 namespace Game {
   
@@ -15,6 +12,7 @@ namespace Game {
     virtual void onAttach() {}
     virtual void onDetach() {}
     virtual void onUpdate() {}
+    virtual void onUiRender(Ui& ui) {}
     virtual void onEvent(const Event& event) {}
 
     inline bool isEnabled() const { return this->enabled; }

@@ -47,8 +47,6 @@ set(Sources
   src/Layers/Layer.hpp
   src/Layers/LayerStack.hpp
   src/Layers/LayerStack.cpp
-  src/Layers/UILayer.hpp
-  src/Layers/UILayer.cpp
   src/Layers/ExampleLayer.hpp
   src/Layers/ExampleLayer.cpp
   

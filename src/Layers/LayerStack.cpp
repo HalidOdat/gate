@@ -21,6 +21,12 @@ namespace Game {
     }
   }
 
+  void LayerStack::onUiRender(Ui& ui) {
+    for (auto it = this->begin(); it != this->end(); ++it) {
+      (*it)->onUiRender(ui);
+    }
+  }
+
   void LayerStack::onEvent(const Event& event) {
     for (auto it = this->rbegin(); it != this->rend(); ++it) {
       if (event.isHandled()) {

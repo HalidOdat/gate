@@ -11,6 +11,7 @@ struct GLFWwindow;
 
 namespace Game {
 
+  // TODO: put events in a queue
   class Window final {
   public:
     using EventCallback = std::function<void(const Event&)>;

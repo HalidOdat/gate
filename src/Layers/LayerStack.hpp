@@ -30,6 +30,7 @@ namespace Game {
     void pop();
 
     void onUpdate(); 
+    void onUiRender(Ui& ui); 
     void onEvent(const Event& event);
 
     void clear();

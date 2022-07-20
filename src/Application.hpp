@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Ui/Ui.hpp"
 #include "Window.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Layers/LayerStack.hpp"
@@ -26,6 +27,7 @@ namespace Game {
   private:
     bool running = true;
     Ref<Window> window = nullptr;
+    Ui* ui;
     LayerStack layerStack;
   };
   
