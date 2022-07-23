@@ -20,12 +20,20 @@ set(Sources
   src/Core/Math.hpp
   src/Core/Timestep.hpp
   
+  src/Utils/Color.hpp
+
   src/Events/KeyCode.hpp
   src/Events/Event.hpp
   src/Events/Event.cpp
   src/Events/KeyEvent.hpp
   src/Events/MouseEvent.hpp
   src/Events/WindowEvent.hpp
+  
+  src/Ecs/Entity.hpp
+  src/Ecs/Component.hpp
+  src/Ecs/Component.cpp
+  src/Ecs/Ecs.hpp
+  src/Ecs/Ecs.cpp
   
   src/Renderer/VertexBuffer.hpp
   src/Renderer/VertexBuffer.cpp
@@ -41,17 +49,15 @@ set(Sources
   src/Renderer/Camera.cpp
   src/Renderer/Renderer.hpp
   src/Renderer/Renderer.cpp
-  
-  src/Ui/Ui.hpp
-  src/Ui/Ui.cpp
 
   src/Layers/Layer.hpp
   src/Layers/LayerStack.hpp
   src/Layers/LayerStack.cpp
   src/Layers/ExampleLayer.hpp
   src/Layers/ExampleLayer.cpp
-  
-  src/Utils/Color.hpp
+
+  src/Ui/Ui.hpp
+  src/Ui/Ui.cpp
 
   src/Window.hpp
   src/Window.cpp

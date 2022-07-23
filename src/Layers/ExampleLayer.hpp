@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Events/KeyEvent.hpp"
+#include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"
 
 namespace Game {
@@ -19,7 +20,7 @@ namespace Game {
     bool onKeyPressedEvent(const KeyPressedEvent& event);
 
   private:
-    
+    Registry registry;
   };
 
 } // namespace Game
