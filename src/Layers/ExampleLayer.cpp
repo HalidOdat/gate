@@ -15,39 +15,36 @@ namespace Game {
     const char* string;
   };
 
+  struct PositionComponent : public Component<PositionComponent> {
+    PositionComponent(const Vec3& position)
+      : position(position)
+    {}
+    Vec3 position;
+  };
+
   ExampleLayer::ExampleLayer() {}
 
   void ExampleLayer::onAttach() {
     Logger::info("ExampleLayer::onAttach was called");
 
-    for (auto entity : this->registry.view<TagComponent>()) {
-      Logger::info("ECS: onAttach 1: Entity: %u", entity);
-    }
+    // for (auto entity : this->registry.view<TagComponent>()) {
+    //   Logger::info("ECS: onAttach 1: Entity: %u", entity);
+    // }
 
     auto entity1 = this->registry.create();
     auto entity2 = this->registry.create();
     auto entity3 = this->registry.create();
 
-    for (auto entity : this->registry.view<TagComponent>()) {
-      Logger::info("ECS: onAttach 2: Entity: %u", entity);
-    }
-
     this->registry.assign<TagComponent>(entity1, "hello - 1");
-
-    for (auto entity : this->registry.view<TagComponent>()) {
-      Logger::info("ECS: onAttach 3: Entity: %u", entity);
-    }
-
     this->registry.assign<TagComponent>(entity2, "hello - 2");
-
-    for (auto entity : this->registry.view<TagComponent>()) {
-      Logger::info("ECS: onAttach 4: Entity: %u", entity);
-    }
-
     this->registry.assign<TagComponent>(entity3, "hello - 3");
-    
-    for (auto entity : this->registry.view<TagComponent>()) {
-      Logger::info("ECS: onAttach 5: Entity: %u", entity);
+
+    this->registry.assign<PositionComponent>(entity3, Vec3{0.0f, 1000.0f, 0.0f});
+
+    Logger::info("................................");
+
+    for (auto[entity, tag, position] : this->registry.view<TagComponent, PositionComponent>()) {
+      Logger::info("ECS: onAttach: Entity: %u : tag: %s : position: %f, %f, %f", entity, tag.string, position.position.x, position.position.y, position.position.z);
     }
   }
 

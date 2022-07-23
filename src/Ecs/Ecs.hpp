@@ -4,6 +4,8 @@
 #include <array>
 #include <bitset>
 
+#include "Core/Assert.hpp"
+
 #include "Ecs/Entity.hpp"
 #include "Ecs/Component.hpp"
 
@@ -39,8 +41,9 @@ namespace Game {
       return result;
     }
 
-    const Entity operator*() const {
-      return Entity(this->index);
+    std::tuple<Entity, Ts&...> operator*() const {
+      auto entity = Entity(this->index);
+      return std::make_tuple(entity, std::ref(this->registry->get<Ts>(entity))...);
     }
 
     bool operator==(const Iterator& other) const {
@@ -162,6 +165,21 @@ namespace Game {
         *pool = ComponentPool(sizeof(T));
       }
       new (pool->create(entity.id)) T{std::forward<Args>(args)...};
+    }
+
+    template<typename T>
+    T& get(Entity entity) {
+      const auto cid = Component<T>::getId();
+      if (!this->entities[entity.id].mask.test(cid)) {
+        GAME_ASSERT(false);
+      }
+
+      return *reinterpret_cast<T*>(this->pools[cid].get(entity.id));
+    }
+
+    template<typename ...Ts>
+    std::tuple<Ts&...> getCs(Entity entity) {
+      return std::tie(this->get<Ts>(entity)...);
     }
 
     template<typename ...Ts>
