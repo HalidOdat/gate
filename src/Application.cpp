@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <filesystem>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -28,6 +29,8 @@ namespace Game {
     this->ui = new Ui(-1.0f, 1.0f, -1.0f, 1.0f);
 
     Logger::info("Game Engine Initialized!");
+
+    std::filesystem::current_path("C:\\linux\\github\\opengl-game");
   }
 
   Application::~Application() {

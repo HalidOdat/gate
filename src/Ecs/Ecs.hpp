@@ -96,9 +96,11 @@ namespace Game {
   public:
     ComponentPool() {}
 
-    ComponentPool(u32 componentSize)
+    ComponentPool(u32 componentSize, BaseComponent::DestroyFunction fn)
       : storage{nullptr}, size{0}, capacity{0}, componentSize{componentSize}, initialized{true}
-    {}
+    {
+      this->destoryFunction = fn;
+    }
 
     ~ComponentPool();
     
@@ -131,6 +133,8 @@ namespace Game {
     bool initialized = false;
     
     std::vector<u32> sparse;
+
+    BaseComponent::DestroyFunction destoryFunction;
   };
 
   class Registry {
@@ -162,7 +166,7 @@ namespace Game {
 
       auto pool = &this->pools[cid];
       if (!pool->isInitialzed()) {
-        *pool = ComponentPool(sizeof(T));
+        *pool = ComponentPool(sizeof(T), Component<T>::destroyFunction);
       }
       return *new (pool->create(entity.id)) T{std::forward<Args>(args)...};
     }

@@ -5,9 +5,16 @@
 
 namespace Game {
 
-  // // ComponentPool implementation
+  // ComponentPool implementation
   ComponentPool::~ComponentPool() {
-    free(this->storage);
+    if (this->storage) {
+      if (this->destoryFunction != nullptr) {
+        for (usize i = 0; i < this->size; ++i) {
+          this->destoryFunction(this->storage + i * this->componentSize);
+        }
+      }
+      free(this->storage);
+    }
   }
   
   u32 ComponentPool::allocateComponent() {
@@ -45,8 +52,12 @@ namespace Game {
       return;
     }
 
+    u8* componentPtr = this->storage + index * this->componentSize;
+    if (this->destoryFunction != nullptr) {
+      this->destoryFunction(componentPtr);
+    }
     std::memcpy(
-      this->storage + index * this->componentSize,
+      componentPtr,
       this->storage + (this->size - 1) * this->componentSize,
       this->componentSize
     );
