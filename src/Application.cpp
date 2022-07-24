@@ -7,6 +7,7 @@
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
 #include "Events/WindowEvent.hpp"
+#include "Resource/Manager.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Application.hpp"
 
@@ -24,6 +25,7 @@ namespace Game {
       [this](const Event& event) { this->onEvent(event); }
     );
 
+    ResourceManager::Initialize();
     Renderer::Initialize();
 
     this->ui = new Ui(-1.0f, 1.0f, -1.0f, 1.0f);
@@ -39,6 +41,7 @@ namespace Game {
     this->layerStack.clear();
     delete this->ui;
     Renderer::Shutdown();
+    ResourceManager::Shutdown();
     this->window.reset();
 
     Logger::info("Game Engine Terminated!");

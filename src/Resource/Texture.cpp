@@ -4,7 +4,7 @@
 
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
-#include "Renderer/Texture.hpp"
+#include "Resource/Texture.hpp"
 
 namespace Game {
 

@@ -4,16 +4,17 @@
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
 #include "Renderer/Renderer.hpp"
+#include "Resource/Manager.hpp"
 
 namespace Game {
 
   struct QuadBatch {
-    static constexpr const u32 MAX            = 512;
-    static constexpr const u32 VERTICES_COUNT = 4;
-    static constexpr const u32 INDICES_COUNT  = 6;
+    static constexpr const u32 MAX              = 512;
+    static constexpr const u32 VERTICES_COUNT   = 4;
+    static constexpr const u32 INDICES_COUNT    = 6;
     
-    static constexpr const auto VERTEX_SHADER   = "res/shaders/renderer/primitives/quad.vs";
-    static constexpr const auto FRAGMENT_SHADER = "res/shaders/renderer/primitives/quad.fs";
+    static constexpr const auto VERTEX_SHADER   = "renderer/primitives/quad.vs";
+    static constexpr const auto FRAGMENT_SHADER = "renderer/primitives/quad.fs";
 
     struct Vertex {
       Vec3 position;
@@ -74,7 +75,7 @@ namespace Game {
     renderer.quad.vertexArray->setIndexBuffer(indexBuffer);
     renderer.quad.vertexArray->unbind();
 
-    renderer.quad.shader = Shader::create(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
+    renderer.quad.shader = ResourceManager::loadShader(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
 
     renderer.quad.base    = new QuadBatch::Vertex[QuadBatch::MAX * QuadBatch::VERTICES_COUNT];
     renderer.quad.current = renderer.quad.base;

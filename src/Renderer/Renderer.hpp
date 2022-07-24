@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Renderer/Camera.hpp"
-#include "Renderer/Shader.hpp"
-#include "Renderer/VertexArray.hpp"
-#include "Renderer/Texture.hpp"
 #include "Core/Math.hpp"
 #include "Utils/Color.hpp"
+#include "Resource/Shader.hpp"
+#include "Resource/Texture.hpp"
+#include "Renderer/VertexArray.hpp"
+#include "Renderer/Camera.hpp"
 
 namespace Game {
   

@@ -29,6 +29,13 @@ set(Sources
   src/Events/MouseEvent.hpp
   src/Events/WindowEvent.hpp
   
+  src/Resource/Manager.hpp
+  src/Resource/Manager.cpp
+  src/Resource/Texture.hpp
+  src/Resource/Texture.cpp
+  src/Resource/Shader.hpp
+  src/Resource/Shader.cpp
+
   src/Ecs/Entity.hpp
   src/Ecs/Component.hpp
   src/Ecs/Component.cpp
@@ -41,10 +48,6 @@ set(Sources
   src/Renderer/IndexBuffer.cpp
   src/Renderer/VertexArray.hpp
   src/Renderer/VertexArray.cpp
-  src/Renderer/Shader.hpp
-  src/Renderer/Shader.cpp
-  src/Renderer/Texture.hpp
-  src/Renderer/Texture.cpp
   src/Renderer/Camera.hpp
   src/Renderer/Camera.cpp
   src/Renderer/Renderer.hpp

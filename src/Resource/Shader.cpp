@@ -5,9 +5,9 @@
 
 #include <glad/glad.h>
 
-#include "Core/Assert.hpp"
 #include "Core/Log.hpp"
-#include "Renderer/Shader.hpp"
+#include "Core/Assert.hpp"
+#include "Resource/Shader.hpp"
 
 namespace Game {
 

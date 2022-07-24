@@ -4,7 +4,11 @@
 
 namespace Game {
   
+  class ResourceManager;
+
   class Shader {
+    friend class ResourceManager;
+
   public:
     enum class Type {
       Vertex,
@@ -15,8 +19,6 @@ namespace Game {
     static constexpr const u32 NULL_SHADER = 0;
 
   public:
-    [[nodiscard]] static Ref<Shader> create(const char* vFilepath, const char* fFilepath) noexcept;
-
     DISALLOW_MOVE_AND_COPY(Shader);
     ~Shader() noexcept;
 
@@ -31,6 +33,9 @@ namespace Game {
     void setMat3(StringView name,  const Mat3& value);
     void setMat4(StringView name,  const Mat4& value);
     void setInt(StringView name,   const i32 value);
+
+  private:
+    [[nodiscard]] static Ref<Shader> create(const char* vFilepath, const char* fFilepath) noexcept;
 
   protected:
     Shader(u32 id)
