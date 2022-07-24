@@ -64,8 +64,7 @@ namespace Game {
 
   // Registry implementation
 
-  Registry::Registry()
-  {
+  Registry::Registry() {
     this->pools.resize(MAX_COMPONENTS);
   }
 
@@ -76,10 +75,6 @@ namespace Game {
     };
     this->entities.push_back(descriptor);
     return entity;
-  }
-
-  bool Registry::hasComponent(const Entity entity, const Requirement requirements) const {
-    return (this->entities[entity.id].mask & requirements) == requirements;
   }
 
 } // namespace Game

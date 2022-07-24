@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Events/KeyEvent.hpp"
+#include "Renderer/Camera.hpp"
 #include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"
 
@@ -20,6 +21,7 @@ namespace Game {
     bool onKeyPressedEvent(const KeyPressedEvent& event);
 
   private:
+    OrthographicCamera camera;
     Registry registry;
   };
 

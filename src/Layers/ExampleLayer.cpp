@@ -4,49 +4,17 @@
 
 
 #include "Core/Log.hpp"
+#include "Renderer/Renderer.hpp"
 #include "Layers/ExampleLayer.hpp"
 
 namespace Game {
-
-  struct TagComponent : public Component<TagComponent> {
-    TagComponent(const char* string)
-      : string(string)
-    {}
-    const char* string;
-  };
-
-  struct PositionComponent : public Component<PositionComponent> {
-    PositionComponent(const Vec3& position)
-      : position(position)
-    {}
-    Vec3 position;
-  };
-
-  ExampleLayer::ExampleLayer() {}
+  
+  ExampleLayer::ExampleLayer()
+  : camera{-1, 1, -1, 1}
+  {}
 
   void ExampleLayer::onAttach() {
     Logger::info("ExampleLayer::onAttach was called");
-
-    // for (auto entity : this->registry.view<TagComponent>()) {
-    //   Logger::info("ECS: onAttach 1: Entity: %u", entity);
-    // }
-
-    auto entity1 = this->registry.create();
-    auto entity2 = this->registry.create();
-    auto entity3 = this->registry.create();
-
-    this->registry.assign<TagComponent>(entity1, "hello - 1");
-    this->registry.assign<TagComponent>(entity2, "hello - 2");
-    this->registry.assign<TagComponent>(entity3, "hello - 3");
-
-    this->registry.assign<PositionComponent>(entity3, Vec3{0.0f, 1000.0f, 0.0f});
-
-    Logger::info("................................");
-
-    for (auto[entity, tag, position] : this->registry.view<TagComponent, PositionComponent>()) {
-      auto[tag, position] = this->registry.get<TagComponent, PositionComponent>(entity);
-      Logger::info("ECS: onAttach: Entity: %u : tag: %s : position: %f, %f, %f", entity, tag.string, position.position.x, position.position.y, position.position.z);
-    }
   }
 
   void ExampleLayer::onDetach() {
@@ -54,7 +22,6 @@ namespace Game {
   }
 
   void ExampleLayer::onUpdate(Timestep ts) {
-
   }
 
   void ExampleLayer::onUiRender(Ui& ui) {

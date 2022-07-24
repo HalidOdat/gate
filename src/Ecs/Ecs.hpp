@@ -18,58 +18,54 @@ namespace Game {
   class Registry;
 
   template<typename ...Ts>
-  class Iterator {
-  public:
-    Iterator(Registry* registry, Requirement requirements, u32 index)
-      : registry{registry}, requirements{requirements}, index{index}
-    {}
-
-
-    Iterator<Ts...>& operator++() {
-      do {
-        this->index++;
-      } while (
-        this->index < this->registry->entities.size()
-        && (this->registry->entities[this->index].mask & this->requirements) != this->requirements
-      );
-      return *this;
-    }
-
-    Iterator<Ts...> operator++(int) {
-      auto result = *this;
-      ++(*this);
-      return result;
-    }
-
-    std::tuple<Entity, Ts&...> operator*() const {
-      auto entity = Entity(this->index);
-      return std::make_tuple(entity, std::ref(this->registry->get<Ts>(entity))...);
-    }
-
-    bool operator==(const Iterator& other) const {
-      return this->index == other.index || this->index == this->registry->entities.size();
-    }
-
-    bool operator!=(const Iterator& other) const {
-      return this->index != other.index && this->index != this->registry->entities.size();
-    }
-
-  public:
-    Registry* registry;
-    Requirement requirements;
-    u32 index;
-  };
-
-  template<typename ...Ts>
   class RegistryView {
+    friend class Registry;
   public:
-    RegistryView(Registry* registry)
-      : registry{registry}
-    {
-      (this->requirements.set(Component<Ts>::getId()),...);
-    }
+    class Iterator {
+      friend class RegistryView;
+    public:
+      Iterator& operator++() {
+        do {
+          this->index++;
+        } while (
+          this->index < this->registry->entities.size()
+          && (this->registry->entities[this->index].mask & this->requirements) != this->requirements
+        );
+        return *this;
+      }
 
-    Iterator<Ts...> begin() {
+      Iterator operator++(int) {
+        auto result = *this;
+        ++(*this);
+        return result;
+      }
+
+      std::tuple<Entity, Ts&...> operator*() const {
+        auto entity = Entity(this->index);
+        return std::make_tuple(entity, std::ref(this->registry->get<Ts>(entity))...);
+      }
+
+      bool operator==(const Iterator& other) const {
+        return this->index == other.index || this->index == this->registry->entities.size();
+      }
+
+      bool operator!=(const Iterator& other) const {
+        return this->index != other.index && this->index != this->registry->entities.size();
+      }
+    
+    private:
+      Iterator(Registry* registry, Requirement requirements, u32 index)
+        : registry{registry}, requirements{requirements}, index{index}
+      {}
+
+    public:
+      Registry* registry;
+      Requirement requirements;
+      u32 index;
+    };
+
+  public:
+    Iterator begin() {
       u32 firstIndex = 0;
       while (firstIndex < this->registry->entities.size() &&
         (this->requirements != (this->requirements & this->registry->entities[firstIndex].mask))
@@ -77,11 +73,18 @@ namespace Game {
       {
         firstIndex++;
       }
-      return Iterator<Ts...>(this->registry, this->requirements, firstIndex);
+      return Iterator(this->registry, this->requirements, firstIndex);
     }
 
-    Iterator<Ts...> end() {
-      return Iterator<Ts...>(this->registry, this->requirements, this->registry->entities.size());
+    Iterator end() {
+      return Iterator(this->registry, this->requirements, (u32)this->registry->entities.size());
+    }
+
+  private:
+    RegistryView(Registry* registry)
+      : registry{registry}
+    {
+      (this->requirements.set(Component<Ts>::getId()),...);
     }
 
   private:
@@ -136,8 +139,6 @@ namespace Game {
 
     template<typename ...Ts>
     friend class RegistryView;
-  public:
-    static constexpr const auto MAX_COMPONENTS = 32;
 
   public:
     Registry();
@@ -148,13 +149,12 @@ namespace Game {
     template<typename ...Ts>
     bool hasComponent(const Entity entity) const {
       Requirement requirements;
-
       (requirements.set(Component<Ts>::getId()),...);
-      this->hasComponent(entity, requirements);
+      return (this->entities[entity.id].mask & requirements) == requirements;
     }
 
     template<typename T, typename ...Args>
-    void assign(Entity entity, Args&& ...args) {
+    T& assign(Entity entity, Args&& ...args) {
       u32 cid = Component<T>::getId();
 
       // TODO: check if already assigned
@@ -164,7 +164,7 @@ namespace Game {
       if (!pool->isInitialzed()) {
         *pool = ComponentPool(sizeof(T));
       }
-      new (pool->create(entity.id)) T{std::forward<Args>(args)...};
+      return *new (pool->create(entity.id)) T{std::forward<Args>(args)...};
     }
 
     template<typename T>
@@ -188,13 +188,9 @@ namespace Game {
     }
 
   private:
-
     struct EntityDescriptor {
       Requirement mask;
     };
-  
-  private:
-    bool hasComponent(const Entity entity, const Requirement requirements) const;
 
   private:
     std::vector<EntityDescriptor> entities;
