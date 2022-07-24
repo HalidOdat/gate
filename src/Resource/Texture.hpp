@@ -8,7 +8,7 @@ namespace Game {
     friend class ResourceManager;
 
   public:
-    void bind() noexcept;
+    void bind(const usize slot = 0) noexcept;
 
     inline u32 getId() const;
     inline u32 getWidth() const;

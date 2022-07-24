@@ -15,7 +15,9 @@ namespace Game {
     static Texture2D loadTexture(const StringView& filepath);
     static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4);
 
-    static Ref<Shader>    loadShader(const StringView& vFilepath, const StringView& fFilepath);
+    static Ref<Shader> loadShader(const StringView& vFilepath, const StringView& fFilepath);
+
+    static void reloadTextures();
 
     ResourceManager() = delete;
   public:

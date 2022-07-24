@@ -173,4 +173,22 @@ namespace Game {
     GAME_GL_CHECK(glUniform1i(uniform_id, value));
   }
 
+  void Shader::setUint(StringView name, const u32 value) {
+    u32 uniform_id;
+    GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
+    GAME_GL_CHECK(glUniform1ui(uniform_id, value));
+  }
+
+  void Shader::setIntArray(StringView name, const i32* value, u32 count) {
+    u32 uniform_id;
+    GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
+    GAME_GL_CHECK(glUniform1iv(uniform_id, count, value));
+  }
+
+  void Shader::setUintArray(StringView name, const u32* value, u32 count) {
+    u32 uniform_id;
+    GAME_GL_CHECK(uniform_id = glGetUniformLocation(this->id, name.data()));
+    GAME_GL_CHECK(glUniform1uiv(uniform_id, count, value));
+  }
+
 } // namespace Game

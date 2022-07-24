@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Events/KeyEvent.hpp"
+#include "Resource/Texture.hpp"
 #include "Renderer/Camera.hpp"
 #include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"
@@ -23,6 +24,8 @@ namespace Game {
   private:
     OrthographicCamera camera;
     Registry registry;
+
+    Texture2D texture;
   };
 
 } // namespace Game

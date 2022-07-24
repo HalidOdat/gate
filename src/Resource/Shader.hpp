@@ -33,6 +33,9 @@ namespace Game {
     void setMat3(StringView name,  const Mat3& value);
     void setMat4(StringView name,  const Mat4& value);
     void setInt(StringView name,   const i32 value);
+    void setUint(StringView name,  const u32 value);
+    void setIntArray(StringView name, const i32* value, u32 count);
+    void setUintArray(StringView name, const u32* value, u32 count);
 
   private:
     [[nodiscard]] static Ref<Shader> create(const char* vFilepath, const char* fFilepath) noexcept;

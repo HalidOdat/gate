@@ -18,6 +18,7 @@ namespace Game {
       Int2,
       Int3,
       Int4,
+      Uint,
       Bool,
     };
 
@@ -39,6 +40,7 @@ namespace Game {
         case Type::Int2:   return 2;
         case Type::Int3:   return 3;
         case Type::Int4:   return 4;
+        case Type::Uint:   return 1;
         case Type::Bool:   return 1;
       }
 
@@ -48,14 +50,15 @@ namespace Game {
 
     inline usize getSize() const {
       switch (type) {
-        case Type::Float:  return sizeof(float) * 1;
-        case Type::Float2: return sizeof(float) * 2;
-        case Type::Float3: return sizeof(float) * 3;
-        case Type::Float4: return sizeof(float) * 4;
-        case Type::Int:    return sizeof(int)   * 1;
-        case Type::Int2:   return sizeof(int)   * 2;
-        case Type::Int3:   return sizeof(int)   * 3;
-        case Type::Int4:   return sizeof(int)   * 4;
+        case Type::Float:  return sizeof(float)        * 1;
+        case Type::Float2: return sizeof(float)        * 2;
+        case Type::Float3: return sizeof(float)        * 3;
+        case Type::Float4: return sizeof(float)        * 4;
+        case Type::Int:    return sizeof(int)          * 1;
+        case Type::Int2:   return sizeof(int)          * 2;
+        case Type::Int3:   return sizeof(int)          * 3;
+        case Type::Int4:   return sizeof(int)          * 4;
+        case Type::Uint:   return sizeof(unsigned int) * 1;
         case Type::Bool:   return sizeof(bool);
       }
 

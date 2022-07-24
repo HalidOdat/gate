@@ -94,8 +94,8 @@ namespace Game {
     auto index = (u32)manager.textures.size();
 
     if (data.id) {
-      manager.textures.emplace_back(1, std::move(path), data);
       Logger::info("ResourceManager: Loaded texture: %s", path.c_str());
+      manager.textures.emplace_back(1, std::move(path), data);
     } else {
       // Load default placeholder texture
       Logger::error("ResourceManager: Couldn't loaded texture: %s", path.c_str());
@@ -129,6 +129,16 @@ namespace Game {
     }
 
     return result;
+  }
+
+  // TODO: Check for change in files
+  void ResourceManager::reloadTextures() {
+    for (auto& texture : manager.textures) {
+      // Ignore non-file based texture
+      if (!texture.path.empty()) {
+        texture.texture = Texture2D::create(texture.path);
+      }
+    }
   }
 
 } // namespace Game

@@ -11,7 +11,7 @@
 namespace Game {
 
   ExampleLayer::ExampleLayer()
-  : camera{-1, 1, -1, 1}
+  : camera{-1, 1, -1, 1}, texture{ResourceManager::loadTexture("thinking-emoji.png")}
   {}
 
   void ExampleLayer::onAttach() {
@@ -23,6 +23,9 @@ namespace Game {
   }
 
   void ExampleLayer::onUpdate(Timestep ts) {
+    Renderer::begin(this->camera);
+    Renderer::drawQuad({0.0f, 1.0f, 0.0f}, {0.1f, 0.1f}, this->texture);
+    Renderer::end();
   }
 
   void ExampleLayer::onUiRender(Ui& ui) {
@@ -38,7 +41,10 @@ namespace Game {
   }
 
   bool ExampleLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
-    return false;
+    if (event.getKey() == Key::R) {
+      ResourceManager::reloadTextures();
+    }
+    return true;
   }
 
 } // namespace Game

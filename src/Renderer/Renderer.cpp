@@ -21,11 +21,17 @@ namespace Game {
       Vec3 position;
       Vec4 color;
       Vec2 texCoord;
+      u32  texIndex;
     };
 
     Ref<Shader>       shader;
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray>  vertexArray;
+
+    // TODO: Query OpenGL
+    static constexpr const u32 MAX_TEXTURES = 32;
+
+    std::vector<Texture2D> textures;
 
     Vertex* base    = nullptr;
     Vertex* current = nullptr;
@@ -63,6 +69,7 @@ namespace Game {
       { BufferElement::Type::Float3, /* position */ },
       { BufferElement::Type::Float4  /* color */ },
       { BufferElement::Type::Float2  /* texture */ },
+      { BufferElement::Type::Uint    /* texIndex */ },
     });
     quad.vertexArray->addVertexBuffer(quad.vertexBuffer);
 
@@ -87,9 +94,19 @@ namespace Game {
 
     quad.shader = ResourceManager::loadShader(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
 
+    i32 samples[QuadBatch::MAX_TEXTURES];
+    for (u32 i = 0; i < QuadBatch::MAX_TEXTURES; ++i) {
+      samples[i] = i;
+    }
+    quad.shader->bind();
+    quad.shader->setIntArray("uTextures", samples, QuadBatch::MAX_TEXTURES);
+
     quad.base    = new QuadBatch::Vertex[QuadBatch::MAX * QuadBatch::VERTICES_COUNT];
     quad.current = quad.base;
     quad.count = 0;
+
+    quad.textures.reserve(QuadBatch::MAX_TEXTURES);
+    quad.textures.push_back(whiteTexture);
 
     renderer = new RendererData{
       Mat4(1.0f),
@@ -121,15 +138,35 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Vec4& color) {
+    Renderer::drawQuad(position, size, renderer->whiteTexture, color);
+  }
+
+  void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Texture2D& texture, const Vec4& color) {
     if (renderer->quad.count == QuadBatch::MAX) {
       Renderer::flush();
     }
 
+    u32 index = 0;
+    for (; index < renderer->quad.textures.size(); ++index) {
+      if (renderer->quad.textures[index] == texture) {
+        break;
+      }
+    }
+
+    if (index == renderer->quad.textures.size()) {
+      if (renderer->quad.textures.size() >= QuadBatch::MAX_TEXTURES) {
+        Renderer::flush();
+      }
+
+      index = (u32)renderer->quad.textures.size();
+      renderer->quad.textures.push_back(texture);
+    }
+
     // TODO: do transfrom with projection view matrix here
-    *(renderer->quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, {1.0f, 1.0f} }; // top-right
-    *(renderer->quad.current++) = { position + Vec3{size.x, -size.y, 0.0f}, color, {1.0f, 0.0f} }; // bottom-right
-    *(renderer->quad.current++) = { position + Vec3{0.0f,   -size.y, 0.0f}, color, {0.0f, 0.0f} }; // bottom-left
-    *(renderer->quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, {0.0f, 1.0f} }; // top-left
+    *(renderer->quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, {1.0f, 1.0f}, index }; // top-right
+    *(renderer->quad.current++) = { position + Vec3{size.x, -size.y, 0.0f}, color, {1.0f, 0.0f}, index }; // bottom-right
+    *(renderer->quad.current++) = { position + Vec3{0.0f,   -size.y, 0.0f}, color, {0.0f, 0.0f}, index }; // bottom-left
+    *(renderer->quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, {0.0f, 1.0f}, index }; // top-left
 
     renderer->quad.count++;
   }
@@ -139,9 +176,12 @@ namespace Game {
       usize dataLength = (u8*)renderer->quad.current - (u8*)renderer->quad.base;
       renderer->whiteTexture.bind();
 
+      for (u32 i = 0; i < renderer->quad.textures.size(); ++i) {
+        renderer->quad.textures[i].bind(i);
+      }
+
       renderer->quad.shader->bind();
       renderer->quad.shader->setMat4("uProjectionView", renderer->projectionViewMatrix);
-      renderer->quad.shader->setInt("uTexture", 0);
 
       renderer->quad.vertexArray->bind();
       renderer->quad.vertexBuffer->set({renderer->quad.base, dataLength});
@@ -149,6 +189,9 @@ namespace Game {
 
       renderer->quad.current = renderer->quad.base;
       renderer->quad.count = 0;
+
+      renderer->quad.textures.clear();
+      renderer->quad.textures.push_back(renderer->whiteTexture);
     }
   }
 

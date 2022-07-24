@@ -60,9 +60,9 @@ namespace Game {
     GAME_GL_CHECK(glDeleteTextures(1, &data.id));
   }
 
-  void Texture2D::bind() noexcept {
+  void Texture2D::bind(const usize slot) noexcept {
     u32 textureId = this->getData().id;
-    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
+    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0 + slot));
     GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureId));
   }
 

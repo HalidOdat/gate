@@ -52,17 +52,33 @@ namespace Game {
         case BufferElement::Type::Int2:
         case BufferElement::Type::Int3:
         case BufferElement::Type::Int4:
-        case BufferElement::Type::Bool:
+        case BufferElement::Type::Uint:
+        case BufferElement::Type::Bool: {
+          GLenum type;
+          switch (element.getType()) {
+            case BufferElement::Type::Bool:
+              type = GL_BOOL;
+              break;
+            case BufferElement::Type::Uint:
+              type = GL_UNSIGNED_INT;
+              break;
+            default:
+              type = GL_INT;
+          }
+          
           GAME_GL_CHECK(glEnableVertexAttribArray(this->vertexAttributeIndex));
 	        GAME_GL_CHECK(glVertexAttribIPointer(
             this->vertexAttributeIndex,
             (GLint)element.getComponentCount(),
-            element.getType() == BufferElement::Type::Bool ? GL_BOOL : GL_INT,
+            type,
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
           ));
           this->vertexAttributeIndex++;
           break;
+        }
+        default:
+          GAME_UNREACHABLE("Unknown buffer element type!");
       }
     }
 
