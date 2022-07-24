@@ -44,6 +44,7 @@ namespace Game {
     Logger::info("................................");
 
     for (auto[entity, tag, position] : this->registry.view<TagComponent, PositionComponent>()) {
+      auto[tag, position] = this->registry.get<TagComponent, PositionComponent>(entity);
       Logger::info("ECS: onAttach: Entity: %u : tag: %s : position: %f, %f, %f", entity, tag.string, position.position.x, position.position.y, position.position.z);
     }
   }

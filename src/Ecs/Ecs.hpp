@@ -25,7 +25,7 @@ namespace Game {
     {}
 
 
-    Iterator& operator++() {
+    Iterator<Ts...>& operator++() {
       do {
         this->index++;
       } while (
@@ -35,8 +35,8 @@ namespace Game {
       return *this;
     }
 
-    Iterator operator++(int) {
-      Iterator result = *this;
+    Iterator<Ts...> operator++(int) {
+      auto result = *this;
       ++(*this);
       return result;
     }
@@ -177,9 +177,9 @@ namespace Game {
       return *reinterpret_cast<T*>(this->pools[cid].get(entity.id));
     }
 
-    template<typename ...Ts>
-    std::tuple<Ts&...> getCs(Entity entity) {
-      return std::tie(this->get<Ts>(entity)...);
+    template<typename T0, typename T1, typename ...Ts>
+    std::tuple<T0&, T1&, Ts&...> get(Entity entity) {
+      return std::tie(this->get<T0>(entity), this->get<T1>(entity), this->get<Ts>(entity)...);
     }
 
     template<typename ...Ts>
