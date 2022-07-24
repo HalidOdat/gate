@@ -5,11 +5,12 @@
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
 #include "Resource/Texture.hpp"
+#include "Resource/Manager.hpp"
 
 namespace Game {
 
-  Ref<Texture2D> Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels) {
-    GAME_ASSERT_WITH_MESSAGE(channels == 3 || channels == 3, "Unknown channel");
+  Texture2D::Data Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels) {
+    GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
     GLenum internalFormat = 0, dataFormat = 0;
     if (channels == 4) {
       internalFormat = GL_RGBA8;
@@ -33,17 +34,17 @@ namespace Game {
     GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes));
     GAME_GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
 
-    return Ref<Texture2D>( new Texture2D(texture, width, height) );
+    return { texture, width, height };
   }
 
-  Ref<Texture2D> Texture2D::create(const StringView& filepath) {
+  Texture2D::Data Texture2D::create(const StringView& filepath) {
     int width, height, channels;
     stbi_set_flip_vertically_on_load(true);
     stbi_uc* data = stbi_load(filepath.data(), &width, &height, &channels, 0);
         
     if (!data) {
       Logger::error("couldn't load image file '%s'", filepath.data());
-      return nullptr;
+      return {0, 0, 0};
     }
 
     const auto result = Texture2D::fromBytes(data, width, height, channels);
@@ -51,13 +52,30 @@ namespace Game {
     return result;
   }
 
-  Texture2D::~Texture2D() noexcept {
-    GAME_GL_CHECK(glDeleteTextures(1, &this->id));
+  const Texture2D::Data& Texture2D::getData() const {
+    return ResourceManager::getTextureData(this->id);
+  }
+
+  void Texture2D::destroy(Texture2D::Data& data) { 
+    GAME_GL_CHECK(glDeleteTextures(1, &data.id));
   }
 
   void Texture2D::bind() noexcept {
+    u32 textureId = this->getData().id;
     GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
-    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, this->id));
+    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureId));
+  }
+
+  u32 Texture2D::getId() const {
+    return this->getData().id;
+  }
+
+  u32 Texture2D::getWidth() const {
+    return this->getData().width;
+  }
+
+  u32 Texture2D::getHeight() const {
+    return this->getData().height;
   }
 
 } // namespace Game

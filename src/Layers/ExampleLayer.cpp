@@ -5,10 +5,11 @@
 
 #include "Core/Log.hpp"
 #include "Renderer/Renderer.hpp"
+#include "Resource/Manager.hpp"
 #include "Layers/ExampleLayer.hpp"
 
 namespace Game {
-  
+
   ExampleLayer::ExampleLayer()
   : camera{-1, 1, -1, 1}
   {}

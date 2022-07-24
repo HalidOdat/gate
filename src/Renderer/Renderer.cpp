@@ -8,6 +8,7 @@
 
 namespace Game {
 
+  // TODO: Refactor this
   struct QuadBatch {
     static constexpr const u32 MAX              = 512;
     static constexpr const u32 VERTICES_COUNT   = 4;
@@ -36,25 +37,34 @@ namespace Game {
 
   struct RendererData {
     Mat4 projectionViewMatrix;
-    Ref<Texture2D> whiteTexture;
+    Texture2D whiteTexture;
 
     QuadBatch quad;
+
+    ~RendererData() {
+      this->quad.shader.reset();
+      this->quad.vertexBuffer.reset();
+      this->quad.vertexArray.reset();
+
+      delete[] this->quad.base;
+    }
   };
 
-  static RendererData renderer;
+  static RendererData* renderer;
 
   void Renderer::Initialize() {
     static const u8 bytes[] = { 0xFF, 0xFF, 0xFF };
-    renderer.whiteTexture = Texture2D::fromBytes(bytes, 1, 1, 3);
+    auto whiteTexture = ResourceManager::textureFromBytes(bytes, 1, 1, 3);
 
-    renderer.quad.vertexArray = VertexArray::create();
-    renderer.quad.vertexBuffer = VertexBuffer::withSize(QuadBatch::VERTEX_BUFFER_BYTE_SIZE);
-    renderer.quad.vertexBuffer->setLayout({
+    QuadBatch quad;
+    quad.vertexArray = VertexArray::create();
+    quad.vertexBuffer = VertexBuffer::withSize(QuadBatch::VERTEX_BUFFER_BYTE_SIZE);
+    quad.vertexBuffer->setLayout({
       { BufferElement::Type::Float3, /* position */ },
       { BufferElement::Type::Float4  /* color */ },
       { BufferElement::Type::Float2  /* texture */ },
     });
-    renderer.quad.vertexArray->addVertexBuffer(renderer.quad.vertexBuffer);
+    quad.vertexArray->addVertexBuffer(quad.vertexBuffer);
 
     u32* indices = new u32[QuadBatch::INDEX_BUFFER_COUNT];
     u32  offset = 0;
@@ -72,37 +82,38 @@ namespace Game {
 
     auto indexBuffer = IndexBuffer::create({indices, QuadBatch::INDEX_BUFFER_COUNT});
     delete[] indices;
-    renderer.quad.vertexArray->setIndexBuffer(indexBuffer);
-    renderer.quad.vertexArray->unbind();
+    quad.vertexArray->setIndexBuffer(indexBuffer);
+    quad.vertexArray->unbind();
 
-    renderer.quad.shader = ResourceManager::loadShader(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
+    quad.shader = ResourceManager::loadShader(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
 
-    renderer.quad.base    = new QuadBatch::Vertex[QuadBatch::MAX * QuadBatch::VERTICES_COUNT];
-    renderer.quad.current = renderer.quad.base;
-    renderer.quad.count = 0;
+    quad.base    = new QuadBatch::Vertex[QuadBatch::MAX * QuadBatch::VERTICES_COUNT];
+    quad.current = quad.base;
+    quad.count = 0;
+
+    renderer = new RendererData{
+      Mat4(1.0f),
+      std::move(whiteTexture),
+      std::move(quad)
+    };
   }
 
   void Renderer::Shutdown() {
-    renderer.whiteTexture.reset();
-
-    renderer.quad.shader.reset();
-    renderer.quad.vertexBuffer.reset();
-    renderer.quad.vertexArray.reset();
-
-    delete[] renderer.quad.base;
+    delete renderer;
+    renderer = nullptr;
   }
 
   void Renderer::begin(const Camera& camera) {
-    renderer.projectionViewMatrix = camera.getProjectionViewMatrix();
+    renderer->projectionViewMatrix = camera.getProjectionViewMatrix();
   }
 
   void Renderer::draw(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture) {
     shader->bind();
-    shader->setMat4("uProjectionView", renderer.projectionViewMatrix);
+    shader->setMat4("uProjectionView", renderer->projectionViewMatrix);
 
     texture->bind();
     vao->bind();
-    vao->drawIndices(6);
+    vao->drawIndices();
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
@@ -110,34 +121,34 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Vec4& color) {
-    if (renderer.quad.count == QuadBatch::MAX) {
+    if (renderer->quad.count == QuadBatch::MAX) {
       Renderer::flush();
     }
 
     // TODO: do transfrom with projection view matrix here
-    *(renderer.quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, {1.0f, 1.0f} }; // top-right
-    *(renderer.quad.current++) = { position + Vec3{size.x, -size.y, 0.0f}, color, {1.0f, 0.0f} }; // bottom-right
-    *(renderer.quad.current++) = { position + Vec3{0.0f,   -size.y, 0.0f}, color, {0.0f, 0.0f} }; // bottom-left
-    *(renderer.quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, {0.0f, 1.0f} }; // top-left
+    *(renderer->quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, {1.0f, 1.0f} }; // top-right
+    *(renderer->quad.current++) = { position + Vec3{size.x, -size.y, 0.0f}, color, {1.0f, 0.0f} }; // bottom-right
+    *(renderer->quad.current++) = { position + Vec3{0.0f,   -size.y, 0.0f}, color, {0.0f, 0.0f} }; // bottom-left
+    *(renderer->quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, {0.0f, 1.0f} }; // top-left
 
-    renderer.quad.count++;
+    renderer->quad.count++;
   }
 
   void Renderer::flush() {
-    if (renderer.quad.count) {
-      usize dataLength = (u8*)renderer.quad.current - (u8*)renderer.quad.base;
-      renderer.whiteTexture->bind();
+    if (renderer->quad.count) {
+      usize dataLength = (u8*)renderer->quad.current - (u8*)renderer->quad.base;
+      renderer->whiteTexture.bind();
 
-      renderer.quad.shader->bind();
-      renderer.quad.shader->setMat4("uProjectionView", renderer.projectionViewMatrix);
-      renderer.quad.shader->setInt("uTexture", 0);
+      renderer->quad.shader->bind();
+      renderer->quad.shader->setMat4("uProjectionView", renderer->projectionViewMatrix);
+      renderer->quad.shader->setInt("uTexture", 0);
 
-      renderer.quad.vertexArray->bind();
-      renderer.quad.vertexBuffer->set({renderer.quad.base, dataLength});
-      renderer.quad.vertexArray->drawIndices(renderer.quad.count * QuadBatch::INDICES_COUNT);
+      renderer->quad.vertexArray->bind();
+      renderer->quad.vertexBuffer->set({renderer->quad.base, dataLength});
+      renderer->quad.vertexArray->drawIndices(renderer->quad.count * QuadBatch::INDICES_COUNT);
 
-      renderer.quad.current = renderer.quad.base;
-      renderer.quad.count = 0;
+      renderer->quad.current = renderer->quad.base;
+      renderer->quad.count = 0;
     }
   }
 

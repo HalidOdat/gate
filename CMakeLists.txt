@@ -31,6 +31,8 @@ set(Sources
   
   src/Resource/Manager.hpp
   src/Resource/Manager.cpp
+  src/Resource/Resource.hpp
+  src/Resource/Resource.cpp
   src/Resource/Texture.hpp
   src/Resource/Texture.cpp
   src/Resource/Shader.hpp

@@ -1,35 +1,38 @@
 #pragma once
 
-#include "Core/Type.hpp"
+#include "Resource/Resource.hpp"
 
 namespace Game {
 
-  class ResourceManager;
-
-  class Texture2D {
+  class Texture2D : public Resource {
     friend class ResourceManager;
 
   public:
-    [[nodiscard]] static Ref<Texture2D> fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4);
-    DISALLOW_COPY_AND_ASSIGN(Texture2D);
-    ~Texture2D() noexcept;
-
     void bind() noexcept;
 
-    inline u32 getId()     const { return this->id; }
-    inline u32 getWidth()  const { return this->width; }
-    inline u32 getHeight() const { return this->height; }
+    inline u32 getId() const;
+    inline u32 getWidth() const;
+    inline u32 getHeight() const;
+
+  public:
+    struct Data {
+      u32 id;
+      u32 width;
+      u32 height;
+    };
 
   private:
-    [[nodiscard]] static Ref<Texture2D> create(const StringView& filepath);
-    Texture2D(u32 id, u32 width, u32 height)
-      : id{id}, width{width}, height{height}
+    Texture2D(Resource::Id id)
+      : Resource(id)
     {}
 
   private:
-    u32 id;
-    u32 width;
-    u32 height;
+    const Data& getData() const;
+
+    static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4);
+    static Data create(const StringView& filepath);
+
+    static void destroy(Data& data);
   };
 
 } // namespace Game
