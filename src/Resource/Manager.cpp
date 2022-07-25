@@ -87,6 +87,15 @@ namespace Game {
     return manager.textures[id.index].texture;
   }
 
+  Texture2D::Data ResourceManager::generateMissingTexture() {
+    static const u8 defaultTextureData[] = {
+        0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
+        0xFF, 0x00, 0xFF, 0xFF,   0x00, 0x00, 0x00, 0xFF,
+      };
+
+    return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, false);
+  }
+
   Texture2D ResourceManager::loadTexture(const StringView& filepath) {
     auto path   = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
     auto data = Texture2D::create(path);
@@ -95,17 +104,17 @@ namespace Game {
 
     if (data.id) {
       Logger::info("ResourceManager: Loaded texture: %s", path.c_str());
-      manager.textures.emplace_back(1, std::move(path), data);
     } else {
-      // Load default placeholder texture
       Logger::error("ResourceManager: Couldn't loaded texture: %s", path.c_str());
+      data = ResourceManager::generateMissingTexture();
     }
+    manager.textures.emplace_back(1, std::move(path), data);
 
     return Texture2D({Resource::Type::Texture, index});
   }
 
-  Texture2D ResourceManager::textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels) {
-    auto data  = Texture2D::fromBytes(bytes, width, height, channels);
+  Texture2D ResourceManager::textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, bool linear) {
+    auto data  = Texture2D::fromBytes(bytes, width, height, channels, linear);
     auto index = (u32)manager.textures.size();
     manager.textures.emplace_back(1, "", data);
     Logger::info("ResourceManager: Loaded texture from memory");
@@ -133,10 +142,16 @@ namespace Game {
 
   // TODO: Check for change in files
   void ResourceManager::reloadTextures() {
+    Logger::info("ResourceManager: Realoading All Textures");
     for (auto& texture : manager.textures) {
       // Ignore non-file based texture
       if (!texture.path.empty()) {
+        Texture2D::destroy(texture.texture);
         texture.texture = Texture2D::create(texture.path);
+        if (texture.texture.id == 0) {
+          // TODO: Use a cached texture, instead of creating a new one
+          texture.texture = ResourceManager::generateMissingTexture();
+        }
       }
     }
   }

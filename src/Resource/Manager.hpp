@@ -13,7 +13,7 @@ namespace Game {
 
   public:
     static Texture2D loadTexture(const StringView& filepath);
-    static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4);
+    static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
 
     static Ref<Shader> loadShader(const StringView& vFilepath, const StringView& fFilepath);
 
@@ -24,11 +24,13 @@ namespace Game {
     static const Texture2D::Data& getTextureData(Resource::Id id);
 
   private:
+    static void Initialize();
+    static void Shutdown();
+
     static void incrementRefCount(Resource::Id id);
     static void decrementRefCount(Resource::Id id);
 
-    static void Initialize();
-    static void Shutdown();
+    static Texture2D::Data generateMissingTexture();
   };
 
 } // namespace Game

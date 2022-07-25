@@ -24,7 +24,7 @@ namespace Game {
 
   void ExampleLayer::onUpdate(Timestep ts) {
     Renderer::begin(this->camera);
-    Renderer::drawQuad({0.0f, 1.0f, 0.0f}, {0.1f, 0.1f}, this->texture);
+    Renderer::drawQuad({0.0f, 1.0f, 0.0f}, {0.5f, 0.5f}, this->texture);
     Renderer::end();
   }
 

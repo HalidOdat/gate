@@ -29,7 +29,7 @@ namespace Game {
   private:
     const Data& getData() const;
 
-    static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4);
+    static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
     static Data create(const StringView& filepath);
 
     static void destroy(Data& data);
