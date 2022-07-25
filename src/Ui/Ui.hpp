@@ -11,9 +11,10 @@ namespace Game {
   
   class Ui {
   public:
-
     class Layout {
       friend Ui;
+    public:
+      static constexpr const float DEFAULT_PADDING = 0.01f;
 
     public:
       enum class Type {
@@ -23,9 +24,11 @@ namespace Game {
 
     private:
       Vec2 nextAvailablePosition();
+      void pushWidget(const Vec2& widgetSize);
 
     private:
       Type type;
+      f32  padding;
       Vec2 position;
       Vec2 size;
     };
@@ -33,8 +36,8 @@ namespace Game {
   public:
     Ui(f32 left, f32 right, f32 bottom, f32 top);
 
-    void begin(const Vec2& position);
-    void beginLayout(Layout::Type type);
+    void begin(const Vec2& position, f32 padding = Layout::DEFAULT_PADDING);
+    void beginLayout(Layout::Type type, f32 padding = Layout::DEFAULT_PADDING);
     bool button(const Vec3& color, u32 id = 0);
     void endLayout();
     void end();

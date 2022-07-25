@@ -30,8 +30,17 @@ namespace Game {
 
   void ExampleLayer::onUiRender(Ui& ui) {
     ui.begin({0.0f, 0.0f});
-      if (ui.button({1.0f, 1.0f, 0.0f})) {
-        Logger::info("Button clicked!!!");
+      if (ui.button({1.0f, 1.0f, 0.0f}, 0)) {
+        Logger::info("Button 0 clicked!!!");
+      }
+      if (ui.button({1.0f, 0.0f, 0.0f}, 1)) {
+        Logger::info("Button 1 clicked!!!");
+      }
+      if (ui.button({1.0f, 0.0f, 1.0f}, 2)) {
+        Logger::info("Button 2 clicked!!!");
+      }
+      if (ui.button({0.0f, 0.0f, 1.0f}, 3)) {
+        Logger::info("Button 3 clicked!!!");
       }
     ui.end();
   }
