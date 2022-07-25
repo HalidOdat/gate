@@ -53,8 +53,10 @@ namespace Game {
   private:
     OrthographicCamera camera;
 
+    bool hasHot    = false;
+    u32  hot       = 0;
     bool hasActive = false;
-    u32  active;
+    u32  active    = 0;
 
     Vec2 mousePosition = Vec2{0.0f, 0.0f};
     bool mouseButton   = false;

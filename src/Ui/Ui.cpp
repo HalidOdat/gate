@@ -93,18 +93,27 @@ namespace Game {
     bool clicked = false;
     if (this->hasActive && this->active == id) {
       if (!this->mouseButton) {
-        c = Vec3(0.0f, 1.0f, 1.0f);
+        this->hasActive = false;
+
         if (rectangle.contains(this->mousePosition)) {
           clicked = true;
         }
-        this->hasActive = false;
+      } else {
+        c = Vec3(0.0f, 1.0f, 1.0f);
+      }
+    } else if (this->hasHot && this->hot == id) {
+      c = Vec3(0.5f, 0.5f, 0.0f);
+
+      if (!rectangle.contains(this->mousePosition)) {
+        this->hasHot = false;
+      } else if (this->mouseButton && !this->hasActive) {
+        this->hasActive = true;
+        this->active    = id;
       }
     } else {
-      if (this->mouseButton && rectangle.contains(this->mousePosition)) {
-        if (!this->hasActive) {
-          this->hasActive = true;
-          this->active     = id;
-        }
+      if (!this->hasActive && rectangle.contains(this->mousePosition)) {
+        this->hasHot = true;
+        this->hot    = id;
       }
     }
 
@@ -145,17 +154,17 @@ namespace Game {
 
   bool Ui::onMouseMoveEvent(const MouseMoveEvent& event) {
     this->mousePosition = {event.getX(), event.getY()};
-    return false;
+    return this->hasHot || this->hasActive;
   }
 
   bool Ui::onMouseButtonPressedEvent(const MouseButtonPressedEvent& event) {
     this->mouseButton = true;
-    return false;  
+    return this->hasHot || this->hasActive;
   }
 
   bool Ui::onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event) {
     this->mouseButton = false;
-    return false;  
+    return  this->hasHot || this->hasActive;
   }
 
 } // namespace Game
