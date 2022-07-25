@@ -34,7 +34,7 @@ namespace Game {
       case Type::Horizontal:
         return this->position + (this->size + Vec2(this->padding)) * Vec2(1.0f, 0.0f);
       case Type::Vertical:
-        return this->position + (this->size + Vec2(this->padding)) * Vec2(0.0f, 1.0f);
+        return this->position + (this->size + Vec2(this->padding)) * Vec2(0.0f, -1.0f);
       default:
         GAME_UNREACHABLE("Unknown Layout type!");
     }
@@ -60,10 +60,6 @@ namespace Game {
   {}
 
   void Ui::begin(const Vec2& position, f32 padding) {
-    // Clear previous state (if any)
-    // this->has_active = false;
-    // this->active     = 0;
-
     Layout layout;
     layout.type     = Layout::Type::Horizontal;
     layout.position = position;
@@ -76,7 +72,13 @@ namespace Game {
   }
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
-    GAME_UNREACHABLE("todo");
+    Layout layout;
+    layout.type     = type;
+    layout.position = layouts.back().nextAvailablePosition();
+    layout.size     = Vec2(0.0f);
+    layout.padding  = padding;
+
+    this->layouts.push_back(layout);
   }
 
   bool Ui::button(const Vec3& color, u32 id) {
@@ -89,18 +91,18 @@ namespace Game {
 
     Vec3 c = color;
     bool clicked = false;
-    if (this->has_active && this->active == id) {
+    if (this->hasActive && this->active == id) {
       if (!this->mouseButton) {
         c = Vec3(0.0f, 1.0f, 1.0f);
         if (rectangle.contains(this->mousePosition)) {
           clicked = true;
         }
-        this->has_active = false;
+        this->hasActive = false;
       }
     } else {
       if (this->mouseButton && rectangle.contains(this->mousePosition)) {
-        if (!this->has_active) {
-          this->has_active = true;
+        if (!this->hasActive) {
+          this->hasActive = true;
           this->active     = id;
         }
       }
@@ -113,12 +115,19 @@ namespace Game {
   }
 
   void Ui::endLayout() {
-    GAME_UNREACHABLE("todo");
+    auto size = this->layouts.back().size;
+    this->layouts.pop_back();
+    this->layouts.back().pushWidget(size);
   }
 
   void Ui::end() {
     GAME_DEBUG_ASSERT(this->layouts.size() == 1);
+    Layout layout = this->layouts.back();
     this->layouts.pop_back();
+
+    layout.pushWidget(Vec2{0.0f});
+
+    Renderer::drawQuad(Vec3{layout.position, -0.1f}, layout.size, Vec4{0.1f, 0.1f, 0.1f, 1.0f});
     Renderer::end();
   }
 

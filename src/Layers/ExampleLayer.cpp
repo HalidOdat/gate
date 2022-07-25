@@ -30,18 +30,42 @@ namespace Game {
 
   void ExampleLayer::onUiRender(Ui& ui) {
     ui.begin({0.0f, 0.0f});
-      if (ui.button({1.0f, 1.0f, 0.0f}, 0)) {
-        Logger::info("Button 0 clicked!!!");
-      }
-      if (ui.button({1.0f, 0.0f, 0.0f}, 1)) {
-        Logger::info("Button 1 clicked!!!");
-      }
-      if (ui.button({1.0f, 0.0f, 1.0f}, 2)) {
-        Logger::info("Button 2 clicked!!!");
-      }
-      if (ui.button({0.0f, 0.0f, 1.0f}, 3)) {
-        Logger::info("Button 3 clicked!!!");
-      }
+      ui.beginLayout(Ui::Layout::Type::Vertical);
+        if (ui.button({1.0f, 1.0f, 0.0f}, 0)) {
+          Logger::info("Button 0 clicked!!!");
+        }
+        if (ui.button({1.0f, 0.0f, 0.0f}, 1)) {
+          Logger::info("Button 1 clicked!!!");
+        }
+        if (ui.button({1.0f, 0.0f, 1.0f}, 2)) {
+          Logger::info("Button 2 clicked!!!");
+        }
+        if (ui.button({0.0f, 0.0f, 1.0f}, 3)) {
+          Logger::info("Button 3 clicked!!!");
+        }
+      ui.endLayout();
+      ui.beginLayout(Ui::Layout::Type::Vertical);
+        if (ui.button({0.0f, 0.0f, 0.0f}, 4)) {
+          Logger::info("Button 4 clicked!!!");
+        }
+        if (ui.button({1.0f, 1.0f, 1.0f}, 5)) {
+          Logger::info("Button 5 clicked!!!");
+        }
+        if (ui.button({0.5f, 0.5f, 0.5f}, 6)) {
+          Logger::info("Button 6 clicked!!!");
+        }
+        if (ui.button({0.0f, 0.5f, 0.0f}, 7)) {
+          Logger::info("Button 7 clicked!!!");
+        }
+        ui.beginLayout(Ui::Layout::Type::Horizontal);
+          if (ui.button({1.0f, 1.0f, 0.5f}, 8)) {
+            Logger::info("Button 8 clicked!!!");
+          }
+          if (ui.button({1.0f, 0.5f, 0.5f}, 9)) {
+            Logger::info("Button 9 clicked!!!");
+          }
+        ui.endLayout();
+      ui.endLayout();
     ui.end();
   }
 

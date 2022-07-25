@@ -75,6 +75,9 @@ namespace Game {
   static RendererData* renderer;
 
   void Renderer::Initialize() {
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
     static const u8 bytes[] = { 0xFF, 0xFF, 0xFF };
     auto whiteTexture = ResourceManager::textureFromBytes(bytes, 1, 1, 3);
 

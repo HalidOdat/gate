@@ -26,7 +26,7 @@ namespace Game {
     );
 
     ResourceManager::Initialize();
-    Renderer::Initialize();
+  Renderer::Initialize();
 
     this->ui = new Ui(-1.0f, 1.0f, -1.0f, 1.0f);
 
