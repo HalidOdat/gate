@@ -2,6 +2,8 @@
 #include <sstream>
 #include <string>
 #include <optional>
+#include <vector>
+#include <algorithm>
 
 #include <glad/glad.h>
 
@@ -16,6 +18,7 @@ namespace Game {
     switch (type) {
       case Shader::Type::Vertex:   return GL_VERTEX_SHADER;
       case Shader::Type::Fragment: return GL_FRAGMENT_SHADER;
+      case Shader::Type::Compute:  return GL_COMPUTE_SHADER;
     }
 
     GAME_UNREACHABLE("unknown shader type!");
@@ -26,25 +29,133 @@ namespace Game {
     switch (type) {
       case Shader::Type::Vertex:   return "Vertex";
       case Shader::Type::Fragment: return "Fragment";
+      case Shader::Type::Compute:  return "Compute";
     }
 
     GAME_UNREACHABLE("unknown shader type!");
     return 0;
   }
 
-  std::optional<std::string> fileToString(const char* filepath) {
+  std::optional<std::string> fileToString(const StringView& filename) {
     std::ifstream file;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
-      file.open(filepath);
+      file.open(filename.data());
       std::stringstream stream;
       stream << file.rdbuf();
       file.close();
       return stream.str();
     } catch (std::ifstream::failure e) {
-      Logger::error("Couldn't load file '%s': %s", filepath, e.what());
+      Logger::error("Couldn't load file '%s': %s", filename.data(), e.what());
       return std::nullopt;
     }
+  }
+
+  // TODO: Move to utils, maybe...
+  static bool stringIsEqualIgnoreCase(const StringView& rhs, const StringView& lhs) {
+    return std::equal(
+      rhs.begin(), rhs.end(),
+      lhs.begin(), lhs.end(),
+      [](char a, char b) {
+        return tolower(a) == tolower(b);
+      }
+    );
+  }
+
+  static std::optional<Shader::Type> stringToShaderType(const StringView& string) {
+    if (stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Vertex))) {
+      return Shader::Type::Vertex;
+    } else if (stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Fragment))) {
+      return Shader::Type::Fragment;
+    } else if (stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Compute))) {
+      return Shader::Type::Compute;
+    }
+
+    return std::nullopt;
+  }
+
+  static std::vector<std::pair<Shader::Type, std::string>> parse(const StringView& filename) {
+    const StringView typeDelimiter = "@type ";
+
+    std::vector<std::pair<Shader::Type, std::string>> result;
+
+    std::optional<std::string> common = std::nullopt;
+
+    std::ifstream file;
+    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try {
+      file.open(filename.data());
+      std::stringstream stream;
+      stream << file.rdbuf();
+      file.close();
+
+      std::string type;
+      std::string content;
+      for (std::string line; std::getline(stream, line); ) {
+        if (line.starts_with(typeDelimiter)) {
+          if (!common) {
+            common = content + '\n';
+          } else {
+            auto shaderType = stringToShaderType(type);
+            if (!shaderType) {
+              return {};
+            }
+
+            if (std::any_of(result.begin(), result.end(), [shaderType](const auto& value){
+              return value.first == shaderType;
+            })) {
+              Logger::error("Duplicate shader type '%s' in %s", shaderTypeToString(*shaderType), filename.data());
+              return {};
+            }
+            
+            result.emplace_back(std::make_pair(*shaderType, *common + content));
+          }
+
+          content.clear();
+
+          type = line.substr(typeDelimiter.size());
+          continue;
+        }
+
+        content += line;
+        content += '\n';
+      }
+
+      auto shaderType = stringToShaderType(type);
+      if (!shaderType) {
+        return {};
+      }
+
+      if (std::any_of(result.begin(), result.end(), [shaderType](const auto& value){
+        return value.first == shaderType;
+      })) {
+        Logger::error("Duplicate shader type '%s' in %s", shaderTypeToString(*shaderType), filename.data());
+        return {};
+      }
+
+      result.emplace_back(std::make_pair(*shaderType, *common + content));
+    } catch (std::ifstream::failure e) {
+      Logger::error("Couldn't open file '%s': %s", filename.data(), e.what());
+      return {};
+    }
+
+    if (!std::any_of(result.begin(), result.end(), [](const auto& value){
+        return value.first == Shader::Type::Vertex;
+    }) || !std::any_of(result.begin(), result.end(), [](const auto& value){
+        return value.first == Shader::Type::Fragment;
+    })) {
+      Logger::error("Shader program '%s' must contain a vertex and fragment shaders", filename.data());
+      return {};
+    }
+
+    // Logger::trace("-------------------------------------");
+    // for (auto&[type, content] : result) {
+    //   Logger::trace("Type: '%s'", shaderTypeToString(type));
+    //   Logger::trace("Content: '%s'", content.c_str());
+    // }
+    // Logger::trace("-------------------------------------");
+
+    return result;
   }
 
   u32 Shader::compile(Type type, const char* source) noexcept {
@@ -66,32 +177,53 @@ namespace Game {
     return id;
   }
 
-  Shader::Data Shader::create(const char* vFilepath, const char* fFilepath) noexcept {
-    const auto vertexShaderSourceString = fileToString(vFilepath);
-    if (!vertexShaderSourceString) {
-      return { NULL_SHADER };
-    }
-    u32 vertexShader = Shader::compile(Type::Vertex, vertexShaderSourceString->c_str());
-    if (!vertexShader) {
+  Shader::Data Shader::create(const StringView& filepath) {
+    auto content = parse(filepath);
+    if (content.empty()) {
       return { NULL_SHADER };
     }
 
-    // fragment shader
-    const auto fragmentShaderSourceString = fileToString(fFilepath);
-    if (!fragmentShaderSourceString) {
-      GAME_GL_CHECK(glDeleteShader(vertexShader));
-      return { NULL_SHADER };
-    }
-    u32 fragmentShader = Shader::compile(Type::Fragment, fragmentShaderSourceString->c_str());
-    if (!fragmentShader) {
-      return { NULL_SHADER };
+    u32 vertex   = 0;
+    u32 fragment = 0;
+    u32 compute  = 0;
+    for (auto&[type, content] : content) {
+      u32* target = nullptr;
+      switch (type) {
+        case Shader::Type::Vertex:
+          target = &vertex;
+          break;
+        case Shader::Type::Fragment:
+          target = &fragment;
+          break;
+        case Shader::Type::Compute:
+          target = &compute;
+          break;
+        default:
+          GAME_UNREACHABLE("Unkown shader type!");
+      }
+
+      *target = Shader::compile(type, content.c_str());
+
+      if (*target == 0) {
+        if (vertex != 0) {
+          GAME_GL_CHECK(glDeleteShader(vertex));
+        }
+        if (fragment != 0) {
+          GAME_GL_CHECK(glDeleteShader(fragment));
+        }
+        if (compute != 0) {
+          GAME_GL_CHECK(glDeleteShader(fragment));
+        }
+
+        return { NULL_SHADER };
+      }
     }
 
     // link shaders
     u32 shaderProgram;
     GAME_GL_CHECK(shaderProgram = glCreateProgram());
-    GAME_GL_CHECK(glAttachShader(shaderProgram, vertexShader));
-    GAME_GL_CHECK(glAttachShader(shaderProgram, fragmentShader));
+    GAME_GL_CHECK(glAttachShader(shaderProgram, vertex));
+    GAME_GL_CHECK(glAttachShader(shaderProgram, fragment));
     GAME_GL_CHECK(glLinkProgram(shaderProgram));
 
     // check for linking errors
@@ -101,10 +233,18 @@ namespace Game {
 
     if (!success) {
         GAME_GL_CHECK(glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog));
-        Logger::error("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
+        Logger::error("Shader program linking failed:\n%s\n", infoLog);
     }
-    GAME_GL_CHECK(glDeleteShader(vertexShader));
-    GAME_GL_CHECK(glDeleteShader(fragmentShader));
+
+    if (vertex != 0) {
+      GAME_GL_CHECK(glDeleteShader(vertex));
+    }
+    if (fragment != 0) {
+      GAME_GL_CHECK(glDeleteShader(fragment));
+    }
+    if (compute != 0) {
+      GAME_GL_CHECK(glDeleteShader(fragment));
+    }
 
     if (!success) {
       glDeleteProgram(shaderProgram);

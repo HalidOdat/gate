@@ -38,8 +38,7 @@ namespace Game {
     static constexpr const u32 VERTICES_COUNT   = 4;
     static constexpr const u32 INDICES_COUNT    = 6;
     
-    static constexpr const auto VERTEX_SHADER   = "renderer/primitives/quad.vs";
-    static constexpr const auto FRAGMENT_SHADER = "renderer/primitives/quad.fs";
+    static constexpr const auto SHADER_PATH = "renderer/Quad.glsl";
 
     struct Vertex {
       Vec3 position;
@@ -110,7 +109,7 @@ namespace Game {
     vertexArray->setIndexBuffer(indexBuffer);
     vertexArray->unbind();
 
-    auto shader = ResourceManager::loadShader(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
+    auto shader = ResourceManager::loadShader(QuadBatch::SHADER_PATH);
 
     i32 samples[QuadBatch::MAX_TEXTURES];
     for (u32 i = 0; i < QuadBatch::MAX_TEXTURES; ++i) {

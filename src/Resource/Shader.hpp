@@ -12,6 +12,7 @@ namespace Game {
     enum class Type {
       Vertex,
       Fragment,
+      Compute,
     };
   
   public:
@@ -43,9 +44,10 @@ namespace Game {
 
   private:
     const Data& getData() const;
-    static void destroy(Data& data);
-    static Shader::Data create(const char* vFilepath, const char* fFilepath) noexcept;
 
+    static void destroy(Data& data);
+    static Data create(const StringView& filepath);
+    
   private:
     Shader(Resource::Id id)
       : Resource{id}
