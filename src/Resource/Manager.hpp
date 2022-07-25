@@ -13,15 +13,16 @@ namespace Game {
 
   public:
     static Texture2D loadTexture(const StringView& filepath);
-    static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
+  static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
 
-    static Ref<Shader> loadShader(const StringView& vFilepath, const StringView& fFilepath);
+    static Shader loadShader(const StringView& vFilepath, const StringView& fFilepath);
 
     static void reloadTextures();
 
     ResourceManager() = delete;
   public:
     static const Texture2D::Data& getTextureData(Resource::Id id);
+    static const Shader::Data&    getShaderData(Resource::Id id);
 
   private:
     static void Initialize();

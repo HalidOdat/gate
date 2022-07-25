@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Core/Math.hpp"
+#include "Resource/Resource.hpp"
 
 namespace Game {
-  
-  class ResourceManager;
 
-  class Shader {
+  class Shader : public Resource {
     friend class ResourceManager;
 
   public:
@@ -19,9 +18,6 @@ namespace Game {
     static constexpr const u32 NULL_SHADER = 0;
 
   public:
-    DISALLOW_MOVE_AND_COPY(Shader);
-    ~Shader() noexcept;
-
     void bind() noexcept;
     void unbind() noexcept;
 
@@ -37,20 +33,23 @@ namespace Game {
     void setIntArray(StringView name, const i32* value, u32 count);
     void setUintArray(StringView name, const u32* value, u32 count);
 
-  private:
-    [[nodiscard]] static Ref<Shader> create(const char* vFilepath, const char* fFilepath) noexcept;
-
-  protected:
-    Shader(u32 id)
-      : id{id}
-    {}
+  public:
+    struct Data {
+      u32 id;
+    };
 
   private:
       static u32 compile(Type type, const char* source) noexcept;
-  private:
-    u32 id;
 
-    const char* filepath;
+  private:
+    const Data& getData() const;
+    static void destroy(Data& data);
+    static Shader::Data create(const char* vFilepath, const char* fFilepath) noexcept;
+
+  private:
+    Shader(Resource::Id id)
+      : Resource{id}
+    {}
   };
 
 } // namespace Game

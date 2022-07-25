@@ -10,6 +10,30 @@ namespace Game {
 
   // TODO: Refactor this
   struct QuadBatch {
+    QuadBatch(
+      Ref<VertexArray>  vertexArray,
+      Ref<VertexBuffer> vertexBuffer,
+      Shader            shader,
+      Texture2D         whiteTexture
+    )
+    : vertexArray{vertexArray},
+      vertexBuffer{vertexBuffer},
+      shader{shader}
+    {
+      this->base    = new QuadBatch::Vertex[QuadBatch::MAX * QuadBatch::VERTICES_COUNT];
+      this->current = this->base;
+      this->count = 0;
+
+      this->textures.reserve(QuadBatch::MAX_TEXTURES);
+      this->textures.push_back(whiteTexture);
+    }
+
+    DISALLOW_MOVE_AND_COPY(QuadBatch);
+
+    ~QuadBatch() {
+      delete[] this->base;
+    }
+
     static constexpr const u32 MAX              = 512;
     static constexpr const u32 VERTICES_COUNT   = 4;
     static constexpr const u32 INDICES_COUNT    = 6;
@@ -24,7 +48,7 @@ namespace Game {
       u32  texIndex;
     };
 
-    Ref<Shader>       shader;
+    Shader            shader;
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray>  vertexArray;
 
@@ -46,14 +70,6 @@ namespace Game {
     Texture2D whiteTexture;
 
     QuadBatch quad;
-
-    ~RendererData() {
-      this->quad.shader.reset();
-      this->quad.vertexBuffer.reset();
-      this->quad.vertexArray.reset();
-
-      delete[] this->quad.base;
-    }
   };
 
   static RendererData* renderer;
@@ -62,16 +78,15 @@ namespace Game {
     static const u8 bytes[] = { 0xFF, 0xFF, 0xFF };
     auto whiteTexture = ResourceManager::textureFromBytes(bytes, 1, 1, 3);
 
-    QuadBatch quad;
-    quad.vertexArray = VertexArray::create();
-    quad.vertexBuffer = VertexBuffer::withSize(QuadBatch::VERTEX_BUFFER_BYTE_SIZE);
-    quad.vertexBuffer->setLayout({
+    auto vertexArray = VertexArray::create();
+    auto vertexBuffer = VertexBuffer::withSize(QuadBatch::VERTEX_BUFFER_BYTE_SIZE);
+    vertexBuffer->setLayout({
       { BufferElement::Type::Float3, /* position */ },
       { BufferElement::Type::Float4  /* color */ },
       { BufferElement::Type::Float2  /* texture */ },
       { BufferElement::Type::Uint    /* texIndex */ },
     });
-    quad.vertexArray->addVertexBuffer(quad.vertexBuffer);
+    vertexArray->addVertexBuffer(vertexBuffer);
 
     u32* indices = new u32[QuadBatch::INDEX_BUFFER_COUNT];
     u32  offset = 0;
@@ -89,29 +104,24 @@ namespace Game {
 
     auto indexBuffer = IndexBuffer::create({indices, QuadBatch::INDEX_BUFFER_COUNT});
     delete[] indices;
-    quad.vertexArray->setIndexBuffer(indexBuffer);
-    quad.vertexArray->unbind();
+    vertexArray->setIndexBuffer(indexBuffer);
+    vertexArray->unbind();
 
-    quad.shader = ResourceManager::loadShader(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
+    auto shader = ResourceManager::loadShader(QuadBatch::VERTEX_SHADER, QuadBatch::FRAGMENT_SHADER);
 
     i32 samples[QuadBatch::MAX_TEXTURES];
     for (u32 i = 0; i < QuadBatch::MAX_TEXTURES; ++i) {
       samples[i] = i;
     }
-    quad.shader->bind();
-    quad.shader->setIntArray("uTextures", samples, QuadBatch::MAX_TEXTURES);
+    shader.bind();
+    shader.setIntArray("uTextures", samples, QuadBatch::MAX_TEXTURES);
 
-    quad.base    = new QuadBatch::Vertex[QuadBatch::MAX * QuadBatch::VERTICES_COUNT];
-    quad.current = quad.base;
-    quad.count = 0;
-
-    quad.textures.reserve(QuadBatch::MAX_TEXTURES);
-    quad.textures.push_back(whiteTexture);
+    auto quad = QuadBatch(vertexArray, vertexBuffer, shader, whiteTexture);
 
     renderer = new RendererData{
       Mat4(1.0f),
-      std::move(whiteTexture),
-      std::move(quad)
+      whiteTexture,
+      {vertexArray, vertexBuffer, shader, whiteTexture}
     };
   }
 
@@ -180,8 +190,8 @@ namespace Game {
         renderer->quad.textures[i].bind(i);
       }
 
-      renderer->quad.shader->bind();
-      renderer->quad.shader->setMat4("uProjectionView", renderer->projectionViewMatrix);
+      renderer->quad.shader.bind();
+      renderer->quad.shader.setMat4("uProjectionView", renderer->projectionViewMatrix);
 
       renderer->quad.vertexArray->bind();
       renderer->quad.vertexBuffer->set({renderer->quad.base, dataLength});

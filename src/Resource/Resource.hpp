@@ -13,6 +13,7 @@ namespace Game {
     enum class Type : u32 {
       None,
       Texture,
+      Shader,
     };
 
   public:

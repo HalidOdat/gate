@@ -15,15 +15,16 @@ namespace Game {
   constexpr const auto CELL_OCCUPIED = 0xFF'FF'FF'FF;
 
   struct TextureResource {
-    u32             refcount;   
+    u32             refcount;
     std::string     path;
     Texture2D::Data texture;
   };
 
   struct ShaderResource {
-    std::string vertexPath;
-    std::string fragmentPath;
-    Ref<Shader> shader;
+    u32          refcount;
+    std::string  vertexPath;
+    std::string  fragmentPath;
+    Shader::Data shader;
   };
 
   struct ResourceManagerData {
@@ -31,6 +32,7 @@ namespace Game {
     std::vector<u32>             texturesFreeList;
 
     std::vector<ShaderResource>  shaders;
+    std::vector<u32>             shadersFreeList;
   };
 
   static ResourceManagerData manager;
@@ -41,6 +43,9 @@ namespace Game {
         break;
       case Resource::Type::Texture:
         manager.textures[id.index].refcount += 1;
+        break;
+      case Resource::Type::Shader:
+        manager.shaders[id.index].refcount += 1;
         break;
       default:
         GAME_UNREACHABLE("Unknown resource type!");
@@ -58,6 +63,15 @@ namespace Game {
           Texture2D::destroy(manager.textures[id.index].texture);
           manager.texturesFreeList.push_back(id.index);
           manager.textures[id.index].refcount = CELL_OCCUPIED;
+        }
+        break;
+      case Resource::Type::Shader:
+        manager.shaders[id.index].refcount -= 1;
+        if (!manager.shaders[id.index].refcount) {
+          Logger::trace("ResourceManager: Shader(%u) destroyed!", manager.shaders[id.index].shader.id);
+          Shader::destroy(manager.shaders[id.index].shader);
+          manager.shadersFreeList.push_back(id.index);
+          manager.shaders[id.index].refcount = CELL_OCCUPIED;
         }
         break;
       default:
@@ -79,12 +93,25 @@ namespace Game {
     manager.textures.clear();
     manager.texturesFreeList.clear();
 
+    for (usize i = 0; i < manager.shaders.size(); ++i) {
+      if (manager.shaders[i].refcount != CELL_OCCUPIED) {
+        Logger::trace("ResourceManager: Shader(%u) destroyed!", manager.shaders[i].shader.id);
+        Shader::destroy(manager.shaders[i].shader);
+      }
+    }
     manager.shaders.clear();
+    manager.shadersFreeList.clear();
     Logger::info("ResourceManager: Shutdown!");
   }
 
   const Texture2D::Data& ResourceManager::getTextureData(Resource::Id id) {
+    GAME_DEBUG_ASSERT(id.type == Resource::Type::Texture);
     return manager.textures[id.index].texture;
+  }
+
+  const Shader::Data& ResourceManager::getShaderData(Resource::Id id) {
+    GAME_DEBUG_ASSERT(id.type == Resource::Type::Shader);
+    return manager.shaders[id.index].shader;
   }
 
   Texture2D::Data ResourceManager::generateMissingTexture() {
@@ -100,6 +127,7 @@ namespace Game {
     auto path   = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
     auto data = Texture2D::create(path);
 
+    // FIXME: Use free list
     auto index = (u32)manager.textures.size();
 
     if (data.id) {
@@ -122,22 +150,28 @@ namespace Game {
     return Texture2D({Resource::Type::Texture, index});
   }
 
-  Ref<Shader> ResourceManager::loadShader(const StringView& vFilepath, const StringView& fFilepath) {
+  Shader ResourceManager::loadShader(const StringView& vFilepath, const StringView& fFilepath) {
     auto vertexPath   = std::string(SHADER_ASSETS_DIRECTORY) + vFilepath.data();
     auto fragmentPath = std::string(SHADER_ASSETS_DIRECTORY) + fFilepath.data();
 
     auto result = Shader::create(vertexPath.c_str(), fragmentPath.c_str());
 
-    if (result) {
+    // FIXME: Use free list
+    auto index = (u32)manager.shaders.size();
+
+    if (result.id) {
       Logger::info("ResourceManager: Loaded shader vertex:   %s", vertexPath.c_str());
       Logger::info("ResourceManager: Loaded shader fragment: %s", fragmentPath.c_str());
-      manager.shaders.emplace_back(std::move(vertexPath), std::move(fragmentPath), result);
+      manager.shaders.emplace_back(1, std::move(vertexPath), std::move(fragmentPath), result);
     } else {
       Logger::info("ResourceManager: Couldn't load shader vertex:   %s", vertexPath.c_str());
       Logger::info("ResourceManager: Couldn't load shader fragment: %s", fragmentPath.c_str());
+      GAME_ASSERT(false);
+      // TODO: Return invalid shader
+      return Shader({Resource::Type::Shader, 0});
     }
 
-    return result;
+    return Shader({Resource::Type::Shader, index});
   }
 
   // TODO: Check for change in files
