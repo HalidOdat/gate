@@ -7,16 +7,16 @@ namespace Game {
 
   class Shader : public Resource {
     friend class ResourceManager;
-
+    
   public:
     enum class Type {
-      Vertex,
+      Vertex = 0,
       Fragment,
       Compute,
     };
   
   public:
-    static constexpr const u32 NULL_SHADER = 0;
+    static constexpr const u32 SHADER_TYPE_COUNT = 3;
 
   public:
     void bind() noexcept;
@@ -38,20 +38,20 @@ namespace Game {
     struct Data {
       u32 id;
     };
-
+  
   private:
-      static u32 compile(Type type, const char* source) noexcept;
+    static constexpr const u32 NULL_SHADER = 0;
 
-  private:
-    const Data& getData() const;
-
-    static void destroy(Data& data);
-    static Data create(const StringView& filepath);
-    
   private:
     Shader(Resource::Id id)
       : Resource{id}
     {}
+
+    static u32  compile(Type type, const char* source) noexcept;
+    static Data create(const StringView& filepath);
+    static void destroy(Data& data);
+
+    const Data& getData() const;
   };
 
 } // namespace Game

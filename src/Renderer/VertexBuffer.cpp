@@ -20,7 +20,6 @@ namespace Game {
   }
 
   VertexBuffer::VertexBuffer(const usize size) {
-    Logger::info("VertexBuffer Size: %zu", size);
     GAME_GL_CHECK(glGenBuffers(1, &this->id));
     GAME_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, this->id));
     GAME_GL_CHECK(glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW));

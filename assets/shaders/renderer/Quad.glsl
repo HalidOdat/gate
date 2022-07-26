@@ -31,7 +31,7 @@ flat in uint vTexIndex;
 uniform sampler2D uTextures[32];
 
 void main() {
-   // Reason for the switch case: 
+   // Reason for the switch cases: 
    // https://stackoverflow.com/questions/72648980/opengl-sampler2d-array
    vec4 color;
    switch (vTexIndex) {

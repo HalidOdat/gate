@@ -58,7 +58,7 @@ namespace Game {
 
     Vertex* base    = nullptr;
     Vertex* current = nullptr;
-    usize count     = 0;
+    u32     count   = 0;
 
     static constexpr const u32 VERTEX_BUFFER_BYTE_SIZE = MAX * VERTICES_COUNT * sizeof(Vertex);
     static constexpr const u32 INDEX_BUFFER_COUNT      = MAX * INDICES_COUNT;

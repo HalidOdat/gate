@@ -4,6 +4,7 @@
 #include <optional>
 #include <vector>
 #include <algorithm>
+#include <array>
 
 #include <glad/glad.h>
 
@@ -183,38 +184,18 @@ namespace Game {
       return { NULL_SHADER };
     }
 
-    u32 vertex   = 0;
-    u32 fragment = 0;
-    u32 compute  = 0;
+    std::array<u32, SHADER_TYPE_COUNT> shaders = {0, 0, 0};
     for (auto&[type, content] : content) {
-      u32* target = nullptr;
-      switch (type) {
-        case Shader::Type::Vertex:
-          target = &vertex;
-          break;
-        case Shader::Type::Fragment:
-          target = &fragment;
-          break;
-        case Shader::Type::Compute:
-          target = &compute;
-          break;
-        default:
-          GAME_UNREACHABLE("Unkown shader type!");
-      }
+      u32 id = Shader::compile(type, content.c_str());;
 
-      *target = Shader::compile(type, content.c_str());
+      shaders[(usize)type] = id;
 
-      if (*target == 0) {
-        if (vertex != 0) {
-          GAME_GL_CHECK(glDeleteShader(vertex));
+      if (id == 0) {
+        for (auto shader : shaders) {
+          if (shader != 0) {
+            GAME_GL_CHECK(glDeleteShader(shader));
+          }
         }
-        if (fragment != 0) {
-          GAME_GL_CHECK(glDeleteShader(fragment));
-        }
-        if (compute != 0) {
-          GAME_GL_CHECK(glDeleteShader(fragment));
-        }
-
         return { NULL_SHADER };
       }
     }
@@ -222,8 +203,13 @@ namespace Game {
     // link shaders
     u32 shaderProgram;
     GAME_GL_CHECK(shaderProgram = glCreateProgram());
-    GAME_GL_CHECK(glAttachShader(shaderProgram, vertex));
-    GAME_GL_CHECK(glAttachShader(shaderProgram, fragment));
+
+    for (auto shader : shaders) {
+      if (shader != 0) {
+        GAME_GL_CHECK(glAttachShader(shaderProgram, shader));
+      }
+    }
+
     GAME_GL_CHECK(glLinkProgram(shaderProgram));
 
     // check for linking errors
@@ -236,14 +222,11 @@ namespace Game {
         Logger::error("Shader program linking failed:\n%s\n", infoLog);
     }
 
-    if (vertex != 0) {
-      GAME_GL_CHECK(glDeleteShader(vertex));
-    }
-    if (fragment != 0) {
-      GAME_GL_CHECK(glDeleteShader(fragment));
-    }
-    if (compute != 0) {
-      GAME_GL_CHECK(glDeleteShader(fragment));
+    for (auto shader : shaders) {
+      if (shader != 0) {
+        GAME_GL_CHECK(glDetachShader(shaderProgram, shader));
+        GAME_GL_CHECK(glDeleteShader(shader));
+      }
     }
 
     if (!success) {
