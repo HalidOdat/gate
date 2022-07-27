@@ -1,3 +1,6 @@
+#include <array>
+#include <cctype>
+
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -67,13 +70,18 @@ namespace Game {
   struct RendererData {
     Mat4 projectionViewMatrix;
     Texture2D whiteTexture;
-
     QuadBatch quad;
+
+    Texture2D fontTexture;
+    std::array<Vec4, 96> fontCoords;
   };
 
   static RendererData* renderer;
 
   void Renderer::Initialize() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -120,11 +128,35 @@ namespace Game {
 
     auto quad = QuadBatch(vertexArray, vertexBuffer, shader, whiteTexture);
 
+    auto fontTexture = ResourceManager::loadTexture("PixelFont_7x9_112x54.png", false);
+    const auto fontTextureWidth  = fontTexture.getWidth();
+    const auto fontTextureHeight = fontTexture.getHeight();
+    const auto fontCharacterWidth  = 7;
+    const auto fontCharacterHeight = 9;
+
+    GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
+    GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
+
     renderer = new RendererData{
       Mat4(1.0f),
       whiteTexture,
-      {vertexArray, vertexBuffer, shader, whiteTexture}
+      {vertexArray, vertexBuffer, shader, whiteTexture},
+      fontTexture
     };
+
+    u32 count = 0;
+    for (u32 height = 0; height != fontTextureHeight; height += fontCharacterHeight) {
+      for (u32 width = 0; width != fontTextureWidth; width += fontCharacterWidth) {
+        const f32 x = (float)width / fontTextureWidth;
+        const f32 y = (float)height / fontTextureHeight;
+        const f32 xSize = (float)fontCharacterWidth / fontTextureWidth;
+        const f32 ySize = (float)fontCharacterHeight / fontTextureHeight;
+        renderer->fontCoords[count++] = Vec4{
+          Vec2{ x,         1 - y - ySize },
+          Vec2{ x + xSize, 1 - y },
+        };
+      }
+    }
   }
 
   void Renderer::Shutdown() {
@@ -151,6 +183,59 @@ namespace Game {
 
   void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Vec4& color) {
     Renderer::drawQuad(position, size, renderer->whiteTexture, color);
+  }
+
+  void Renderer::drawChar(char c, const Vec3& position, const Vec2& size, const Vec4& color) {
+    auto texture = renderer->fontTexture;
+
+    // TODO: refactor this.
+    if (renderer->quad.count == QuadBatch::MAX) {
+      Renderer::flush();
+    }
+
+    u32 index = 0;
+    for (; index < renderer->quad.textures.size(); ++index) {
+      if (renderer->quad.textures[index] == texture) {
+        break;
+      }
+    }
+
+    if (index == renderer->quad.textures.size()) {
+      if (renderer->quad.textures.size() >= QuadBatch::MAX_TEXTURES) {
+        Renderer::flush();
+      }
+
+      index = (u32)renderer->quad.textures.size();
+      renderer->quad.textures.push_back(texture);
+    }
+
+    if (!std::isprint(c)) {
+      c = (usize)('~' + 1);
+    }
+
+    Vec4 tc = renderer->fontCoords[(usize)(c - ' ')];
+
+    // TODO: do transfrom with projection view matrix here
+    *(renderer->quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right
+    *(renderer->quad.current++) = { position + Vec3{size.x, -size.y, 0.0f}, color, /* {1.0f, 0.0f} */ {tc.z, tc.y}, index }; // bottom-right
+    *(renderer->quad.current++) = { position + Vec3{0.0f,   -size.y, 0.0f}, color, /* {0.0f, 0.0f} */ {tc.x, tc.y}, index }; // bottom-left
+    *(renderer->quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, /* {0.0f, 1.0f} */ {tc.x, tc.w}, index }; // top-left
+
+    renderer->quad.count++;
+  }
+
+  void Renderer::drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color) {
+    Vec3 start = position;
+    Vec3 current = start;
+    for (const char c : text) {
+      if (c != '\n') {
+        Renderer::drawChar(c, current, size, color);
+        current.x += size.x;
+      } else {
+        current.y -= size.y; 
+        current.x  = start.x;
+      }
+    }
   }
 
   void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Texture2D& texture, const Vec4& color) {

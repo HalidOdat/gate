@@ -12,7 +12,7 @@ namespace Game {
     friend class Resource;
 
   public:
-    static Texture2D loadTexture(const StringView& filepath);
+    static Texture2D loadTexture(const StringView& filepath, bool linear = false, bool verticalFlip = true);
   static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
 
     static Shader loadShader(const StringView& filepath);

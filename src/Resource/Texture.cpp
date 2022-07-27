@@ -37,9 +37,9 @@ namespace Game {
     return { texture, width, height };
   }
 
-  Texture2D::Data Texture2D::create(const StringView& filepath) {
+  Texture2D::Data Texture2D::create(const StringView& filepath, bool linear, bool verticalFlip) {
     int width, height, channels;
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(verticalFlip);
     stbi_uc* data = stbi_load(filepath.data(), &width, &height, &channels, 0);
         
     if (!data) {
@@ -47,7 +47,7 @@ namespace Game {
       return {0, 0, 0};
     }
 
-    const auto result = Texture2D::fromBytes(data, width, height, channels);
+    const auto result = Texture2D::fromBytes(data, width, height, channels, linear);
     stbi_image_free(data);
     return result;
   }

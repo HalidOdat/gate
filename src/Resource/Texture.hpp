@@ -10,9 +10,9 @@ namespace Game {
   public:
     void bind(const usize slot = 0) noexcept;
 
-    inline u32 getId() const;
-    inline u32 getWidth() const;
-    inline u32 getHeight() const;
+    u32 getId() const;
+    u32 getWidth() const;
+    u32 getHeight() const;
 
   public:
     struct Data {
@@ -30,7 +30,7 @@ namespace Game {
     const Data& getData() const;
 
     static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
-    static Data create(const StringView& filepath);
+    static Data create(const StringView& filepath, bool linear = false, bool verticalFlip = true);
 
     static void destroy(Data& data);
   };

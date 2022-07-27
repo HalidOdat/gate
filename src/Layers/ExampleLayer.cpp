@@ -1,7 +1,7 @@
+#include <string>
+
 #include <glm/gtc/matrix_transform.hpp>
-
 #include <glad/glad.h>
-
 
 #include "Core/Log.hpp"
 #include "Renderer/Renderer.hpp"
@@ -11,7 +11,7 @@
 namespace Game {
 
   ExampleLayer::ExampleLayer()
-  : camera{-1, 1, -1, 1}, texture{ResourceManager::loadTexture("thinking-emoji.png")}
+  : camera{-1, 1, -1, 1}, texture{ResourceManager::loadTexture("pixel_font_7x9.png", true)}
   {}
 
   void ExampleLayer::onAttach() {
@@ -23,8 +23,12 @@ namespace Game {
   }
 
   void ExampleLayer::onUpdate(Timestep ts) {
+    auto fps = std::to_string(1.0f / ts);
     Renderer::begin(this->camera);
-    Renderer::drawQuad({0.0f, 1.0f, 0.0f}, {0.5f, 0.5f}, this->texture);
+    // Renderer::drawText(fps + "fps", {-0.98f, 0.98f, 0.0f}, {0.1f, 0.1f});
+    // Renderer::drawQuad({0.0f, 1.0f, 0.0f}, {0.5f, 0.5f}, this->texture);
+    // Renderer::drawChar(' ', {0.0f, 1.0f, 0.0f}, {0.5f, 0.5f});
+    Renderer::drawText("Hi Sarrahhh!\t\n%", {-0.9f, 0.8f, 0.0f}, {0.1f, 0.1f}, Color::RED);
     Renderer::end();
   }
 

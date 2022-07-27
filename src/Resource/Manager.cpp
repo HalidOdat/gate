@@ -122,9 +122,9 @@ namespace Game {
     return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, false);
   }
 
-  Texture2D ResourceManager::loadTexture(const StringView& filepath) {
+  Texture2D ResourceManager::loadTexture(const StringView& filepath, bool linear, bool verticalFlip) {
     auto path   = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
-    auto data = Texture2D::create(path);
+    auto data = Texture2D::create(path, linear, verticalFlip);
 
     // FIXME: Use free list
     auto index = (u32)manager.textures.size();

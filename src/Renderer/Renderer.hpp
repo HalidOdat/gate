@@ -21,6 +21,8 @@ namespace Game {
     static void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawQuad(const Vec3& position, const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawQuad(const Vec3& position, const Vec2& size, const Texture2D& texture, const Vec4& color = Color::WHITE);
+    static void drawChar(char c, const Vec3& position, const Vec2& size, const Vec4& color = Color::WHITE);
+    static void drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color = Color::WHITE);
     static void draw(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture);
     static void flush();
     static void end();
