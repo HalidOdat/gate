@@ -1,9 +1,22 @@
 # TODO
 
 - [ ] UI implementation
-- [ ] Better shader compilation
 - [ ] Renderer Primitives
+  - [ ] Renderer Text
+  - [ ] 2D
+    - [x] Quad
+    - [ ] Circle
+    - [ ] Line
+  - [ ] 3D
+    - [ ] Cube
+    - [ ] Sphere
+    - [ ] Cylinder
 - [ ] Implement Entity Component System
+- [x] Resource Manager
+  - [ ] Shader library
+- [ ] Material System
+  - [ ] Uniform shader reflaction
+- [x] Better shader compilation
 - [x] Implement Camera class
 - [x] Implement Events
 - [x] Move rendering stuff to renderer directory

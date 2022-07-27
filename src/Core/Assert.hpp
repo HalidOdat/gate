@@ -6,7 +6,7 @@
 // FIXME: always on debug mode
 #define GAME_DEBUG_MODE
 
-#define GAME_ASSERT_IMPL(type, cond, sep, msg) do { if (!(cond)) { fprintf(stderr, "%s:%d: " type " Failed '" #cond "'%s%s\n", __FILE__, __LINE__, sep, msg); std::exit(1); } } while(false)
+#define GAME_ASSERT_IMPL(type, cond, sep, msg) do { if (!(cond)) { fprintf(stderr, "%s:%d: " type " Failed '%s'%s%s\n", __FILE__, __LINE__, #cond, sep, msg); std::exit(1); } } while(false)
 
 #if defined(GAME_DEBUG_MODE)
 # define GAME_DEBUG_ASSERT(cond)                   GAME_ASSERT_IMPL("Debug Assert", cond, "", "")
