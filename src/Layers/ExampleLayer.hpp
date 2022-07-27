@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Math.hpp"
 #include "Events/KeyEvent.hpp"
 #include "Resource/Texture.hpp"
 #include "Renderer/Camera.hpp"
@@ -10,7 +11,7 @@ namespace Game {
     
   class ExampleLayer : public Layer {
   public:
-    ExampleLayer();
+    ExampleLayer(f32 aspectRatio);
 
     virtual void onAttach() override;
     virtual void onDetach() override;
@@ -26,6 +27,7 @@ namespace Game {
     Registry registry;
 
     Texture2D texture;
+    Vec4 color = Vec4(1.0f);
   };
 
 } // namespace Game

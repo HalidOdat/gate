@@ -9,7 +9,8 @@ namespace Game {
   class GameApplication : public Application {
   public:
     GameApplication() {
-      this->pushLayer(new ExampleLayer());
+      f32 aspectRatio = Application::getWindow().getAspectRatio();
+      this->pushLayer(new ExampleLayer(aspectRatio));
     }
   };
 

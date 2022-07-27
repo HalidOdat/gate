@@ -52,6 +52,8 @@ set(Sources
   src/Renderer/VertexArray.cpp
   src/Renderer/Camera.hpp
   src/Renderer/Camera.cpp
+  src/Renderer/CameraController.hpp
+  src/Renderer/CameraController.cpp
   src/Renderer/Renderer.hpp
   src/Renderer/Renderer.cpp
 

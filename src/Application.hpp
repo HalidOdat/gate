@@ -14,6 +14,9 @@ namespace Game {
     ~Application();
 
   public:
+    inline static Application& get() { return *sInstance; }
+    inline static Window& getWindow() { return *sInstance->window; }
+
     void start();
     void quit();
 
@@ -23,6 +26,9 @@ namespace Game {
     void onEvent(const Event& event);
     bool onWindowCloseEvent(const WindowCloseEvent& event);
     bool onWindowResizeEvent(const WindowResizeEvent& event);
+
+  private:
+    static Application* sInstance;
 
   private:
     bool running = true;

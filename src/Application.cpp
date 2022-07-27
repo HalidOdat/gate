@@ -13,26 +13,29 @@
 
 namespace Game {
 
+  Application* Application::sInstance = nullptr;
+
   Application::Application(const char *title, const u32 width, const u32 height) {
     Logger::trace("Game Engine Initializing...");
 
+    sInstance = this;
     this->window = Window::create(title, width, height);
     if (!this->window) {
       std::exit(EXIT_FAILURE);
     }
 
-    this->window->setEventCallback(
-      [this](const Event& event) { this->onEvent(event); }
-    );
-
     ResourceManager::Initialize();
-  Renderer::Initialize();
+    Renderer::Initialize();
 
     this->ui = new Ui(-1.0f, 1.0f, -1.0f, 1.0f);
 
+    std::filesystem::current_path("C:\\linux\\github\\opengl-game");
+
     Logger::info("Game Engine Initialized!");
 
-    std::filesystem::current_path("C:\\linux\\github\\opengl-game");
+    this->window->setEventCallback(
+      [this](const Event& event) { this->onEvent(event); }
+    );
   }
 
   Application::~Application() {
@@ -85,7 +88,6 @@ namespace Game {
     glViewport(0, 0, event.getWidth(), event.getHeight());
     return false;
   }
-
 
   void Application::pushLayer(Layer* layer) {
     this->layerStack.push(layer);

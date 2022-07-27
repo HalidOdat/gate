@@ -37,6 +37,8 @@ namespace Game {
     void setPosition(const Vec3& position);
     void setRotation(const f32 rotation);
 
+    inline f32 getRotation() const { return this->rotation; }
+
   private:
     void recalculateProjectionViewMatrix();
 
