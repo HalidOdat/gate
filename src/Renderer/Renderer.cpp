@@ -67,13 +67,17 @@ namespace Game {
     static constexpr const u32 INDEX_BUFFER_COUNT      = MAX * INDICES_COUNT;
   };
 
+  struct FontData {
+    Texture2D texture;
+    std::array<Vec4, 96> coords;
+  };
+
   struct RendererData {
     Mat4 projectionViewMatrix;
     Texture2D whiteTexture;
     QuadBatch quad;
 
-    Texture2D fontTexture;
-    std::array<Vec4, 96> fontCoords;
+    FontData font;
   };
 
   static RendererData* renderer;
@@ -141,7 +145,7 @@ namespace Game {
       Mat4(1.0f),
       whiteTexture,
       {vertexArray, vertexBuffer, shader, whiteTexture},
-      fontTexture
+      {fontTexture}
     };
 
     u32 count = 0;
@@ -151,7 +155,7 @@ namespace Game {
         const f32 y = (float)height / fontTextureHeight;
         const f32 xSize = (float)fontCharacterWidth / fontTextureWidth;
         const f32 ySize = (float)fontCharacterHeight / fontTextureHeight;
-        renderer->fontCoords[count++] = Vec4{
+        renderer->font.coords[count++] = Vec4{
           Vec2{ x,         1 - y - ySize },
           Vec2{ x + xSize, 1 - y },
         };
@@ -186,7 +190,7 @@ namespace Game {
   }
 
   void Renderer::drawChar(char c, const Vec3& position, const Vec2& size, const Vec4& color) {
-    auto texture = renderer->fontTexture;
+    auto texture = renderer->font.texture;
 
     // TODO: refactor this.
     if (renderer->quad.count == QuadBatch::MAX) {
@@ -213,7 +217,7 @@ namespace Game {
       c = (usize)('~' + 1);
     }
 
-    Vec4 tc = renderer->fontCoords[(usize)(c - ' ')];
+    Vec4 tc = renderer->font.coords[(usize)(c - ' ')];
 
     // TODO: do transfrom with projection view matrix here
     *(renderer->quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right

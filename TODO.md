@@ -2,7 +2,7 @@
 
 - [ ] UI implementation
 - [ ] Renderer Primitives
-  - [ ] Renderer Text
+  - [x] Renderer Text
   - [ ] 2D
     - [x] Quad
     - [ ] Circle

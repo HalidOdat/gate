@@ -11,7 +11,7 @@ out vec4 vColor;
 out vec2 vTexCoord;
 flat out uint vTexIndex;
 
-uniform mat4 uProjectionView = mat4(1.0f);
+uniform mat4 uProjectionView;
 
 void main() {
    vColor      = aColor;
