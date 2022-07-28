@@ -5,7 +5,7 @@
 #include "Events/Event.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
-#include "Renderer/Camera.hpp"
+#include "Renderer/CameraController.hpp"
 
 namespace Game {
   
@@ -34,7 +34,7 @@ namespace Game {
     };
 
   public:
-    Ui(f32 left, f32 right, f32 bottom, f32 top);
+    Ui(f32 aspectRatio);
 
     void begin(const Vec2& position, f32 padding = Layout::DEFAULT_PADDING);
     void beginLayout(Layout::Type type, f32 padding = Layout::DEFAULT_PADDING);
@@ -51,7 +51,7 @@ namespace Game {
     bool onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event);
 
   private:
-    OrthographicCamera camera;
+    OrthographicCameraController mCameraController;
 
     bool hasHot    = false;
     u32  hot       = 0;

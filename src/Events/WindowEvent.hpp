@@ -24,15 +24,16 @@ namespace Game {
 
   public:
     WindowResizeEvent(const u32 width, const u32 height)
-      : Event(TYPE), size{ width, height }
+      : Event(TYPE), mSize{ width, height }
     {}
 
-    inline WindowSize getSize() const { return this->size; }
-    inline u32 getWidth() const { return this->size.width; }
-    inline u32 getHeight() const { return this->size.height; }
-    
+    inline WindowSize getSize() const { return mSize; }
+    inline u32 getWidth() const { return mSize.width; }
+    inline u32 getHeight() const { return mSize.height; }
+    inline f32 getAspectRatio() const { return (f32)mSize.width / (f32)mSize.height; }    
+
   private:
-    WindowSize size;
+    WindowSize mSize;
   };
 
   class WindowCloseEvent : public Event {

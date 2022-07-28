@@ -56,8 +56,8 @@ namespace Game {
     }
   }
 
-  Ui::Ui(f32 left, f32 right, f32 bottom, f32 top)
-    : camera{left, right, bottom, top}
+  Ui::Ui(f32 aspectRatio)
+    : mCameraController{aspectRatio}
   {}
 
   void Ui::begin(const Vec2& position, f32 padding) {
@@ -69,7 +69,7 @@ namespace Game {
   
     this->layouts.push_back(layout);
 
-    Renderer::begin(this->camera);
+    Renderer::begin(this->mCameraController.getCamera());
   }
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
@@ -149,7 +149,7 @@ namespace Game {
   }
 
   bool Ui::onWindowResizeEvent(const WindowResizeEvent& event) {
-    GAME_UNREACHABLE("todo");
+    mCameraController.resize(event.getWidth(), event.getHeight());
     return false;
   }
 

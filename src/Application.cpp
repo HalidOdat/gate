@@ -27,15 +27,15 @@ namespace Game {
     ResourceManager::Initialize();
     Renderer::Initialize();
 
-    this->ui = new Ui(-1.0f, 1.0f, -1.0f, 1.0f);
+    this->ui = new Ui(window->getAspectRatio());
 
     std::filesystem::current_path("C:\\linux\\github\\opengl-game");
-
-    Logger::info("Game Engine Initialized!");
 
     this->window->setEventCallback(
       [this](const Event& event) { this->onEvent(event); }
     );
+    
+    Logger::info("Game Engine Initialized!");
   }
 
   Application::~Application() {

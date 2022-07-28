@@ -31,6 +31,8 @@ namespace Game {
   public:
     OrthographicCamera(f32 left, f32 right, f32 bottom, f32 top, f32 zNear = -1.0f, f32 zFar = 1.0f);
 
+    void setProjection(f32 left, f32 right, f32 bottom, f32 top, f32 zNear = -1.0f, f32 zFar = 1.0f);
+
     inline void offsetPosition(const Vec3& offset) { this->setPosition(this->position + offset); }
     inline void offsetRotation(const f32   offset) { this->setRotation(this->rotation + offset); }
 

@@ -19,6 +19,11 @@ namespace Game {
     this->projectionViewMatrix = this->projection * this->view;
   }
 
+  void OrthographicCamera::setProjection(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar) {
+    this->projection = glm::ortho(left, right, bottom, top, zNear, zFar);
+    this->projectionViewMatrix = this->projection * this->view;
+  }
+
   void OrthographicCamera::setPosition(const Vec3& position) {
     this->position = position;
     recalculateProjectionViewMatrix();
