@@ -17,14 +17,14 @@ namespace Game {
 
   class PerspectiveCamera : public Camera {
   public:
-    PerspectiveCamera(Vec3 position, f32 fov, f32 aspect, f32 zNear, f32 zFar);
+    PerspectiveCamera(const Vec3& position, const Vec3& forward, const Vec3& up, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
+
+    void setProjection(const Vec3& position, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
+    void setView(const Vec3& position, const Vec3& forward, const Vec3& up);
 
   private:
-    Vec3 position;
-    Vec3 forward;
-    Vec3 up;
-
-    Mat4 projection;
+    Mat4 mProjection;
+    Mat4 mView;
   };
 
   class OrthographicCamera : public Camera {

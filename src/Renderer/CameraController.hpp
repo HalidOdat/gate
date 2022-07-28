@@ -4,6 +4,7 @@
 
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
+#include "Events/KeyEvent.hpp"
 
 #include "Renderer/Camera.hpp"
 
@@ -47,6 +48,51 @@ namespace Game {
     // f32                mCameraRotationSpeed = 100.0f;
   };
 
-  // TODO: Implement PerspectiveCameraController
+  class PerspectiveCameraController {
+  public:
+    PerspectiveCameraController(Vec3 position, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
+
+    const PerspectiveCamera& getCamera() const { return mCamera; }
+    PerspectiveCamera& getCamera() { return mCamera; }
+
+    inline f32 getAspectRatio() const { return mAspectRatio; }
+    inline f32 getFov() const { return mFov; }
+    inline const Vec3& getPosition() const { return mPosition; }
+
+    void setPosition(const Vec3 position);
+    void offsetPosition(const Vec3 offset);
+
+    void resize(u32 width, u32 height);
+    void onUpdate(Timestep ts);
+
+    void onEvent(const Event& event);
+
+  private:
+    bool onWindowResizeEvent(const WindowResizeEvent& event);
+    bool onKeyPressedEvent(const KeyPressedEvent& event);
+
+    void updateCameraVectors();
+
+  private:
+    Vec3 mPosition = {0.0f, 0.0f, 0.0f};
+    f32  mAspectRatio;
+    f32  mFov;
+    f32  mZNear;
+    f32  mZFar;
+
+    Vec3 mFront;
+    Vec3 mUp;
+    Vec3 mRight;
+    Vec3 mWorldUp;
+
+    f32 mYaw = -90.0f;
+    f32 mPitch = 0.0f;
+
+    f32 mMovmentSpeed = 2.5f;
+    f32 mMouseSensitivity = 0.1f;
+    f32 mZoomLevel = 45.0f;
+
+    PerspectiveCamera mCamera;
+  };
 
 } // namespace Game

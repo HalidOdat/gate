@@ -60,6 +60,8 @@ set(Sources
   src/Layers/Layer.hpp
   src/Layers/LayerStack.hpp
   src/Layers/LayerStack.cpp
+  src/Layers/GameLayer.hpp
+  src/Layers/GameLayer.cpp
   src/Layers/ExampleLayer.hpp
   src/Layers/ExampleLayer.cpp
 
