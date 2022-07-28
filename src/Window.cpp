@@ -183,4 +183,9 @@ namespace Game {
   void Window::setEventCallback(EventCallback callback) {
     this->data.eventCallback = callback;
   }
+
+  bool Window::isKeyPressed(Key key) const {
+    auto state = glfwGetKey(data.window, (int)key);
+    return state == GLFW_PRESS || state == GLFW_REPEAT;
+  }
 }

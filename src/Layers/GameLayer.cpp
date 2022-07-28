@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 
 #include "Core/Log.hpp"
+#include "Core/Input.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Resource/Manager.hpp"
 #include "Layers/GameLayer.hpp"
@@ -39,7 +40,6 @@ namespace Game {
   }
 
   void GameLayer::onEvent(const Event& event) {
-    Logger::error("ffffgggggggggggggggggggdddddddddddddddddddddf");
     mCameraController.onEvent(event);
     event.dispatch(&GameLayer::onWindowResizeEvent, this);
     event.dispatch(&GameLayer::onMouseScrollEvent, this);
@@ -56,7 +56,6 @@ namespace Game {
   }
 
   bool GameLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
-    
     return false;
   }
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Core/Type.hpp"
+#include "Core/KeyCode.hpp"
 #include "Events/Event.hpp"
-#include "Events/KeyCode.hpp"
 
 namespace Game {
 

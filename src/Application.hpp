@@ -2,6 +2,7 @@
 
 #include "Ui/Ui.hpp"
 #include "Window.hpp"
+#include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Layers/LayerStack.hpp"
 

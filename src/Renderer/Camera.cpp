@@ -4,20 +4,20 @@
 
 namespace Game {
 
-  PerspectiveCamera::PerspectiveCamera(const Vec3& position, const Vec3& forward, const Vec3& up, f32 fov, f32 aspect, f32 zNear, f32 zFar)
+  PerspectiveCamera::PerspectiveCamera(const Vec3& position, const Vec3& target, const Vec3& up, f32 fov, f32 aspect, f32 zNear, f32 zFar)
     : mProjection{glm::perspective(glm::radians(fov), aspect, zNear, zFar)},
-      mView{glm::lookAt(position, position + forward, up)}
+      mView{glm::lookAt(position, target, up)}
   {
     projectionViewMatrix = mProjection * mView;
   }
 
-  void PerspectiveCamera::setProjection(const Vec3& position, f32 fov, f32 aspect, f32 zNear, f32 zFar) {
+  void PerspectiveCamera::setProjection(f32 fov, f32 aspect, f32 zNear, f32 zFar) {
     mProjection = glm::perspective(glm::radians(fov), aspect, zNear, zFar);
     projectionViewMatrix = mProjection * mView;
   }
 
-  void PerspectiveCamera::setView(const Vec3& position, const Vec3& forward, const Vec3& up) {
-    mView = glm::lookAt(position, position + forward, up);
+  void PerspectiveCamera::lookAt(const Vec3& position, const Vec3& target, const Vec3& up) {
+    mView = glm::lookAt(position, target, up);
     projectionViewMatrix = mProjection * mView;
   }
 

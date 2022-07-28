@@ -17,10 +17,10 @@ namespace Game {
 
   class PerspectiveCamera : public Camera {
   public:
-    PerspectiveCamera(const Vec3& position, const Vec3& forward, const Vec3& up, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
+    PerspectiveCamera(const Vec3& position, const Vec3& target, const Vec3& up, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
 
-    void setProjection(const Vec3& position, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
-    void setView(const Vec3& position, const Vec3& forward, const Vec3& up);
+    void setProjection(f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
+    void lookAt(const Vec3& position, const Vec3& target, const Vec3& up = Vec3{0.0f, 0.0f, 1.0f});
 
   private:
     Mat4 mProjection;

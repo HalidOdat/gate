@@ -60,6 +60,7 @@ namespace Game {
       GAME_GL_CHECK(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
       GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+      Timestep::timestep = dt;
       this->layerStack.onUpdate(dt);
       this->layerStack.onUiRender(*this->ui);
 

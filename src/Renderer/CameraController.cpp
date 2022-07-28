@@ -57,17 +57,17 @@ namespace Game {
 
   void PerspectiveCameraController::setPosition(const Vec3 position) {
     mPosition = position;
-    mCamera.setView(mPosition, mFront, mUp);
+    mCamera.lookAt(mPosition, mPosition + mFront, mUp);
   }
 
   void PerspectiveCameraController::offsetPosition(const Vec3 offset) {
     mPosition += offset;
-    mCamera.setView(mPosition, mFront, mUp);
+    mCamera.lookAt(mPosition, mPosition + mFront, mUp);
   }
 
   void PerspectiveCameraController::resize(u32 width, u32 height) {
-    f32 aspectRatio = (f32)width / (f32)height;
-    mCamera = PerspectiveCamera(mPosition, mFront, mUp, mFov, mAspectRatio, mZNear, mZFar);
+    mAspectRatio = (f32)width / (f32)height;
+    mCamera.setProjection(mFov, mAspectRatio, mZNear, mZFar);
   }
 
   void PerspectiveCameraController::updateCameraVectors() {
@@ -81,7 +81,7 @@ namespace Game {
     mRight = glm::normalize(glm::cross(mFront, mWorldUp));
     mUp    = glm::normalize(glm::cross(mRight, mFront));
 
-    mCamera.setView(mPosition, mFront, mUp);
+    mCamera.lookAt(mPosition, mPosition + mFront, mUp);
   }
 
   void PerspectiveCameraController::onUpdate(Timestep ts) {
@@ -97,19 +97,19 @@ namespace Game {
     return false;
   }
   bool PerspectiveCameraController::onKeyPressedEvent(const KeyPressedEvent& event) {
-    f32 speed = 0.01f;
+    f32 velocity = mMovmentSpeed * Timestep::get();
     switch (event.getKey()) {
       case Key::W:
-        mPosition += mFront * 0.01f;
+        mPosition += mFront * velocity;
         break;
       case Key::S:
-        mPosition -= mFront * 0.01f;
+        mPosition -= mFront * velocity;
         break;
       case Key::A:
-        mPosition -= mRight * 0.01f;
+        mPosition -= mRight * velocity;
         break;
       case Key::D:
-        mPosition += mRight * 0.01f;
+        mPosition += mRight * velocity;
         break;
       default:
         break;

@@ -18,11 +18,14 @@ set(Sources
   src/Core/Log.hpp
   src/Core/Log.cpp
   src/Core/Math.hpp
+  src/Core/KeyCode.hpp
+  src/Core/Input.hpp
+  src/Core/Input.cpp
   src/Core/Timestep.hpp
+  src/Core/Timestep.cpp
   
   src/Utils/Color.hpp
 
-  src/Events/KeyCode.hpp
   src/Events/Event.hpp
   src/Events/Event.cpp
   src/Events/KeyEvent.hpp
