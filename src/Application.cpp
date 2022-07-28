@@ -69,7 +69,7 @@ namespace Game {
   }
 
   void Application::quit() {
-    this->window->setShouldClose();
+    this->running = false;
   }
 
   void Application::onEvent(const Event& event) {

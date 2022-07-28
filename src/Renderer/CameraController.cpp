@@ -1,5 +1,6 @@
 #include <algorithm>
 
+#include "Core/Input.hpp"
 #include "Renderer/CameraController.hpp"
 
 namespace Game {
@@ -85,37 +86,60 @@ namespace Game {
   }
 
   void PerspectiveCameraController::onUpdate(Timestep ts) {
-    // nothing for now ...
+    f32 velocity = mMovmentSpeed * ts;
+    if (Input::isKeyPressed(Key::W)) {
+        mPosition += mFront * velocity;
+    } else if (Input::isKeyPressed(Key::S)) {
+        mPosition -= mFront * velocity;
+    }
+
+    if (Input::isKeyPressed(Key::A)) {
+        mPosition -= mRight * velocity;
+    } else if (Input::isKeyPressed(Key::D)) {
+        mPosition += mRight * velocity;
+    }
+
+    setPosition(mPosition);
   }
 
   void PerspectiveCameraController::onEvent(const Event& event) {
     event.dispatch(&PerspectiveCameraController::onWindowResizeEvent, this);
     event.dispatch(&PerspectiveCameraController::onKeyPressedEvent, this);
+    event.dispatch(&PerspectiveCameraController::onMouseMoveEvent, this);
   }
   bool PerspectiveCameraController::onWindowResizeEvent(const WindowResizeEvent& event) {
     resize(event.getWidth(), event.getHeight());
     return false;
   }
   bool PerspectiveCameraController::onKeyPressedEvent(const KeyPressedEvent& event) {
-    f32 velocity = mMovmentSpeed * Timestep::get();
-    switch (event.getKey()) {
-      case Key::W:
-        mPosition += mFront * velocity;
-        break;
-      case Key::S:
-        mPosition -= mFront * velocity;
-        break;
-      case Key::A:
-        mPosition -= mRight * velocity;
-        break;
-      case Key::D:
-        mPosition += mRight * velocity;
-        break;
-      default:
-        break;
-    }
-    setPosition(mPosition);
+    
     return false;
+  }
+
+  bool PerspectiveCameraController::onMouseMoveEvent(const MouseMoveEvent& event) {
+    auto[x, y] = event.getPosition();
+    if (mFristMove) {
+      mLastMousePosition = {x, y};
+      mFristMove = false;
+    }
+
+    const auto ts = Timestep::get();
+
+    f32 xOffset = (x - mLastMousePosition.x) * mMouseSensitivity * ts;
+    f32 yOffset = (y - mLastMousePosition.y) * mMouseSensitivity * ts;
+
+    mLastMousePosition = {x, y};
+
+    mYaw   += xOffset;
+    mPitch += yOffset;
+
+    const auto constrainPitch = true;
+    if (constrainPitch) {
+      mPitch = std::clamp(mPitch, -89.0f, 89.0f);
+    }
+
+    updateCameraVectors();
+    return true;
   }
 
 } // namespace Game

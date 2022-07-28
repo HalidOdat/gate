@@ -34,6 +34,8 @@ namespace Game {
 
     bool isKeyPressed(Key key) const;
 
+    void enableCursor(bool yes = true);
+
   private:
     struct Data {
       GLFWwindow* window;

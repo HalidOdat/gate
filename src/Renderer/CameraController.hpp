@@ -70,6 +70,7 @@ namespace Game {
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
+    bool onMouseMoveEvent(const MouseMoveEvent& event);
 
     void updateCameraVectors();
 
@@ -88,9 +89,11 @@ namespace Game {
     f32 mYaw = -90.0f;
     f32 mPitch = 0.0f;
 
-    f32 mMovmentSpeed = 2.5f;
-    f32 mMouseSensitivity = 0.1f;
     f32 mZoomLevel = 45.0f;
+    f32 mMovmentSpeed = 2.5f;
+    f32 mMouseSensitivity = 800.0f;
+    bool mFristMove = true;
+    Vec2 mLastMousePosition;
 
     PerspectiveCamera mCamera;
   };

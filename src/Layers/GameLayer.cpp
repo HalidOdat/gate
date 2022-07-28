@@ -21,13 +21,16 @@ namespace Game {
 
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
+    Application::getWindow().enableCursor(mCaptureCursor);
   }
 
   void GameLayer::onDetach() {
     Logger::info("GameLayer::onDetach was called");
+    Application::getWindow().enableCursor(false);
   }
 
   void GameLayer::onUpdate(Timestep ts) {
+    mCameraController.onUpdate(ts);
     Renderer::begin(mCameraController.getCamera());
     Renderer::drawText("HELLO, WORLD!!!", {-0.8f, 0.0f, 0.0f}, {0.08f, 0.1f}, mColor);
     Renderer::drawQuad({0.0f, 0.0f, 0.0f}, {1, 1}, Color::RED);
@@ -56,6 +59,18 @@ namespace Game {
   }
 
   bool GameLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
+    switch (event.getKey()) {
+      case Key::C:
+        mCaptureCursor = !mCaptureCursor;
+        Application::getWindow().enableCursor(mCaptureCursor);
+        break;
+      case Key::Escape:
+        Application::get().quit();
+        break;
+    }
+    if (event.getKey() == Key::Escape) {
+      Application::get().quit();
+    }
     return false;
   }
 

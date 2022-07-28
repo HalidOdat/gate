@@ -188,4 +188,12 @@ namespace Game {
     auto state = glfwGetKey(data.window, (int)key);
     return state == GLFW_PRESS || state == GLFW_REPEAT;
   }
+
+  void Window::enableCursor(bool yes) {
+    if (yes) {
+      glfwSetInputMode(this->data.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    } else {
+      glfwSetInputMode(this->data.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+  }
 }
