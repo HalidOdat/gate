@@ -99,6 +99,12 @@ namespace Game {
         mPosition += mRight * velocity;
     }
 
+    if (Input::isKeyPressed(Key::Space)) {
+        mPosition.y += velocity;
+    } else if (Input::isKeyPressed(Key::LeftShift) || Input::isKeyPressed(Key::RightShift)) {
+        mPosition.y -= velocity;
+    }
+
     setPosition(mPosition);
   }
 
