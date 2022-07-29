@@ -2,6 +2,7 @@
 
 #include "Resource/Texture.hpp"
 #include "Resource/Shader.hpp"
+#include "Resource/Mesh.hpp"
 
 namespace Game {
   
@@ -13,9 +14,9 @@ namespace Game {
 
   public:
     static Texture2D loadTexture(const StringView& filepath, bool linear = false, bool verticalFlip = true);
-  static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
-
+    static Texture2D textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
     static Shader loadShader(const StringView& filepath);
+    static Mesh loadMesh(const StringView& filepath);
 
     static void reloadTextures();
 
@@ -23,6 +24,7 @@ namespace Game {
   public:
     static const Texture2D::Data& getTextureData(Resource::Id id);
     static const Shader::Data&    getShaderData(Resource::Id id);
+    static const Mesh::Data&      getMeshData(Resource::Id id);
 
   private:
     static void Initialize();

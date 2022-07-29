@@ -37,7 +37,7 @@ namespace Game {
     return 0;
   }
 
-  std::optional<std::string> fileToString(const StringView& filename) {
+  static std::optional<std::string> fileToString(const StringView& filename) {
     std::ifstream file;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {

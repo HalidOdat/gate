@@ -60,8 +60,7 @@ namespace Game {
     >
     inline constexpr Slice(U (&array)[N])
       : _data{array}, _size{N}
-    {
-    }
+    {}
 
     template <typename U = T, usize N,
       std::enable_if_t<
@@ -71,13 +70,27 @@ namespace Game {
     >
     inline constexpr Slice(U (&array)[N])
       : _data{array}, _size{N * sizeof(U)}
-    {
-    }
+    {}
 
-    inline constexpr Slice(T* data, usize length)
+    template <typename U = T,
+      std::enable_if_t<
+        !std::is_same_v<std::remove_cv_t<U>, void> &&
+         std::is_same_v<std::remove_cv_t<U>, std::remove_cv_t<T>>,
+      bool> = true
+    >
+    inline constexpr Slice(U* data, usize length)
       : _data{data}, _size{length}
-    {
-    }
+    {}
+
+    template <typename U = T,
+      std::enable_if_t<
+        !std::is_same_v<std::remove_cv_t<U>, void> &&
+         std::is_same_v<std::remove_cv_t<T>, void>,
+      bool> = true
+    >
+    inline constexpr Slice(U* data, usize length)
+      : _data{data}, _size{length * sizeof(U)}
+    {}
 
     inline constexpr const T* data()   const { return this->_data; }
     inline constexpr T* data() { return this->_data; }

@@ -10,6 +10,7 @@ namespace Game {
   constexpr const auto         ASSETS_DIRECTORY = "assets/";
   constexpr const auto  SHADER_ASSETS_DIRECTORY = "assets/shaders/";
   constexpr const auto TEXTURE_ASSETS_DIRECTORY = "assets/textures/";
+  constexpr const auto MESH_ASSETS_DIRECTORY    = "assets/objects/";
 
   using Refcount = u32;
   constexpr const auto CELL_OCCUPIED = 0xFF'FF'FF'FF;
@@ -26,12 +27,21 @@ namespace Game {
     Shader::Data shader;
   };
 
+  struct MeshResource {
+    u32          refcount;
+    std::string  path;
+    Mesh::Data   data;
+  };
+
   struct ResourceManagerData {
     std::vector<TextureResource> textures;
     std::vector<u32>             texturesFreeList;
 
     std::vector<ShaderResource>  shaders;
     std::vector<u32>             shadersFreeList;
+
+    std::vector<MeshResource>    meshes;
+    std::vector<u32>             meshesFreeList;
   };
 
   static ResourceManagerData manager;
@@ -45,6 +55,9 @@ namespace Game {
         break;
       case Resource::Type::Shader:
         manager.shaders[id.index].refcount += 1;
+        break;
+      case Resource::Type::Mesh:
+        manager.meshes[id.index].refcount += 1;
         break;
       default:
         GAME_UNREACHABLE("Unknown resource type!");
@@ -71,6 +84,15 @@ namespace Game {
           Shader::destroy(manager.shaders[id.index].shader);
           manager.shadersFreeList.push_back(id.index);
           manager.shaders[id.index].refcount = CELL_OCCUPIED;
+        }
+        break;
+      case Resource::Type::Mesh:
+        manager.meshes[id.index].refcount -= 1;
+        if (!manager.meshes[id.index].refcount) {
+          Logger::trace("ResourceManager: Mesh(%u) destroyed!", id.index);
+          Mesh::destroy(manager.meshes[id.index].data);
+          manager.meshesFreeList.push_back(id.index);
+          manager.meshes[id.index].refcount = CELL_OCCUPIED;
         }
         break;
       default:
@@ -100,6 +122,15 @@ namespace Game {
     }
     manager.shaders.clear();
     manager.shadersFreeList.clear();
+
+    for (usize i = 0; i < manager.meshes.size(); ++i) {
+      if (manager.meshes[i].refcount != CELL_OCCUPIED) {
+        Logger::trace("ResourceManager: Mesh(%u) destroyed!", i);
+        Mesh::destroy(manager.meshes[i].data);
+      }
+    }
+    manager.meshes.clear();
+    manager.meshesFreeList.clear();
     Logger::info("ResourceManager: Shutdown!");
   }
 
@@ -111,6 +142,11 @@ namespace Game {
   const Shader::Data& ResourceManager::getShaderData(Resource::Id id) {
     GAME_DEBUG_ASSERT(id.type == Resource::Type::Shader);
     return manager.shaders[id.index].shader;
+  }
+
+  const Mesh::Data& ResourceManager::getMeshData(Resource::Id id) {
+    GAME_DEBUG_ASSERT(id.type == Resource::Type::Mesh);
+    return manager.meshes[id.index].data;
   }
 
   Texture2D::Data ResourceManager::generateMissingTexture() {
@@ -168,6 +204,27 @@ namespace Game {
     }
 
     return Shader({Resource::Type::Shader, index});
+  }
+
+  Mesh ResourceManager::loadMesh(const StringView& filepath) {
+    auto path   = std::string(MESH_ASSETS_DIRECTORY) + filepath.data();
+
+    auto result = Mesh::fromFileSource(Mesh::FileFormat::Obj, path);
+
+    // FIXME: Use free list
+    auto index = (u32)manager.meshes.size();
+
+    if (result.vertexArray) {
+      Logger::info("ResourceManager: Loaded mesh: %s", path.c_str());
+      manager.meshes.emplace_back(1, std::move(path), result);
+    } else {
+      Logger::info("ResourceManager: Couldn't load mesh: %s", path.c_str());
+      GAME_ASSERT(false);
+      // TODO: Return invalid shader
+      return Mesh({Resource::Type::Mesh, 0});
+    }
+
+    return Mesh({Resource::Type::Mesh, index});
   }
 
   // TODO: Check for change in files

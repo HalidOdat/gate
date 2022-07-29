@@ -40,6 +40,8 @@ set(Sources
   src/Resource/Texture.cpp
   src/Resource/Shader.hpp
   src/Resource/Shader.cpp
+  src/Resource/Mesh.hpp
+  src/Resource/Mesh.cpp
 
   src/Ecs/Entity.hpp
   src/Ecs/Component.hpp

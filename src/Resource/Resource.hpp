@@ -14,6 +14,7 @@ namespace Game {
       None,
       Texture,
       Shader,
+      Mesh,
     };
 
   public:

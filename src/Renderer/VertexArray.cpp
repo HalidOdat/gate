@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include "Core/Log.hpp"
 #include "Renderer/VertexArray.hpp"
 
 namespace Game {

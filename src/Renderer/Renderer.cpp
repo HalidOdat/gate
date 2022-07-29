@@ -172,6 +172,18 @@ namespace Game {
     renderer->projectionViewMatrix = camera.getProjectionViewMatrix();
   }
 
+  void Renderer::draw(Shader& shader, const Mesh& mesh, const Texture2D& texture, const Mat4& transform) {
+    texture.bind(0);
+    shader.bind();
+    shader.setMat4("uProjectionView", renderer->projectionViewMatrix);
+    shader.setInt("uTexture", 0);
+
+    auto vao = mesh.getVertexArray();
+    vao->bind();
+    vao->drawIndices();
+    vao->unbind();
+  }
+
   void Renderer::draw(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture) {
     shader->bind();
     shader->setMat4("uProjectionView", renderer->projectionViewMatrix);

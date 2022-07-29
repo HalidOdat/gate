@@ -5,6 +5,8 @@
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Resource/Texture.hpp"
+#include "Resource/Mesh.hpp"
+#include "Resource/Shader.hpp"
 #include "Renderer/CameraController.hpp"
 #include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"
@@ -34,6 +36,9 @@ namespace Game {
     Vec4 mColor = Vec4(1.0f);
 
     bool mCaptureCursor = true;
+
+    Shader    mShader;
+    Mesh      mCubeMesh;
   };
 
 } // namespace Game
