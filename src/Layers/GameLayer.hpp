@@ -14,6 +14,21 @@
 namespace Game {
     
   class GameLayer : public Layer {
+    struct Material {
+      Vec3 ambient;
+      Vec3 diffuse;
+      Vec3 specular;
+      float shininess;
+    };
+
+    struct Light {
+      Vec3 position;
+
+      Vec3 ambient;
+      Vec3 diffuse;
+      Vec3 specular;
+    };
+
   public:
     GameLayer(f32 aspectRatio);
 
@@ -41,6 +56,22 @@ namespace Game {
     Shader    mShader;
     Mesh      mCubeMesh;
     u32       mCount = 1;
+    bool mMoveLight = true;
+
+    Material mMaterial = {
+      Vec3{1.0f, 0.5f, 0.31f},
+      Vec3{1.0f, 0.5f, 0.31f},
+      Vec3{ 0.5f, 0.5f, 0.5f},
+      32.0f
+    };
+
+    constexpr static const auto lightColor = Vec3{1.0f, 1.0f, 1.0f};
+    Light mLight = {
+      Vec3(),
+      lightColor * Vec3(0.5f),
+      lightColor * Vec3(0.2f),
+      Vec3(1.0f, 1.0f, 1.0f),
+    };
   };
 
 } // namespace Game

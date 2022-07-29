@@ -175,8 +175,8 @@ namespace Game {
   void Renderer::draw(Shader& shader, const Mesh& mesh, const Texture2D& texture, const Mat4& transform) {
     texture.bind(0);
     shader.bind();
-    shader.setMat4("uProjectionView", renderer->projectionViewMatrix);
-    shader.setMat4("uTransform", transform);
+    shader.setMat4("uProjectionViewMatrix", renderer->projectionViewMatrix);
+    shader.setMat4("uModelMatrix", transform);
     shader.setInt("uTexture", 0);
 
     auto vao = mesh.getVertexArray();
@@ -297,7 +297,7 @@ namespace Game {
       renderer->quad.shader.setMat4("uProjectionView", renderer->projectionViewMatrix);
 
       renderer->quad.vertexArray->bind();
-      renderer->quad.vertexBuffer->set({renderer->quad.base, renderer->quad.count});
+      renderer->quad.vertexBuffer->set({renderer->quad.base,  renderer->quad.count * QuadBatch::VERTICES_COUNT});
       renderer->quad.vertexArray->drawIndices(renderer->quad.count * QuadBatch::INDICES_COUNT);
 
       renderer->quad.current = renderer->quad.base;

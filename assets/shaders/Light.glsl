@@ -10,17 +10,32 @@ out vec2 vTexture;
 out vec3 vNormal;
 out vec3 vFragmentPosition;
 
-uniform mat4 uProjectionView;
-uniform mat4 uTransform;
+uniform mat4 uProjectionViewMatrix;
+uniform mat4 uModelMatrix;
 
 void main() {
   vTexture = aTexture;
-  vNormal  = aNormal;
-  vFragmentPosition = vec3(uTransform * vec4(aPosition, 1.0));
-  gl_Position = uProjectionView * uTransform * vec4(aPosition, 1.0);
+  vNormal  = mat3(transpose(inverse(uModelMatrix))) * aNormal;
+  vFragmentPosition = vec3(uModelMatrix * vec4(aPosition, 1.0));
+  gl_Position = uProjectionViewMatrix * uModelMatrix * vec4(aPosition, 1.0);
 }
 
 @type fragment
+
+struct Material {
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
+  float shininess;
+};
+
+struct Light {
+  vec3 position;
+
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
+};
 
 out vec4 vFragmentColor;
 
@@ -29,18 +44,25 @@ in vec3 vNormal;
 in vec3 vFragmentPosition;
 
 uniform sampler2D uTexture;
-uniform vec3      uLightPosition = vec3(4.0f, 0.0f, 0.0f);
+uniform vec3      uViewPosition;
+
+uniform Material uMaterial;
+uniform Light    uLight;
 
 void main() {
-  const float ambientStrength = 0.1;
-  const vec3  lightColor = vec3(1.0f, 1.0f, 1.0f);
-  const vec3  ambient = ambientStrength * lightColor;
+  vec3 ambient = uLight.ambient * uMaterial.ambient;
 
   vec3 norm = normalize(vNormal);
-  vec3 lightDirection = normalize(uLightPosition - vFragmentPosition);
+  vec3 lightDirection = normalize(uLight.position - vFragmentPosition);
 
   float diff = max(dot(norm, lightDirection), 0.0);
-  vec3 diffuse = diff * lightColor;
+  vec3 diffuse = uLight.diffuse * (diff * uMaterial.diffuse);
 
-  vFragmentColor = texture(uTexture, vTexture) * vec4(ambient + diffuse, 1.0f);
+  vec3 viewDirection = normalize(uViewPosition - vFragmentPosition);
+  vec3 reflectDirirection = reflect(-lightDirection, norm); 
+
+  float spec = pow(max(dot(viewDirection, reflectDirirection), 0.0), uMaterial.shininess);
+  vec3 specular = uLight.specular * (spec * uMaterial.specular);
+
+  vFragmentColor = texture(uTexture, vTexture) * vec4(ambient + diffuse + specular, 1.0f);
 }

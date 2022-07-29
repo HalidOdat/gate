@@ -47,7 +47,18 @@ namespace Game {
     // Renderer::drawQuad({0.0f, 0.0f, -1.0f}, {1, 1}, Color::BLUE);
 
     mShader.bind();
-    mShader.setVec3("uLightPosition", mCameraController.getPosition());
+    mShader.setVec3("uViewPosition", mCameraController.getPosition());
+    if (mMoveLight) {
+      mShader.setVec3("uLight.position", mCameraController.getPosition());
+    }
+    mShader.setVec3("uLight.ambient", mLight.ambient);
+    mShader.setVec3("uLight.diffuse", mLight.diffuse);
+    mShader.setVec3("uLight.specular", mLight.specular);
+    
+    mShader.setVec3("uMaterial.ambient", mMaterial.ambient);
+    mShader.setVec3("uMaterial.diffuse", mMaterial.diffuse);
+    mShader.setVec3("uMaterial.specular", mMaterial.specular);
+    mShader.setFloat("uMaterial.shininess", mMaterial.shininess);
     mShader.unbind();
 
     Renderer::begin(mCameraController.getCamera());
@@ -95,6 +106,37 @@ namespace Game {
 
     if (event.getKey() == Key::Up) {
       mCount++;
+    }
+
+    if (event.getKey() == Key::M) {
+      mMoveLight = !mMoveLight;
+    }
+
+    switch (event.getKey()) {
+      case Key::_1:
+        mMaterial.ambient -= 0.1;
+        break;
+      case Key::_2:
+        mMaterial.ambient += 0.1;
+        break;
+      case Key::_3:
+        mMaterial.diffuse -= 0.1;
+        break;
+      case Key::_4:
+        mMaterial.diffuse += 0.1;
+        break;
+      case Key::_5:
+        mMaterial.specular -= 0.1;
+        break;
+      case Key::_6:
+        mMaterial.specular += 0.1;
+        break;
+      case Key::_7:
+        mMaterial.shininess -= 1;
+        break;
+      case Key::_8:
+        mMaterial.shininess += 1;
+        break;
     }
     return false;
   }
