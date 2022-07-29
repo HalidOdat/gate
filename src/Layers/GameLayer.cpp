@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
 
@@ -15,7 +16,8 @@
 namespace Game {
 
   GameLayer::GameLayer(f32 aspectRatio)
-  : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, aspectRatio),
+  : mO(aspectRatio),
+    mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, aspectRatio),
     mTexture{ResourceManager::loadTexture("stallTexture.png")},
     mShader{ResourceManager::loadShader("Light.glsl")},
     mCubeMesh{ResourceManager::loadMesh("stall.obj")}
@@ -32,14 +34,30 @@ namespace Game {
   }
 
   void GameLayer::onUpdate(Timestep ts) {
-    mCameraController.onUpdate(ts);
-    Renderer::begin(mCameraController.getCamera());
-    // Renderer::drawText("HELLO, WORLD!!!", {-0.8f, 0.0f, 0.0f}, {0.08f, 0.1f}, mColor);
+    auto fps = 1.0f / ts;
+    std::stringstream ss;
+    ss.precision(4);
+    ss << std::fixed << (1.0f / ts) << "fps" << '\n';
+
+    Renderer::begin(mO.getCamera());
+    Renderer::drawText(ss.str(), {-0.95f, 0.95, 0.0f}, {0.1f, 0.1f}, mColor);
+    Renderer::end();
     // Renderer::drawQuad({0.0f, 0.0f, 0.0f}, {1, 1}, Color::RED);
     // Renderer::drawQuad({0.0f, 0.0f, 1.0f}, {1, 1}, Color::GREEN);
     // Renderer::drawQuad({0.0f, 0.0f, -1.0f}, {1, 1}, Color::BLUE);
-    Renderer::draw(mShader, mCubeMesh, mTexture);
-    Renderer::end();
+
+    mShader.bind();
+    mShader.setVec3("uLightPosition", mCameraController.getPosition());
+    mShader.unbind();
+
+    Renderer::begin(mCameraController.getCamera());
+    mCameraController.onUpdate(ts);
+    for (u32 i = 0; i < mCount; i++) {
+      Mat4 transform = Mat4(1.0f);
+      transform = glm::translate(transform, Vec3{0.1f * (f32)i});
+      // transform = glm::scale(transform, Vec3{f});
+      Renderer::draw(mShader, mCubeMesh, mTexture, transform);
+    }
   }
 
   void GameLayer::onUiRender(Ui& ui) {
@@ -73,6 +91,10 @@ namespace Game {
     }
     if (event.getKey() == Key::Escape) {
       Application::get().quit();
+    }
+
+    if (event.getKey() == Key::Up) {
+      mCount++;
     }
     return false;
   }

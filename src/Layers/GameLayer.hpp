@@ -29,6 +29,7 @@ namespace Game {
     bool onKeyPressedEvent(const KeyPressedEvent& event);
 
   private:
+    OrthographicCameraController mO;
     PerspectiveCameraController mCameraController;
     Registry mRegistry;
 
@@ -39,6 +40,7 @@ namespace Game {
 
     Shader    mShader;
     Mesh      mCubeMesh;
+    u32       mCount = 1;
   };
 
 } // namespace Game

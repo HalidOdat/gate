@@ -176,6 +176,7 @@ namespace Game {
     texture.bind(0);
     shader.bind();
     shader.setMat4("uProjectionView", renderer->projectionViewMatrix);
+    shader.setMat4("uTransform", transform);
     shader.setInt("uTexture", 0);
 
     auto vao = mesh.getVertexArray();
@@ -286,7 +287,6 @@ namespace Game {
 
   void Renderer::flush() {
     if (renderer->quad.count) {
-      usize dataLength = (u8*)renderer->quad.current - (u8*)renderer->quad.base;
       renderer->whiteTexture.bind();
 
       for (u32 i = 0; i < renderer->quad.textures.size(); ++i) {
@@ -297,7 +297,7 @@ namespace Game {
       renderer->quad.shader.setMat4("uProjectionView", renderer->projectionViewMatrix);
 
       renderer->quad.vertexArray->bind();
-      renderer->quad.vertexBuffer->set({renderer->quad.base, dataLength});
+      renderer->quad.vertexBuffer->set({renderer->quad.base, renderer->quad.count});
       renderer->quad.vertexArray->drawIndices(renderer->quad.count * QuadBatch::INDICES_COUNT);
 
       renderer->quad.current = renderer->quad.base;

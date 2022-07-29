@@ -33,18 +33,12 @@ namespace Game {
         s >> result.y;
         s >> result.z;
         vertices.push_back(result);
-
-        // Logger::info("v -> x: %f, y: %f, z: %f", result.x, result.y, result.z);
       } else if (line.starts_with("vt ")) {
         std::stringstream s(line.substr(3));
         Vec2 result;
         s >> result.x;
         s >> result.y;
-        // result.y = 1 - result.y;
-
         textures.push_back(result);
-
-        // Logger::info("vt %f %f", result.x, result.y);
       } else if (line.starts_with("vn ")) {
         std::stringstream s(line.substr(3));
         Vec3 result;
@@ -52,8 +46,6 @@ namespace Game {
         s >> result.y;
         s >> result.z;
         normals.push_back(result);
-
-        // Logger::info("vn %f %f %f", result.x, result.y, result.z);
       } else if (line.starts_with("f ")) {
         if (first) {
           result.resize(vertices.size());
@@ -84,10 +76,7 @@ namespace Game {
         }
       }
     }
-
-
-    Logger::error("Vertices: %zu", vertices.size());
-    Logger::error("Indices: %zu", indices.size());
+    
     return {result, indices};
   }
 
