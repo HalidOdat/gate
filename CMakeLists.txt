@@ -67,8 +67,8 @@ set(Sources
   src/Layers/LayerStack.cpp
   src/Layers/GameLayer.hpp
   src/Layers/GameLayer.cpp
-  src/Layers/ExampleLayer.hpp
-  src/Layers/ExampleLayer.cpp
+  src/Layers/EditorLayer.hpp
+  src/Layers/EditorLayer.cpp
 
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp

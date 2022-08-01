@@ -11,6 +11,8 @@
 
 namespace Game {
 
+  // TODO: Use uniform buffer for camera and static data
+
   // TODO: Refactor this
   struct QuadBatch {
     QuadBatch(
@@ -88,6 +90,9 @@ namespace Game {
     
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
 
     static const u8 bytes[] = { 0xFF, 0xFF, 0xFF };
     auto whiteTexture = ResourceManager::textureFromBytes(bytes, 1, 1, 3);
@@ -239,6 +244,10 @@ namespace Game {
     *(renderer->quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, /* {0.0f, 1.0f} */ {tc.x, tc.w}, index }; // top-left
 
     renderer->quad.count++;
+  }
+
+  void Renderer::drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color) {
+    Renderer::drawText(text, Vec3(position, 0.0f), {size - size/8.0f, size}, color);
   }
 
   void Renderer::drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color) {

@@ -11,9 +11,9 @@
 
 namespace Game {
     
-  class ExampleLayer : public Layer {
+  class EditorLayer : public Layer {
   public:
-    ExampleLayer(f32 aspectRatio);
+    EditorLayer();
 
     virtual void onAttach() override;
     virtual void onDetach() override;
@@ -25,13 +25,9 @@ namespace Game {
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onMouseScrollEvent(const MouseScrollEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
-
+  
   private:
     OrthographicCameraController mCameraController;
-    Registry mRegistry;
-
-    Texture2D mTexture;
-    Vec4 mColor = Vec4(1.0f);
   };
 
 } // namespace Game

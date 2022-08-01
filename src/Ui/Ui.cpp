@@ -86,7 +86,7 @@ namespace Game {
     auto& layout = this->layouts.back();
 
     const auto position = layout.nextAvailablePosition();
-    const auto size     = Vec2(0.15f, 0.1f);
+    const auto size     = mConfig.buttonSize;
 
     const auto rectangle = AABB(position, size);
 

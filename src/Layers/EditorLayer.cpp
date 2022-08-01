@@ -7,42 +7,39 @@
 #include "Core/Log.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Resource/Manager.hpp"
-#include "Layers/ExampleLayer.hpp"
+#include "Layers/EditorLayer.hpp"
 
 #include "Application.hpp"
 
 namespace Game {
 
-  ExampleLayer::ExampleLayer(f32 aspectRatio)
-  : mCameraController(aspectRatio),
-    mTexture{ResourceManager::loadTexture("thinking-emoji.png")}
+  EditorLayer::EditorLayer()
+    : mCameraController(Application::getWindow().getAspectRatio())
   {}
 
-  void ExampleLayer::onAttach() {
-    Logger::info("ExampleLayer::onAttach was called");
+  void EditorLayer::onAttach() {
+    Logger::info("EditorLayer::onAttach was called");
   }
 
-  void ExampleLayer::onDetach() {
-    Logger::info("ExampleLayer::onDetach was called");
+  void EditorLayer::onDetach() {
+    Logger::info("EditorLayer::onDetach was called");
   }
 
-  void ExampleLayer::onUpdate(Timestep ts) {
+  void EditorLayer::onUpdate(Timestep ts) {
     auto fps = 1.0f / ts;
     std::stringstream ss;
     ss.precision(2);
-    ss << std::fixed << (1.0f / ts) << "fps";
+    ss << std::fixed << (1.0f / ts) << "fps" << '\n';
+
+    std::string fpsString = ss.str();
+
+    const auto ar = Application::getWindow().getAspectRatio();
     Renderer::begin(mCameraController.getCamera());
-    Renderer::drawText("HELLO, WORLD!!!", {-0.8f, 0.0f, 0.0f}, {0.08f, 0.1f}, mColor);
-    // Renderer::drawQuad({-0.8f, 0.8f, 0.0f}, {0.8f * 2, 0.8f * 2}, this->texture);
-    mCameraController.offsetRotation(-28.0f * ts);
-    mColor.r = glm::sin(mCameraController.getRotation());
-    mColor.b = glm::cos(mCameraController.getRotation());
-    // Renderer::drawCharacter(' ', {0.0f, 1.0f, 0.0f}, {0.5f, 0.5f});
-    // Renderer::drawText("Hello, world!", {-0.9f, 0.7f, 0.0f}, {0.1f, 0.1f}, Color::GREEN);
+    Renderer::drawText(fpsString, { -1.0f * ar, 0.7f, 0.0f }, { 0.05f, 0.05f});
     Renderer::end();
   }
 
-  void ExampleLayer::onUiRender(Ui& ui) {
+  void EditorLayer::onUiRender(Ui& ui) {
     ui.begin({0.0f, 0.0f});
       ui.beginLayout(Ui::Layout::Type::Vertical);
         if (ui.button({1.0f, 1.0f, 0.0f}, 0)) {
@@ -83,27 +80,29 @@ namespace Game {
     ui.end();
   }
 
-  void ExampleLayer::onEvent(const Event& event) {
-    event.dispatch(&ExampleLayer::onWindowResizeEvent, this);
-    event.dispatch(&ExampleLayer::onMouseScrollEvent, this);
-    event.dispatch(&ExampleLayer::onKeyPressedEvent, this);
+  void EditorLayer::onEvent(const Event& event) {
+    event.dispatch(&EditorLayer::onWindowResizeEvent, this);
+    event.dispatch(&EditorLayer::onMouseScrollEvent, this);
+    event.dispatch(&EditorLayer::onKeyPressedEvent, this);
   }
 
-  bool ExampleLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
-    mCameraController.resize(event.getWidth(), event.getHeight());
+  bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
+    auto[width, height] = event.getSize();
+    mCameraController.resize(width, height);
     return false;
   }
 
-  bool ExampleLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
-    mCameraController.offsetZoomLevel( -event.getYOffset() * 0.25f );
+  bool EditorLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
     return false;
   }
 
-  bool ExampleLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
+  bool EditorLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
     if (event.getKey() == Key::R) {
       ResourceManager::reloadTextures();
+      return true;
     }
-    return true;
+
+    return false;
   }
 
 } // namespace Game

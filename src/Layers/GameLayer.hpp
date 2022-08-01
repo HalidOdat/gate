@@ -14,6 +14,8 @@
 namespace Game {
     
   class GameLayer : public Layer {
+
+    // TODO: Move into a material system
     struct Material {
       Vec3 ambient;
       Vec3 diffuse;
@@ -30,7 +32,7 @@ namespace Game {
     };
 
   public:
-    GameLayer(f32 aspectRatio);
+    GameLayer();
 
     virtual void onAttach() override;
     virtual void onDetach() override;
@@ -44,7 +46,6 @@ namespace Game {
     bool onKeyPressedEvent(const KeyPressedEvent& event);
 
   private:
-    OrthographicCameraController mO;
     PerspectiveCameraController mCameraController;
     Registry mRegistry;
 

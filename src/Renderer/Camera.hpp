@@ -3,7 +3,9 @@
 #include "Core/Math.hpp"
 
 namespace Game {
-  
+
+  // TODO: Camera should only contain projection and view matrix
+
   class Camera {
   public:
     inline const Mat4& getProjectionViewMatrix() const { return this->projectionViewMatrix; }

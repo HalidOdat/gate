@@ -11,6 +11,10 @@ namespace Game {
   
   class Ui {
   public:
+    struct Config {
+      Vec2 buttonSize = { 0.2f, 0.1f };
+    };
+
     class Layout {
       friend Ui;
     public:
@@ -42,6 +46,9 @@ namespace Game {
     void endLayout();
     void end();
 
+    Config& getConfig() { return mConfig; }
+    const Config& getConfig() const { return mConfig; }
+
     void onEvent(const Event& event);
 
   private:
@@ -62,6 +69,8 @@ namespace Game {
     bool mouseButton   = false;
 
     std::vector<Layout> layouts;
+
+    Config mConfig;
   };
 
 } // namespace Game

@@ -15,9 +15,8 @@
 
 namespace Game {
 
-  GameLayer::GameLayer(f32 aspectRatio)
-  : mO(aspectRatio),
-    mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, aspectRatio),
+  GameLayer::GameLayer()
+  : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
     mTexture{ResourceManager::loadTexture("stallTexture.png")},
     mShader{ResourceManager::loadShader("Light.glsl")},
     mCubeMesh{ResourceManager::loadMesh("stall.obj")}
@@ -34,18 +33,6 @@ namespace Game {
   }
 
   void GameLayer::onUpdate(Timestep ts) {
-    auto fps = 1.0f / ts;
-    std::stringstream ss;
-    ss.precision(4);
-    ss << std::fixed << (1.0f / ts) << "fps" << '\n';
-
-    Renderer::begin(mO.getCamera());
-    Renderer::drawText(ss.str(), {-0.95f, 0.95, 0.0f}, {0.1f, 0.1f}, mColor);
-    Renderer::end();
-    // Renderer::drawQuad({0.0f, 0.0f, 0.0f}, {1, 1}, Color::RED);
-    // Renderer::drawQuad({0.0f, 0.0f, 1.0f}, {1, 1}, Color::GREEN);
-    // Renderer::drawQuad({0.0f, 0.0f, -1.0f}, {1, 1}, Color::BLUE);
-
     mShader.bind();
     mShader.setVec3("uViewPosition", mCameraController.getPosition());
     if (mMoveLight) {
@@ -65,8 +52,7 @@ namespace Game {
     mCameraController.onUpdate(ts);
     for (u32 i = 0; i < mCount; i++) {
       Mat4 transform = Mat4(1.0f);
-      transform = glm::translate(transform, Vec3{0.1f * (f32)i});
-      // transform = glm::scale(transform, Vec3{f});
+      transform = glm::translate(transform, Vec3{0.01f * (f32)i});
       Renderer::draw(mShader, mCubeMesh, mTexture, transform);
     }
   }
