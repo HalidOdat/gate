@@ -1,6 +1,8 @@
 #include <vector>
 #include <utility>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Core/Log.hpp"
 #include "Core/Assert.hpp"
 #include "Renderer/Renderer.hpp"
@@ -59,7 +61,7 @@ namespace Game {
   Ui::Ui(u32 width, u32 height)
     : mCamera{0.0f, (f32)width, (f32)height, 0.0f}
   {
-    // mCamera.setPosition({ 0, 0, -1.0f});
+    // mCamera.setPosition({ (f32)width / 2, 0, -1.0f});
   }
 
   void Ui::begin(const Vec2& position, f32 padding) {

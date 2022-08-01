@@ -7,6 +7,8 @@
 #include "Events/MouseEvent.hpp"
 #include "Renderer/CameraController.hpp"
 
+#include "Resource/Manager.hpp"
+
 namespace Game {
   
   class Ui {

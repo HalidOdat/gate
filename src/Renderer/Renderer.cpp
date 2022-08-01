@@ -69,10 +69,10 @@ namespace Game {
     static constexpr const u32 INDEX_BUFFER_COUNT      = MAX * INDICES_COUNT;
 
     static constexpr const std::array<Vec4, 4> position = {
-      Vec4{  0.5f,  0.5f, 0.0f, 1.0f }, // top    right
-		  Vec4{  0.5f, -0.5f, 0.0f, 1.0f }, // bottom right
-		  Vec4{ -0.5f, -0.5f, 0.0f, 1.0f }, // bottom left
-		  Vec4{ -0.5f,  0.5f, 0.0f, 1.0f }, // top    left 
+      Vec4{  1.0f,  1.0f, 0.0f, 1.0f }, // top    right
+		  Vec4{  1.0f,  0.0f, 0.0f, 1.0f }, // bottom right
+		  Vec4{  0.0f,  0.0f, 0.0f, 1.0f }, // bottom left
+		  Vec4{  0.0f,  1.0f, 0.0f, 1.0f }, // top    left 
     };
   };
 

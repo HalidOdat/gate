@@ -36,9 +36,13 @@ namespace Game {
     const auto ar = Application::getWindow().getAspectRatio();
     Renderer::begin(mCameraController.getCamera());
     Renderer::drawText(fpsString, { 0.0f, 0.7f, 0.0f }, { 0.08f, 0.08f});
+    // Renderer::drawQuad({0, 0}, {0.9, 0.9});
     Renderer::end();
   }
 
+#if 0
+  void EditorLayer::onUiRender(Ui& ui) {}
+#else
   void EditorLayer::onUiRender(Ui& ui) {
     ui.begin({0.0f, 0.0f});
       ui.beginLayout(Ui::Layout::Type::Vertical);
@@ -79,6 +83,7 @@ namespace Game {
       ui.endLayout();
     ui.end();
   }
+#endif
 
   void EditorLayer::onEvent(const Event& event) {
     event.dispatch(&EditorLayer::onWindowResizeEvent, this);
