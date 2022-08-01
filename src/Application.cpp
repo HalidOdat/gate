@@ -27,7 +27,7 @@ namespace Game {
     ResourceManager::Initialize();
     Renderer::Initialize();
 
-    this->ui = new Ui(window->getAspectRatio());
+    this->ui = new Ui(width, height);
 
     std::filesystem::current_path("C:\\linux\\github\\opengl-game");
 

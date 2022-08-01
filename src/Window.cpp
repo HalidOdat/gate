@@ -147,10 +147,7 @@ namespace Game {
 
     glfwSetCursorPosCallback(result->data.window, [](GLFWwindow* window, double x, double y) {
       auto& data = *(Data*)glfwGetWindowUserPointer(window);
-      MouseMoveEvent event(
-        static_cast<f32>(x) / (data.width / 2.0f) - 1,
-        1 - static_cast<f32>(y) / (data.height / 2.0f)
-      );
+      MouseMoveEvent event(static_cast<f32>(x), static_cast<f32>(y));
       data.eventCallback(event);
     });
     return result;

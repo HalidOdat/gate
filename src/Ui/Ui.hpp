@@ -12,13 +12,13 @@ namespace Game {
   class Ui {
   public:
     struct Config {
-      Vec2 buttonSize = { 0.2f, 0.1f };
+      Vec2 buttonSize = { 60, 30 };
     };
 
     class Layout {
       friend Ui;
     public:
-      static constexpr const float DEFAULT_PADDING = 0.01f;
+      static constexpr const float DEFAULT_PADDING = 10.0f;
 
     public:
       enum class Type {
@@ -38,7 +38,7 @@ namespace Game {
     };
 
   public:
-    Ui(f32 aspectRatio);
+    Ui(u32 width, u32 height);
 
     void begin(const Vec2& position, f32 padding = Layout::DEFAULT_PADDING);
     void beginLayout(Layout::Type type, f32 padding = Layout::DEFAULT_PADDING);
@@ -58,7 +58,7 @@ namespace Game {
     bool onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event);
 
   private:
-    OrthographicCameraController mCameraController;
+    OrthographicCamera mCamera;
 
     bool hasHot    = false;
     u32  hot       = 0;

@@ -17,7 +17,7 @@ namespace Game {
 
     bool contains(const Vec2& point) const {
       if ((point.x >= position.x && point.x <= (position.x + size.x))
-       && (point.y <= position.y && point.y >= (position.y - size.y))
+       && (point.y >= position.y && point.y <= (position.y + size.y))
       ) {
         return true;
       }
@@ -35,7 +35,7 @@ namespace Game {
       case Type::Horizontal:
         return this->position + (this->size + Vec2(this->padding)) * Vec2(1.0f, 0.0f);
       case Type::Vertical:
-        return this->position + (this->size + Vec2(this->padding)) * Vec2(0.0f, -1.0f);
+        return this->position + (this->size + Vec2(this->padding)) * Vec2(0.0f, 1.0f);
       default:
         GAME_UNREACHABLE("Unknown Layout type!");
     }
@@ -56,9 +56,11 @@ namespace Game {
     }
   }
 
-  Ui::Ui(f32 aspectRatio)
-    : mCameraController{aspectRatio}
-  {}
+  Ui::Ui(u32 width, u32 height)
+    : mCamera{0.0f, (f32)width, (f32)height, 0.0f}
+  {
+    // mCamera.setPosition({ 0, 0, -1.0f});
+  }
 
   void Ui::begin(const Vec2& position, f32 padding) {
     Layout layout;
@@ -69,7 +71,7 @@ namespace Game {
   
     this->layouts.push_back(layout);
 
-    Renderer::begin(this->mCameraController.getCamera());
+    Renderer::begin(mCamera);
   }
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
@@ -149,7 +151,8 @@ namespace Game {
   }
 
   bool Ui::onWindowResizeEvent(const WindowResizeEvent& event) {
-    mCameraController.resize(event.getWidth(), event.getHeight());
+    auto[width, height] = event.getSize();
+    mCamera.setProjection(0.0f, (f32)width, (f32)height, 0.0f);
     return false;
   }
 

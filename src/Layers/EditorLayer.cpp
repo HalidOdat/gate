@@ -35,7 +35,7 @@ namespace Game {
 
     const auto ar = Application::getWindow().getAspectRatio();
     Renderer::begin(mCameraController.getCamera());
-    Renderer::drawText(fpsString, { -1.0f * ar, 0.7f, 0.0f }, { 0.05f, 0.05f});
+    Renderer::drawText(fpsString, { 0.0f, 0.7f, 0.0f }, { 0.08f, 0.08f});
     Renderer::end();
   }
 

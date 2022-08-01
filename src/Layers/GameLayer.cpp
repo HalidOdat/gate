@@ -48,13 +48,16 @@ namespace Game {
     mShader.setFloat("uMaterial.shininess", mMaterial.shininess);
     mShader.unbind();
 
-    Renderer::begin(mCameraController.getCamera());
     mCameraController.onUpdate(ts);
+    Renderer::begin(mCameraController.getCamera());
+    Renderer::drawQuad({4, 4}, {0.5f, 0.5f}, Color::GREEN);
+    Renderer::drawText("A B C D E F G H I J K L M N O P", {-4, -4}, 0.5f);
     for (u32 i = 0; i < mCount; i++) {
       Mat4 transform = Mat4(1.0f);
       transform = glm::translate(transform, Vec3{0.01f * (f32)i});
       Renderer::draw(mShader, mCubeMesh, mTexture, transform);
     }
+    Renderer::end();
   }
 
   void GameLayer::onUiRender(Ui& ui) {

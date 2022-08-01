@@ -67,6 +67,13 @@ namespace Game {
 
     static constexpr const u32 VERTEX_BUFFER_BYTE_SIZE = MAX * VERTICES_COUNT * sizeof(Vertex);
     static constexpr const u32 INDEX_BUFFER_COUNT      = MAX * INDICES_COUNT;
+
+    static constexpr const std::array<Vec4, 4> position = {
+      Vec4{  0.5f,  0.5f, 0.0f, 1.0f }, // top    right
+		  Vec4{  0.5f, -0.5f, 0.0f, 1.0f }, // bottom right
+		  Vec4{ -0.5f, -0.5f, 0.0f, 1.0f }, // bottom left
+		  Vec4{ -0.5f,  0.5f, 0.0f, 1.0f }, // top    left 
+    };
   };
 
   struct FontData {
@@ -156,13 +163,13 @@ namespace Game {
     u32 count = 0;
     for (u32 height = 0; height != fontTextureHeight; height += fontCharacterHeight) {
       for (u32 width = 0; width != fontTextureWidth; width += fontCharacterWidth) {
-        const f32 x = (float)width / fontTextureWidth;
-        const f32 y = (float)height / fontTextureHeight;
-        const f32 xSize = (float)fontCharacterWidth / fontTextureWidth;
-        const f32 ySize = (float)fontCharacterHeight / fontTextureHeight;
+        const f32 x     = (f32)width  / fontTextureWidth;
+        const f32 y     = (f32)height / fontTextureHeight;
+        const f32 xSize = (f32)fontCharacterWidth / fontTextureWidth;
+        const f32 ySize = (f32)fontCharacterHeight / fontTextureHeight;
         renderer->font.coords[count++] = Vec4{
           Vec2{ x,         1 - y - ySize },
-          Vec2{ x + xSize, 1 - y },
+          Vec2{ x + xSize, 1 - y - ySize / fontCharacterHeight },
         };
       }
     }
@@ -208,6 +215,13 @@ namespace Game {
   }
 
   void Renderer::drawChar(char c, const Vec3& position, const Vec2& size, const Vec4& color) {
+    Mat4 transform = Mat4(1.0f);
+    transform      = glm::translate(transform, position);
+    transform      = glm::scale(transform, Vec3(size, 1.0f));
+    Renderer::drawChar(c, transform, color);
+  }
+
+  void Renderer::drawChar(char c, const Mat4& transform, const Vec4& color) {
     auto texture = renderer->font.texture;
 
     // TODO: refactor this.
@@ -238,10 +252,10 @@ namespace Game {
     Vec4 tc = renderer->font.coords[(usize)(c - ' ')];
 
     // TODO: do transfrom with projection view matrix here
-    *(renderer->quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right
-    *(renderer->quad.current++) = { position + Vec3{size.x, -size.y, 0.0f}, color, /* {1.0f, 0.0f} */ {tc.z, tc.y}, index }; // bottom-right
-    *(renderer->quad.current++) = { position + Vec3{0.0f,   -size.y, 0.0f}, color, /* {0.0f, 0.0f} */ {tc.x, tc.y}, index }; // bottom-left
-    *(renderer->quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, /* {0.0f, 1.0f} */ {tc.x, tc.w}, index }; // top-left
+    *(renderer->quad.current++) = { transform * QuadBatch::position[0], color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right
+    *(renderer->quad.current++) = { transform * QuadBatch::position[1], color, /* {1.0f, 0.0f} */ {tc.z, tc.y}, index }; // bottom-right
+    *(renderer->quad.current++) = { transform * QuadBatch::position[2], color, /* {0.0f, 0.0f} */ {tc.x, tc.y}, index }; // bottom-left
+    *(renderer->quad.current++) = { transform * QuadBatch::position[3], color, /* {0.0f, 1.0f} */ {tc.x, tc.w}, index }; // top-left
 
     renderer->quad.count++;
   }
@@ -265,6 +279,13 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Texture2D& texture, const Vec4& color) {
+    Mat4 transform = Mat4(1.0f);
+    transform      = glm::translate(transform, position);
+    transform      = glm::scale(transform, Vec3(size, 1.0f));
+    Renderer::drawQuad(transform, texture, color);
+  }
+
+  void Renderer::drawQuad(const Mat4& transform, const Texture2D& texture, const Vec4& color) {
     if (renderer->quad.count == QuadBatch::MAX) {
       Renderer::flush();
     }
@@ -286,10 +307,10 @@ namespace Game {
     }
 
     // TODO: do transfrom with projection view matrix here
-    *(renderer->quad.current++) = { position + Vec3{size.x,    0.0f, 0.0f}, color, {1.0f, 1.0f}, index }; // top-right
-    *(renderer->quad.current++) = { position + Vec3{size.x, -size.y, 0.0f}, color, {1.0f, 0.0f}, index }; // bottom-right
-    *(renderer->quad.current++) = { position + Vec3{0.0f,   -size.y, 0.0f}, color, {0.0f, 0.0f}, index }; // bottom-left
-    *(renderer->quad.current++) = { position + Vec3{0.0f,      0.0f, 0.0f}, color, {0.0f, 1.0f}, index }; // top-left
+    *(renderer->quad.current++) = { transform * QuadBatch::position[0], color, {1.0f, 1.0f}, index }; // top-right
+    *(renderer->quad.current++) = { transform * QuadBatch::position[1], color, {1.0f, 0.0f}, index }; // bottom-right
+    *(renderer->quad.current++) = { transform * QuadBatch::position[2], color, {0.0f, 0.0f}, index }; // bottom-left
+    *(renderer->quad.current++) = { transform * QuadBatch::position[3], color, {0.0f, 1.0f}, index }; // top-left
 
     renderer->quad.count++;
   }

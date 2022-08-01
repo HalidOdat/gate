@@ -90,8 +90,8 @@ namespace Game {
     f32 mPitch = 0.0f;
 
     f32 mZoomLevel = 45.0f;
-    f32 mMovmentSpeed = 4.5f;
-    f32 mMouseSensitivity = 1200.0f;
+    f32 mMovmentSpeed = 6.5f;
+    f32 mMouseSensitivity = 15.0f;
     bool mFristMove = true;
     Vec2 mLastMousePosition;
 

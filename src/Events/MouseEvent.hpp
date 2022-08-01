@@ -24,15 +24,22 @@ namespace Game {
 
   public:
     MouseMoveEvent(const f32 x, const f32 y)
-      : Event(TYPE), position{x, y}
+      : Event(TYPE), mPosition{x, y}
     {}
 
-    const Position& getPosition() const { return this->position; }
-    f32 getX() const { return this->position.x; }
-    f32 getY() const { return this->position.y; }
+    const Position& getPosition() const { return mPosition; }
+    f32 getX() const { return mPosition.x; }
+    f32 getY() const { return mPosition.y; }
+
+    Position getOpenGLScreenCoordinates(u32 width, u32 height) const {
+      return {
+        mPosition.x     / ((f32)width / 2.0f) - 1,
+        1 - mPosition.y / ((f32)height / 2.0f)
+      };
+    }
 
   private:
-    Position position;
+    Position mPosition;
   };
 
   class MouseScrollEvent : public Event {

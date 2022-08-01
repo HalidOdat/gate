@@ -132,7 +132,7 @@ namespace Game {
     const auto ts = Timestep::get();
 
     f32 xOffset = (x - mLastMousePosition.x) * mMouseSensitivity * ts;
-    f32 yOffset = (y - mLastMousePosition.y) * mMouseSensitivity * ts;
+    f32 yOffset = (mLastMousePosition.y - y) * mMouseSensitivity * ts;
 
     mLastMousePosition = {x, y};
 
