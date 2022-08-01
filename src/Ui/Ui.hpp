@@ -14,7 +14,26 @@ namespace Game {
   class Ui {
   public:
     struct Config {
-      Vec2 buttonSize = { 60, 30 };
+      struct Margin {
+        f32 left   = 4.0f;
+        f32 top    = 2.0f;
+        f32 right  = 4.0f;
+        f32 bottom = 2.0f;
+      };
+
+      struct Color {
+        Vec3 inactive = { 0.15f, 0.15f, 0.15f };
+        Vec3 hot      = { 0.20f, 0.20f, 0.20f };
+        Vec3 active   = { 0.25f, 0.25f, 0.25f };
+      };
+
+      struct Button {
+        Margin margin;
+        Color color;
+        Vec2 size { 80, 20 };
+      };
+
+      Button  button;
     };
 
     class Layout {
@@ -44,7 +63,7 @@ namespace Game {
 
     void begin(const Vec2& position, f32 padding = Layout::DEFAULT_PADDING);
     void beginLayout(Layout::Type type, f32 padding = Layout::DEFAULT_PADDING);
-    bool button(const Vec3& color, u32 id = 0);
+    bool button(const StringView& text, u32 id = 0);
     void endLayout();
     void end();
 

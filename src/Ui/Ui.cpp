@@ -60,16 +60,14 @@ namespace Game {
 
   Ui::Ui(u32 width, u32 height)
     : mCamera{0.0f, (f32)width, (f32)height, 0.0f}
-  {
-    // mCamera.setPosition({ (f32)width / 2, 0, -1.0f});
-  }
+  {}
 
   void Ui::begin(const Vec2& position, f32 padding) {
     Layout layout;
-    layout.type     = Layout::Type::Horizontal;
-    layout.position = position;
+    layout.type     = Layout::Type::Vertical;
     layout.size     = Vec2(0.0f);
     layout.padding  = padding;
+    layout.position = position;
   
     this->layouts.push_back(layout);
 
@@ -86,15 +84,18 @@ namespace Game {
     this->layouts.push_back(layout);
   }
 
-  bool Ui::button(const Vec3& color, u32 id) {
+  bool Ui::button(const StringView& text, u32 id) {
     auto& layout = this->layouts.back();
 
-    const auto position = layout.nextAvailablePosition();
-    const auto size     = mConfig.buttonSize;
+    const auto position = layout.nextAvailablePosition() + Vec2(mConfig.button.margin.left, mConfig.button.margin.top);
+    const auto size     = mConfig.button.size;
 
-    const auto rectangle = AABB(position, size);
+    const auto rectangle = AABB(
+      position, 
+      size
+    );
 
-    Vec3 c = color;
+    Vec3 color = mConfig.button.color.inactive;
     bool clicked = false;
     if (this->hasActive && this->active == id) {
       if (!this->mouseButton) {
@@ -104,10 +105,10 @@ namespace Game {
           clicked = true;
         }
       } else {
-        c = Vec3(0.0f, 1.0f, 1.0f);
+        color = mConfig.button.color.active;
       }
     } else if (this->hasHot && this->hot == id) {
-      c = Vec3(0.5f, 0.5f, 0.0f);
+      color = mConfig.button.color.hot;
 
       if (!rectangle.contains(this->mousePosition)) {
         this->hasHot = false;
@@ -122,9 +123,13 @@ namespace Game {
       }
     }
 
-    Renderer::drawQuad(position, size, Vec4(c, 1.0f));
+    Renderer::drawQuad(
+      position,
+      size,//     + Vec2(mConfig.button.margin.right, mConfig.button.margin.bottom),
+      Vec4(color, 1.0f))
+      ;
 
-    layout.pushWidget(size);
+    layout.pushWidget(size + Vec2(mConfig.button.margin.left, mConfig.button.margin.top) + Vec2(mConfig.button.margin.right, mConfig.button.margin.bottom));
     return clicked;
   }
 
