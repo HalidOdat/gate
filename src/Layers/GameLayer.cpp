@@ -20,7 +20,7 @@ namespace Game {
     mTextureDiffuse{ResourceManager::loadTexture("CrateDiffuse.png")},
     mTextureSpecular{ResourceManager::loadTexture("CrateSpecular.png")},
     mTextureEmission{ResourceManager::loadTexture("matrix.jpg")},
-    mShader{ResourceManager::loadShader("LightMap.glsl")},
+    mShader{ResourceManager::loadShader("PointLight.glsl")},
     mCubeMesh{ResourceManager::cubeMesh()}
   {}
 
@@ -42,8 +42,12 @@ namespace Game {
     mShader.setVec3("uLight.ambient", mLight.ambient);
     mShader.setVec3("uLight.diffuse", mLight.diffuse);
     mShader.setVec3("uLight.specular", mLight.specular);
+    mShader.setFloat("uLight.constant",  1.0f);
+    mShader.setFloat("uLight.linear",    0.09f);
+    mShader.setFloat("uLight.quadratic", 0.032f);	
     
     // mShader.setVec3("uMaterial.ambient", mMaterial.ambient);
+    mTextureDiffuse.bind(0);
     mTextureSpecular.bind(1);
     mTextureEmission.bind(2);
 
@@ -57,12 +61,28 @@ namespace Game {
     if (mCaptureCursor) {
       mCameraController.onUpdate(ts);
     }
+
+    static Vec3 cubePositions[] = {
+      Vec3( 0.0f,  0.0f,  0.0f),
+      Vec3( 2.0f,  5.0f, -15.0f),
+      Vec3(-1.5f, -2.2f, -2.5f),
+      Vec3(-3.8f, -2.0f, -12.3f),
+      Vec3( 2.4f, -0.4f, -3.5f),
+      Vec3(-1.7f,  3.0f, -7.5f),
+      Vec3( 1.3f, -2.0f, -2.5f),
+      Vec3( 1.5f,  2.0f, -2.5f),
+      Vec3( 1.5f,  0.2f, -1.5f),
+      Vec3(-1.3f,  1.0f, -1.5f)
+    };
+
     Renderer::begin(mCameraController.getCamera());
     Renderer::drawQuad({4, 4}, {0.5f, 0.5f}, Color::GREEN);
     Renderer::drawText("A B C D E F G H I J K L M N O P", {-4, -4}, 0.5f);
-    for (u32 i = 0; i < mCount; i++) {
+    for (u32 i = 0; i < mCount && i < 10; i++) {
       Mat4 transform = Mat4(1.0f);
-      transform = glm::translate(transform, Vec3{0.01f * (f32)i});
+      transform = glm::translate(transform, cubePositions[i]);
+      f32 angle = 20.0f * i;
+      transform = glm::rotate(transform, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
       Renderer::draw(mShader, mCubeMesh, mTextureDiffuse, transform);
     }
     Renderer::end();
@@ -71,6 +91,9 @@ namespace Game {
   void GameLayer::onUiRender(Ui& ui) {
     ui.begin({0, 200});
       ui.slider(mMaterial.shininess, 0.1f, 128.0f);
+      ui.slider(mLight.ambient,  Vec3(0.1f), Vec3(1.0f));
+      ui.slider(mLight.diffuse,  Vec3(0.1f), Vec3(1.0f));
+      ui.slider(mLight.specular, Vec3(0.1f), Vec3(1.0f));
     ui.end();
   }
 
