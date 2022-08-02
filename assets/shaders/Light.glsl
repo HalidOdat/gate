@@ -12,10 +12,11 @@ out vec3 vFragmentPosition;
 
 uniform mat4 uProjectionViewMatrix;
 uniform mat4 uModelMatrix;
+uniform mat3 uNormalMatrix;
 
 void main() {
   vTexture = aTexture;
-  vNormal  = mat3(transpose(inverse(uModelMatrix))) * aNormal;
+  vNormal  = normalize(uNormalMatrix * aNormal);
   vFragmentPosition = vec3(uModelMatrix * vec4(aPosition, 1.0));
   gl_Position = uProjectionViewMatrix * uModelMatrix * vec4(aPosition, 1.0);
 }
@@ -52,14 +53,13 @@ uniform Light    uLight;
 void main() {
   vec3 ambient = uLight.ambient * uMaterial.ambient;
 
-  vec3 norm = normalize(vNormal);
   vec3 lightDirection = normalize(uLight.position - vFragmentPosition);
 
-  float diff = max(dot(norm, lightDirection), 0.0);
+  float diff = max(dot(vNormal, lightDirection), 0.0);
   vec3 diffuse = uLight.diffuse * (diff * uMaterial.diffuse);
 
   vec3 viewDirection = normalize(uViewPosition - vFragmentPosition);
-  vec3 reflectDirirection = reflect(-lightDirection, norm); 
+  vec3 reflectDirirection = reflect(-lightDirection, vNormal); 
 
   float spec = pow(max(dot(viewDirection, reflectDirirection), 0.0), uMaterial.shininess);
   vec3 specular = uLight.specular * (spec * uMaterial.specular);

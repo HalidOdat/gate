@@ -18,9 +18,9 @@ namespace Game {
   public:
     Renderer() = delete;
 
-    static void enableBlending(bool yes = true);
+    static void enableBlending(bool  yes = true);
     static void enableDepthTest(bool yes = true);
-    static void enableCullFace(bool yes  = true);
+    static void enableCullFace(bool  yes = true);
 
     static void begin(const Camera& camera);
     static void drawQuad(const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);

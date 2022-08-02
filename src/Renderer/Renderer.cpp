@@ -211,8 +211,11 @@ namespace Game {
   void Renderer::draw(Shader& shader, const Mesh& mesh, const Texture2D& texture, const Mat4& transform) {
     texture.bind(0);
     shader.bind();
+    
     shader.setMat4("uProjectionViewMatrix", renderer->projectionViewMatrix);
     shader.setMat4("uModelMatrix", transform);
+    // mat3(transpose(inverse(uModelMatrix)))
+    shader.setMat3("uNormalMatrix", Mat3(glm::transpose(glm::inverse(transform))));
     shader.setInt("uTexture", 0);
 
     auto vao = mesh.getVertexArray();
