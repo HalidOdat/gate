@@ -112,6 +112,22 @@ namespace Game {
     return {vao, vbo, ibo};
   }
 
+  Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
+    auto vao = VertexArray::create();
+    auto vbo = VertexBuffer::create(vertices);
+    vbo->setLayout({
+      BufferElement::Type::Float3, // position
+      BufferElement::Type::Float2, // texcoords
+      BufferElement::Type::Float3, // normals
+    });
+    vao->addVertexBuffer(vbo);
+    auto ibo = IndexBuffer::create(indices);
+    vao->setIndexBuffer(ibo);
+    vao->unbind();
+
+    return {vao, vbo, ibo};
+  }
+
   void Mesh::destroy(Data& data) {
     // do nothing...
   }

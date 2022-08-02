@@ -220,9 +220,9 @@ namespace Game {
     shader.bind();
     
     shader.setMat4("uProjectionMatrix", renderer->projectionMatrix);
-    shader.setMat4("uViewMatrix",       renderer->ViewMatrix);
+    shader.setMat4("uViewMatrix", renderer->ViewMatrix);
     shader.setMat4("uModelMatrix", transform);
-    shader.setMat3("uNormalMatrix", Mat3(glm::transpose(glm::inverse(renderer->ViewMatrix * transform)))); // mat3(transpose(inverse(uViewMatrix * uModelMatrix)))
+    shader.setMat3("uNormalMatrix", Mat3(glm::transpose(glm::inverse(transform)))); // mat3(transpose(inverse(uModelMatrix)))
     shader.setInt("uTexture", 0);
 
     auto vao = mesh.getVertexArray();

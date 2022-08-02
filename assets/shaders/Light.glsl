@@ -54,6 +54,7 @@ in vec2     vTexture;
 in vec3     vNormal;
 in vec3     vFragmentPosition;
 in vec3     vLightPosition;
+
 flat in Material vMaterial;
 flat in Light    vLight;
 

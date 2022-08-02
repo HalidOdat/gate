@@ -31,6 +31,7 @@ namespace Game {
     const Data& getData() const;
 
     static Data fromFileSource(FileFormat format, const std::string& source);
+    static Data fromVertices(const Slice<const void> vertices, const Slice<const u32> indices);
     static void destroy(Data& data);
 
   private:

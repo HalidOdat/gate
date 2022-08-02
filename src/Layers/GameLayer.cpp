@@ -17,9 +17,10 @@ namespace Game {
 
   GameLayer::GameLayer()
   : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
-    mTexture{ResourceManager::loadTexture("stallTexture.png")},
-    mShader{ResourceManager::loadShader("Light.glsl")},
-    mCubeMesh{ResourceManager::loadMesh("stall.obj")}
+    mTextureDiffuse{ResourceManager::loadTexture("CrateDiffuse.png")},
+    mTextureSpecular{ResourceManager::loadTexture("CrateSpecular.png")},
+    mShader{ResourceManager::loadShader("LightMap.glsl")},
+    mCubeMesh{ResourceManager::cubeMesh()}
   {}
 
   void GameLayer::onAttach() {
@@ -41,11 +42,14 @@ namespace Game {
     mShader.setVec3("uLight.diffuse", mLight.diffuse);
     mShader.setVec3("uLight.specular", mLight.specular);
     
-    mShader.setVec3("uMaterial.ambient", mMaterial.ambient);
-    mShader.setVec3("uMaterial.diffuse", mMaterial.diffuse);
-    mShader.setVec3("uMaterial.specular", mMaterial.specular);
+    // mShader.setVec3("uMaterial.ambient", mMaterial.ambient);
+    mTextureSpecular.bind(1);
+
+    mShader.setInt("uMaterial.diffuse", 0);
+    mShader.setInt("uMaterial.specular", 1);
     mShader.setFloat("uMaterial.shininess", mMaterial.shininess);
     mShader.unbind();
+
 
     if (mCaptureCursor) {
       mCameraController.onUpdate(ts);
@@ -56,15 +60,14 @@ namespace Game {
     for (u32 i = 0; i < mCount; i++) {
       Mat4 transform = Mat4(1.0f);
       transform = glm::translate(transform, Vec3{0.01f * (f32)i});
-      Renderer::draw(mShader, mCubeMesh, mTexture, transform);
+      Renderer::draw(mShader, mCubeMesh, mTextureDiffuse, transform);
     }
     Renderer::end();
   }
 
   void GameLayer::onUiRender(Ui& ui) {
     ui.begin({0, 200});
-      ui.slider(mMaterial.ambient, Vec3(0.1f), Vec3(1.0f));
-      ui.slider(mMaterial.shininess, 0.1f, 32.0f);
+      ui.slider(mMaterial.shininess, 0.1f, 128.0f);
     ui.end();
   }
 

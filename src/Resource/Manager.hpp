@@ -18,6 +18,8 @@ namespace Game {
     static Shader loadShader(const StringView& filepath);
     static Mesh loadMesh(const StringView& filepath);
 
+    static Mesh cubeMesh();
+
     static void reloadTextures();
 
     ResourceManager() = delete;

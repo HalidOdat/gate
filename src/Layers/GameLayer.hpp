@@ -49,7 +49,8 @@ namespace Game {
     PerspectiveCameraController mCameraController;
     Registry mRegistry;
 
-    Texture2D mTexture;
+    Texture2D mTextureDiffuse;
+    Texture2D mTextureSpecular;
     Vec4 mColor = Vec4(1.0f);
 
     bool mCaptureCursor = false;
