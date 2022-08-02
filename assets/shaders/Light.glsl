@@ -10,7 +10,8 @@ out vec2 vTexture;
 out vec3 vNormal;
 out vec3 vFragmentPosition;
 
-uniform mat4 uProjectionViewMatrix;
+uniform mat4 uProjectionMatrix;
+uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform mat3 uNormalMatrix;
 
@@ -18,7 +19,7 @@ void main() {
   vTexture = aTexture;
   vNormal  = normalize(uNormalMatrix * aNormal);
   vFragmentPosition = vec3(uModelMatrix * vec4(aPosition, 1.0));
-  gl_Position = uProjectionViewMatrix * uModelMatrix * vec4(aPosition, 1.0);
+  gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1.0);
 }
 
 @type fragment

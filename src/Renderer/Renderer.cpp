@@ -83,6 +83,9 @@ namespace Game {
 
   struct RendererData {
     Mat4 projectionViewMatrix;
+    Mat4 projectionMatrix;
+    Mat4 ViewMatrix;
+
     Texture2D whiteTexture;
     QuadBatch quad;
 
@@ -179,6 +182,8 @@ namespace Game {
 
     renderer = new RendererData{
       Mat4(1.0f),
+      Mat4(1.0f),
+      Mat4(1.0f),
       whiteTexture,
       {vertexArray, vertexBuffer, shader, whiteTexture},
       {fontTexture}
@@ -206,16 +211,18 @@ namespace Game {
 
   void Renderer::begin(const Camera& camera) {
     renderer->projectionViewMatrix = camera.getProjectionViewMatrix();
+    renderer->projectionMatrix     = camera.getProjectionMatrix();
+    renderer->ViewMatrix           = camera.getViewMatrix();
   }
 
   void Renderer::draw(Shader& shader, const Mesh& mesh, const Texture2D& texture, const Mat4& transform) {
     texture.bind(0);
     shader.bind();
     
-    shader.setMat4("uProjectionViewMatrix", renderer->projectionViewMatrix);
+    shader.setMat4("uProjectionMatrix", renderer->projectionMatrix);
+    shader.setMat4("uViewMatrix",       renderer->ViewMatrix);
     shader.setMat4("uModelMatrix", transform);
-    // mat3(transpose(inverse(uModelMatrix)))
-    shader.setMat3("uNormalMatrix", Mat3(glm::transpose(glm::inverse(transform))));
+    shader.setMat3("uNormalMatrix", Mat3(glm::transpose(glm::inverse(transform)))); // mat3(transpose(inverse(uModelMatrix)))
     shader.setInt("uTexture", 0);
 
     auto vao = mesh.getVertexArray();
