@@ -24,7 +24,6 @@ namespace Game {
 
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
-    Application::getWindow().enableCursor(mCaptureCursor);
   }
 
   void GameLayer::onDetach() {
@@ -48,7 +47,9 @@ namespace Game {
     mShader.setFloat("uMaterial.shininess", mMaterial.shininess);
     mShader.unbind();
 
-    mCameraController.onUpdate(ts);
+    if (mCaptureCursor) {
+      mCameraController.onUpdate(ts);
+    }
     Renderer::begin(mCameraController.getCamera());
     Renderer::drawQuad({4, 4}, {0.5f, 0.5f}, Color::GREEN);
     Renderer::drawText("A B C D E F G H I J K L M N O P", {-4, -4}, 0.5f);
@@ -61,10 +62,16 @@ namespace Game {
   }
 
   void GameLayer::onUiRender(Ui& ui) {
+    ui.begin({0, 200});
+      ui.slider(mMaterial.ambient, Vec3(0.1f), Vec3(1.0f));
+      ui.slider(mMaterial.shininess, 0.1f, 32.0f);
+    ui.end();
   }
 
   void GameLayer::onEvent(const Event& event) {
-    mCameraController.onEvent(event);
+    if (mCaptureCursor) {
+      mCameraController.onEvent(event);
+    }
     event.dispatch(&GameLayer::onWindowResizeEvent, this);
     event.dispatch(&GameLayer::onMouseScrollEvent, this);
     event.dispatch(&GameLayer::onKeyPressedEvent, this);
@@ -82,8 +89,8 @@ namespace Game {
   bool GameLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
     switch (event.getKey()) {
       case Key::C:
-        mCaptureCursor = !mCaptureCursor;
         Application::getWindow().enableCursor(mCaptureCursor);
+        mCaptureCursor = !mCaptureCursor;
         break;
       case Key::Escape:
         Application::get().quit();

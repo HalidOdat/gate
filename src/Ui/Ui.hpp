@@ -40,12 +40,20 @@ namespace Game {
         Text text;
       };
 
+      struct Slider {
+        Margin margin;
+        Color color;
+        Vec2 size { 120, 20 };
+        Text text;
+      };
+
       struct Window {
         Vec2 size;
       };
 
-      Button button;
       Window window;
+      Button button;
+      Slider slider;
     };
 
     class Layout {
@@ -60,7 +68,7 @@ namespace Game {
       };
 
     private:
-      Vec2 nextAvailablePosition();
+      Vec2 nextAvailablePosition(bool withPadding = true);
       void pushWidget(const Vec2& widgetSize);
 
     private:
@@ -75,7 +83,9 @@ namespace Game {
 
     void begin(const Vec2& position, f32 padding = Layout::DEFAULT_PADDING);
     void beginLayout(Layout::Type type, f32 padding = Layout::DEFAULT_PADDING);
-    bool button(const StringView& text, u32 id = 0);
+    bool button(const StringView& text, u64 id = 0);
+    bool slider(f32& value, const f32 min, const f32 max);
+    bool slider(Vec3& value, const Vec3& mins, const Vec3& maxs);
     void endLayout();
     void end();
 
@@ -101,12 +111,14 @@ namespace Game {
     OrthographicCamera mCamera;
 
     bool hasHot    = false;
-    u32  hot       = 0;
     bool hasActive = false;
-    u32  active    = 0;
+    u64  hot       = 0;
+    u64  active    = 0;
+
 
     Vec2 mousePosition = Vec2{0.0f, 0.0f};
     bool mouseButton   = false;
+    Vec2 mLastMousePosition;
 
     std::vector<Layout> layouts;
 

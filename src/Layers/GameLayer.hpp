@@ -52,7 +52,7 @@ namespace Game {
     Texture2D mTexture;
     Vec4 mColor = Vec4(1.0f);
 
-    bool mCaptureCursor = true;
+    bool mCaptureCursor = false;
 
     Shader    mShader;
     Mesh      mCubeMesh;

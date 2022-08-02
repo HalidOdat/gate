@@ -28,6 +28,8 @@ namespace Game {
   
   private:
     OrthographicCameraController mCameraController;
+
+    f32 mValue = 0.0f;
   };
 
 } // namespace Game

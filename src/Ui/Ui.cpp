@@ -1,5 +1,7 @@
 #include <vector>
 #include <utility>
+#include <sstream>
+#include <algorithm>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -32,12 +34,12 @@ namespace Game {
     Vec2 size;
   };
 
-  Vec2 Ui::Layout::nextAvailablePosition() {
+  Vec2 Ui::Layout::nextAvailablePosition(bool withPadding) {
     switch (this->type) {
       case Type::Horizontal:
-        return this->position + (this->size + Vec2(this->padding)) * Vec2(1.0f, 0.0f);
+        return this->position + this->size * Vec2(1.0f, 0.0f);
       case Type::Vertical:
-        return this->position + (this->size + Vec2(this->padding)) * Vec2(0.0f, 1.0f);
+        return this->position + this->size * Vec2(0.0f, 1.0f);
       default:
         GAME_UNREACHABLE("Unknown Layout type!");
     }
@@ -46,12 +48,12 @@ namespace Game {
   void Ui::Layout::pushWidget(const Vec2& widgetSize) {
     switch (this->type) {
       case Type::Horizontal:
-        this->size.x = this->size.x + widgetSize.x + this->padding;
+        this->size.x = this->size.x + widgetSize.x;
         this->size.y = std::max(this->size.y, widgetSize.y);
         break;
       case Type::Vertical:
         this->size.x = std::max(this->size.x, widgetSize.x);
-        this->size.y = this->size.y + widgetSize.y + this->padding;
+        this->size.y = this->size.y + widgetSize.y;
         break;
       default:
         GAME_UNREACHABLE("Unknown Layout type!");
@@ -96,14 +98,14 @@ namespace Game {
   void Ui::beginLayout(Layout::Type type, f32 padding) {
     Layout layout;
     layout.type     = type;
-    layout.position = layouts.back().nextAvailablePosition();
+    layout.position = layouts.back().nextAvailablePosition(false);
     layout.size     = Vec2(0.0f);
     layout.padding  = padding;
 
     this->layouts.push_back(layout);
   }
 
-  bool Ui::button(const StringView& text, u32 id) {
+  bool Ui::button(const StringView& text, u64 id) {
     auto& layout = this->layouts.back();
 
     const auto position = layout.nextAvailablePosition() + Vec2(mConfig.button.margin.left, mConfig.button.margin.top);
@@ -151,6 +153,87 @@ namespace Game {
         + Vec2(mConfig.button.margin.right, mConfig.button.margin.bottom)
     );
     return clicked;
+  }
+
+  static f32 scale(f32 value, std::pair<f32, f32> src, std::pair<f32, f32> dst) {
+    return ((value - src.first) / (src.second - src.first)) * (dst.second - dst.first) + dst.first;
+  }
+
+  bool Ui::slider(f32& value, const f32 min, const f32 max) {
+    const u64 id = (u64)(void*)&value;
+
+    auto& layout = this->layouts.back();
+
+    const auto position = layout.nextAvailablePosition() + Vec2(mConfig.slider.margin.left, mConfig.slider.margin.top);
+    const auto size     = mConfig.slider.size;
+
+    const auto rectangle = AABB(
+      position, 
+      size
+    );
+
+    Vec3 color = mConfig.slider.color.inactive;
+
+    bool changed = false;
+    if (this->hasActive && this->active == id) {
+      color = mConfig.slider.color.active;
+      if (!this->mouseButton) {
+        this->hasActive = false;
+        this->hasHot    = false;
+      }
+      
+      if (mLastMousePosition.x != mousePosition.x) {
+        mLastMousePosition = mousePosition;
+        changed = true;
+      }
+    } else if (this->hasHot && this->hot == id) {
+      color = mConfig.slider.color.hot;
+
+      if (rectangle.contains(this->mousePosition)) {
+        if (this->mouseButton && !this->hasActive) {
+          this->hasActive    = true;
+          this->active       = id;
+          this->hasHot       = false;
+          mLastMousePosition = mousePosition;
+        }
+      } else {
+        this->hasHot = false;
+      }
+    } else {
+      if (!this->hasActive && rectangle.contains(this->mousePosition)) {
+        this->hasHot = true;
+        this->hot    = id;
+      }
+    }
+
+    if (changed) {
+      f32 x = std::clamp(mLastMousePosition.x - position.x, 0.0f, size.x) / size.x;
+      value = scale(x, {0.0f, 1.0f}, {min, max});
+    }
+
+    drawQuad(position, size, color);
+    std::stringstream ss;
+    ss.precision(4);
+    ss << std::fixed << value;
+    drawText(ss.str(), position + Vec2(4.0f, size.y / 1.2f), size.y / 2.0f, mConfig.slider.text.color);
+
+    layout.pushWidget(
+      size
+        + Vec2(mConfig.slider.margin.left, mConfig.slider.margin.top)
+        + Vec2(mConfig.slider.margin.right, mConfig.slider.margin.bottom)
+    );
+
+    return changed;
+  }
+
+  bool Ui::slider(Vec3& value, const Vec3& mins, const Vec3& maxs) {
+    bool changed = false;
+    this->beginLayout(Layout::Type::Horizontal);
+      changed = this->slider(value.x, mins.x, maxs.x) || changed;
+      changed = this->slider(value.y, mins.y, maxs.y) || changed;
+      changed = this->slider(value.z, mins.z, maxs.z) || changed;
+    this->endLayout();
+    return changed;
   }
 
   void Ui::endLayout() {

@@ -33,9 +33,14 @@ namespace Game {
 
     std::string fpsString = ss.str();
 
+    std::stringstream ss2;
+    ss2.precision(4);
+    ss2 << std::fixed << mValue;
+
     const auto ar = Application::getWindow().getAspectRatio();
     Renderer::begin(mCameraController.getCamera());
     Renderer::drawText(fpsString, { 0.0f, 0.7f, 0.0f }, { 0.08f, 0.08f});
+    Renderer::drawText(ss2.str(), { 0.0f, 0.5f, 0.0f }, { 0.08f, 0.08f});
     // Renderer::drawQuad({0, 0}, {0.9, 0.9});
     Renderer::end();
   }
@@ -53,6 +58,10 @@ namespace Game {
       }
       if (ui.button("Button 3", 3)) {
         Logger::info("Button 3 clicked!!!");
+      }
+
+      if (ui.slider(mValue, -100, 100)) {
+        Logger::info("Changed!!!");
       }
       // ui.beginLayout(Ui::Layout::Type::Vertical);
       //   if (ui.button({1.0f, 1.0f, 0.0f}, 0)) {
