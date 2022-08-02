@@ -20,7 +20,7 @@ namespace Game {
     mTextureDiffuse{ResourceManager::loadTexture("CrateDiffuse.png")},
     mTextureSpecular{ResourceManager::loadTexture("CrateSpecular.png")},
     mTextureEmission{ResourceManager::loadTexture("matrix.jpg")},
-    mShader{ResourceManager::loadShader("PointLight.glsl")},
+    mShader{ResourceManager::loadShader("SpotLight.glsl")},
     mCubeMesh{ResourceManager::cubeMesh()}
   {}
 
@@ -39,6 +39,10 @@ namespace Game {
     if (mMoveLight) {
       mShader.setVec3("uLight.position", mCameraController.getPosition());
     }
+    mShader.setVec3("uLight.direction", mCameraController.getFront());
+    mShader.setFloat("uLight.cutOff", glm::cos(glm::radians(12.5f)));
+    mShader.setFloat("uLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+
     mShader.setVec3("uLight.ambient", mLight.ambient);
     mShader.setVec3("uLight.diffuse", mLight.diffuse);
     mShader.setVec3("uLight.specular", mLight.specular);

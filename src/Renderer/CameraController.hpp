@@ -58,6 +58,7 @@ namespace Game {
     inline f32 getAspectRatio() const { return mAspectRatio; }
     inline f32 getFov() const { return mFov; }
     inline const Vec3& getPosition() const { return mPosition; }
+    inline const Vec3& getFront() const { return mFront; }
 
     void setPosition(const Vec3 position);
     void offsetPosition(const Vec3 offset);
