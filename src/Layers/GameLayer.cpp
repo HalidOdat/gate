@@ -19,6 +19,7 @@ namespace Game {
   : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
     mTextureDiffuse{ResourceManager::loadTexture("CrateDiffuse.png")},
     mTextureSpecular{ResourceManager::loadTexture("CrateSpecular.png")},
+    mTextureEmission{ResourceManager::loadTexture("matrix.jpg")},
     mShader{ResourceManager::loadShader("LightMap.glsl")},
     mCubeMesh{ResourceManager::cubeMesh()}
   {}
@@ -44,9 +45,11 @@ namespace Game {
     
     // mShader.setVec3("uMaterial.ambient", mMaterial.ambient);
     mTextureSpecular.bind(1);
+    mTextureEmission.bind(2);
 
     mShader.setInt("uMaterial.diffuse", 0);
     mShader.setInt("uMaterial.specular", 1);
+    mShader.setInt("uMaterial.emission", 2);
     mShader.setFloat("uMaterial.shininess", mMaterial.shininess);
     mShader.unbind();
 

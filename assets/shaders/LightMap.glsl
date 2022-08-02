@@ -29,6 +29,7 @@ void main() {
 struct Material {
   sampler2D diffuse;
   sampler2D specular;
+  sampler2D emission;
   float     shininess;
 };
 
@@ -51,7 +52,7 @@ out vec4 vFragmentColor;
 
 void main() {
   // ambient
-  vec3 ambient = uLight.ambient * texture(uMaterial.diffuse, vTexCoords).rgb;
+  vec3 ambient = uLight.ambient * vec3(texture(uMaterial.diffuse, vTexCoords));
   	
   // diffuse 
   vec3 norm = normalize(vNormal);
@@ -64,7 +65,10 @@ void main() {
   vec3 reflectDir = reflect(-lightDir, norm);  
   float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
   vec3 specular = uLight.specular * spec * vec3(texture(uMaterial.specular, vTexCoords));
-        
-  vec3 result = ambient + diffuse + specular;
+
+  // emission
+  vec3 emission = vec3(texture(uMaterial.emission, vTexCoords));
+
+  vec3 result = ambient + diffuse + specular + emission;
   vFragmentColor = vec4(result, 1.0);
 }

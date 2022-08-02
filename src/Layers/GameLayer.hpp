@@ -51,6 +51,7 @@ namespace Game {
 
     Texture2D mTextureDiffuse;
     Texture2D mTextureSpecular;
+    Texture2D mTextureEmission;
     Vec4 mColor = Vec4(1.0f);
 
     bool mCaptureCursor = false;
