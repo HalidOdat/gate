@@ -59,8 +59,27 @@ namespace Game {
   }
 
   Ui::Ui(u32 width, u32 height)
-    : mCamera{0.0f, (f32)width, (f32)height, 0.0f}
-  {}
+    : mCamera{0.0f, (f32)width, 0.0f, (f32)height}
+  {
+    mConfig.window.size = { (f32)width, (f32)height };
+  }
+
+  void Ui::prepareFrame() {
+    Renderer::enableBlending(true);
+    // Renderer::enableDepthTest(false);
+  }
+
+  void Ui::endFrame() {
+    Renderer::enableDepthTest(true);
+  }
+
+  void Ui::drawQuad(Vec2 position, Vec2 size, Vec3 color) {
+    Renderer::drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, Vec4(color, 1.0f));
+  }
+
+  void Ui::drawText(const StringView& text, Vec2 position, f32 size, Vec3 color) {
+    Renderer::drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
+  }
 
   void Ui::begin(const Vec2& position, f32 padding) {
     Layout layout;
@@ -123,13 +142,14 @@ namespace Game {
       }
     }
 
-    Renderer::drawQuad(
-      position,
-      size,//     + Vec2(mConfig.button.margin.right, mConfig.button.margin.bottom),
-      Vec4(color, 1.0f))
-      ;
+    drawQuad(position, size, color);
+    drawText(text, position + Vec2(4.0f, size.y / 1.2f), size.y / 2.0f, mConfig.button.text.color);
 
-    layout.pushWidget(size + Vec2(mConfig.button.margin.left, mConfig.button.margin.top) + Vec2(mConfig.button.margin.right, mConfig.button.margin.bottom));
+    layout.pushWidget(
+      size
+        + Vec2(mConfig.button.margin.left, mConfig.button.margin.top)
+        + Vec2(mConfig.button.margin.right, mConfig.button.margin.bottom)
+    );
     return clicked;
   }
 
@@ -146,7 +166,10 @@ namespace Game {
 
     layout.pushWidget(Vec2{0.0f});
 
-    Renderer::drawQuad(Vec3{layout.position, -0.1f}, layout.size, Vec4{0.1f, 0.1f, 0.1f, 1.0f});
+    // TODO: fix this, it's a bit hacky...
+    Renderer::enableDepthTest(true);
+    drawQuad(layout.position, layout.size, {0.1f, 0.1f, 0.1f});
+
     Renderer::end();
   }
 
@@ -159,7 +182,8 @@ namespace Game {
 
   bool Ui::onWindowResizeEvent(const WindowResizeEvent& event) {
     auto[width, height] = event.getSize();
-    mCamera.setProjection(0.0f, (f32)width, (f32)height, 0.0f);
+    mConfig.window.size = { (f32)width, (f32)height };
+    mCamera.setProjection(0.0f, (f32)width, 0.0f, (f32)height);
     return false;
   }
 

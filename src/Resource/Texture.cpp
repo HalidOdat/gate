@@ -28,7 +28,7 @@ namespace Game {
     // set the texture wrapping/filtering options (on the currently bound texture object)
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));	
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST));
+    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear ? GL_LINEAR : GL_NEAREST));
 
     GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes));
@@ -61,8 +61,9 @@ namespace Game {
   }
 
   void Texture2D::bind(const usize slot) const {
+    // TODO: debug check if max texture slot reached
     u32 textureId = this->getData().id;
-    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0 + slot));
+    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0 + (GLenum)slot));
     GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureId));
   }
 

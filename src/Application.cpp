@@ -62,7 +62,10 @@ namespace Game {
 
       Timestep::timestep = dt;
       this->layerStack.onUpdate(dt);
+      
+      this->ui->prepareFrame();
       this->layerStack.onUiRender(*this->ui);
+      this->ui->endFrame();
 
       this->window->update();
     }

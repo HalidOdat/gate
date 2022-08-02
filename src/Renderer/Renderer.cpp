@@ -69,10 +69,10 @@ namespace Game {
     static constexpr const u32 INDEX_BUFFER_COUNT      = MAX * INDICES_COUNT;
 
     static constexpr const std::array<Vec4, 4> position = {
-      Vec4{  1.0f,  1.0f, 0.0f, 1.0f }, // top    right
-		  Vec4{  1.0f,  0.0f, 0.0f, 1.0f }, // bottom right
-		  Vec4{  0.0f,  0.0f, 0.0f, 1.0f }, // bottom left
-		  Vec4{  0.0f,  1.0f, 0.0f, 1.0f }, // top    left 
+      Vec4{ 1.0f,  1.0f, 0.0f, 1.0f }, // top    right
+		  Vec4{ 1.0f,  0.0f, 0.0f, 1.0f }, // bottom right
+		  Vec4{ 0.0f,  0.0f, 0.0f, 1.0f }, // bottom left
+		  Vec4{ 0.0f,  1.0f, 0.0f, 1.0f }, // top    left 
     };
   };
 
@@ -91,9 +91,33 @@ namespace Game {
 
   static RendererData* renderer;
 
+  void Renderer::enableBlending(bool yes) {
+    if (yes) {
+      glEnable(GL_BLEND);
+    } else {
+      glDisable(GL_BLEND);
+    }
+  }
+
+  void Renderer::enableDepthTest(bool yes) {
+    if (yes) {
+      glEnable(GL_DEPTH_TEST);
+    } else {
+      glDisable(GL_DEPTH_TEST);
+    }
+  }
+
+  void Renderer::enableCullFace(bool yes) {
+    if (yes) {
+      glEnable(GL_CULL_FACE);
+    } else {
+      glDisable(GL_CULL_FACE);
+    }
+  }
+
   void Renderer::Initialize() {
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -261,7 +285,7 @@ namespace Game {
   }
 
   void Renderer::drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color) {
-    Renderer::drawText(text, Vec3(position, 0.0f), {size - size/8.0f, size}, color);
+    Renderer::drawText(text, Vec3(position, 0.1f), {size - size/8.0f, size}, color);
   }
 
   void Renderer::drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color) {

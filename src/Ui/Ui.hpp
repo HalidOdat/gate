@@ -10,7 +10,9 @@
 #include "Resource/Manager.hpp"
 
 namespace Game {
-  
+
+  class Application;
+
   class Ui {
   public:
     struct Config {
@@ -27,13 +29,23 @@ namespace Game {
         Vec3 active   = { 0.25f, 0.25f, 0.25f };
       };
 
+      struct Text {
+        Vec3 color = Vec3(1.0f, 1.0f, 1.0f);
+      };
+
       struct Button {
         Margin margin;
         Color color;
         Vec2 size { 80, 20 };
+        Text text;
       };
 
-      Button  button;
+      struct Window {
+        Vec2 size;
+      };
+
+      Button button;
+      Window window;
     };
 
     class Layout {
@@ -78,6 +90,13 @@ namespace Game {
     bool onMouseButtonPressedEvent(const MouseButtonPressedEvent& event);
     bool onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event);
 
+    void prepareFrame();
+    void endFrame();
+
+  private:
+    void drawQuad(Vec2 position, Vec2 size, Vec3 color);
+    void drawText(const StringView& text, Vec2 position, f32 size, Vec3 color = Vec3(1.0f, 1.0f, 1.0f));
+
   private:
     OrthographicCamera mCamera;
 
@@ -92,6 +111,10 @@ namespace Game {
     std::vector<Layout> layouts;
 
     Config mConfig;
+
+    f32 mLayerOffset = 1.0f;
+
+    friend class Application;
   };
 
 } // namespace Game
