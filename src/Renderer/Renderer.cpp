@@ -81,15 +81,39 @@ namespace Game {
     std::array<Vec4, 96> coords;
   };
 
+  struct RenderUnit {
+    using InitFn = auto(*)(Shader& shader) -> void;
+
+    Shader shader;
+    Mesh   mesh;
+    Material material;
+
+    Mat4 modelMatrix;
+    Mat3 normalMatrix;
+
+    InitFn init;
+  };
+
+  struct RenderPipeline {
+    Mat4 projectionMatrix;
+    Mat4 viewMatrix;
+
+    std::vector<RenderUnit> units;
+  };
+
   struct RendererData {
     Mat4 projectionViewMatrix;
     Mat4 projectionMatrix;
     Mat4 ViewMatrix;
 
+    // TODO: Make accessor for this texture in ResourceManager
     Texture2D whiteTexture;
     QuadBatch quad;
 
     FontData font;
+
+    // 3D stuff
+    RenderPipeline pipeline;
   };
 
   static RendererData* renderer;
@@ -118,7 +142,7 @@ namespace Game {
     }
   }
 
-  void Renderer::Initialize() {
+  void Renderer::initialize() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
@@ -204,7 +228,7 @@ namespace Game {
     }
   }
 
-  void Renderer::Shutdown() {
+  void Renderer::shutdown() {
     delete renderer;
     renderer = nullptr;
   }
@@ -215,53 +239,49 @@ namespace Game {
     renderer->ViewMatrix           = camera.getViewMatrix();
   }
 
-  void Renderer::submit(Shader& shader, const Mesh& mesh, const Mat4& transform) {
-    shader.bind();
-    
-    shader.setMat4("uProjectionMatrix", renderer->projectionMatrix);
-    shader.setMat4("uViewMatrix", renderer->ViewMatrix);
-    shader.setMat4("uModelMatrix", transform);
-    shader.setMat3("uNormalMatrix", Mat3(glm::transpose(glm::inverse(transform)))); // mat3(transpose(inverse(uModelMatrix)))
-    
-    u32 i = 0;
-    for (auto& data : mesh.getMaterialData()) {
-      data.texture.bind(i);
+  void Renderer::begin3D(const Camera& camera) {
+    renderer->pipeline.projectionMatrix     = camera.getProjectionMatrix();
+    renderer->pipeline.viewMatrix           = camera.getViewMatrix();
+  }
 
-      switch (data.type) {
-        case Mesh::MaterialData::Type::Diffuse:
-          shader.setInt("uMatrial.diffuse", i);
-          break;
-        case Mesh::MaterialData::Type::Specular:
-          shader.setInt("uMatrial.specular", i);
-          break;
-        case Mesh::MaterialData::Type::Emission:
-          shader.setInt("uMatrial.emission", i);
-          break;
-      default:
-        GAME_UNREACHABLE("Unknown material data type!");
-        break;
-      }
-      i++;
+  void Renderer::submit(Shader& shader, const Mesh& mesh, const Material& material, const Mat4& transform) {
+    RenderUnit unit {
+      shader,
+      mesh,
+      material,
+      transform,
+      Mat3(glm::transpose(glm::inverse(transform))),
+    };
+    renderer->pipeline.units.push_back(unit);
+  }
+
+  void Renderer::waitAndRender() {
+    for (auto& unit : renderer->pipeline.units) {
+      unit.shader.bind();
+      unit.shader.setMat4("uProjectionMatrix", renderer->pipeline.projectionMatrix);
+      unit.shader.setMat4("uViewMatrix", renderer->pipeline.viewMatrix);
+
+      unit.shader.setMat4("uModelMatrix", unit.modelMatrix);
+      unit.shader.setMat3("uNormalMatrix", unit.normalMatrix);
+
+      // TODO: Make this more dynamic
+      unit.material.getDiffuseMap().bind(0);
+      unit.material.getSpecularMap().bind(1);
+      unit.material.getEmissionMap().bind(2);
+
+      unit.shader.setInt("uMaterial.diffuse",  0);
+      unit.shader.setInt("uMaterial.specular", 1);
+      unit.shader.setInt("uMaterial.emission", 2);
+
+      unit.shader.setFloat("uMaterial.shininess", unit.material.getShininess());
+
+      auto vao = unit.mesh.getVertexArray();
+      vao->bind();
+      vao->drawIndices();
+      vao->unbind();
     }
 
-    auto vao = mesh.getVertexArray();
-    vao->bind();
-    vao->drawIndices();
-    vao->unbind();
-  }
-
-  void Renderer::submit(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture) {
-    GAME_TODO("Not finished!");
-    shader->bind();
-    shader->setMat4("uProjectionView", renderer->projectionViewMatrix);
-
-    texture->bind();
-    vao->bind();
-    vao->drawIndices();
-  }
-
-  void Renderer::render() {
-    GAME_TODO("Not Implemented!");
+    renderer->pipeline.units.clear();
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {

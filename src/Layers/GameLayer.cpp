@@ -17,9 +17,6 @@ namespace Game {
 
   GameLayer::GameLayer()
   : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
-    mTextureDiffuse{ResourceManager::loadTexture("CrateDiffuse.png")},
-    mTextureSpecular{ResourceManager::loadTexture("CrateSpecular.png")},
-    mTextureEmission{ResourceManager::loadTexture("matrix.jpg")},
     mShader{ResourceManager::loadShader("SpotLight.glsl")},
     mCubeMesh{ResourceManager::cubeMesh()}
   {}
@@ -27,9 +24,10 @@ namespace Game {
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
 
-    mCubeMesh.addMaterialData(Mesh::MaterialData::Type::Diffuse, mTextureDiffuse);
-    mCubeMesh.addMaterialData(Mesh::MaterialData::Type::Specular, mTextureSpecular);
-    mCubeMesh.addMaterialData(Mesh::MaterialData::Type::Emission, mTextureEmission);
+    mMaterial.setDiffuseMap(ResourceManager::loadTexture("CrateDiffuse.png"));
+    mMaterial.setSpecularMap(ResourceManager::loadTexture("CrateSpecular.png"));
+    mMaterial.setEmissionMap(ResourceManager::loadTexture("matrix.jpg"));
+    mMaterial.setShininess(32.0f);
   }
 
   void GameLayer::onDetach() {
@@ -50,13 +48,10 @@ namespace Game {
     mShader.setVec3("uLight.ambient", mLight.ambient);
     mShader.setVec3("uLight.diffuse", mLight.diffuse);
     mShader.setVec3("uLight.specular", mLight.specular);
+
     mShader.setFloat("uLight.constant",  1.0f);
     mShader.setFloat("uLight.linear",    0.09f);
     mShader.setFloat("uLight.quadratic", 0.032f);	
-
-    mShader.setFloat("uMaterial.shininess", mMaterial.shininess);
-    mShader.unbind();
-
 
     if (mCaptureCursor) {
       mCameraController.onUpdate(ts);
@@ -75,22 +70,24 @@ namespace Game {
       Vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    Renderer::begin(mCameraController.getCamera());
-    Renderer::drawQuad({4, 4}, {0.5f, 0.5f}, Color::GREEN);
-    Renderer::drawText("A B C D E F G H I J K L M N O P", {-4, -4}, 0.5f);
+    Renderer::begin3D(mCameraController.getCamera());
     for (u32 i = 0; i < mCount && i < 10; i++) {
       Mat4 transform = Mat4(1.0f);
       transform = glm::translate(transform, cubePositions[i]);
       f32 angle = 20.0f * i;
       transform = glm::rotate(transform, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-      Renderer::submit(mShader, mCubeMesh, transform);
+      Renderer::submit(mShader, mCubeMesh, mMaterial, transform);
     }
+    Renderer::end();
+
+    Renderer::begin(mCameraController.getCamera());
+    Renderer::drawText("A B C D E F G H I J K L M N O P", {-4, -4}, 0.5f);
+    Renderer::drawQuad({4, 4}, {0.5f, 0.5f}, Color::GREEN);
     Renderer::end();
   }
 
   void GameLayer::onUiRender(Ui& ui) {
     ui.begin({0, 200});
-      ui.slider(mMaterial.shininess, 0.1f, 128.0f);
       ui.slider(mLight.ambient,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.diffuse,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.specular, Vec3(0.1f), Vec3(1.0f));
@@ -138,32 +135,6 @@ namespace Game {
       mMoveLight = !mMoveLight;
     }
 
-    switch (event.getKey()) {
-      case Key::_1:
-        mMaterial.ambient -= 0.1;
-        break;
-      case Key::_2:
-        mMaterial.ambient += 0.1;
-        break;
-      case Key::_3:
-        mMaterial.diffuse -= 0.1;
-        break;
-      case Key::_4:
-        mMaterial.diffuse += 0.1;
-        break;
-      case Key::_5:
-        mMaterial.specular -= 0.1;
-        break;
-      case Key::_6:
-        mMaterial.specular += 0.1;
-        break;
-      case Key::_7:
-        mMaterial.shininess -= 1;
-        break;
-      case Key::_8:
-        mMaterial.shininess += 1;
-        break;
-    }
     return false;
   }
 

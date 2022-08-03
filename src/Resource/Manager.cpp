@@ -135,7 +135,10 @@ namespace Game {
   }
 
   const Texture2D::Data& ResourceManager::getTextureData(Resource::Id id) {
-    GAME_DEBUG_ASSERT(id.type == Resource::Type::Texture);
+    GAME_DEBUG_ASSERT(id.type == Resource::Type::None || id.type == Resource::Type::Texture);
+    if (id.type == Resource::Type::None) {
+      GAME_TODO("return 'missing texture' texture");
+    }
     return manager.textures[id.index].texture;
   }
 
@@ -159,7 +162,7 @@ namespace Game {
   }
 
   Texture2D ResourceManager::loadTexture(const StringView& filepath, bool linear, bool verticalFlip) {
-    auto path   = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
+    auto path = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
     auto data = Texture2D::create(path, linear, verticalFlip);
 
     // FIXME: Use free list

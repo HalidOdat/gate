@@ -7,6 +7,7 @@
 #include "Resource/Texture.hpp"
 #include "Resource/Mesh.hpp"
 #include "Resource/Shader.hpp"
+#include "Renderer/Material.hpp"
 #include "Renderer/CameraController.hpp"
 #include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"
@@ -14,15 +15,6 @@
 namespace Game {
     
   class GameLayer : public Layer {
-
-    // TODO: Move into a material system
-    struct Material {
-      Vec3 ambient;
-      Vec3 diffuse;
-      Vec3 specular;
-      float shininess;
-    };
-
     struct Light {
       Vec3 position;
 
@@ -47,26 +39,16 @@ namespace Game {
 
   private:
     PerspectiveCameraController mCameraController;
-    Registry mRegistry;
-
-    Texture2D mTextureDiffuse;
-    Texture2D mTextureSpecular;
-    Texture2D mTextureEmission;
-    Vec4 mColor = Vec4(1.0f);
-
     bool mCaptureCursor = false;
+
+    Registry mRegistry;
 
     Shader    mShader;
     Mesh      mCubeMesh;
     u32       mCount = 1;
     bool mMoveLight = true;
 
-    Material mMaterial = {
-      Vec3{1.0f, 0.5f, 0.31f},
-      Vec3{1.0f, 0.5f, 0.31f},
-      Vec3{ 0.5f, 0.5f, 0.5f},
-      32.0f
-    };
+    Material mMaterial;
 
     constexpr static const auto lightColor = Vec3{1.0f, 1.0f, 1.0f};
     Light mLight = {

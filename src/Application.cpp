@@ -25,7 +25,7 @@ namespace Game {
     }
 
     ResourceManager::Initialize();
-    Renderer::Initialize();
+    Renderer::initialize();
 
     this->ui = new Ui(width, height);
 
@@ -43,7 +43,7 @@ namespace Game {
 
     this->layerStack.clear();
     delete this->ui;
-    Renderer::Shutdown();
+    Renderer::shutdown();
     ResourceManager::Shutdown();
     this->window.reset();
 
@@ -62,7 +62,9 @@ namespace Game {
 
       Timestep::timestep = dt;
       this->layerStack.onUpdate(dt);
-      
+
+      Renderer::waitAndRender();
+
       this->ui->prepareFrame();
       this->layerStack.onUiRender(*this->ui);
       this->ui->endFrame();

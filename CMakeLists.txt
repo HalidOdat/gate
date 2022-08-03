@@ -59,6 +59,8 @@ set(Sources
   src/Renderer/Camera.cpp
   src/Renderer/CameraController.hpp
   src/Renderer/CameraController.cpp
+  src/Renderer/Material.hpp
+  src/Renderer/Material.cpp
   src/Renderer/Renderer.hpp
   src/Renderer/Renderer.cpp
 

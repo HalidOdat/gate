@@ -8,6 +8,8 @@ namespace Game {
     friend class ResourceManager;
 
   public:
+    Texture2D() {}
+
     void bind(const usize slot = 0) const;
 
     u32 getId() const;

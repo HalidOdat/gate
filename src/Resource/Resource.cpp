@@ -22,7 +22,7 @@ namespace Game {
 
     ResourceManager::decrementRefCount(this->id);
     ResourceManager::incrementRefCount(other.id);
-    this->id = id;
+    this->id = other.id;
 
     return *this;
   }

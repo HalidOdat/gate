@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "Core/Math.hpp"
 #include "Utils/Color.hpp"
 #include "Resource/Shader.hpp"
@@ -7,6 +9,7 @@
 #include "Resource/Mesh.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Camera.hpp"
+#include "Renderer/Material.hpp"
 
 namespace Game {
   
@@ -23,6 +26,7 @@ namespace Game {
     static void enableCullFace(bool  yes = true);
 
     static void begin(const Camera& camera);
+    static void begin3D(const Camera& camera);
     static void drawQuad(const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawQuad(const Vec3& position,  const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawQuad(const Vec3& position,  const Vec2& size, const Texture2D& texture, const Vec4& color = Color::WHITE);
@@ -33,18 +37,15 @@ namespace Game {
     static void drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE);
 
-    static void submit(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture);
-    static void submit(Shader& shader, const Mesh& mesh, const Mat4& transform = Mat4(1.0f));
-
-    static void render();
+    static void submit(Shader& shader, const Mesh& mesh, const Material& material, const Mat4& transform = Mat4(1.0f));
 
     static void flush();
     static void end();
 
-
   private:
-    static void Initialize();
-    static void Shutdown();
+    static void waitAndRender();
+    static void initialize();
+    static void shutdown();
   };
 
 } // namespace Game
