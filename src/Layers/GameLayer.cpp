@@ -70,7 +70,7 @@ namespace Game {
       Vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    Renderer::begin3D(mCameraController.getCamera());
+    Renderer::begin3D(mCameraController);
     for (u32 i = 0; i < mCount && i < 10; i++) {
       Mat4 transform = Mat4(1.0f);
       transform = glm::translate(transform, cubePositions[i]);
@@ -88,6 +88,7 @@ namespace Game {
 
   void GameLayer::onUiRender(Ui& ui) {
     ui.begin({0, 200});
+      ui.slider(mMaterial.getTransparency(), 0.0f, 1.0f);
       ui.slider(mLight.ambient,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.diffuse,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.specular, Vec3(0.1f), Vec3(1.0f));

@@ -1,5 +1,6 @@
 #include <array>
 #include <cctype>
+#include <algorithm>
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -94,12 +95,20 @@ namespace Game {
     InitFn init;
   };
 
-  struct RenderPipeline {
-    Mat4 projectionMatrix;
-    Mat4 viewMatrix;
+  struct RenderCamera {
+    Mat4 projection;
+    Mat4 view;
+    
+    Vec3 position;
+    Vec3 front;
+  };
 
-    std::vector<RenderUnit> units;
-    std::vector<u32>        opaqueUnitIndices;
+  struct RenderPipeline {
+    RenderCamera camera;
+
+    std::vector<RenderUnit>          units;
+    std::vector<u32>                 opaqueUnitIndices;
+    std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
   };
 
   struct RendererData {
@@ -239,13 +248,20 @@ namespace Game {
     renderer->projectionMatrix     = camera.getProjectionMatrix();
     renderer->ViewMatrix           = camera.getViewMatrix();
   }
-
-  void Renderer::begin3D(const Camera& camera) {
-    renderer->pipeline.projectionMatrix     = camera.getProjectionMatrix();
-    renderer->pipeline.viewMatrix           = camera.getViewMatrix();
+  
+  void Renderer::begin3D(const PerspectiveCameraController& cameraController) {
+    renderer->pipeline.camera.projection = cameraController.getCamera().getProjectionMatrix();
+    renderer->pipeline.camera.view       = cameraController.getCamera().getViewMatrix();
+    renderer->pipeline.camera.position   = cameraController.getPosition();
+    renderer->pipeline.camera.front      = cameraController.getFront();
   }
 
   void Renderer::submit(Shader& shader, const Mesh& mesh, const Material& material, const Mat4& transform) {
+    // Don't render fully transparent objects
+    if (material.getTransparency() == 0.0f) {
+      return;
+    }
+
     u32 index = (u32)renderer->pipeline.units.size();
     RenderUnit unit {
       shader,
@@ -255,39 +271,63 @@ namespace Game {
       Mat3(glm::transpose(glm::inverse(transform))),
     };
     renderer->pipeline.units.push_back(unit);
-    renderer->pipeline.opaqueUnitIndices.emplace_back(index);
+    if (!material.hasTransparency()) {
+      renderer->pipeline.opaqueUnitIndices.emplace_back(index);
+    } else {
+      Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
+      f32 distance = glm::length(position - renderer->pipeline.camera.position);
+      renderer->pipeline.transparentUnitIndices.push_back(std::pair(distance, index));
+    }
+  }
+
+  void renderUnit(u32 unitIndex) {
+    RenderUnit& unit = renderer->pipeline.units[unitIndex];
+
+    unit.shader.bind();
+    unit.shader.setMat4("uProjectionMatrix", renderer->pipeline.camera.projection);
+    unit.shader.setMat4("uViewMatrix", renderer->pipeline.camera.view);
+
+    unit.shader.setMat4("uModelMatrix", unit.modelMatrix);
+    unit.shader.setMat3("uNormalMatrix", unit.normalMatrix);
+
+    // TODO: Make this more dynamic
+    unit.material.getDiffuseMap().bind(0);
+    unit.material.getSpecularMap().bind(1);
+    unit.material.getEmissionMap().bind(2);
+
+    unit.shader.setInt("uMaterial.diffuse",  0);
+    unit.shader.setInt("uMaterial.specular", 1);
+    unit.shader.setInt("uMaterial.emission", 2);
+
+    unit.shader.setFloat("uMaterial.shininess", unit.material.getShininess());
+    unit.shader.setFloat("uMaterial.transparency", unit.material.getTransparency());
+
+    auto vao = unit.mesh.getVertexArray();
+    vao->bind();
+    vao->drawIndices();
+    vao->unbind();
   }
 
   void Renderer::waitAndRender() {
     for (auto& index : renderer->pipeline.opaqueUnitIndices) {
-      RenderUnit& unit = renderer->pipeline.units[index];
+      renderUnit(index);
+    }
 
-      unit.shader.bind();
-      unit.shader.setMat4("uProjectionMatrix", renderer->pipeline.projectionMatrix);
-      unit.shader.setMat4("uViewMatrix", renderer->pipeline.viewMatrix);
+    std::sort(
+      renderer->pipeline.transparentUnitIndices.begin(),
+      renderer->pipeline.transparentUnitIndices.end(),
+      [](auto& a, auto& b) {
+        return a.first > b.first;
+      }
+    );
 
-      unit.shader.setMat4("uModelMatrix", unit.modelMatrix);
-      unit.shader.setMat3("uNormalMatrix", unit.normalMatrix);
-
-      // TODO: Make this more dynamic
-      unit.material.getDiffuseMap().bind(0);
-      unit.material.getSpecularMap().bind(1);
-      unit.material.getEmissionMap().bind(2);
-
-      unit.shader.setInt("uMaterial.diffuse",  0);
-      unit.shader.setInt("uMaterial.specular", 1);
-      unit.shader.setInt("uMaterial.emission", 2);
-
-      unit.shader.setFloat("uMaterial.shininess", unit.material.getShininess());
-
-      auto vao = unit.mesh.getVertexArray();
-      vao->bind();
-      vao->drawIndices();
-      vao->unbind();
+    for (auto& unitIndex : renderer->pipeline.transparentUnitIndices) {
+      renderUnit(unitIndex.second);
     }
 
     renderer->pipeline.units.clear();
     renderer->pipeline.opaqueUnitIndices.clear();
+    renderer->pipeline.transparentUnitIndices.clear();
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {

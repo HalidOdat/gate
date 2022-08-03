@@ -31,6 +31,7 @@ struct Material {
   sampler2D specular;
   sampler2D emission;
   float     shininess;
+  float     transparency;
 };
 
 struct Light {
@@ -95,5 +96,5 @@ void main() {
   //emission *= attenuation;
 
   vec3 result = ambient + diffuse + specular; // + emission
-  vFragmentColor = vec4(result, 1.0);
+  vFragmentColor = vec4(result, uMaterial.transparency);
 }

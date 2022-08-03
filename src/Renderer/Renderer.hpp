@@ -8,8 +8,8 @@
 #include "Resource/Texture.hpp"
 #include "Resource/Mesh.hpp"
 #include "Renderer/VertexArray.hpp"
-#include "Renderer/Camera.hpp"
 #include "Renderer/Material.hpp"
+#include "Renderer/CameraController.hpp"
 
 namespace Game {
   
@@ -26,7 +26,7 @@ namespace Game {
     static void enableCullFace(bool  yes = true);
 
     static void begin(const Camera& camera);
-    static void begin3D(const Camera& camera);
+    static void begin3D(const PerspectiveCameraController& cameraController);
     static void drawQuad(const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawQuad(const Vec3& position,  const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawQuad(const Vec3& position,  const Vec2& size, const Texture2D& texture, const Vec4& color = Color::WHITE);
