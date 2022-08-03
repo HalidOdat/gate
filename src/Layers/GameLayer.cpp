@@ -26,6 +26,10 @@ namespace Game {
 
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
+
+    mCubeMesh.addMaterialData(Mesh::MaterialData::Type::Diffuse, mTextureDiffuse);
+    mCubeMesh.addMaterialData(Mesh::MaterialData::Type::Specular, mTextureSpecular);
+    mCubeMesh.addMaterialData(Mesh::MaterialData::Type::Emission, mTextureEmission);
   }
 
   void GameLayer::onDetach() {
@@ -49,15 +53,7 @@ namespace Game {
     mShader.setFloat("uLight.constant",  1.0f);
     mShader.setFloat("uLight.linear",    0.09f);
     mShader.setFloat("uLight.quadratic", 0.032f);	
-    
-    // mShader.setVec3("uMaterial.ambient", mMaterial.ambient);
-    mTextureDiffuse.bind(0);
-    mTextureSpecular.bind(1);
-    mTextureEmission.bind(2);
 
-    mShader.setInt("uMaterial.diffuse", 0);
-    mShader.setInt("uMaterial.specular", 1);
-    mShader.setInt("uMaterial.emission", 2);
     mShader.setFloat("uMaterial.shininess", mMaterial.shininess);
     mShader.unbind();
 
@@ -87,7 +83,7 @@ namespace Game {
       transform = glm::translate(transform, cubePositions[i]);
       f32 angle = 20.0f * i;
       transform = glm::rotate(transform, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-      Renderer::draw(mShader, mCubeMesh, mTextureDiffuse, transform);
+      Renderer::draw(mShader, mCubeMesh, transform);
     }
     Renderer::end();
   }

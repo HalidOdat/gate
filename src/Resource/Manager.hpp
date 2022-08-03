@@ -26,7 +26,7 @@ namespace Game {
   public:
     static const Texture2D::Data& getTextureData(Resource::Id id);
     static const Shader::Data&    getShaderData(Resource::Id id);
-    static const Mesh::Data&      getMeshData(Resource::Id id);
+    static       Mesh::Data&      getMeshData(Resource::Id id);
 
   private:
     static void Initialize();

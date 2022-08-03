@@ -105,6 +105,15 @@ namespace Game {
   }
 
   void ResourceManager::Shutdown() {
+    for (usize i = 0; i < manager.meshes.size(); ++i) {
+      if (manager.meshes[i].refcount != CELL_OCCUPIED) {
+        Logger::trace("ResourceManager: Mesh(%u) destroyed!", i);
+        Mesh::destroy(manager.meshes[i].data);
+      }
+    }
+    manager.meshes.clear();
+    manager.meshesFreeList.clear();
+    
     for (usize i = 0; i < manager.textures.size(); ++i) {
       if (manager.textures[i].refcount != CELL_OCCUPIED) {
         Logger::trace("ResourceManager: Texture(%u) destroyed!", manager.textures[i].texture.id);
@@ -122,15 +131,6 @@ namespace Game {
     }
     manager.shaders.clear();
     manager.shadersFreeList.clear();
-
-    for (usize i = 0; i < manager.meshes.size(); ++i) {
-      if (manager.meshes[i].refcount != CELL_OCCUPIED) {
-        Logger::trace("ResourceManager: Mesh(%u) destroyed!", i);
-        Mesh::destroy(manager.meshes[i].data);
-      }
-    }
-    manager.meshes.clear();
-    manager.meshesFreeList.clear();
     Logger::info("ResourceManager: Shutdown!");
   }
 
@@ -144,7 +144,7 @@ namespace Game {
     return manager.shaders[id.index].shader;
   }
 
-  const Mesh::Data& ResourceManager::getMeshData(Resource::Id id) {
+  Mesh::Data& ResourceManager::getMeshData(Resource::Id id) {
     GAME_DEBUG_ASSERT(id.type == Resource::Type::Mesh);
     return manager.meshes[id.index].data;
   }

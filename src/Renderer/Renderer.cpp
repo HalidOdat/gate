@@ -215,15 +215,34 @@ namespace Game {
     renderer->ViewMatrix           = camera.getViewMatrix();
   }
 
-  void Renderer::draw(Shader& shader, const Mesh& mesh, const Texture2D& texture, const Mat4& transform) {
-    texture.bind(0);
+  void Renderer::draw(Shader& shader, const Mesh& mesh, const Mat4& transform) {
     shader.bind();
     
     shader.setMat4("uProjectionMatrix", renderer->projectionMatrix);
     shader.setMat4("uViewMatrix", renderer->ViewMatrix);
     shader.setMat4("uModelMatrix", transform);
     shader.setMat3("uNormalMatrix", Mat3(glm::transpose(glm::inverse(transform)))); // mat3(transpose(inverse(uModelMatrix)))
-    shader.setInt("uTexture", 0);
+    
+    u32 i = 0;
+    for (auto& data : mesh.getMaterialData()) {
+      data.texture.bind(i);
+
+      switch (data.type) {
+        case Mesh::MaterialData::Type::Diffuse:
+          shader.setInt("uMatrial.diffuse", i);
+          break;
+        case Mesh::MaterialData::Type::Specular:
+          shader.setInt("uMatrial.specular", i);
+          break;
+        case Mesh::MaterialData::Type::Emission:
+          shader.setInt("uMatrial.emission", i);
+          break;
+      default:
+        GAME_UNREACHABLE("Unknown material data type!");
+        break;
+      }
+      i++;
+    }
 
     auto vao = mesh.getVertexArray();
     vao->bind();

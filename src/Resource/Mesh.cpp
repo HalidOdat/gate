@@ -128,11 +128,23 @@ namespace Game {
     return {vao, vbo, ibo};
   }
 
+  const std::vector<Mesh::MaterialData>& Mesh::getMaterialData() const {
+    return getData().material;
+  }
+
+  void Mesh::addMaterialData(MaterialData::Type type, Texture2D texture) {
+    ResourceManager::getMeshData(id).material.push_back(MaterialData{type, texture});
+  }
+
   void Mesh::destroy(Data& data) {
     // do nothing...
   }
 
   const Mesh::Data& Mesh::getData() const {
+    return ResourceManager::getMeshData(id);
+  }
+
+  Mesh::Data& Mesh::getData() {
     return ResourceManager::getMeshData(id);
   }
 
