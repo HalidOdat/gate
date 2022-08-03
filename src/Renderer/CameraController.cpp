@@ -124,9 +124,9 @@ namespace Game {
 
   bool PerspectiveCameraController::onMouseMoveEvent(const MouseMoveEvent& event) {
     auto[x, y] = event.getPosition();
-    if (mFristMove) {
+    if (mFirstMove) {
       mLastMousePosition = {x, y};
-      mFristMove = false;
+      mFirstMove = false;
     }
 
     const auto ts = Timestep::get();

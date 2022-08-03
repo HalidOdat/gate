@@ -63,6 +63,8 @@ namespace Game {
     void setPosition(const Vec3 position);
     void offsetPosition(const Vec3 offset);
 
+    inline void resetLastPosition() { mFirstMove = true; }
+
     void resize(u32 width, u32 height);
     void onUpdate(Timestep ts);
 
@@ -93,7 +95,7 @@ namespace Game {
     f32 mZoomLevel = 45.0f;
     f32 mMovmentSpeed = 6.5f;
     f32 mMouseSensitivity = 15.0f;
-    bool mFristMove = true;
+    bool mFirstMove = true;
     Vec2 mLastMousePosition;
 
     PerspectiveCamera mCamera;

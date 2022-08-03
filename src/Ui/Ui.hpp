@@ -43,7 +43,7 @@ namespace Game {
       struct Slider {
         Margin margin;
         Color color;
-        Vec2 size { 120, 20 };
+        Vec2 size { 100, 20 };
         Text text;
       };
 

@@ -215,7 +215,7 @@ namespace Game {
     renderer->ViewMatrix           = camera.getViewMatrix();
   }
 
-  void Renderer::draw(Shader& shader, const Mesh& mesh, const Mat4& transform) {
+  void Renderer::submit(Shader& shader, const Mesh& mesh, const Mat4& transform) {
     shader.bind();
     
     shader.setMat4("uProjectionMatrix", renderer->projectionMatrix);
@@ -250,13 +250,18 @@ namespace Game {
     vao->unbind();
   }
 
-  void Renderer::draw(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture) {
+  void Renderer::submit(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture) {
+    GAME_TODO("Not finished!");
     shader->bind();
     shader->setMat4("uProjectionView", renderer->projectionViewMatrix);
 
     texture->bind();
     vao->bind();
     vao->drawIndices();
+  }
+
+  void Renderer::render() {
+    GAME_TODO("Not Implemented!");
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {

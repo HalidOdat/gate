@@ -83,7 +83,7 @@ namespace Game {
       transform = glm::translate(transform, cubePositions[i]);
       f32 angle = 20.0f * i;
       transform = glm::rotate(transform, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-      Renderer::draw(mShader, mCubeMesh, transform);
+      Renderer::submit(mShader, mCubeMesh, transform);
     }
     Renderer::end();
   }
@@ -120,6 +120,7 @@ namespace Game {
       case Key::C:
         Application::getWindow().enableCursor(mCaptureCursor);
         mCaptureCursor = !mCaptureCursor;
+        mCameraController.resetLastPosition();
         break;
       case Key::Escape:
         Application::get().quit();

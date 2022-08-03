@@ -33,8 +33,10 @@ namespace Game {
     static void drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE);
 
-    static void draw(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture);
-    static void draw(Shader& shader, const Mesh& mesh, const Mat4& transform = Mat4(1.0f));
+    static void submit(const Ref<Shader>& shader, const Ref<VertexArray>& vao, const Ref<Texture2D>& texture);
+    static void submit(Shader& shader, const Mesh& mesh, const Mat4& transform = Mat4(1.0f));
+
+    static void render();
 
     static void flush();
     static void end();
