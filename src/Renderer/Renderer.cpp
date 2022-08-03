@@ -99,6 +99,7 @@ namespace Game {
     Mat4 viewMatrix;
 
     std::vector<RenderUnit> units;
+    std::vector<u32>        opaqueUnitIndices;
   };
 
   struct RendererData {
@@ -245,6 +246,7 @@ namespace Game {
   }
 
   void Renderer::submit(Shader& shader, const Mesh& mesh, const Material& material, const Mat4& transform) {
+    u32 index = (u32)renderer->pipeline.units.size();
     RenderUnit unit {
       shader,
       mesh,
@@ -253,10 +255,13 @@ namespace Game {
       Mat3(glm::transpose(glm::inverse(transform))),
     };
     renderer->pipeline.units.push_back(unit);
+    renderer->pipeline.opaqueUnitIndices.emplace_back(index);
   }
 
   void Renderer::waitAndRender() {
-    for (auto& unit : renderer->pipeline.units) {
+    for (auto& index : renderer->pipeline.opaqueUnitIndices) {
+      RenderUnit& unit = renderer->pipeline.units[index];
+
       unit.shader.bind();
       unit.shader.setMat4("uProjectionMatrix", renderer->pipeline.projectionMatrix);
       unit.shader.setMat4("uViewMatrix", renderer->pipeline.viewMatrix);
@@ -282,6 +287,7 @@ namespace Game {
     }
 
     renderer->pipeline.units.clear();
+    renderer->pipeline.opaqueUnitIndices.clear();
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
