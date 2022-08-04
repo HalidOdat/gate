@@ -275,6 +275,10 @@ namespace Game {
     renderer = nullptr;
   }
 
+  void Renderer::invalidate(u32 width, u32 height) {
+    renderer->pipeline.frameBuffer->invalidate(width, height);
+  }
+
   void Renderer::begin(const Camera& camera) {
     renderer->projectionViewMatrix = camera.getProjectionViewMatrix();
     renderer->projectionMatrix     = camera.getProjectionMatrix();

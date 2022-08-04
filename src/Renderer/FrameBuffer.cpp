@@ -9,7 +9,18 @@ namespace Game {
     return Ref<FrameBuffer>(new FrameBuffer(width, height));
   }
 
-  FrameBuffer::FrameBuffer(u32 width, u32 height) {
+  FrameBuffer::FrameBuffer(u32 width, u32 height)
+    : mId{0}
+  {
+    invalidate(width, height);
+  }
+
+  void FrameBuffer::invalidate(u32 width, u32 height) {
+    if (mId != 0) {
+      destroy();
+      mId = 0;
+    }
+
     // Create and bind
     GAME_GL_CHECK(glGenFramebuffers(1, &mId));
     GAME_GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mId));
@@ -39,10 +50,6 @@ namespace Game {
 
     // unbind framebuffer
     GAME_GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-  }
-
-  void FrameBuffer::invalidate(u32 width, u32 height) {
-    GAME_TODO("not implemented");    
   }
 
   void FrameBuffer::destroy() {

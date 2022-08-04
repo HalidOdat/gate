@@ -93,6 +93,7 @@ namespace Game {
 
   bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
     glViewport(0, 0, event.getWidth(), event.getHeight());
+    Renderer::invalidate(event.getWidth(), event.getHeight());
     return false;
   }
 

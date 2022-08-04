@@ -44,6 +44,7 @@ namespace Game {
     static void waitAndRender();
     static void initialize();
     static void shutdown();
+    static void invalidate(u32 width, u32 height);
   };
 
 } // namespace Game
