@@ -76,11 +76,11 @@ namespace Game {
   }
 
   void Ui::drawQuad(Vec2 position, Vec2 size, Vec3 color) {
-    Renderer::drawQuad(Vec3(position.x, mConfig.window.size.y - position.y, 0.0f), {size.x, -size.y}, Vec4(color, 1.0f));
+    Renderer::drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, Vec4(color, 1.0f));
   }
 
   void Ui::drawText(const StringView& text, Vec2 position, f32 size, Vec3 color) {
-    Renderer::drawText(text, Vec3(position.x, mConfig.window.size.y - position.y, 0.0f), size, Vec4(color, 1.0f));
+    Renderer::drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
   }
 
   void Ui::begin(const Vec2& position, f32 padding) {

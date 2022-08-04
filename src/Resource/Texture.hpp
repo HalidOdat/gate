@@ -4,11 +4,10 @@
 
 namespace Game {
 
-  class Texture2D : public Resource {
-    friend class ResourceManager;
-
+  class Texture2D {
   public:
-    Texture2D() {}
+    DISALLOW_MOVE_AND_COPY(Texture2D);
+    ~Texture2D();
 
     void bind(const usize slot = 0) const;
 
@@ -23,18 +22,18 @@ namespace Game {
       u32 height;
     };
 
-  private:
-    Texture2D(Resource::Id id)
-      : Resource(id)
+    Texture2D(Data data)
+      : mData{data}
     {}
 
   private:
-    const Data& getData() const;
-
     static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
     static Data create(const StringView& filepath, bool linear = false, bool verticalFlip = true);
 
-    static void destroy(Data& data);
+  private:
+    Data mData;
+
+    friend class ResourceManager;
   };
 
 } // namespace Game

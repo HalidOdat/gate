@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 
+#include <string>
 #include <string_view>
 #include <memory>
 
@@ -47,6 +48,7 @@ namespace Game {
     }
   };
 
+  using String     = std::string;
   using StringView = std::string_view;
 
   template<typename T>

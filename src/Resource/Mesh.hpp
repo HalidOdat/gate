@@ -10,7 +10,7 @@
 
 namespace Game {
 
-  class Mesh : public Resource {
+  class Mesh {
   public:
     struct MaterialData {
       enum class Type {
@@ -20,14 +20,15 @@ namespace Game {
       };
 
       Type type;
-      Texture2D texture;
+      Resource<Texture2D> texture;
     };
 
   public:
+    DISALLOW_MOVE_AND_COPY(Mesh);
     const Ref<VertexArray> getVertexArray() const;
 
     const std::vector<MaterialData>& getMaterialData() const;
-    void addMaterialData(MaterialData::Type type, Texture2D textue);
+    void addMaterialData(MaterialData::Type type, Resource<Texture2D> textue);
 
   public:
     struct Data {
@@ -37,24 +38,22 @@ namespace Game {
       std::vector<MaterialData> material;
     };
 
+    Mesh(Data data)
+      : mData(std::move(data))
+    {}
+
   private:
     enum class FileFormat {
       Obj,
     };
 
   private:
-    Mesh(Resource::Id id)
-      : Resource(id)
-    {}
-
-    const Data& getData() const;
-    Data& getData();
-
     static Data fromFileSource(FileFormat format, const std::string& source);
     static Data fromVertices(const Slice<const void> vertices, const Slice<const u32> indices);
-    static void destroy(Data& data);
 
   private:
+    Data mData;
+
     friend class ResourceManager;
   };
 

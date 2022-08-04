@@ -36,22 +36,22 @@ namespace Game {
   }
 
   void GameLayer::onUpdate(Timestep ts) {
-    mShader.bind();
-    mShader.setVec3("uViewPosition", mCameraController.getPosition());
+    mShader->bind();
+    mShader->setVec3("uViewPosition", mCameraController.getPosition());
     if (mMoveLight) {
-      mShader.setVec3("uLight.position", mCameraController.getPosition());
+      mShader->setVec3("uLight.position", mCameraController.getPosition());
     }
-    mShader.setVec3("uLight.direction", mCameraController.getFront());
-    mShader.setFloat("uLight.cutOff", glm::cos(glm::radians(12.5f)));
-    mShader.setFloat("uLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+    mShader->setVec3("uLight.direction", mCameraController.getFront());
+    mShader->setFloat("uLight.cutOff", glm::cos(glm::radians(12.5f)));
+    mShader->setFloat("uLight.outerCutOff", glm::cos(glm::radians(17.5f)));
 
-    mShader.setVec3("uLight.ambient", mLight.ambient);
-    mShader.setVec3("uLight.diffuse", mLight.diffuse);
-    mShader.setVec3("uLight.specular", mLight.specular);
+    mShader->setVec3("uLight.ambient", mLight.ambient);
+    mShader->setVec3("uLight.diffuse", mLight.diffuse);
+    mShader->setVec3("uLight.specular", mLight.specular);
 
-    mShader.setFloat("uLight.constant",  1.0f);
-    mShader.setFloat("uLight.linear",    0.09f);
-    mShader.setFloat("uLight.quadratic", 0.032f);	
+    mShader->setFloat("uLight.constant",  1.0f);
+    mShader->setFloat("uLight.linear",    0.09f);
+    mShader->setFloat("uLight.quadratic", 0.032f);	
 
     if (mCaptureCursor) {
       mCameraController.onUpdate(ts);

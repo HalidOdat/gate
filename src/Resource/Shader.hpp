@@ -5,7 +5,7 @@
 
 namespace Game {
 
-  class Shader : public Resource {
+  class Shader {
     friend class ResourceManager;
     
   public:
@@ -19,6 +19,9 @@ namespace Game {
     static constexpr const u32 SHADER_TYPE_COUNT = 3;
 
   public:
+    DISALLOW_MOVE_AND_COPY(Shader);
+    ~Shader();
+
     void bind() noexcept;
     void unbind() noexcept;
 
@@ -38,20 +41,20 @@ namespace Game {
     struct Data {
       u32 id;
     };
+
+    Shader(Data data)
+      : mData{data}
+    {}
   
   private:
     static constexpr const u32 NULL_SHADER = 0;
 
   private:
-    Shader(Resource::Id id)
-      : Resource{id}
-    {}
-
     static u32  compile(Type type, const char* source) noexcept;
     static Data create(const StringView& filepath);
-    static void destroy(Data& data);
 
-    const Data& getData() const;
+  private:
+    Data mData;
   };
 
 } // namespace Game

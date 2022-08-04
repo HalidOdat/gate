@@ -24,7 +24,7 @@ namespace Game {
       std::exit(EXIT_FAILURE);
     }
 
-    ResourceManager::Initialize();
+    ResourceManager::initialize();
     Renderer::initialize();
 
     this->ui = new Ui(width, height);
@@ -44,7 +44,7 @@ namespace Game {
     this->layerStack.clear();
     delete this->ui;
     Renderer::shutdown();
-    ResourceManager::Shutdown();
+    ResourceManager::shutdown();
     this->window.reset();
 
     Logger::info("Game Engine Terminated!");

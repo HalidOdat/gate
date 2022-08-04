@@ -52,31 +52,27 @@ namespace Game {
     return result;
   }
 
-  const Texture2D::Data& Texture2D::getData() const {
-    return ResourceManager::getTextureData(this->id);
-  }
-
-  void Texture2D::destroy(Texture2D::Data& data) { 
-    GAME_GL_CHECK(glDeleteTextures(1, &data.id));
+  Texture2D::~Texture2D() {
+    GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
   }
 
   void Texture2D::bind(const usize slot) const {
     // TODO: debug check if max texture slot reached
-    u32 textureId = this->getData().id;
+    u32 textureId = mData.id;
     GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0 + (GLenum)slot));
     GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureId));
   }
 
   u32 Texture2D::getId() const {
-    return this->getData().id;
+    return mData.id;
   }
 
   u32 Texture2D::getWidth() const {
-    return this->getData().width;
+    return mData.width;
   }
 
   u32 Texture2D::getHeight() const {
-    return this->getData().height;
+    return mData.height;
   }
 
 } // namespace Game

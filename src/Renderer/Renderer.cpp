@@ -21,8 +21,8 @@ namespace Game {
     QuadBatch(
       Ref<VertexArray>  vertexArray,
       Ref<VertexBuffer> vertexBuffer,
-      Shader            shader,
-      Texture2D         whiteTexture
+      Resource<Shader>       shader,
+      Resource<Texture2D>    whiteTexture
     )
     : vertexArray{vertexArray},
       vertexBuffer{vertexBuffer},
@@ -55,14 +55,14 @@ namespace Game {
       u32  texIndex;
     };
 
-    Shader            shader;
+    Resource<Shader>       shader;
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray>  vertexArray;
 
     // TODO: Query OpenGL
     static constexpr const u32 MAX_TEXTURES = 32;
 
-    std::vector<Texture2D> textures;
+    std::vector<Resource<Texture2D>> textures;
 
     Vertex* base    = nullptr;
     Vertex* current = nullptr;
@@ -80,16 +80,16 @@ namespace Game {
   };
 
   struct FontData {
-    Texture2D texture;
+    Resource<Texture2D> texture;
     std::array<Vec4, 96> coords;
   };
 
   struct RenderUnit {
     using InitFn = auto(*)(Shader& shader) -> void;
 
-    Shader shader;
-    Mesh   mesh;
-    Material material;
+    Resource<Shader> shader;
+    Resource<Mesh>   mesh;
+    Material    material;
 
     Mat4 modelMatrix;
     Mat3 normalMatrix;
@@ -106,7 +106,7 @@ namespace Game {
   };
 
   struct RenderPipeline {
-    Shader postProcesingShader;
+    Resource<Shader> postProcesingShader;
     RenderCamera camera;
     Ref<FrameBuffer> frameBuffer;
     Ref<VertexArray> quadVertexArray;
@@ -122,7 +122,7 @@ namespace Game {
     Mat4 ViewMatrix;
 
     // TODO: Make accessor for this texture in ResourceManager
-    Texture2D whiteTexture;
+    Resource<Texture2D> whiteTexture;
     QuadBatch quad;
 
     FontData font;
@@ -205,14 +205,14 @@ namespace Game {
     for (u32 i = 0; i < QuadBatch::MAX_TEXTURES; ++i) {
       samples[i] = i;
     }
-    shader.bind();
-    shader.setIntArray("uTextures", samples, QuadBatch::MAX_TEXTURES);
+    shader->bind();
+    shader->setIntArray("uTextures", samples, QuadBatch::MAX_TEXTURES);
 
     auto quad = QuadBatch(vertexArray, vertexBuffer, shader, whiteTexture);
 
     auto fontTexture = ResourceManager::loadTexture("PixelFont_7x9_112x54.png", false);
-    const auto fontTextureWidth  = fontTexture.getWidth();
-    const auto fontTextureHeight = fontTexture.getHeight();
+    const auto fontTextureWidth  = fontTexture->getWidth();
+    const auto fontTextureHeight = fontTexture->getHeight();
     const auto fontCharacterWidth  = 7;
     const auto fontCharacterHeight = 9;
 
@@ -288,7 +288,7 @@ namespace Game {
     renderer->pipeline.camera.front      = cameraController.getFront();
   }
 
-  void Renderer::submit(Shader& shader, const Mesh& mesh, const Material& material, const Mat4& transform) {
+  void Renderer::submit(Resource<Shader>& shader, const Resource<Mesh>& mesh, const Material& material, const Mat4& transform) {
     // Don't render fully transparent objects
     if (material.getTransparency() == 0.0f) {
       return;
@@ -315,26 +315,26 @@ namespace Game {
   void renderUnit(u32 unitIndex) {
     RenderUnit& unit = renderer->pipeline.units[unitIndex];
 
-    unit.shader.bind();
-    unit.shader.setMat4("uProjectionMatrix", renderer->pipeline.camera.projection);
-    unit.shader.setMat4("uViewMatrix", renderer->pipeline.camera.view);
+    unit.shader->bind();
+    unit.shader->setMat4("uProjectionMatrix", renderer->pipeline.camera.projection);
+    unit.shader->setMat4("uViewMatrix", renderer->pipeline.camera.view);
 
-    unit.shader.setMat4("uModelMatrix", unit.modelMatrix);
-    unit.shader.setMat3("uNormalMatrix", unit.normalMatrix);
+    unit.shader->setMat4("uModelMatrix", unit.modelMatrix);
+    unit.shader->setMat3("uNormalMatrix", unit.normalMatrix);
 
     // TODO: Make this more dynamic
-    unit.material.getDiffuseMap().bind(0);
-    unit.material.getSpecularMap().bind(1);
-    unit.material.getEmissionMap().bind(2);
+    unit.material.getDiffuseMap()->bind(0);
+    unit.material.getSpecularMap()->bind(1);
+    unit.material.getEmissionMap()->bind(2);
 
-    unit.shader.setInt("uMaterial.diffuse",  0);
-    unit.shader.setInt("uMaterial.specular", 1);
-    unit.shader.setInt("uMaterial.emission", 2);
+    unit.shader->setInt("uMaterial.diffuse",  0);
+    unit.shader->setInt("uMaterial.specular", 1);
+    unit.shader->setInt("uMaterial.emission", 2);
 
-    unit.shader.setFloat("uMaterial.shininess", unit.material.getShininess());
-    unit.shader.setFloat("uMaterial.transparency", unit.material.getTransparency());
+    unit.shader->setFloat("uMaterial.shininess", unit.material.getShininess());
+    unit.shader->setFloat("uMaterial.transparency", unit.material.getTransparency());
 
-    auto vao = unit.mesh.getVertexArray();
+    auto vao = unit.mesh->getVertexArray();
     vao->bind();
     vao->drawIndices();
     vao->unbind();
@@ -387,12 +387,11 @@ namespace Game {
     u32 texture = renderer->pipeline.frameBuffer->getColorAttachmentId();
     GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
     GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
-    renderer->pipeline.postProcesingShader.bind();
-    renderer->pipeline.postProcesingShader.setInt("uScreenTexture", 0);
+    renderer->pipeline.postProcesingShader->bind();
+    renderer->pipeline.postProcesingShader->setInt("uScreenTexture", 0);
 
     renderer->pipeline.quadVertexArray->bind();
-    // renderer->pipeline.quadVertexArray->drawArrays(6);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    renderer->pipeline.quadVertexArray->drawArrays(6);
     renderer->pipeline.quadVertexArray->unbind();
 
     // Renderer::enableDepthTest(false);
@@ -470,14 +469,14 @@ namespace Game {
     }
   }
 
-  void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Texture2D& texture, const Vec4& color) {
+  void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Resource<Texture2D>& texture, const Vec4& color) {
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, position);
     transform      = glm::scale(transform, Vec3(size, 1.0f));
     Renderer::drawQuad(transform, texture, color);
   }
 
-  void Renderer::drawQuad(const Mat4& transform, const Texture2D& texture, const Vec4& color) {
+  void Renderer::drawQuad(const Mat4& transform, const Resource<Texture2D>& texture, const Vec4& color) {
     if (renderer->quad.count == QuadBatch::MAX) {
       Renderer::flush();
     }
@@ -508,13 +507,13 @@ namespace Game {
 
   void Renderer::flush() {
     if (renderer->quad.count) {
-      renderer->whiteTexture.bind();
+      renderer->whiteTexture->bind();
 
       for (u32 i = 0; i < renderer->quad.textures.size(); ++i) {
-        renderer->quad.textures[i].bind(i);
+        renderer->quad.textures[i]->bind(i);
       }
 
-      renderer->quad.shader.bind();
+      renderer->quad.shader->bind();
 
       renderer->quad.vertexArray->bind();
       renderer->quad.vertexBuffer->set({renderer->quad.base,  renderer->quad.count * QuadBatch::VERTICES_COUNT});

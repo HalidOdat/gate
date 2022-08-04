@@ -4,9 +4,7 @@
 
 #include "Core/Math.hpp"
 #include "Utils/Color.hpp"
-#include "Resource/Shader.hpp"
-#include "Resource/Texture.hpp"
-#include "Resource/Mesh.hpp"
+#include "Resource/Manager.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Material.hpp"
 #include "Renderer/CameraController.hpp"
@@ -29,15 +27,15 @@ namespace Game {
     static void begin3D(const PerspectiveCameraController& cameraController);
     static void drawQuad(const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawQuad(const Vec3& position,  const Vec2& size, const Vec4& color = Color::WHITE);
-    static void drawQuad(const Vec3& position,  const Vec2& size, const Texture2D& texture, const Vec4& color = Color::WHITE);
-    static void drawQuad(const Mat4& transform, const Texture2D& texture, const Vec4& color = Color::WHITE);
+    static void drawQuad(const Vec3& position,  const Vec2& size, const Resource<Texture2D>& texture, const Vec4& color = Color::WHITE);
+    static void drawQuad(const Mat4& transform, const Resource<Texture2D>& texture, const Vec4& color = Color::WHITE);
 
     static void drawChar(char c, const Vec3& position,  const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawChar(char c, const Mat4& transform, const Vec4& color = Color::WHITE);
     static void drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color = Color::WHITE);
     static void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE);
 
-    static void submit(Shader& shader, const Mesh& mesh, const Material& material, const Mat4& transform = Mat4(1.0f));
+    static void submit(Resource<Shader>& shader, const Resource<Mesh>& mesh, const Material& material, const Mat4& transform = Mat4(1.0f));
 
     static void flush();
     static void end();
