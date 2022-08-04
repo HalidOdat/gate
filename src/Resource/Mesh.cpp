@@ -95,8 +95,14 @@ namespace Game {
     }
   }
 
-  Mesh::Data Mesh::fromFileSource(FileFormat format, const std::string& source) {
-    auto[vertices, indices] = parseObjFile(*fileToString(source));
+  Option<Mesh::Data> Mesh::fromFile(const std::string& file) {
+    FileFormat format = FileFormat::Obj;
+    auto source = fileToString(file);
+    if (!source) {
+      return None;
+    }
+
+    auto[vertices, indices] = parseObjFile(*source);
     auto vao = VertexArray::create();
     auto vbo = VertexBuffer::create({vertices.data(), vertices.size()});
     vbo->setLayout({
@@ -109,7 +115,7 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return {vao, vbo, ibo};
+    return Data{vao, vbo, ibo, {}, file};
   }
 
   Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
@@ -126,6 +132,21 @@ namespace Game {
     vao->unbind();
 
     return {vao, vbo, ibo};
+  }
+
+  bool Mesh::reload() {
+    if (!mData.filePath.has_value()) {
+      return false;
+    }
+
+    auto data = Mesh::fromFile(*mData.filePath);
+    if (data) {
+      Logger::trace("Reloaded mesh: %s", mData.filePath.value().c_str());
+      mData = *data;
+      return true;
+    }
+
+    return false;
   }
 
   const std::vector<Mesh::MaterialData>& Mesh::getMaterialData() const {

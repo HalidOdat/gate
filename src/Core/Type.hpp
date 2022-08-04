@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <memory>
+#include <optional>
 
 namespace Game {
 
@@ -50,6 +51,10 @@ namespace Game {
 
   using String     = std::string;
   using StringView = std::string_view;
+
+  template<typename T>
+  using Option     = std::optional<T>;
+  static constexpr const std::nullopt_t None = std::nullopt;
 
   template<typename T>
   class Slice {

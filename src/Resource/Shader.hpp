@@ -27,6 +27,8 @@ namespace Game {
     void bind() noexcept;
     void unbind() noexcept;
 
+    bool reload();
+
     void setFloat(StringView name, const f32 value);
     void setVec2(StringView name,  const Vec2& value);
     void setVec3(StringView name,  const Vec3& value);
@@ -40,8 +42,11 @@ namespace Game {
     void setUintArray(StringView name, const u32* value, u32 count);
 
   public:
+    static constexpr const bool hasMissingDataPlaceholder = false;
+
     struct Data {
       u32 id;
+      Option<String> filePath;
     };
 
     Shader(Data data)
@@ -52,8 +57,8 @@ namespace Game {
     static constexpr const u32 NULL_SHADER = 0;
 
   private:
+    static Option<Data> fromFile(const StringView& filepath);
     static u32  compile(Type type, const char* source) noexcept;
-    static Data create(const StringView& filepath);
 
   private:
     Data mData;

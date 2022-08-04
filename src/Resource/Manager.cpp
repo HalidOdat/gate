@@ -13,31 +13,6 @@ namespace Game {
 
   ResourceManager ResourceManager::sInstance;
 
-  using Refcount = u32;
-  constexpr const auto CELL_OCCUPIED = 0xFF'FF'FF'FF;
-
-  struct TextureResource {
-    u32             refcount;
-    std::string     path;
-    Texture2D::Data texture;
-  };
-
-  struct ShaderResource {
-    u32          refcount;
-    std::string  path;
-    Shader::Data shader;
-  };
-
-  struct ResourceManagerData {
-    std::vector<TextureResource> textures;
-    std::vector<u32>             texturesFreeList;
-
-    std::vector<ShaderResource>  shaders;
-    std::vector<u32>             shadersFreeList;
-  };
-
-  static ResourceManagerData manager;
-
   void ResourceManager::initialize() {
     Logger::info("ResourceManager: Initialized!");
   }
@@ -49,66 +24,55 @@ namespace Game {
     Logger::info("ResourceManager: Shutdown!");
   }
 
-  Texture2D::Data ResourceManager::generateMissingTexture() {
-    static const u8 defaultTextureData[] = {
-        0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
-        0xFF, 0x00, 0xFF, 0xFF,   0x00, 0x00, 0x00, 0xFF,
-      };
-
-    Texture2D::Specification specification;
-    specification.filtering.mag = Texture::FilteringMode::Nearest;
-    specification.filtering.min = Texture::FilteringMode::Linear;
-    specification.mipmap        = Texture::MipmapMode::Linear;
-
-    return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, specification);
-  }
-
   Texture2D::Handle ResourceManager::loadTexture(const StringView& filepath, Texture2D::Specification specification) {
     auto path = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
-    auto data = Texture2D::create(path, specification);
+    Option<Texture2D::Data> data = Texture2D::fromFile(path, specification);
 
-    if (!data.id) {
+    if (!data) {
       Logger::error("ResourceManager: Couldn't loaded texture: %s", path.c_str());
-      data = ResourceManager::generateMissingTexture();
-      return ResourceManager::getFactory<Texture2D>().emplace(data);
+      data = Texture2D::generateMissingDataPlaceholder();
+      return ResourceManager::getFactory<Texture2D>().emplace(*data);
     }
 
     Logger::info("ResourceManager: Loaded texture: %s", path.c_str());
 
-    return ResourceManager::getFactory<Texture2D>().emplace(data);
+    return ResourceManager::getFactory<Texture2D>().emplace(*data);
   }
 
   Texture2D::Handle ResourceManager::textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Texture2D::Specification specification) {
     auto data  = Texture2D::fromBytes(bytes, width, height, channels, specification);
-    Logger::info("ResourceManager: Loaded texture from memory");
+    Logger::info("ResourceManager: Loaded texture from memory: 0x%x", bytes);
     return ResourceManager::getFactory<Texture2D>().emplace(data);
   }
 
   Shader::Handle ResourceManager::loadShader(const StringView& filepath) {
     auto path   = std::string(SHADER_ASSETS_DIRECTORY) + filepath.data();
-    auto result = Shader::create(path);
+    Option<Shader::Data> result = Shader::fromFile(path);
 
-    if (!result.id) {
-      Logger::info("ResourceManager: Couldn't load shader: %s", path.c_str());
+    if (!result) {
+      Logger::error("ResourceManager: Couldn't load shader: %s", path.c_str());
       GAME_ASSERT(false);
       return Shader::Handle();
     }
 
-    return ResourceManager::getFactory<Shader>().emplace(result);
+    Logger::info("ResourceManager: Loaded shader: %s", path.c_str());
+
+    return ResourceManager::getFactory<Shader>().emplace(*result);
   }
 
   Mesh::Handle ResourceManager::loadMesh(const StringView& filepath) {
     auto path   = std::string(MESH_ASSETS_DIRECTORY) + filepath.data();
-    auto result = Mesh::fromFileSource(Mesh::FileFormat::Obj, path);
+    Option<Mesh::Data> result = Mesh::fromFile(path);
 
-    if (!result.vertexArray) {
-      Logger::info("ResourceManager: Couldn't load mesh: %s", path.c_str());
+    if (!result) {
+      Logger::error("ResourceManager: Couldn't load mesh: %s", path.c_str());
       GAME_ASSERT(false);
       // TODO: Return invalid shader
       return Mesh::Handle();
     }
+    Logger::info("ResourceManager: Loaded mesh: %s", path.c_str());
 
-    return ResourceManager::getFactory<Mesh>().emplace(result);
+    return ResourceManager::getFactory<Mesh>().emplace(*result);
   }
 
   Mesh::Handle ResourceManager::cubeMesh() {
@@ -201,24 +165,10 @@ namespace Game {
       35,
     };
 
+    Logger::info("ResourceManager: Loaded cube mesh");
+
     auto result = Mesh::fromVertices(vertices, indices);
     return ResourceManager::getFactory<Mesh>().emplace(result);
-  }
-
-  // TODO: Check for change in files
-  void ResourceManager::reloadTextures() {
-    Logger::info("ResourceManager: Realoading All Textures");
-    for (auto& texture : manager.textures) {
-      // TODO: implement this
-      // if (!texture.path.empty()) {
-      //   Texture2D::destroy(texture.texture);
-      //   texture.texture = Texture2D::create(texture.path);
-      //   if (texture.texture.id == 0) {
-      //     // TODO: Use a cached texture, instead of creating a new one
-      //     texture.texture = ResourceManager::generateMissingTexture();
-      //   }
-      // }
-    }
   }
 
 } // namespace Game

@@ -84,10 +84,10 @@ namespace Game {
     GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes));
     GAME_GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
 
-    return { texture, width, height };
+    return { texture, width, height, specification };
   }
 
-  Texture2D::Data Texture2D::create(const StringView& filepath, Specification specification) {
+  Option<Texture2D::Data> Texture2D::fromFile(const StringView& filepath, Specification specification) {
     stbi_set_flip_vertically_on_load(specification.verticalFlip == Texture::VerticalFlip::True);
 
     int width, height, channels;
@@ -95,12 +95,44 @@ namespace Game {
         
     if (!data) {
       Logger::error("couldn't load image file '%s'", filepath.data());
-      return {0, 0, 0};
+      return None;
     }
 
-    const auto result = Texture2D::fromBytes(data, width, height, channels, specification);
+    auto result = Texture2D::fromBytes(data, width, height, channels, specification);
+    result.filePath = filepath;
     stbi_image_free(data);
     return result;
+  }
+
+  Texture2D::Data Texture2D::generateMissingDataPlaceholder() {
+    static const u8 defaultTextureData[] = {
+        0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
+        0xFF, 0x00, 0xFF, 0xFF,   0x00, 0x00, 0x00, 0xFF,
+      };
+
+    Texture2D::Specification specification;
+    specification.filtering.mag = Texture::FilteringMode::Nearest;
+    specification.filtering.min = Texture::FilteringMode::Linear;
+    specification.mipmap        = Texture::MipmapMode::Linear;
+
+    return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, specification);
+  }
+
+  bool Texture2D::reload() {
+    if (!mData.filePath.has_value()) {
+      return false;
+    }
+
+    auto data = Texture2D::fromFile(*mData.filePath, mData.specification);
+    if (data) {
+      Logger::trace("Reloaded texture: %s", mData.filePath.value().c_str());
+
+      GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
+      mData = *data;
+      return true;
+    }
+
+    return false;
   }
 
   Texture2D::~Texture2D() {

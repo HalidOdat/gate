@@ -42,6 +42,11 @@ namespace Game {
       Texture::FilteringMode mag;
     };
 
+    enum class Source {
+      Memory,
+      File,
+    };
+
   private:
     Texture() = delete;
   };
@@ -67,29 +72,42 @@ namespace Game {
     u32 getWidth() const;
     u32 getHeight() const;
   
-    const Specification& getSpecification() const { return mData.specification; }
+    inline const Specification& getSpecification() const { return mData.specification; }
+
+    bool reload();
+
+
+    inline const Option<String> getFilePath() const { return mData.filePath; }
 
   public:
+    static constexpr const bool hasMissingDataPlaceholder = true;
+
     struct Data {
       u32 id;
       u32 width;
       u32 height;
 
       Specification specification;
+      Option<String> filePath;
     };
 
     Texture2D(Data data)
       : mData{data}
     {}
 
+
   private:
+    static Option<Data> fromFile(const StringView& filepath, Specification specification = {});
     static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, Specification specification = {});
-    static Data create(const StringView& filepath, Specification specification = {});
+    static Data generateMissingDataPlaceholder();
 
   private:
     Data mData;
 
     friend class ResourceManager;
+
+    template<typename T>
+    friend class ResourceFactory;
   };
 
 } // namespace Game

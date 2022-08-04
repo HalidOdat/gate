@@ -32,12 +32,18 @@ namespace Game {
     const std::vector<MaterialData>& getMaterialData() const;
     void addMaterialData(MaterialData::Type type, Texture2D::Handle textue);
 
+    bool reload();
+
   public:
+    static constexpr const bool hasMissingDataPlaceholder = false;
+
     struct Data {
       Ref<VertexArray>          vertexArray;
       Ref<VertexBuffer>         vertexBuffer;
       Ref<IndexBuffer>          indexBuffer;
       std::vector<MaterialData> material;
+
+      Option<String> filePath;
     };
 
     Mesh(Data data)
@@ -50,7 +56,7 @@ namespace Game {
     };
 
   private:
-    static Data fromFileSource(FileFormat format, const std::string& source);
+    static Option<Mesh::Data> fromFile(const std::string& file);
     static Data fromVertices(const Slice<const void> vertices, const Slice<const u32> indices);
 
   private:

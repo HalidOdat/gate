@@ -178,10 +178,10 @@ namespace Game {
     return id;
   }
 
-  Shader::Data Shader::create(const StringView& filepath) {
+  Option<Shader::Data> Shader::fromFile(const StringView& filepath) {
     auto content = parse(filepath);
     if (content.empty()) {
-      return { NULL_SHADER };
+      return None;
     }
 
     std::array<u32, SHADER_TYPE_COUNT> shaders = {0, 0, 0};
@@ -196,7 +196,7 @@ namespace Game {
             GAME_GL_CHECK(glDeleteShader(shader));
           }
         }
-        return { NULL_SHADER };
+        return None;
       }
     }
 
@@ -231,14 +231,31 @@ namespace Game {
 
     if (!success) {
       glDeleteProgram(shaderProgram);
-      return { NULL_SHADER };
+      return None;
     }
 
-    return { shaderProgram };
+    return Data{ shaderProgram, String(filepath) };
   }
 
   Shader::~Shader() {
     GAME_GL_CHECK(glDeleteProgram(mData.id));
+  }
+
+  bool Shader::reload() {
+    if (!mData.filePath.has_value()) {
+      return false;
+    }
+
+    auto data = Shader::fromFile(*mData.filePath);
+    if (data) {
+      Logger::trace("Reloaded shader: %s", mData.filePath.value().c_str());
+
+      GAME_GL_CHECK(glDeleteProgram(mData.id));
+      mData = *data;
+      return true;
+    }
+
+    return false;
   }
 
   void Shader::bind() noexcept {

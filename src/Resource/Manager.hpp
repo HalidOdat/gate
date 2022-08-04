@@ -12,7 +12,7 @@ namespace Game {
   template<typename T>
   class ManagedResource {
   public:
-    enum class State : u32 {
+    enum class State : u8 {
       Mortal,
       Immortal,
       Free,
@@ -35,21 +35,37 @@ namespace Game {
     inline T& getResource() { return *std::launder(reinterpret_cast<T*>(mData)); }
     inline const T& getResource() const { return *std::launder(reinterpret_cast<T*>(mData)); }
     
-    inline void decrementReferenceCount() { mReferenceCount += 1; }
-    inline void incrementReferenceCount() { mReferenceCount -= 1; }
+    // TODO: destruct if reference count is 0
+    inline void decrementReferenceCount() { mReferenceCount -= 1; }
+    inline void incrementReferenceCount() { mReferenceCount += 1; }
 
     inline void makeImmortal() { mState = State::Immortal; }
 
     inline void destroy() {
       if (mState != State::Free) {
         std::launder(reinterpret_cast<T*>(mData))->~T();
+        mState = State::Free;
       }
     }
 
+
+    template<typename ...Args>
+    inline void emplace(Args&& ...args) {
+      destroy();
+      new (mData) T{std::forward<Args>(args)...};
+    }
+
+    inline bool isFree() const { return mState == State::Free; }
+    
   private:
     State          mState;
     ReferenceCount mReferenceCount;
     alignas(T)     u8 mData[sizeof(T)];
+
+  private:
+
+    template<typename T>
+    friend class ResourceFactory;
   };
 
   template<typename T>
@@ -83,9 +99,36 @@ namespace Game {
       mFreeList.clear();
     }
 
+    bool reload(Resource<T>& resource) {
+      if (!resource) {
+        return false;
+      }
+
+      return reloadById(resource.mId);
+    }
+
+    void reloadAll() {
+      for (u32 i = 0; i < mManagedResources.size(); ++i) {
+        if (mManagedResources[i].isFree()) {
+          continue;
+        }
+
+        reloadById(i);
+      }
+    }
+  
+  private:
+    bool reloadById(Resource<T>::Id id) {
+      return mManagedResources[id].getResource().reload();
+    }
+
   private:
     std::vector<ManagedResource<T>> mManagedResources;
     std::vector<u32>                mFreeList;
+  
+  private:
+
+    friend class ResourceManager;
   };
 
   class ResourceManager {
@@ -97,7 +140,9 @@ namespace Game {
 
     static Mesh::Handle cubeMesh();
 
-    static void reloadTextures();
+    template<typename T> inline static bool reload(Resource<T>& resource) { return getFactory<T>().reload(resource); }
+    template<typename T> inline static void reloadAll() { getFactory<T>().reloadAll(); }
+
   public:
     template<typename T>
     inline static ResourceFactory<T>& getFactory() {
@@ -116,8 +161,6 @@ namespace Game {
 
     static void initialize();
     static void shutdown();
-
-    static Texture2D::Data generateMissingTexture();
 
   private:
     static ResourceManager sInstance;

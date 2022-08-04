@@ -10,7 +10,7 @@ namespace Game {
   class Resource {
   public:
     using Id = u32;
-  
+
   public:
     static constexpr const Id InvalidId = UINT32_MAX;
 

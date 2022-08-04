@@ -117,8 +117,16 @@ namespace Game {
   }
 
   bool EditorLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
-    if (event.getKey() == Key::R) {
-      ResourceManager::reloadTextures();
+    if (event.getKey() == Key::T) {
+      ResourceManager::reloadAll<Texture2D>();
+      return true;
+    }
+    if (event.getKey() == Key::Z) {
+      ResourceManager::reloadAll<Shader>();
+      return true;
+    }
+    if (event.getKey() == Key::M) {
+      ResourceManager::reloadAll<Mesh>();
       return true;
     }
 
