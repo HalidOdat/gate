@@ -6,6 +6,9 @@ namespace Game {
 
   class Texture2D {
   public:
+    using Handle = Resource<Texture2D>;
+    
+  public:
     DISALLOW_MOVE_AND_COPY(Texture2D);
     ~Texture2D();
 

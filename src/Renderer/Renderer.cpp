@@ -21,8 +21,8 @@ namespace Game {
     QuadBatch(
       Ref<VertexArray>  vertexArray,
       Ref<VertexBuffer> vertexBuffer,
-      Resource<Shader>       shader,
-      Resource<Texture2D>    whiteTexture
+      Shader::Handle       shader,
+      Texture2D::Handle    whiteTexture
     )
     : vertexArray{vertexArray},
       vertexBuffer{vertexBuffer},
@@ -55,14 +55,14 @@ namespace Game {
       u32  texIndex;
     };
 
-    Resource<Shader>       shader;
+    Shader::Handle       shader;
     Ref<VertexBuffer> vertexBuffer;
     Ref<VertexArray>  vertexArray;
 
     // TODO: Query OpenGL
     static constexpr const u32 MAX_TEXTURES = 32;
 
-    std::vector<Resource<Texture2D>> textures;
+    std::vector<Texture2D::Handle> textures;
 
     Vertex* base    = nullptr;
     Vertex* current = nullptr;
@@ -80,15 +80,15 @@ namespace Game {
   };
 
   struct FontData {
-    Resource<Texture2D> texture;
+    Texture2D::Handle texture;
     std::array<Vec4, 96> coords;
   };
 
   struct RenderUnit {
     using InitFn = auto(*)(Shader& shader) -> void;
 
-    Resource<Shader> shader;
-    Resource<Mesh>   mesh;
+    Shader::Handle shader;
+    Mesh::Handle   mesh;
     Material    material;
 
     Mat4 modelMatrix;
@@ -106,7 +106,7 @@ namespace Game {
   };
 
   struct RenderPipeline {
-    Resource<Shader> postProcesingShader;
+    Shader::Handle postProcesingShader;
     RenderCamera camera;
     Ref<FrameBuffer> frameBuffer;
     Ref<VertexArray> quadVertexArray;
@@ -122,7 +122,7 @@ namespace Game {
     Mat4 ViewMatrix;
 
     // TODO: Make accessor for this texture in ResourceManager
-    Resource<Texture2D> whiteTexture;
+    Texture2D::Handle whiteTexture;
     QuadBatch quad;
 
     FontData font;
@@ -288,7 +288,7 @@ namespace Game {
     renderer->pipeline.camera.front      = cameraController.getFront();
   }
 
-  void Renderer::submit(Resource<Shader>& shader, const Resource<Mesh>& mesh, const Material& material, const Mat4& transform) {
+  void Renderer::submit(Shader::Handle& shader, const Mesh::Handle& mesh, const Material& material, const Mat4& transform) {
     // Don't render fully transparent objects
     if (material.getTransparency() == 0.0f) {
       return;
@@ -469,14 +469,14 @@ namespace Game {
     }
   }
 
-  void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Resource<Texture2D>& texture, const Vec4& color) {
+  void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, position);
     transform      = glm::scale(transform, Vec3(size, 1.0f));
     Renderer::drawQuad(transform, texture, color);
   }
 
-  void Renderer::drawQuad(const Mat4& transform, const Resource<Texture2D>& texture, const Vec4& color) {
+  void Renderer::drawQuad(const Mat4& transform, const Texture2D::Handle& texture, const Vec4& color) {
     if (renderer->quad.count == QuadBatch::MAX) {
       Renderer::flush();
     }

@@ -14,6 +14,8 @@ namespace Game {
       Fragment,
       Compute,
     };
+
+    using Handle = Resource<Shader>;
   
   public:
     static constexpr const u32 SHADER_TYPE_COUNT = 3;

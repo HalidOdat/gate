@@ -44,9 +44,9 @@ namespace Game {
 
     Registry mRegistry;
 
-    Resource<Shader> mShader;
-    Resource<Mesh>   mCubeMesh;
-    u32       mCount = 1;
+    Shader::Handle mShader;
+    Mesh::Handle   mCubeMesh;
+    u32            mCount = 1;
     bool mMoveLight = true;
 
     Material mMaterial;

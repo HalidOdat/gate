@@ -58,7 +58,7 @@ namespace Game {
     return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, false);
   }
 
-  Resource<Texture2D> ResourceManager::loadTexture(const StringView& filepath, bool linear, bool verticalFlip) {
+  Texture2D::Handle ResourceManager::loadTexture(const StringView& filepath, bool linear, bool verticalFlip) {
     auto path = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
     auto data = Texture2D::create(path, linear, verticalFlip);
 
@@ -73,26 +73,26 @@ namespace Game {
     return ResourceManager::getFactory<Texture2D>().emplace(data);
   }
 
-  Resource<Texture2D> ResourceManager::textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, bool linear) {
+  Texture2D::Handle ResourceManager::textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, bool linear) {
     auto data  = Texture2D::fromBytes(bytes, width, height, channels, linear);
     Logger::info("ResourceManager: Loaded texture from memory");
     return ResourceManager::getFactory<Texture2D>().emplace(data);
   }
 
-  Resource<Shader> ResourceManager::loadShader(const StringView& filepath) {
+  Shader::Handle ResourceManager::loadShader(const StringView& filepath) {
     auto path   = std::string(SHADER_ASSETS_DIRECTORY) + filepath.data();
     auto result = Shader::create(path);
 
     if (!result.id) {
       Logger::info("ResourceManager: Couldn't load shader: %s", path.c_str());
       GAME_ASSERT(false);
-      return Resource<Shader>();
+      return Shader::Handle();
     }
 
     return ResourceManager::getFactory<Shader>().emplace(result);
   }
 
-  Resource<Mesh> ResourceManager::loadMesh(const StringView& filepath) {
+  Mesh::Handle ResourceManager::loadMesh(const StringView& filepath) {
     auto path   = std::string(MESH_ASSETS_DIRECTORY) + filepath.data();
     auto result = Mesh::fromFileSource(Mesh::FileFormat::Obj, path);
 
@@ -100,13 +100,13 @@ namespace Game {
       Logger::info("ResourceManager: Couldn't load mesh: %s", path.c_str());
       GAME_ASSERT(false);
       // TODO: Return invalid shader
-      return Resource<Mesh>();
+      return Mesh::Handle();
     }
 
     return ResourceManager::getFactory<Mesh>().emplace(result);
   }
 
-  Resource<Mesh> ResourceManager::cubeMesh() {
+  Mesh::Handle ResourceManager::cubeMesh() {
     static const f32 vertices[] = {
       // positions          // normals           // texture coords
       -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,   0.0f,  0.0f, -1.0f,

@@ -39,6 +39,7 @@ namespace Game {
         other.incrementReferenceCount();
       }
       mId = other.mId;
+      return *this;
     }
 
     inline Resource(Resource&& other)

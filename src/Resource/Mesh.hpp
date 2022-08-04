@@ -12,6 +12,8 @@ namespace Game {
 
   class Mesh {
   public:
+    using Handle = Resource<Mesh>;
+
     struct MaterialData {
       enum class Type {
         Diffuse,
@@ -20,7 +22,7 @@ namespace Game {
       };
 
       Type type;
-      Resource<Texture2D> texture;
+      Texture2D::Handle texture;
     };
 
   public:
@@ -28,7 +30,7 @@ namespace Game {
     const Ref<VertexArray> getVertexArray() const;
 
     const std::vector<MaterialData>& getMaterialData() const;
-    void addMaterialData(MaterialData::Type type, Resource<Texture2D> textue);
+    void addMaterialData(MaterialData::Type type, Texture2D::Handle textue);
 
   public:
     struct Data {

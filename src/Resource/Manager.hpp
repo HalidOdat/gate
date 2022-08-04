@@ -90,12 +90,12 @@ namespace Game {
 
   class ResourceManager {
   public:
-    static Resource<Texture2D> loadTexture(const StringView& filepath, bool linear = false, bool verticalFlip = true);
-    static Resource<Texture2D> textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
-    static Resource<Shader>    loadShader(const StringView& filepath);
-    static Resource<Mesh>      loadMesh(const StringView& filepath);
+    static Texture2D::Handle loadTexture(const StringView& filepath, bool linear = false, bool verticalFlip = true);
+    static Texture2D::Handle textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, bool linear = true);
+    static Shader::Handle    loadShader(const StringView& filepath);
+    static Mesh::Handle      loadMesh(const StringView& filepath);
 
-    static Resource<Mesh> cubeMesh();
+    static Mesh::Handle cubeMesh();
 
     static void reloadTextures();
   public:
@@ -129,7 +129,7 @@ namespace Game {
 
   private:
     friend class Application;
-    
+
     template<typename T>
     friend class Resource;
   };

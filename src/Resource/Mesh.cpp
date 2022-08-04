@@ -132,7 +132,7 @@ namespace Game {
     return mData.material;
   }
 
-  void Mesh::addMaterialData(MaterialData::Type type, Resource<Texture2D> texture) {
+  void Mesh::addMaterialData(MaterialData::Type type, Texture2D::Handle texture) {
     mData.material.push_back(MaterialData{type, texture});
   }
 
