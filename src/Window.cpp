@@ -86,6 +86,12 @@ namespace Game {
 
     glfwSetWindowSizeCallback(result->data.window, [](GLFWwindow* window, int width, int height) {
       auto& data = *(Data*)glfwGetWindowUserPointer(window);
+      if (width == 0 && height == 0) { // window minimized
+        WindowMinimizedEvent event;
+        data.eventCallback(event);
+        return;
+      }
+
       data.width  = width;
       data.height = height;
       WindowResizeEvent event(width, height);

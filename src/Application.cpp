@@ -56,19 +56,20 @@ namespace Game {
       float time = (float)glfwGetTime();
       float dt = time - this->lastFrameTime;
       this->lastFrameTime = time;
+      Timestep::timestep = dt;
 
       // clear all relevant buffers
       // GAME_GL_CHECK(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
       // GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+      if (!mWindowMinimized) {
+        this->layerStack.onUpdate(dt);
 
-      Timestep::timestep = dt;
-      this->layerStack.onUpdate(dt);
+        Renderer::waitAndRender();
 
-      Renderer::waitAndRender();
-
-      this->ui->prepareFrame();
-      this->layerStack.onUiRender(*this->ui);
-      this->ui->endFrame();
+        this->ui->prepareFrame();
+        this->layerStack.onUiRender(*this->ui);
+        this->ui->endFrame();
+      }
 
       this->window->update();
     }
@@ -79,8 +80,9 @@ namespace Game {
   }
 
   void Application::onEvent(const Event& event) {
-    event.dispatch<WindowResizeEvent>(&Application::onWindowResizeEvent, this);
-    event.dispatch<WindowCloseEvent>(&Application::onWindowCloseEvent, this);
+    event.dispatch(&Application::onWindowResizeEvent, this);
+    event.dispatch(&Application::onWindowCloseEvent, this);
+    event.dispatch(&Application::onWindowMinimizedEvent, this);
 
     this->ui->onEvent(event);
     this->layerStack.onEvent(event);
@@ -94,6 +96,12 @@ namespace Game {
   bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
     glViewport(0, 0, event.getWidth(), event.getHeight());
     Renderer::invalidate(event.getWidth(), event.getHeight());
+    mWindowMinimized = false;
+    return false;
+  }
+
+  bool Application::onWindowMinimizedEvent(const WindowMinimizedEvent& event) {
+    mWindowMinimized = true;
     return false;
   }
 

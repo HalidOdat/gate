@@ -30,7 +30,7 @@ namespace Game {
     inline WindowSize getSize() const { return mSize; }
     inline u32 getWidth() const { return mSize.width; }
     inline u32 getHeight() const { return mSize.height; }
-    inline f32 getAspectRatio() const { return (f32)mSize.width / (f32)mSize.height; }    
+    inline f32 getAspectRatio() const { return (f32)mSize.width / (f32)mSize.height; }
 
   private:
     WindowSize mSize;
@@ -42,6 +42,16 @@ namespace Game {
 
   public:
     WindowCloseEvent()
+      : Event{TYPE}
+    {}
+  };
+
+  class WindowMinimizedEvent : public Event {
+  public:
+    inline static constexpr const auto TYPE = Event::Type::WindowMinimized;
+
+  public:
+    WindowMinimizedEvent()
       : Event{TYPE}
     {}
   };

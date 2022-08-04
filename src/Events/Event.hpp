@@ -10,7 +10,7 @@ namespace Game {
     enum class Type : u8 {
       KeyPressed, KeyReleased,
       MouseMove, MouseScroll, MouseButtonPressed, MouseButtonReleased,
-      WindowResize, WindowClose,
+      WindowResize, WindowClose, WindowMinimized,
     };
 
   public:

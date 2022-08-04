@@ -27,12 +27,14 @@ namespace Game {
     void onEvent(const Event& event);
     bool onWindowCloseEvent(const WindowCloseEvent& event);
     bool onWindowResizeEvent(const WindowResizeEvent& event);
+    bool onWindowMinimizedEvent(const WindowMinimizedEvent& event);
 
   private:
     static Application* sInstance;
 
   private:
     bool running = true;
+    bool mWindowMinimized = false;
     Ref<Window> window = nullptr;
     Ui* ui;
     LayerStack layerStack;
