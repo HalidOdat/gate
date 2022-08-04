@@ -11,13 +11,11 @@ out vec4 vColor;
 out vec2 vTexCoord;
 flat out uint vTexIndex;
 
-uniform mat4 uProjectionView;
-
 void main() {
    vColor      = aColor;
    vTexCoord   = aTexCoord;
    vTexIndex   = aTexIndex;
-   gl_Position = uProjectionView * vec4(aPosition, 1.0);
+   gl_Position = vec4(aPosition, 1.0);
 }
 
 @type fragment

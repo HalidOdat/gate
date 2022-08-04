@@ -55,6 +55,8 @@ set(Sources
   src/Renderer/IndexBuffer.cpp
   src/Renderer/VertexArray.hpp
   src/Renderer/VertexArray.cpp
+  src/Renderer/FrameBuffer.hpp
+  src/Renderer/FrameBuffer.cpp
   src/Renderer/Camera.hpp
   src/Renderer/Camera.cpp
   src/Renderer/CameraController.hpp

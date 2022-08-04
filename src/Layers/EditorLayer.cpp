@@ -41,8 +41,6 @@ namespace Game {
     Renderer::begin(mCameraController.getCamera());
     Renderer::drawText(fpsString, { 0.0f, 0.7f, 0.0f }, { 0.08f, 0.08f});
     Renderer::drawText(ss2.str(), { 0.0f, 0.5f, 0.0f }, { 0.08f, 0.08f});
-    // Renderer::drawQuad({0, 0}, {0.9, 0.9});
-    Renderer::end();
   }
 
   void EditorLayer::onUiRender(Ui& ui) {

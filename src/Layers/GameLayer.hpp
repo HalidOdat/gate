@@ -8,6 +8,7 @@
 #include "Resource/Mesh.hpp"
 #include "Resource/Shader.hpp"
 #include "Renderer/Material.hpp"
+#include "Renderer/FrameBuffer.hpp"
 #include "Renderer/CameraController.hpp"
 #include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"

@@ -102,4 +102,8 @@ namespace Game {
     GAME_GL_CHECK(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
   }
 
+  void VertexArray::drawArrays(u32 count) {
+    GAME_GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, count));
+  }
+
 } // namespace Game

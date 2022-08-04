@@ -26,6 +26,8 @@ namespace Game {
     void drawIndices();
     void drawIndices(const u32 count);
 
+    void drawArrays(u32 count);
+
   private:
     VertexArray();
 

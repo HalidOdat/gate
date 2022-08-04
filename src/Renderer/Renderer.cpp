@@ -7,8 +7,10 @@
 
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
+#include "Renderer/FrameBuffer.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Resource/Manager.hpp"
+#include "Application.hpp"
 
 namespace Game {
 
@@ -104,7 +106,10 @@ namespace Game {
   };
 
   struct RenderPipeline {
+    Shader postProcesingShader;
     RenderCamera camera;
+    Ref<FrameBuffer> frameBuffer;
+    Ref<VertexArray> quadVertexArray;
 
     std::vector<RenderUnit>          units;
     std::vector<u32>                 opaqueUnitIndices;
@@ -156,8 +161,8 @@ namespace Game {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    // glEnable(GL_DEPTH_TEST);
+    // glDepthFunc(GL_LESS);
 
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
@@ -214,13 +219,15 @@ namespace Game {
     GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
     GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
 
+    auto postProcesingShader = ResourceManager::loadShader("PostProcessing.glsl");
     renderer = new RendererData{
       Mat4(1.0f),
       Mat4(1.0f),
       Mat4(1.0f),
       whiteTexture,
       {vertexArray, vertexBuffer, shader, whiteTexture},
-      {fontTexture}
+      {fontTexture},
+      {postProcesingShader}
     };
 
     u32 count = 0;
@@ -236,6 +243,31 @@ namespace Game {
         };
       }
     }
+
+    auto width = Application::getWindow().getWidth();
+    auto height = Application::getWindow().getHeight();
+    renderer->pipeline.frameBuffer = FrameBuffer::create(width, height);
+
+    static const float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+      // positions   // texCoords
+      -1.0f,  1.0f,  0.0f, 1.0f,
+      -1.0f, -1.0f,  0.0f, 0.0f,
+       1.0f, -1.0f,  1.0f, 0.0f,
+
+      -1.0f,  1.0f,  0.0f, 1.0f,
+       1.0f, -1.0f,  1.0f, 0.0f,
+       1.0f,  1.0f,  1.0f, 1.0f
+    };
+
+    auto quadVertexArray = VertexArray::create();
+    auto quadVertexBuffer = VertexBuffer::create(quadVertices);
+    quadVertexBuffer->setLayout({
+      { BufferElement::Type::Float2, /* position */ },
+      { BufferElement::Type::Float2  /* texture */ },
+    });
+    quadVertexArray->addVertexBuffer(quadVertexBuffer);
+    quadVertexArray->unbind();
+    renderer->pipeline.quadVertexArray = quadVertexArray;
   }
 
   void Renderer::shutdown() {
@@ -309,6 +341,18 @@ namespace Game {
   }
 
   void Renderer::waitAndRender() {
+    // First Pass
+    renderer->pipeline.frameBuffer->bind();
+
+    Renderer::enableDepthTest(true);
+
+    // Renderer::enableCullFace(true);
+    // glCullFace(GL_BACK);
+    // glFrontFace(GL_CCW);
+
+    GAME_GL_CHECK(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+    GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    
     for (auto& index : renderer->pipeline.opaqueUnitIndices) {
       renderUnit(index);
     }
@@ -328,6 +372,30 @@ namespace Game {
     renderer->pipeline.units.clear();
     renderer->pipeline.opaqueUnitIndices.clear();
     renderer->pipeline.transparentUnitIndices.clear();
+
+    // Renderer::enableCullFace(false);
+
+    Renderer::enableDepthTest(false);
+    renderer->pipeline.frameBuffer->unbind();
+    
+    //  glDisable(GL_DEPTH_TEST);
+
+    // Second Pass
+    GAME_GL_CHECK(glClearColor(1.0f, 1.0f, 1.0f, 1.0f)); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
+    GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+    u32 texture = renderer->pipeline.frameBuffer->getColorAttachmentId();
+    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
+    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
+    renderer->pipeline.postProcesingShader.bind();
+    renderer->pipeline.postProcesingShader.setInt("uScreenTexture", 0);
+
+    renderer->pipeline.quadVertexArray->bind();
+    // renderer->pipeline.quadVertexArray->drawArrays(6);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    renderer->pipeline.quadVertexArray->unbind();
+
+    // Renderer::enableDepthTest(false);
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
@@ -376,10 +444,10 @@ namespace Game {
     Vec4 tc = renderer->font.coords[(usize)(c - ' ')];
 
     // TODO: do transfrom with projection view matrix here
-    *(renderer->quad.current++) = { transform * QuadBatch::position[0], color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right
-    *(renderer->quad.current++) = { transform * QuadBatch::position[1], color, /* {1.0f, 0.0f} */ {tc.z, tc.y}, index }; // bottom-right
-    *(renderer->quad.current++) = { transform * QuadBatch::position[2], color, /* {0.0f, 0.0f} */ {tc.x, tc.y}, index }; // bottom-left
-    *(renderer->quad.current++) = { transform * QuadBatch::position[3], color, /* {0.0f, 1.0f} */ {tc.x, tc.w}, index }; // top-left
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[0], color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[1], color, /* {1.0f, 0.0f} */ {tc.z, tc.y}, index }; // bottom-right
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[2], color, /* {0.0f, 0.0f} */ {tc.x, tc.y}, index }; // bottom-left
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[3], color, /* {0.0f, 1.0f} */ {tc.x, tc.w}, index }; // top-left
 
     renderer->quad.count++;
   }
@@ -430,11 +498,10 @@ namespace Game {
       renderer->quad.textures.push_back(texture);
     }
 
-    // TODO: do transfrom with projection view matrix here
-    *(renderer->quad.current++) = { transform * QuadBatch::position[0], color, {1.0f, 1.0f}, index }; // top-right
-    *(renderer->quad.current++) = { transform * QuadBatch::position[1], color, {1.0f, 0.0f}, index }; // bottom-right
-    *(renderer->quad.current++) = { transform * QuadBatch::position[2], color, {0.0f, 0.0f}, index }; // bottom-left
-    *(renderer->quad.current++) = { transform * QuadBatch::position[3], color, {0.0f, 1.0f}, index }; // top-left
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[0], color, {1.0f, 1.0f}, index }; // top-right
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[1], color, {1.0f, 0.0f}, index }; // bottom-right
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[2], color, {0.0f, 0.0f}, index }; // bottom-left
+    *(renderer->quad.current++) = { renderer->projectionViewMatrix * transform * QuadBatch::position[3], color, {0.0f, 1.0f}, index }; // top-left
 
     renderer->quad.count++;
   }
@@ -448,7 +515,6 @@ namespace Game {
       }
 
       renderer->quad.shader.bind();
-      renderer->quad.shader.setMat4("uProjectionView", renderer->projectionViewMatrix);
 
       renderer->quad.vertexArray->bind();
       renderer->quad.vertexBuffer->set({renderer->quad.base,  renderer->quad.count * QuadBatch::VERTICES_COUNT});
