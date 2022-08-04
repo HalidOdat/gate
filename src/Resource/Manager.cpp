@@ -55,12 +55,17 @@ namespace Game {
         0xFF, 0x00, 0xFF, 0xFF,   0x00, 0x00, 0x00, 0xFF,
       };
 
-    return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, false);
+    Texture2D::Specification specification;
+    specification.filtering.mag = Texture::FilteringMode::Nearest;
+    specification.filtering.min = Texture::FilteringMode::Linear;
+    specification.mipmap        = Texture::MipmapMode::Linear;
+
+    return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, specification);
   }
 
-  Texture2D::Handle ResourceManager::loadTexture(const StringView& filepath, bool linear, bool verticalFlip) {
+  Texture2D::Handle ResourceManager::loadTexture(const StringView& filepath, Texture2D::Specification specification) {
     auto path = std::string(TEXTURE_ASSETS_DIRECTORY) + filepath.data();
-    auto data = Texture2D::create(path, linear, verticalFlip);
+    auto data = Texture2D::create(path, specification);
 
     if (!data.id) {
       Logger::error("ResourceManager: Couldn't loaded texture: %s", path.c_str());
@@ -73,8 +78,8 @@ namespace Game {
     return ResourceManager::getFactory<Texture2D>().emplace(data);
   }
 
-  Texture2D::Handle ResourceManager::textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, bool linear) {
-    auto data  = Texture2D::fromBytes(bytes, width, height, channels, linear);
+  Texture2D::Handle ResourceManager::textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Texture2D::Specification specification) {
+    auto data  = Texture2D::fromBytes(bytes, width, height, channels, specification);
     Logger::info("ResourceManager: Loaded texture from memory");
     return ResourceManager::getFactory<Texture2D>().emplace(data);
   }

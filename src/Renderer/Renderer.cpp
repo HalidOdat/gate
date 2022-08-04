@@ -210,7 +210,12 @@ namespace Game {
 
     auto quad = QuadBatch(vertexArray, vertexBuffer, shader, whiteTexture);
 
-    auto fontTexture = ResourceManager::loadTexture("PixelFont_7x9_112x54.png", false);
+    Texture2D::Specification specification;
+    specification.filtering.mag = Texture::FilteringMode::Nearest;
+    specification.filtering.min = Texture::FilteringMode::Linear;
+    specification.mipmap        = Texture::MipmapMode::Linear;
+
+    auto fontTexture = ResourceManager::loadTexture("PixelFont_7x9_112x54.png", specification);
     const auto fontTextureWidth  = fontTexture->getWidth();
     const auto fontTextureHeight = fontTexture->getHeight();
     const auto fontCharacterWidth  = 7;
