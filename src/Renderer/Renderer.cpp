@@ -372,6 +372,7 @@ namespace Game {
       return;
     }
 
+    // TODO: Sort by shader
     u32 index = (u32)renderer->pipeline.units.size();
     RenderUnit unit {
       shader,

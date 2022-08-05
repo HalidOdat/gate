@@ -25,6 +25,10 @@ set(Sources
   src/Core/Timestep.cpp
   
   src/Utils/Color.hpp
+  src/Utils/File.hpp
+  src/Utils/File.cpp
+  src/Utils/String.hpp
+  src/Utils/String.cpp
 
   src/Events/Event.hpp
   src/Events/Event.cpp

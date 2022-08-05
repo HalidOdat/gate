@@ -1,17 +1,15 @@
+#include <vector>
+#include <array>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <optional>
-#include <vector>
 #include <algorithm>
-#include <array>
 
 #include <glad/glad.h>
 
 #include "Core/Log.hpp"
 #include "Core/Assert.hpp"
 #include "Resource/Shader.hpp"
-#include "Resource/Manager.hpp"
+#include "Utils/String.hpp"
 
 namespace Game {
 
@@ -37,38 +35,12 @@ namespace Game {
     return 0;
   }
 
-  static std::optional<std::string> fileToString(const StringView& filename) {
-    std::ifstream file;
-    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    try {
-      file.open(filename.data());
-      std::stringstream stream;
-      stream << file.rdbuf();
-      file.close();
-      return stream.str();
-    } catch (std::ifstream::failure e) {
-      Logger::error("Couldn't load file '%s': %s", filename.data(), e.what());
-      return std::nullopt;
-    }
-  }
-
-  // TODO: Move to utils, maybe...
-  static bool stringIsEqualIgnoreCase(const StringView& rhs, const StringView& lhs) {
-    return std::equal(
-      rhs.begin(), rhs.end(),
-      lhs.begin(), lhs.end(),
-      [](char a, char b) {
-        return tolower(a) == tolower(b);
-      }
-    );
-  }
-
   static std::optional<Shader::Type> stringToShaderType(const StringView& string) {
-    if (stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Vertex))) {
+    if (Utils::stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Vertex))) {
       return Shader::Type::Vertex;
-    } else if (stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Fragment))) {
+    } else if (Utils::stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Fragment))) {
       return Shader::Type::Fragment;
-    } else if (stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Compute))) {
+    } else if (Utils::stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Compute))) {
       return Shader::Type::Compute;
     }
 
