@@ -68,7 +68,6 @@ namespace Game {
 
   void Ui::prepareFrame() {
     Renderer::enableBlending(true);
-    // Renderer::enableDepthTest(false);
   }
 
   void Ui::endFrame() {

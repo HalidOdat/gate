@@ -5,6 +5,7 @@
 
 namespace Game {
 
+  // TODO: shader specification of definitions
   class Shader {
     friend class ResourceManager;
     

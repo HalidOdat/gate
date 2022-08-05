@@ -88,7 +88,7 @@ set(Sources
   src/Game.hpp
   src/Game.cpp
   
-  src/main.cpp
+  src/Main.cpp
 )
 
 add_executable(${This} ${Sources})
@@ -100,6 +100,28 @@ target_link_libraries(${This} PUBLIC
   glad
   glm::glm
   stb
+)
+
+target_precompile_headers(${This}
+  # PUBLIC
+  #   "Core/Type.h"
+  PRIVATE
+    <cstdio>
+    <cstdlib>
+    <cstdint>
+    <cstddef>
+
+    <string>
+    <string_view>
+    <vector>
+    <array>
+    <memory>
+    <optional>
+    <fstream>
+    <sstream>
+    <map>
+    <unordered_map>
+    <type_traits>
 )
 
 add_subdirectory(vendor)

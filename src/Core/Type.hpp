@@ -41,15 +41,6 @@ namespace Game {
   template<typename T>
   using Ref = std::shared_ptr<T>;
 
-  template<typename T>
-  class CreateObject {
-  public:
-    template<typename ...Args>
-    inline static Ref<T> Create(Args&&... args) {
-      return Ref<T>(new T(std::forward<Args>(args)...));
-    }
-  };
-
   template<typename T, usize N>
   using Array      = std::array<T, N>;
 

@@ -33,71 +33,28 @@ namespace Game {
 
     std::string fpsString = ss.str();
 
-    std::stringstream ss2;
-    ss2.precision(4);
-    ss2 << std::fixed << mValue;
-
     const auto ar = Application::getWindow().getAspectRatio();
     Renderer::begin(mCameraController.getCamera());
     Renderer::drawText(fpsString, { 0.0f, 0.7f, 0.0f }, { 0.08f, 0.08f});
-    Renderer::drawText(ss2.str(), { 0.0f, 0.5f, 0.0f }, { 0.08f, 0.08f});
   }
 
   void EditorLayer::onUiRender(Ui& ui) {
-    ui.begin({0.0f, 0.0f});
-      if (ui.button("Button 0", 0)) {
-        Logger::info("Button 0 clicked!!!");
-      }
-      if (ui.button("Button 1", 1)) {
-        Logger::info("Button 1 clicked!!!");
-      }
-      if (ui.button("Button 2", 2)) {
-        Logger::info("Button 2 clicked!!!");
-      }
-      if (ui.button("Button 3", 3)) {
-        Logger::info("Button 3 clicked!!!");
-      }
-
-      if (ui.slider(mValue, -100, 100)) {
-        Logger::info("Changed!!!");
-      }
-      // ui.beginLayout(Ui::Layout::Type::Vertical);
-      //   if (ui.button({1.0f, 1.0f, 0.0f}, 0)) {
-      //     Logger::info("Button 0 clicked!!!");
-      //   }
-      //   if (ui.button({1.0f, 0.0f, 0.0f}, 1)) {
-      //     Logger::info("Button 1 clicked!!!");
-      //   }
-      //   if (ui.button({1.0f, 0.0f, 1.0f}, 2)) {
-      //     Logger::info("Button 2 clicked!!!");
-      //   }
-      //   if (ui.button({0.0f, 0.0f, 1.0f}, 3)) {
-      //     Logger::info("Button 3 clicked!!!");
-      //   }
-      // ui.endLayout();
-      // ui.beginLayout(Ui::Layout::Type::Vertical);
-      //   if (ui.button({0.0f, 0.0f, 0.0f}, 4)) {
-      //     Logger::info("Button 4 clicked!!!");
-      //   }
-      //   if (ui.button({1.0f, 1.0f, 1.0f}, 5)) {
-      //     Logger::info("Button 5 clicked!!!");
-      //   }
-      //   if (ui.button({0.5f, 0.5f, 0.5f}, 6)) {
-      //     Logger::info("Button 6 clicked!!!");
-      //   }
-      //   if (ui.button({0.0f, 0.5f, 0.0f}, 7)) {
-      //     Logger::info("Button 7 clicked!!!");
-      //   }
-      //   ui.beginLayout(Ui::Layout::Type::Horizontal);
-      //     if (ui.button({1.0f, 1.0f, 0.5f}, 8)) {
-      //       Logger::info("Button 8 clicked!!!");
-      //     }
-      //     if (ui.button({1.0f, 0.5f, 0.5f}, 9)) {
-      //       Logger::info("Button 9 clicked!!!");
-      //     }
-      //   ui.endLayout();
-      // ui.endLayout();
-    ui.end();
+    if (mShow) {
+      ui.begin({0.0f, 0.0f});
+        if (ui.button("Button 0", 0)) {
+          Logger::info("Button 0 clicked!!!");
+        }
+        if (ui.button("Button 1", 1)) {
+          Logger::info("Button 1 clicked!!!");
+        }
+        if (ui.button("Button 2", 2)) {
+          Logger::info("Button 2 clicked!!!");
+        }
+        if (ui.button("Button 3", 3)) {
+          Logger::info("Button 3 clicked!!!");
+        }
+      ui.end();
+    }
   }
 
   void EditorLayer::onEvent(const Event& event) {
@@ -117,17 +74,24 @@ namespace Game {
   }
 
   bool EditorLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
-    if (event.getKey() == Key::T) {
-      ResourceManager::reloadAll<Texture2D>();
+    if (event.getKey() == Key::F3) {
+      mShow = !mShow;
       return true;
     }
-    if (event.getKey() == Key::Z) {
-      ResourceManager::reloadAll<Shader>();
-      return true;
-    }
-    if (event.getKey() == Key::M) {
-      ResourceManager::reloadAll<Mesh>();
-      return true;
+    
+    if (mShow) {
+      if (event.getKey() == Key::T) {
+        ResourceManager::reloadAll<Texture2D>();
+        return true;
+      }
+      if (event.getKey() == Key::Z) {
+        ResourceManager::reloadAll<Shader>();
+        return true;
+      }
+      if (event.getKey() == Key::M) {
+        ResourceManager::reloadAll<Mesh>();
+        return true;
+      }
     }
 
     return false;
