@@ -25,8 +25,8 @@ out vec4 vFragmentColor;
 
 void main() {
   vFragmentColor = texture(uScreenTexture, vTexCoords);
-  if (vPosition.x < 0.0f) {
-    float average = 0.2126 * vFragmentColor.r + 0.7152 * vFragmentColor.g + 0.0722 * vFragmentColor.b;
-    vFragmentColor = vec4(average, average, average, 1.0);
-  }
+  // if (vPosition.x < 0.0f) {
+  //   float average = 0.2126 * vFragmentColor.r + 0.7152 * vFragmentColor.g + 0.0722 * vFragmentColor.b;
+  //   vFragmentColor = vec4(average, average, average, 1.0);
+  // }
 }

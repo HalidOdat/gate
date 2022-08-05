@@ -48,7 +48,7 @@ namespace Game {
       other.mId = InvalidId;
     }
 
-    inline Resource& operator=(const Resource&& other) {
+    inline Resource& operator=(Resource&& other) {
       if (this == &other) {
         return *this;
       }
@@ -58,6 +58,7 @@ namespace Game {
       }
       mId = other.mId;
       other.mId = InvalidId;
+      return *this;
     }
 
     inline ~Resource() {

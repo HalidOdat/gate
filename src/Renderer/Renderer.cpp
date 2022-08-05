@@ -111,6 +111,10 @@ namespace Game {
     Ref<FrameBuffer> frameBuffer;
     Ref<VertexArray> quadVertexArray;
 
+    CubeMap::Handle  skyboxTexture;
+    Ref<VertexArray> skyboxVertexArray;
+    Shader::Handle   skyboxShader;
+
     std::vector<RenderUnit>          units;
     std::vector<u32>                 opaqueUnitIndices;
     std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
@@ -273,6 +277,71 @@ namespace Game {
     quadVertexArray->addVertexBuffer(quadVertexBuffer);
     quadVertexArray->unbind();
     renderer->pipeline.quadVertexArray = quadVertexArray;
+
+    renderer->pipeline.skyboxTexture = ResourceManager::loadCubeMap({
+      "skybox/right.jpg",
+      "skybox/left.jpg",
+      "skybox/top.jpg",
+      "skybox/bottom.jpg",
+      "skybox/front.jpg",
+      "skybox/back.jpg",
+    });
+
+    static const f32 skyboxVertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+
+    auto skyboxVertexArray = VertexArray::create();
+    auto skyboxVertexBuffer = VertexBuffer::create(skyboxVertices);
+    skyboxVertexBuffer->setLayout({
+      { BufferElement::Type::Float3, /* position */ },
+    });
+    skyboxVertexArray->addVertexBuffer(skyboxVertexBuffer);
+    skyboxVertexArray->unbind();
+    renderer->pipeline.skyboxVertexArray = skyboxVertexArray;
+
+    renderer->pipeline.skyboxShader = ResourceManager::loadShader("Skybox.glsl");
   }
 
   void Renderer::shutdown() {
@@ -383,6 +452,17 @@ namespace Game {
     renderer->pipeline.transparentUnitIndices.clear();
 
     // Renderer::enableCullFace(false);
+
+    // Skybox
+    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    renderer->pipeline.skyboxTexture->bind();
+    renderer->pipeline.skyboxShader->bind();
+    renderer->pipeline.skyboxShader->setMat4("uView", Mat4(Mat3(renderer->pipeline.camera.view)));
+    renderer->pipeline.skyboxShader->setMat4("uProjection", renderer->pipeline.camera.projection);
+    renderer->pipeline.skyboxShader->setInt("uSkybox", 0);
+    renderer->pipeline.skyboxVertexArray->bind();
+    renderer->pipeline.skyboxVertexArray->drawArrays(36);
+    glDepthFunc(GL_LESS); // set depth function back to default
 
     Renderer::enableDepthTest(false);
     renderer->pipeline.frameBuffer->unbind();

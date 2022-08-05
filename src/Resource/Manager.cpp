@@ -172,7 +172,15 @@ namespace Game {
   }
 
   CubeMap::Handle ResourceManager::loadCubeMap(const CubeMap::FilePaths& filepaths) {
-    auto data = CubeMap::fromFile(filepaths);
+    CubeMap::FilePaths paths = {
+      TEXTURE_ASSETS_DIRECTORY + filepaths[0],
+      TEXTURE_ASSETS_DIRECTORY + filepaths[1],
+      TEXTURE_ASSETS_DIRECTORY + filepaths[2],
+      TEXTURE_ASSETS_DIRECTORY + filepaths[3],
+      TEXTURE_ASSETS_DIRECTORY + filepaths[4],
+      TEXTURE_ASSETS_DIRECTORY + filepaths[5],
+    };
+    auto data = CubeMap::fromFile(std::move(paths));
     Logger::info("ResourceManager: Loaded CubeMap");
     return ResourceManager::getFactory<CubeMap>().emplace(*data);
   }
