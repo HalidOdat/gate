@@ -110,5 +110,45 @@ namespace Game {
     friend class ResourceFactory;
   };
 
+  class CubeMap {
+  public:
+    using Handle = Resource<CubeMap>;
+
+    using FilePaths = Array<String, 6>;
+
+  public:
+    DISALLOW_MOVE_AND_COPY(CubeMap);
+    ~CubeMap();
+
+    void bind() const;
+
+    u32 getId() const;
+    bool reload();
+
+    inline const FilePaths& getFilePath() const { return mData.filePaths; }
+
+  public:
+    struct Data {
+      u32 id;
+      FilePaths filePaths;
+    };
+
+    CubeMap(Data data)
+      : mData{data}
+    {}
+
+
+  private:
+    static Option<Data> fromFile(FilePaths paths);
+    
+  private:
+    Data mData;
+
+    friend class ResourceManager;
+
+    template<typename T>
+    friend class ResourceFactory;
+  };
+
 } // namespace Game
 

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 
+#include <array>
 #include <string>
 #include <string_view>
 #include <memory>
@@ -48,6 +49,9 @@ namespace Game {
       return Ref<T>(new T(std::forward<Args>(args)...));
     }
   };
+
+  template<typename T, usize N>
+  using Array      = std::array<T, N>;
 
   using String     = std::string;
   using StringView = std::string_view;

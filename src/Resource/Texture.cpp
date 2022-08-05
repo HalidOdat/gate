@@ -9,6 +9,11 @@
 
 namespace Game {
 
+  static const u8 defaultTextureData[] = {
+    0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
+    0xFF, 0x00, 0xFF, 0xFF,   0x00, 0x00, 0x00, 0xFF,
+  };
+
   static GLenum TextureWrappingToOpenGL(Texture::WrappingMode wrapping) {
     switch (wrapping) {
       case Texture::WrappingMode::Repeat:         return GL_REPEAT;
@@ -105,11 +110,6 @@ namespace Game {
   }
 
   Texture2D::Data Texture2D::generateMissingDataPlaceholder() {
-    static const u8 defaultTextureData[] = {
-        0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
-        0xFF, 0x00, 0xFF, 0xFF,   0x00, 0x00, 0x00, 0xFF,
-      };
-
     Texture2D::Specification specification;
     specification.filtering.mag = Texture::FilteringMode::Nearest;
     specification.filtering.min = Texture::FilteringMode::Linear;
@@ -157,5 +157,50 @@ namespace Game {
   u32 Texture2D::getHeight() const {
     return mData.height;
   }
+
+  // ---------------------------- CubeMap ---------------------------
+
+  Option<CubeMap::Data> CubeMap::fromFile(FilePaths paths) {
+    GAME_ASSERT(paths.size() == 6);
+
+    u32 texture;
+    GAME_GL_CHECK(glGenTextures(1, &texture));
+    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, texture));
+
+    int width, height, nrChannels;
+    for (u32 i = 0; i < paths.size(); ++i) {
+      u8* data = stbi_load(paths[i].c_str(), &width, &height, &nrChannels, 0);
+      if (data) {
+        GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+        stbi_image_free(data);
+      } else {
+        GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, defaultTextureData));
+      }
+    }
+
+    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)); 
+
+    return Data{texture, std::move(paths)};
+  }
+
+  CubeMap::~CubeMap() {
+    GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
+  }
+
+  void CubeMap::bind() const {
+    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
+    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, mData.id));
+  }
+
+  bool CubeMap::reload() {
+    // TODO: implement reloading
+    GAME_TODO("not implemented");
+    return false;
+  }
+
 
 } // namespace Game

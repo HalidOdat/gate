@@ -171,4 +171,10 @@ namespace Game {
     return ResourceManager::getFactory<Mesh>().emplace(result);
   }
 
+  CubeMap::Handle ResourceManager::loadCubeMap(const CubeMap::FilePaths& filepaths) {
+    auto data = CubeMap::fromFile(filepaths);
+    Logger::info("ResourceManager: Loaded CubeMap");
+    return ResourceManager::getFactory<CubeMap>().emplace(*data);
+  }
+
 } // namespace Game

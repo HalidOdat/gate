@@ -137,6 +137,7 @@ namespace Game {
     static Texture2D::Handle textureFromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, Texture2D::Specification specification = {});
     static Shader::Handle    loadShader(const StringView& filepath);
     static Mesh::Handle      loadMesh(const StringView& filepath);
+    static CubeMap::Handle   loadCubeMap(const CubeMap::FilePaths& filepaths);
 
     static Mesh::Handle cubeMesh();
 
@@ -152,6 +153,7 @@ namespace Game {
     template<> inline static ResourceFactory<Texture2D>& getFactory<Texture2D>() { return sInstance.texturesFactory; }
     template<> inline static ResourceFactory<Shader>&    getFactory<Shader>() { return sInstance.shadersFactory; }
     template<> inline static ResourceFactory<Mesh>&      getFactory<Mesh>() { return sInstance.meshesFactory; }
+    template<> inline static ResourceFactory<CubeMap>&   getFactory<CubeMap>() { return sInstance.cubeMapsFactory; }
 
     template<typename T>
     inline static T& getResource(Resource<T>::Id id) { return getFactory<T>().get(id).getResource(); }
@@ -169,6 +171,7 @@ namespace Game {
     ResourceFactory<Texture2D> texturesFactory;
     ResourceFactory<Shader>    shadersFactory;
     ResourceFactory<Mesh>      meshesFactory;
+    ResourceFactory<CubeMap>   cubeMapsFactory;
 
   private:
     friend class Application;
