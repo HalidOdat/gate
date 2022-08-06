@@ -9,12 +9,11 @@
 namespace Game {
 
   class Application {
-  protected:
+  public:
     Application(const char* title = "Game Title", const u32 width = 900, const u32 height = 600);
     DISALLOW_MOVE_AND_COPY(Application);
     ~Application();
 
-  public:
     inline static Application& get() { return *sInstance; }
     inline static Window& getWindow() { return *sInstance->window; }
 
@@ -28,6 +27,8 @@ namespace Game {
     bool onWindowCloseEvent(const WindowCloseEvent& event);
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onWindowMinimizedEvent(const WindowMinimizedEvent& event);
+
+    void startGameLoop();
 
   private:
     static Application* sInstance;

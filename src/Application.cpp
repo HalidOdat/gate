@@ -11,9 +11,18 @@
 #include "Renderer/Renderer.hpp"
 #include "Application.hpp"
 
+#include "Layers/GameLayer.hpp"
+#include "Layers/EditorLayer.hpp"
+
 namespace Game {
 
   Application* Application::sInstance = nullptr;
+
+  void Application::start() {
+    this->pushLayer(new EditorLayer());
+
+    startGameLoop();
+  }
 
   Application::Application(const char *title, const u32 width, const u32 height) {
     Logger::trace("Game Engine Initializing...");
@@ -50,7 +59,7 @@ namespace Game {
     Logger::info("Game Engine Terminated!");
   }
 
-  void Application::start() {
+  void Application::startGameLoop() {
     this->lastFrameTime = (float)glfwGetTime();
     while (running) {
       float time = (float)glfwGetTime();

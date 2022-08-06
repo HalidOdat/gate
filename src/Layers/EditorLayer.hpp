@@ -11,6 +11,8 @@
 
 namespace Game {
     
+  class Scene;
+
   class EditorLayer : public Layer {
   public:
     EditorLayer();
@@ -27,9 +29,20 @@ namespace Game {
     bool onKeyPressedEvent(const KeyPressedEvent& event);
   
   private:
-    OrthographicCameraController mCameraController;
+    enum class State : u8 {
+      Edit,
+      Play,
+    };
 
-    bool mShow = true;
+  private:
+    OrthographicCameraController mEditorCameraController;
+    PerspectiveCameraController mCameraController;
+    
+    bool  mShow  = true;
+    State mState = State::Play;
+
+    Ref<Scene> mEditorScene = nullptr;
+    Ref<Scene> mActiveScene = nullptr;
   };
 
 } // namespace Game

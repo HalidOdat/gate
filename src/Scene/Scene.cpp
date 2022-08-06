@@ -9,7 +9,8 @@ namespace Game {
       : mName{name}
   {}
 
-  void Scene::render() {
+  void Scene::render(const PerspectiveCameraController& camera) {
+    Renderer::begin3D(camera);
     auto view = mRegistry.view<TransformComponent, MeshSourceComponent, MeshRendererComponent>();
     for (auto[entity, tc, ms, mr] : view) {
       Renderer::submit(mr.shader, ms.mesh, mr.material, tc.getTranformMatrix());
@@ -17,7 +18,8 @@ namespace Game {
   }
 
   void Scene::onUpdate(Timestep ts) {
-    render();
+    // render();
+    GAME_TODO("");
   }
 
   Entity Scene::createEntity(String tag) {

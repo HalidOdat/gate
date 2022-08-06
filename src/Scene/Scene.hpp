@@ -17,8 +17,9 @@ namespace Game {
 
     Entity createEntity(String tag = "Entity");
 
-    void render();
+    void render(const PerspectiveCameraController& camera);
     void onUpdate(Timestep ts);
+
   private:
     String mName;
     Ecs::Registry mRegistry;

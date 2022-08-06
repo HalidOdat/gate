@@ -1,5 +1,5 @@
-#include "Game.hpp"
+#include "Application.hpp"
 
 int main(int argc, char* argv[]) {
-  Game::GameApplication().start();
+  Game::Application().start();
 }
