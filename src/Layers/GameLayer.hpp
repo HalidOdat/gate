@@ -13,6 +13,8 @@
 #include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"
 
+#include "Scene/Scene.hpp"
+
 namespace Game {
     
   class GameLayer : public Layer {
@@ -42,8 +44,6 @@ namespace Game {
     PerspectiveCameraController mCameraController;
     bool mCaptureCursor = false;
 
-    Registry mRegistry;
-
     Shader::Handle mShader;
     Mesh::Handle   mCubeMesh;
     u32            mCount = 1;
@@ -58,6 +58,8 @@ namespace Game {
       lightColor * Vec3(0.2f),
       Vec3(1.0f, 1.0f, 1.0f),
     };
+
+    Ref<Scene> mScene;
   };
 
 } // namespace Game

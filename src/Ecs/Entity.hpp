@@ -2,7 +2,7 @@
 
 #include "Core/Type.hpp"
 
-namespace Game {
+namespace Game::Ecs {
   
   class Registry;
 
@@ -21,4 +21,4 @@ namespace Game {
     Id id;
   };
 
-} // namespace Game
+} // namespace Game::Ecs

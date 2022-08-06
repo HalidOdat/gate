@@ -2,7 +2,7 @@
 
 #include "Core/Type.hpp"
 
-namespace Game {
+namespace Game::Ecs {
 
   namespace internals {
     
@@ -29,4 +29,4 @@ namespace Game {
     }
   };
 
-} // namespace Game
+} // namespace Game::Ecs

@@ -1,6 +1,6 @@
 #include "Ecs/Component.hpp"
 
-namespace Game {
+namespace Game::Ecs {
   
   namespace internals {
     
@@ -8,4 +8,4 @@ namespace Game {
 
   } // namespace internals
 
-} // namespace Game
+} // namespace Game::Ecs

@@ -9,7 +9,7 @@
 #include "Ecs/Entity.hpp"
 #include "Ecs/Component.hpp"
 
-namespace Game {
+namespace Game::Ecs {
 
   constexpr const auto MAX_COMPONENTS = 32;
 
@@ -201,4 +201,4 @@ namespace Game {
     std::vector<ComponentPool> pools;
   };
 
-} // namespace Game
+} // namespace Game::Ecs

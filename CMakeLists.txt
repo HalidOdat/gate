@@ -70,6 +70,12 @@ set(Sources
   src/Renderer/Renderer.hpp
   src/Renderer/Renderer.cpp
 
+  src/Scene/Scene.hpp
+  src/Scene/Scene.cpp
+  src/Scene/Components.hpp
+  src/Scene/Components.cpp
+  src/Scene/Entity.hpp
+
   src/Layers/Layer.hpp
   src/Layers/LayerStack.hpp
   src/Layers/LayerStack.cpp

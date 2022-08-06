@@ -18,7 +18,8 @@ namespace Game {
   GameLayer::GameLayer()
   : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
     mShader{ResourceManager::loadShader("SpotLight.glsl")},
-    mCubeMesh{ResourceManager::cubeMesh()}
+    mCubeMesh{ResourceManager::cubeMesh()},
+    mScene{new Scene("Scene")}
   {}
 
   void GameLayer::onAttach() {
@@ -28,6 +29,34 @@ namespace Game {
     mMaterial.setSpecularMap(ResourceManager::loadTexture("CrateSpecular.png"));
     mMaterial.setEmissionMap(ResourceManager::loadTexture("matrix.jpg"));
     mMaterial.setShininess(32.0f);
+
+    static Vec3 cubePositions[] = {
+      Vec3( 0.0f,  0.0f,  0.0f),
+      Vec3( 2.0f,  5.0f, -15.0f),
+      Vec3(-1.5f, -2.2f, -2.5f),
+      Vec3(-3.8f, -2.0f, -12.3f),
+      Vec3( 2.4f, -0.4f, -3.5f),
+      Vec3(-1.7f,  3.0f, -7.5f),
+      Vec3( 1.3f, -2.0f, -2.5f),
+      Vec3( 1.5f,  2.0f, -2.5f),
+      Vec3( 1.5f,  0.2f, -1.5f),
+      Vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    // for (u32 i = 0; i < mCount && i < 10; i++) {
+    //   Mat4 transform = Mat4(1.0f);
+    //   transform = glm::translate(transform, cubePositions[i]);
+    //   f32 angle = 20.0f * i;
+    //   transform = glm::rotate(transform, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+    //   Renderer::submit(mShader, mCubeMesh, mMaterial, transform);
+    // }
+
+    for (u32 i = 0; i < 10; i++) {
+      Entity entity = mScene->createEntity(String("box ") + std::to_string(i));
+      entity.add<TransformComponent>(cubePositions[i]);
+      entity.add<MeshSourceComponent>(mCubeMesh);
+      entity.add<MeshRendererComponent>(mShader, mMaterial);
+    }
   }
 
   void GameLayer::onDetach() {
@@ -51,33 +80,14 @@ namespace Game {
 
     mShader->setFloat("uLight.constant",  1.0f);
     mShader->setFloat("uLight.linear",    0.09f);
-    mShader->setFloat("uLight.quadratic", 0.032f);	
+    mShader->setFloat("uLight.quadratic", 0.032f);
 
     if (mCaptureCursor) {
       mCameraController.onUpdate(ts);
     }
 
-    static Vec3 cubePositions[] = {
-      Vec3( 0.0f,  0.0f,  0.0f),
-      Vec3( 2.0f,  5.0f, -15.0f),
-      Vec3(-1.5f, -2.2f, -2.5f),
-      Vec3(-3.8f, -2.0f, -12.3f),
-      Vec3( 2.4f, -0.4f, -3.5f),
-      Vec3(-1.7f,  3.0f, -7.5f),
-      Vec3( 1.3f, -2.0f, -2.5f),
-      Vec3( 1.5f,  2.0f, -2.5f),
-      Vec3( 1.5f,  0.2f, -1.5f),
-      Vec3(-1.3f,  1.0f, -1.5f)
-    };
-
     Renderer::begin3D(mCameraController);
-    for (u32 i = 0; i < mCount && i < 10; i++) {
-      Mat4 transform = Mat4(1.0f);
-      transform = glm::translate(transform, cubePositions[i]);
-      f32 angle = 20.0f * i;
-      transform = glm::rotate(transform, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-      Renderer::submit(mShader, mCubeMesh, mMaterial, transform);
-    }
+    mScene->onUpdate(ts);
     Renderer::end();
 
     Renderer::begin(mCameraController.getCamera());

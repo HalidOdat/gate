@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <algorithm>
 
-namespace Game {
+namespace Game::Ecs {
 
   // ComponentPool implementation
   ComponentPool::~ComponentPool() {
@@ -88,4 +88,4 @@ namespace Game {
     return entity;
   }
 
-} // namespace Game
+} // namespace Game::Ecs
