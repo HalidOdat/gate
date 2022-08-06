@@ -6,6 +6,8 @@ namespace Game {
   
   class Material {
   public:
+    using Handle = Ref<Material>;
+
     enum class AlphaMode {
       Opaque,
     };

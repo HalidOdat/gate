@@ -41,12 +41,11 @@ namespace Game {
   };
 
   struct MeshRendererComponent : Ecs::Component<MeshSourceComponent> {
-    MeshRendererComponent(const Shader::Handle& shader, const Material& material)
-      : shader{shader}, material{material}
+    MeshRendererComponent(const Material::Handle& material)
+      : material{material}
     {}
 
-    Material material;
-    Shader::Handle shader;
+    Material::Handle material;
   };
 
 } // namespace Game

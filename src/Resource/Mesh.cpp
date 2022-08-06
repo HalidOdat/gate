@@ -115,7 +115,7 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return Data{vao, vbo, ibo, {}, file};
+    return Data{vao, vbo, ibo, file};
   }
 
   Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
@@ -147,14 +147,6 @@ namespace Game {
     }
 
     return false;
-  }
-
-  const std::vector<Mesh::MaterialData>& Mesh::getMaterialData() const {
-    return mData.material;
-  }
-
-  void Mesh::addMaterialData(MaterialData::Type type, Texture2D::Handle texture) {
-    mData.material.push_back(MaterialData{type, texture});
   }
 
   const Ref<VertexArray> Mesh::getVertexArray() const {

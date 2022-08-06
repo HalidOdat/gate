@@ -14,23 +14,9 @@ namespace Game {
   public:
     using Handle = Resource<Mesh>;
 
-    struct MaterialData {
-      enum class Type {
-        Diffuse,
-        Specular,
-        Emission,
-      };
-
-      Type type;
-      Texture2D::Handle texture;
-    };
-
   public:
     DISALLOW_MOVE_AND_COPY(Mesh);
     const Ref<VertexArray> getVertexArray() const;
-
-    const std::vector<MaterialData>& getMaterialData() const;
-    void addMaterialData(MaterialData::Type type, Texture2D::Handle textue);
 
     bool reload();
 
@@ -38,10 +24,9 @@ namespace Game {
     static constexpr const bool hasMissingDataPlaceholder = false;
 
     struct Data {
-      Ref<VertexArray>          vertexArray;
-      Ref<VertexBuffer>         vertexBuffer;
-      Ref<IndexBuffer>          indexBuffer;
-      std::vector<MaterialData> material;
+      Ref<VertexArray>  vertexArray;
+      Ref<VertexBuffer> vertexBuffer;
+      Ref<IndexBuffer>  indexBuffer;
 
       Option<String> filePath;
     };

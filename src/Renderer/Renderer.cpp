@@ -85,16 +85,11 @@ namespace Game {
   };
 
   struct RenderUnit {
-    using InitFn = auto(*)(Shader& shader) -> void;
-
-    Shader::Handle shader;
-    Mesh::Handle   mesh;
-    Material    material;
+    Mesh::Handle mesh;
+    Material     material;
 
     Mat4 modelMatrix;
     Mat3 normalMatrix;
-
-    InitFn init;
   };
 
   struct RenderCamera {
@@ -115,6 +110,7 @@ namespace Game {
     Ref<VertexArray> skyboxVertexArray;
     Shader::Handle   skyboxShader;
 
+    Shader::Handle shader;
     std::vector<RenderUnit>          units;
     std::vector<u32>                 opaqueUnitIndices;
     std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
@@ -342,6 +338,7 @@ namespace Game {
     renderer->pipeline.skyboxVertexArray = skyboxVertexArray;
 
     renderer->pipeline.skyboxShader = ResourceManager::loadShader("Skybox.glsl");
+    renderer->pipeline.shader = ResourceManager::loadShader("SpotLight.glsl");
   }
 
   void Renderer::shutdown() {
@@ -366,23 +363,22 @@ namespace Game {
     renderer->pipeline.camera.front      = cameraController.getFront();
   }
 
-  void Renderer::submit(Shader::Handle& shader, const Mesh::Handle& mesh, const Material& material, const Mat4& transform) {
+  void Renderer::submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform) {
     // Don't render fully transparent objects
-    if (material.getTransparency() == 0.0f) {
+    if (material->getTransparency() == 0.0f) {
       return;
     }
 
     // TODO: Sort by shader
     u32 index = (u32)renderer->pipeline.units.size();
     RenderUnit unit {
-      shader,
       mesh,
-      material,
+      *material, // Copy material
       transform,
       Mat3(glm::transpose(glm::inverse(transform))),
     };
     renderer->pipeline.units.push_back(unit);
-    if (!material.hasTransparency()) {
+    if (!material->hasTransparency()) {
       renderer->pipeline.opaqueUnitIndices.emplace_back(index);
     } else {
       Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
@@ -394,24 +390,20 @@ namespace Game {
   void renderUnit(u32 unitIndex) {
     RenderUnit& unit = renderer->pipeline.units[unitIndex];
 
-    unit.shader->bind();
-    unit.shader->setMat4("uProjectionMatrix", renderer->pipeline.camera.projection);
-    unit.shader->setMat4("uViewMatrix", renderer->pipeline.camera.view);
-
-    unit.shader->setMat4("uModelMatrix", unit.modelMatrix);
-    unit.shader->setMat3("uNormalMatrix", unit.normalMatrix);
+    renderer->pipeline.shader->setMat4("uModelMatrix", unit.modelMatrix);
+    renderer->pipeline.shader->setMat3("uNormalMatrix", unit.normalMatrix);
 
     // TODO: Make this more dynamic
     unit.material.getDiffuseMap()->bind(0);
     unit.material.getSpecularMap()->bind(1);
     unit.material.getEmissionMap()->bind(2);
 
-    unit.shader->setInt("uMaterial.diffuse",  0);
-    unit.shader->setInt("uMaterial.specular", 1);
-    unit.shader->setInt("uMaterial.emission", 2);
+    renderer->pipeline.shader->setInt("uMaterial.diffuse",  0);
+    renderer->pipeline.shader->setInt("uMaterial.specular", 1);
+    renderer->pipeline.shader->setInt("uMaterial.emission", 2);
 
-    unit.shader->setFloat("uMaterial.shininess", unit.material.getShininess());
-    unit.shader->setFloat("uMaterial.transparency", unit.material.getTransparency());
+    renderer->pipeline.shader->setFloat("uMaterial.shininess", unit.material.getShininess());
+    renderer->pipeline.shader->setFloat("uMaterial.transparency", unit.material.getTransparency());
 
     auto vao = unit.mesh->getVertexArray();
     vao->bind();
@@ -432,6 +424,22 @@ namespace Game {
     GAME_GL_CHECK(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     
+    renderer->pipeline.shader->bind();
+    renderer->pipeline.shader->setMat4("uProjectionMatrix", renderer->pipeline.camera.projection);
+    renderer->pipeline.shader->setMat4("uViewMatrix", renderer->pipeline.camera.view);
+
+    renderer->pipeline.shader->setVec3("uViewPosition", renderer->pipeline.camera.position);
+    renderer->pipeline.shader->setVec3("uLight.position", renderer->pipeline.camera.position);
+    renderer->pipeline.shader->setVec3("uLight.direction", renderer->pipeline.camera.front);
+    renderer->pipeline.shader->setFloat("uLight.cutOff", glm::cos(glm::radians(12.5f)));
+    renderer->pipeline.shader->setFloat("uLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+    renderer->pipeline.shader->setVec3("uLight.ambient",  Vec3(0.3f, 0.3f, 0.3f));
+    renderer->pipeline.shader->setVec3("uLight.diffuse",  Vec3(1.0f, 1.0f, 1.0f));
+    renderer->pipeline.shader->setVec3("uLight.specular", Vec3(1.0f, 1.0f, 1.0f));
+    renderer->pipeline.shader->setFloat("uLight.constant",  1.0f);
+    renderer->pipeline.shader->setFloat("uLight.linear",    0.09f);
+    renderer->pipeline.shader->setFloat("uLight.quadratic", 0.032f);
+
     for (auto& index : renderer->pipeline.opaqueUnitIndices) {
       renderUnit(index);
     }

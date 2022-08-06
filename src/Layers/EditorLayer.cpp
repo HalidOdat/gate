@@ -24,6 +24,34 @@ namespace Game {
     mEditorScene.reset(new Scene("New Scene"));
     mActiveScene = mEditorScene;
 
+    Material::Handle material(new Material());
+    material->setDiffuseMap(ResourceManager::loadTexture("CrateDiffuse.png"));
+    material->setSpecularMap(ResourceManager::loadTexture("CrateSpecular.png"));
+    material->setEmissionMap(ResourceManager::loadTexture("matrix.jpg"));
+    material->setShininess(32.0f);
+
+    static Vec3 cubePositions[] = {
+      Vec3( 0.0f,  0.0f,  0.0f),
+      Vec3( 2.0f,  5.0f, -15.0f),
+      Vec3(-1.5f, -2.2f, -2.5f),
+      Vec3(-3.8f, -2.0f, -12.3f),
+      Vec3( 2.4f, -0.4f, -3.5f),
+      Vec3(-1.7f,  3.0f, -7.5f),
+      Vec3( 1.3f, -2.0f, -2.5f),
+      Vec3( 1.5f,  2.0f, -2.5f),
+      Vec3( 1.5f,  0.2f, -1.5f),
+      Vec3(-1.3f,  1.0f, -1.5f)
+    };
+    
+    Mesh::Handle mesh = ResourceManager::cubeMesh();
+
+    for (u32 i = 0; i < 10; i++) {
+      Entity entity = mEditorScene->createEntity(String("box ") + std::to_string(i));
+      entity.add<TransformComponent>(cubePositions[i % 10] + (f32)i * Vec3(0.2), Vec3(0.1f, 0.2f, 0.3f) * (f32)i);
+      entity.add<MeshSourceComponent>(mesh);
+      entity.add<MeshRendererComponent>(material);
+    }
+
     Logger::info("EditorLayer::onAttach was called");
   }
 
@@ -94,6 +122,10 @@ namespace Game {
   }
 
   bool EditorLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
+    if (event.getKey() == Key::Escape) {
+      Application::get().quit();
+    }
+
     if (event.getKey() == Key::F3) {
       mShow = !mShow;
       return true;

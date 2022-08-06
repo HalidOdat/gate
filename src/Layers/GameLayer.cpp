@@ -55,7 +55,7 @@ namespace Game {
       Entity entity = mScene->createEntity(String("box ") + std::to_string(i));
       entity.add<TransformComponent>(cubePositions[i]);
       entity.add<MeshSourceComponent>(mCubeMesh);
-      entity.add<MeshRendererComponent>(mShader, mMaterial);
+      // entity.add<MeshRendererComponent>(mMaterial);
       mEntity = entity;
     }
   }
