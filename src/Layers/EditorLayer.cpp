@@ -78,7 +78,7 @@ namespace Game {
       mShow = !mShow;
       return true;
     }
-    
+
     if (mShow) {
       if (event.getKey() == Key::T) {
         ResourceManager::reloadAll<Texture2D>();

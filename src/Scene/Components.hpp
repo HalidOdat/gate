@@ -4,6 +4,7 @@
 #include "Resource/Mesh.hpp"
 #include "Renderer/Material.hpp"
 #include "Ecs/Component.hpp"
+#include "Renderer/CameraController.hpp"
 
 namespace Game {
 

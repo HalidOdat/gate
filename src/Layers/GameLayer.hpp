@@ -60,6 +60,7 @@ namespace Game {
     };
 
     Ref<Scene> mScene;
+    Entity mEntity;
   };
 
 } // namespace Game

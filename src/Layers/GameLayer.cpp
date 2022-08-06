@@ -56,6 +56,7 @@ namespace Game {
       entity.add<TransformComponent>(cubePositions[i]);
       entity.add<MeshSourceComponent>(mCubeMesh);
       entity.add<MeshRendererComponent>(mShader, mMaterial);
+      mEntity = entity;
     }
   }
 
@@ -102,6 +103,7 @@ namespace Game {
       ui.slider(mLight.ambient,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.diffuse,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.specular, Vec3(0.1f), Vec3(1.0f));
+      ui.slider(mEntity.get<TransformComponent>().rotation, Vec3(0.0f), Vec3(8.0f));
     ui.end();
   }
 

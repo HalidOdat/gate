@@ -17,6 +17,8 @@ namespace Game::Ecs {
       : id{id}
     {}
 
+    inline Id getId() const { return id; }
+
   private:
     Id id;
   };

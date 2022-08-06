@@ -29,18 +29,35 @@ namespace Game {
 
   class Entity {
   public:
+    Entity()
+      : mEntityId{0}, mScene{nullptr}
+    {}
+
     template<typename T, typename ...Args>
     T& add(Args&&... args) {
-      return mScene->mRegistry.assign<T>(mEntity, std::forward<Args>(args)...);
+      return mScene->mRegistry.assign<T>(
+        Ecs::Entity(mEntityId),
+        std::forward<Args>(args)...
+      );
+    }
+
+    template<typename T, typename ...Ts>
+    bool has() {
+      return mScene->mRegistry.hasComponent<T, Ts...>(Ecs::Entity(mEntityId));
+    }
+
+    template<typename T, typename ...Ts>
+    decltype(auto) get() {
+      return mScene->mRegistry.get<T, Ts...>(Ecs::Entity(mEntityId));
     }
 
   private:
     Entity(Ecs::Entity entity, Scene* scene)
-      : mEntity{entity}, mScene{scene}
+      : mEntityId{entity.getId()}, mScene{scene}
     {}
 
   private:
-    Ecs::Entity mEntity;
+    Ecs::Entity::Id mEntityId;
     Scene* mScene;
 
   private:
