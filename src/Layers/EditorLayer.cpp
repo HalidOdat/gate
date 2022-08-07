@@ -47,10 +47,13 @@ namespace Game {
 
     for (u32 i = 0; i < 10; i++) {
       Entity entity = mEditorScene->createEntity(String("box ") + std::to_string(i));
-      entity.add<TransformComponent>(cubePositions[i % 10] + (f32)i * Vec3(0.2), Vec3(0.1f, 0.2f, 0.3f) * (f32)i);
+      entity.add<TransformComponent>(cubePositions[i % 10] + (f32)i * Vec3(0.2f), Vec3(0.1f, 0.2f, 0.3f) * (f32)i);
       entity.add<MeshSourceComponent>(mesh);
       entity.add<MeshRendererComponent>(material);
     }
+
+    auto node = Serializer::Node(*mEditorScene);
+    Logger::info("Object: %s", node.toString().c_str());
 
     Logger::info("EditorLayer::onAttach was called");
   }

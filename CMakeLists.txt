@@ -30,6 +30,9 @@ set(Sources
   src/Utils/String.hpp
   src/Utils/String.cpp
 
+  src/Serializer/Serializer.hpp
+  src/Serializer/Serializer.cpp
+
   src/Events/Event.hpp
   src/Events/Event.cpp
   src/Events/KeyEvent.hpp

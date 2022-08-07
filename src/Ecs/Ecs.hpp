@@ -81,8 +81,8 @@ namespace Game::Ecs {
     }
 
   private:
-    RegistryView(Registry* registry)
-      : registry{registry}
+    RegistryView(const Registry* registry)
+      : registry{(Registry*)registry}
     {
       (this->requirements.set(Component<Ts>::getId()),...);
     }
@@ -188,6 +188,11 @@ namespace Game::Ecs {
 
     template<typename ...Ts>
     RegistryView<Ts...> view() {
+      return RegistryView<Ts...>(this);
+    }
+
+    template<typename ...Ts>
+    RegistryView<Ts...> view() const {
       return RegistryView<Ts...>(this);
     }
 
