@@ -235,6 +235,61 @@ namespace Game {
     return changed;
   }
 
+  bool Ui::checkbox(bool& value) {
+    u64 id = (u64)(void*)&value;
+
+    auto& layout = this->layouts.back();
+
+    const auto position = layout.nextAvailablePosition() + Vec2(mConfig.checkbox.margin.left, mConfig.checkbox.margin.top);
+    const auto size     = mConfig.checkbox.size;
+
+    const auto rectangle = AABB(
+      position, 
+      size
+    );
+
+    Vec3 color = mConfig.checkbox.color.inactive;
+    if (this->hasActive && this->active == id) {
+      if (!this->mouseButton) {
+        this->hasActive = false;
+
+        if (rectangle.contains(this->mousePosition)) {
+          value = !value;
+        }
+      } else {
+        color = mConfig.checkbox.color.active;
+      }
+    } else if (this->hasHot && this->hot == id) {
+      color = mConfig.checkbox.color.hot;
+
+      if (!rectangle.contains(this->mousePosition)) {
+        this->hasHot = false;
+      } else if (this->mouseButton && !this->hasActive) {
+        this->hasActive = true;
+        this->active    = id;
+      }
+    } else {
+      if (!this->hasActive && rectangle.contains(this->mousePosition)) {
+        this->hasHot = true;
+        this->hot    = id;
+      }
+    }
+
+    if (value) {
+      drawQuad(position + Vec2(5.0f), size - Vec2(10.0f), Vec3(0.1f, 0.9f, 0.3f));
+    } else {
+      drawQuad(position + Vec2(5.0f), size - Vec2(10.0f), Vec3(0.3f, 0.3f, 0.3f));
+    }
+    drawQuad(position, size, color);
+
+    layout.pushWidget(
+      size
+        + Vec2(mConfig.checkbox.margin.left, mConfig.checkbox.margin.top)
+        + Vec2(mConfig.checkbox.margin.right, mConfig.checkbox.margin.bottom)
+    );
+    return value;
+  }
+
   void Ui::endLayout() {
     auto size = this->layouts.back().size;
     this->layouts.pop_back();

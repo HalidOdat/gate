@@ -53,8 +53,8 @@ namespace Game {
       entity.add<MeshRendererComponent>(material);
     }
 
-    auto node = SceneSerializer::serialize(*mEditorScene);
-    Logger::info("Object: %s", node.c_str());
+    // auto node = SceneSerializer::serialize(*mEditorScene);
+    // Logger::info("Object: %s", node.c_str());
 
     Logger::info("EditorLayer::onAttach was called");
   }
@@ -79,7 +79,7 @@ namespace Game {
   }
 
   void EditorLayer::onUiRender(Ui& ui) {
-    if (mShow) {
+    if (mShow || true) {
       auto ts = Timestep::get();
       const auto ar = Application::getWindow().getAspectRatio();
       Renderer::begin(mCameraController.getCamera());
@@ -102,6 +102,9 @@ namespace Game {
         }
         if (ui.button("Button 3", 3)) {
           Logger::info("Button 3 clicked!!!");
+        }
+        if (ui.checkbox(mShow)) {
+
         }
       ui.end();
     }

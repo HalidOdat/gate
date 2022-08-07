@@ -47,6 +47,12 @@ namespace Game {
         Text text;
       };
 
+      struct Checkbox {
+        Margin margin;
+        Color color;
+        Vec2 size { 20, 20 };
+      };
+
       struct Window {
         Vec2 size;
       };
@@ -54,6 +60,7 @@ namespace Game {
       Window window;
       Button button;
       Slider slider;
+      Checkbox checkbox;
     };
 
     class Layout {
@@ -86,6 +93,7 @@ namespace Game {
     bool button(const StringView& text, u64 id = 0);
     bool slider(f32& value, const f32 min, const f32 max);
     bool slider(Vec3& value, const Vec3& mins, const Vec3& maxs);
+    bool checkbox(bool& value);
     void endLayout();
     void end();
 
