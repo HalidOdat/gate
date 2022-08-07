@@ -19,6 +19,7 @@ namespace Game::Serializer {
   void Node::toStringWithIndent(std::stringstream& ss, u32 level) const {
     Style style = this->mStyle;
     std::visit(overloaded {
+      [&](Null) { ss << "null"; },
       [&](Integer value) { ss << value; },
       [&](Float value) { ss << std::fixed << value; },
       [&](const String& value) { ss << std::quoted(value); },

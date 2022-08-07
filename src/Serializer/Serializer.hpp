@@ -181,6 +181,17 @@ namespace Game::Serializer {
   };
 
   template<typename T>
+  struct Convert<Option<T>> {
+    static Node encode(const Option<T>& value) {
+      if (value) {
+        return *value;
+      }
+
+      return Node{};
+    }
+  };
+
+  template<typename T>
   struct Convert<std::vector<T>> {
     static Node encode(const std::vector<T>& value) {
       auto node = Node::array();

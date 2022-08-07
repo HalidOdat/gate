@@ -12,6 +12,7 @@
 #include "Application.hpp"
 
 #include "Scene/Scene.hpp"
+#include "Scene/SceneSerializer.hpp"
 
 namespace Game {
 
@@ -52,8 +53,8 @@ namespace Game {
       entity.add<MeshRendererComponent>(material);
     }
 
-    auto node = Serializer::Node(*mEditorScene);
-    Logger::info("Object: %s", node.toString().c_str());
+    auto node = SceneSerializer::serialize(*mEditorScene);
+    Logger::info("Object: %s", node.c_str());
 
     Logger::info("EditorLayer::onAttach was called");
   }

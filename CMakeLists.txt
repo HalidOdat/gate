@@ -78,6 +78,8 @@ set(Sources
   src/Scene/Components.hpp
   src/Scene/Components.cpp
   src/Scene/Entity.hpp
+  src/Scene/SceneSerializer.hpp
+  src/Scene/SceneSerializer.cpp
 
   src/Layers/Layer.hpp
   src/Layers/LayerStack.hpp
