@@ -251,7 +251,10 @@ namespace Game {
 
     auto width = Application::getWindow().getWidth();
     auto height = Application::getWindow().getHeight();
-    renderer->pipeline.frameBuffer = FrameBuffer::create(width, height);
+
+    FrameBuffer::Specification frameBufferSpecification;
+    frameBufferSpecification.clearColor = {0.2f, 0.2f, 0.2f, 1.0f};
+    renderer->pipeline.frameBuffer = FrameBuffer::create(width, height, frameBufferSpecification);
 
     static const float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
       // positions   // texCoords
@@ -387,7 +390,7 @@ namespace Game {
     }
   }
 
-  void renderUnit(u32 unitIndex) {
+  static void renderUnit(u32 unitIndex) {
     RenderUnit& unit = renderer->pipeline.units[unitIndex];
 
     renderer->pipeline.shader->setMat4("uModelMatrix", unit.modelMatrix);
@@ -411,19 +414,7 @@ namespace Game {
     vao->unbind();
   }
 
-  void Renderer::waitAndRender() {
-    // First Pass
-    renderer->pipeline.frameBuffer->bind();
-
-    Renderer::enableDepthTest(true);
-
-    // Renderer::enableCullFace(true);
-    // glCullFace(GL_BACK);
-    // glFrontFace(GL_CCW);
-
-    GAME_GL_CHECK(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
-    GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    
+  static void renderAllUnits() {
     renderer->pipeline.shader->bind();
     renderer->pipeline.shader->setMat4("uProjectionMatrix", renderer->pipeline.camera.projection);
     renderer->pipeline.shader->setMat4("uViewMatrix", renderer->pipeline.camera.view);
@@ -459,10 +450,9 @@ namespace Game {
     renderer->pipeline.units.clear();
     renderer->pipeline.opaqueUnitIndices.clear();
     renderer->pipeline.transparentUnitIndices.clear();
+  }
 
-    // Renderer::enableCullFace(false);
-
-    // Skybox
+  void renderSkybox() {
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     renderer->pipeline.skyboxTexture->bind();
     renderer->pipeline.skyboxShader->bind();
@@ -472,7 +462,15 @@ namespace Game {
     renderer->pipeline.skyboxVertexArray->bind();
     renderer->pipeline.skyboxVertexArray->drawArrays(36);
     glDepthFunc(GL_LESS); // set depth function back to default
+  }
 
+  void Renderer::waitAndRender() {
+    // First Pass
+    renderer->pipeline.frameBuffer->bind();
+    GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    Renderer::enableDepthTest(true);
+    renderAllUnits();
+    renderSkybox();
     Renderer::enableDepthTest(false);
     renderer->pipeline.frameBuffer->unbind();
     

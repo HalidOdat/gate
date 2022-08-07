@@ -5,12 +5,12 @@
 
 namespace Game {
   
-  Ref<FrameBuffer> FrameBuffer::create(u32 width, u32 height) {
-    return Ref<FrameBuffer>(new FrameBuffer(width, height));
+  Ref<FrameBuffer> FrameBuffer::create(u32 width, u32 height, Specification specification) {
+    return Ref<FrameBuffer>(new FrameBuffer(width, height, std::move(specification)));
   }
 
-  FrameBuffer::FrameBuffer(u32 width, u32 height)
-    : mId{0}
+  FrameBuffer::FrameBuffer(u32 width, u32 height, Specification specification)
+    : mId{0}, mSpecification{std::move(specification)}
   {
     invalidate(width, height);
   }
@@ -66,6 +66,14 @@ namespace Game {
 
   void FrameBuffer::bind() {
     GAME_GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mId));
+    GAME_GL_CHECK(
+      glClearColor(
+        mSpecification.clearColor.r,
+        mSpecification.clearColor.g,
+        mSpecification.clearColor.b,
+        mSpecification.clearColor.a
+      )
+    );
   }
 
   void FrameBuffer::unbind() {
