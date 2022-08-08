@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 #include "Core/Math.hpp"
 #include "Utils/Color.hpp"
 #include "Resource/Manager.hpp"

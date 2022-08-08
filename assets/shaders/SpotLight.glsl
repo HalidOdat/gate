@@ -70,9 +70,10 @@ void main() {
   vec3 diffuse = uLight.diffuse * diff * vec3(texture(uMaterial.diffuse, vTexCoords));
     
   // specular
-  vec3 viewDir = normalize(uViewPosition - vFragmentPosition);
-  vec3 reflectDir = reflect(-lightDir, norm);  
-  float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
+  vec3 viewDir    = normalize(uViewPosition - vFragmentPosition);
+  vec3 halfwayDir = normalize(lightDir + viewDir);
+  // vec3 reflectDir = reflect(-lightDir, norm);  
+  float spec = pow(max(dot(viewDir, halfwayDir), 0.0), uMaterial.shininess * 4.0f);
   vec3 specular = uLight.specular * spec * vec3(texture(uMaterial.specular, vTexCoords));
 
   // emission

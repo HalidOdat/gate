@@ -186,6 +186,7 @@ namespace Game {
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)); 
 
     return Data{texture, std::move(paths)};
+    
   }
 
   CubeMap::~CubeMap() {
