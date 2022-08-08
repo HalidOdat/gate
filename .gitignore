@@ -40,3 +40,7 @@ build-win/
 # IDE
 .vscode/
 .idea/
+
+# Assets directory (for now)
+assets/objects/
+assets/textures/
