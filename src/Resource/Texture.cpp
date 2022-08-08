@@ -71,6 +71,14 @@ namespace Game {
       dataFormat = GL_RGB;
     }
 
+    if (specification.gammaCorrected) {
+      if (internalFormat == GL_RGBA8) {
+        internalFormat = GL_SRGB8_ALPHA8;
+      } else if (internalFormat == GL_RGB8) {
+        internalFormat = GL_SRGB8;
+      }
+    }
+
     GAME_ASSERT_WITH_MESSAGE(internalFormat && dataFormat, "Format not supported!");
 
     auto repeat    = TextureWrappingToOpenGL(specification.wrapping);
@@ -87,7 +95,9 @@ namespace Game {
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter));
 
     GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes));
-    GAME_GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+    if (specification.mipmap != Texture::MipmapMode::None) {
+      GAME_GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+    }
 
     return { texture, width, height, specification };
   }
@@ -186,7 +196,7 @@ namespace Game {
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)); 
 
     return Data{texture, std::move(paths)};
-    
+
   }
 
   CubeMap::~CubeMap() {
