@@ -16,7 +16,7 @@ namespace Game {
 
   public:
     DISALLOW_MOVE_AND_COPY(Mesh);
-    const Ref<VertexArray> getVertexArray() const;
+    const VertexArray::Handle getVertexArray() const;
 
     bool reload();
 
@@ -24,9 +24,9 @@ namespace Game {
     static constexpr const bool hasMissingDataPlaceholder = false;
 
     struct Data {
-      Ref<VertexArray>  vertexArray;
-      Ref<VertexBuffer> vertexBuffer;
-      Ref<IndexBuffer>  indexBuffer;
+      VertexArray::Handle  vertexArray;
+      VertexBuffer::Handle vertexBuffer;
+      IndexBuffer::Handle  indexBuffer;
 
       Option<String> filePath;
     };

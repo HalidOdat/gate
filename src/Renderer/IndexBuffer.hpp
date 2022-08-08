@@ -7,7 +7,10 @@ namespace Game {
   // TODO: Support indices of different types, like unsigned short
   class IndexBuffer {
   public:
-    [[nodiscard]] static Ref<IndexBuffer> create(Slice<const u32> slice);
+    using Handle = Ref<IndexBuffer>;
+
+  public:
+    [[nodiscard]] static IndexBuffer::Handle create(Slice<const u32> slice);
     DISALLOW_COPY_AND_ASSIGN(IndexBuffer);
 
     ~IndexBuffer();

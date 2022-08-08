@@ -10,16 +10,18 @@ namespace Game {
 
   class VertexArray {
   public:
-    [[nodiscard]] static Ref<VertexArray> create();
-    
+    using Handle = Ref<VertexArray>;
+
+  public:
+    [[nodiscard]] static VertexArray::Handle create();
     DISALLOW_MOVE_AND_COPY(VertexArray);
     ~VertexArray();
 
     void bind();
     void unbind();
 
-    void addVertexBuffer(Ref<VertexBuffer> buffer);
-    void setIndexBuffer(Ref<IndexBuffer> buffer);
+    void addVertexBuffer(VertexBuffer::Handle buffer);
+    void setIndexBuffer(IndexBuffer::Handle buffer);
 
     inline u32 getId() { return id; }
 
@@ -34,8 +36,8 @@ namespace Game {
   private:
     u32 id;
     u32 vertexAttributeIndex = 0;
-    std::vector<Ref<VertexBuffer>> buffers;
-    Ref<IndexBuffer> indexBuffer;
+    std::vector<VertexBuffer::Handle> buffers;
+    IndexBuffer::Handle indexBuffer;
   };
 
 } // namespace Game

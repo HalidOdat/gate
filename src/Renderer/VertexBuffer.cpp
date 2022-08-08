@@ -5,12 +5,12 @@
 
 namespace Game {
 
-  Ref<VertexBuffer> VertexBuffer::withSize(const usize size) {
-    return Ref<VertexBuffer>(new VertexBuffer(size));
+  VertexBuffer::Handle VertexBuffer::withSize(const usize size) {
+    return VertexBuffer::Handle(new VertexBuffer(size));
   }
 
-  Ref<VertexBuffer> VertexBuffer::create(Slice<const void> slice) {
-    return Ref<VertexBuffer>(new VertexBuffer(slice));
+  VertexBuffer::Handle VertexBuffer::create(Slice<const void> slice) {
+    return VertexBuffer::Handle(new VertexBuffer(slice));
   }
 
   VertexBuffer::VertexBuffer(Slice<const void> slice) {

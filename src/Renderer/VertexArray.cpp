@@ -7,8 +7,8 @@
 
 namespace Game {
   
-  Ref<VertexArray> VertexArray::create() {
-    return Ref<VertexArray>(new VertexArray());
+  VertexArray::Handle VertexArray::create() {
+    return VertexArray::Handle(new VertexArray());
   }
 
   VertexArray::VertexArray() {
@@ -27,7 +27,7 @@ namespace Game {
     GAME_GL_CHECK(glBindVertexArray(0));
   }
 
-  void VertexArray::addVertexBuffer(Ref<VertexBuffer> buffer) {
+  void VertexArray::addVertexBuffer(VertexBuffer::Handle buffer) {
     this->bind();
     buffer->bind();
 
@@ -86,7 +86,7 @@ namespace Game {
     this->buffers.push_back(buffer);
   }
 
-  void VertexArray::setIndexBuffer(Ref<IndexBuffer> buffer) {
+  void VertexArray::setIndexBuffer(IndexBuffer::Handle buffer) {
     this->bind();
     buffer->bind();
     this->indexBuffer = buffer;

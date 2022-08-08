@@ -3,17 +3,20 @@
 #include <vector>
 #include "Core/Type.hpp"
 #include "Core/Math.hpp"
+#include "Resource/Texture.hpp"
 
 namespace Game {
 
   class FrameBuffer {
   public:
+    using Handle = Ref<FrameBuffer>;
+
     struct Specification {
       Vec4 clearColor{1.0f};
     };
 
   public:
-    [[nodiscard]] static Ref<FrameBuffer> create(u32 width, u32 height, Specification specification = {});
+    [[nodiscard]] static FrameBuffer::Handle create(u32 width, u32 height, Specification specification = {});
     DISALLOW_MOVE_AND_COPY(FrameBuffer);
     ~FrameBuffer();
 

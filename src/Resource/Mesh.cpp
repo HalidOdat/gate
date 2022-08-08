@@ -149,7 +149,7 @@ namespace Game {
     return false;
   }
 
-  const Ref<VertexArray> Mesh::getVertexArray() const {
+  const VertexArray::Handle Mesh::getVertexArray() const {
     return mData.vertexArray;
   }
 

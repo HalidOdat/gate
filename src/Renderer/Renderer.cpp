@@ -19,8 +19,8 @@ namespace Game {
   // TODO: Refactor this
   struct QuadBatch {
     QuadBatch(
-      Ref<VertexArray>  vertexArray,
-      Ref<VertexBuffer> vertexBuffer,
+      VertexArray::Handle  vertexArray,
+      VertexBuffer::Handle vertexBuffer,
       Shader::Handle       shader,
       Texture2D::Handle    whiteTexture
     )
@@ -56,8 +56,8 @@ namespace Game {
     };
 
     Shader::Handle       shader;
-    Ref<VertexBuffer> vertexBuffer;
-    Ref<VertexArray>  vertexArray;
+    VertexBuffer::Handle vertexBuffer;
+    VertexArray::Handle  vertexArray;
 
     // TODO: Query OpenGL
     static constexpr const u32 MAX_TEXTURES = 32;
@@ -103,11 +103,11 @@ namespace Game {
   struct RenderPipeline {
     Shader::Handle postProcesingShader;
     RenderCamera camera;
-    Ref<FrameBuffer> frameBuffer;
-    Ref<VertexArray> quadVertexArray;
+    FrameBuffer::Handle frameBuffer;
+    VertexArray::Handle quadVertexArray;
 
     CubeMap::Handle  skyboxTexture;
-    Ref<VertexArray> skyboxVertexArray;
+    VertexArray::Handle skyboxVertexArray;
     Shader::Handle   skyboxShader;
 
     Shader::Handle shader;

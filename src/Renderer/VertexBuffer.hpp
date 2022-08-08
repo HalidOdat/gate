@@ -107,8 +107,11 @@ namespace Game {
 
   class VertexBuffer {
   public:
-    [[nodiscard]] static Ref<VertexBuffer> create(Slice<const void> slice);
-    [[nodiscard]] static Ref<VertexBuffer> withSize(const usize size);
+    using Handle = Ref<VertexBuffer>;
+
+  public:
+    [[nodiscard]] static VertexBuffer::Handle create(Slice<const void> slice);
+    [[nodiscard]] static VertexBuffer::Handle withSize(const usize size);
     DISALLOW_COPY_AND_ASSIGN(VertexBuffer);
     ~VertexBuffer();
 

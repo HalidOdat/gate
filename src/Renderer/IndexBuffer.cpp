@@ -4,8 +4,8 @@
 #include "Renderer/IndexBuffer.hpp"
 
 namespace Game {
-  Ref<IndexBuffer> IndexBuffer::create(Slice<const u32> slice) {
-    return Ref<IndexBuffer>(new IndexBuffer(slice));
+  IndexBuffer::Handle IndexBuffer::create(Slice<const u32> slice) {
+    return IndexBuffer::Handle(new IndexBuffer(slice));
   }
 
   IndexBuffer::IndexBuffer(Slice<const u32> slice)
