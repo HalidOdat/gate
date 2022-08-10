@@ -17,17 +17,17 @@ namespace Game {
 
   GameLayer::GameLayer()
   : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
-    mShader{ResourceManager::loadShader("SpotLight.glsl")},
-    mCubeMesh{ResourceManager::cubeMesh()},
+    mShader{Shader::load("SpotLight.glsl")},
+    mCubeMesh{Mesh::cube()},
     mScene{new Scene("Scene")}
   {}
 
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
 
-    mMaterial.setDiffuseMap(ResourceManager::loadTexture("CrateDiffuse.png"));
-    mMaterial.setSpecularMap(ResourceManager::loadTexture("CrateSpecular.png"));
-    mMaterial.setEmissionMap(ResourceManager::loadTexture("matrix.jpg"));
+    mMaterial.setDiffuseMap(Texture2D::load("CrateDiffuse.png"));
+    mMaterial.setSpecularMap(Texture2D::load("CrateSpecular.png"));
+    mMaterial.setEmissionMap(Texture2D::load("matrix.jpg"));
     mMaterial.setShininess(32.0f);
 
     static Vec3 cubePositions[] = {

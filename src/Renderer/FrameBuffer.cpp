@@ -3,10 +3,14 @@
 #include "Core/Assert.hpp"
 #include "Renderer/FrameBuffer.hpp"
 
+#include "Resource/Factory.hpp"
+
 namespace Game {
-  
-  Ref<FrameBuffer> FrameBuffer::create(u32 width, u32 height, Specification specification) {
-    return Ref<FrameBuffer>(new FrameBuffer(width, height, std::move(specification)));
+
+  GAME_FACTORY_IMPLEMENTATION(FrameBuffer, factory)
+
+  FrameBuffer::Handle FrameBuffer::create(u32 width, u32 height, Specification specification) {
+    return factory.emplace(width, height, specification);
   }
 
   FrameBuffer::FrameBuffer(u32 width, u32 height, Specification specification)

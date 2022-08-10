@@ -9,9 +9,13 @@
 #include "Core/Log.hpp"
 #include "Core/Assert.hpp"
 #include "Resource/Shader.hpp"
+#include "Resource/Factory.hpp"
+
 #include "Utils/String.hpp"
 
 namespace Game {
+
+  GAME_FACTORY_IMPLEMENTATION(Shader, factory)
 
   static u32 shaderTypeToOpenGLType(Shader::Type type) {
     switch (type) {
@@ -150,10 +154,12 @@ namespace Game {
     return id;
   }
 
-  Option<Shader::Data> Shader::fromFile(const StringView& filepath) {
+  Shader::Handle Shader::load(const StringView& path) {
+    auto filepath = "assets/shaders/" + String(path);
+    
     auto content = parse(filepath);
     if (content.empty()) {
-      return None;
+      return {};
     }
 
     std::array<u32, SHADER_TYPE_COUNT> shaders = {0, 0, 0};
@@ -168,7 +174,7 @@ namespace Game {
             GAME_GL_CHECK(glDeleteShader(shader));
           }
         }
-        return None;
+        return {};
       }
     }
 
@@ -203,27 +209,29 @@ namespace Game {
 
     if (!success) {
       glDeleteProgram(shaderProgram);
-      return None;
+      return {};
     }
 
-    return Data{ shaderProgram, String(filepath) };
+    return factory.emplace(shaderProgram, String(filepath));
   }
 
   Shader::~Shader() {
-    GAME_GL_CHECK(glDeleteProgram(mData.id));
+    GAME_GL_CHECK(glDeleteProgram(id));
   }
 
   bool Shader::reload() {
-    if (!mData.filePath.has_value()) {
+    if (!mFilePath.has_value()) {
       return false;
     }
+    
+    GAME_TODO("");
 
-    auto data = Shader::fromFile(*mData.filePath);
+    auto data = Shader::load(*mFilePath);
     if (data) {
-      Logger::trace("Reloaded shader: %s", mData.filePath.value().c_str());
+      Logger::trace("Reloaded shader: %s", mFilePath.value().c_str());
 
-      GAME_GL_CHECK(glDeleteProgram(mData.id));
-      mData = *data;
+      GAME_GL_CHECK(glDeleteProgram(id));
+      // mData = *data;
       return true;
     }
 
@@ -231,8 +239,7 @@ namespace Game {
   }
 
   void Shader::bind() noexcept {
-    u32 programId = mData.id;
-    GAME_GL_CHECK(glUseProgram(programId));
+    GAME_GL_CHECK(glUseProgram(id));
   }
 
   void Shader::unbind() noexcept {
@@ -240,77 +247,77 @@ namespace Game {
   }
 
   void Shader::setFloat(StringView name, const f32 value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform1f(uniform_id, value));
   }
 
   void Shader::setVec2(StringView name, const Vec2& value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform2f(uniform_id, value.x, value.y));
   }
 
   void Shader::setVec3(StringView name, const Vec3& value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform3f(uniform_id, value.x, value.y, value.z));
   }
 
   void Shader::setVec4(StringView name, const Vec4& value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform4f(uniform_id, value.x, value.y, value.z, value.w));
   }
 
   void Shader::setMat2(StringView name, const Mat2& value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniformMatrix2fv(uniform_id, 1, GL_FALSE, &value[0][0]));
   }
 
   void Shader::setMat3(StringView name, const Mat3& value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniformMatrix3fv(uniform_id, 1, GL_FALSE, &value[0][0]));
   }
 
   void Shader::setMat4(StringView name, const Mat4& value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniformMatrix4fv(uniform_id, 1, GL_FALSE, &value[0][0]));
   }
 
   void Shader::setInt(StringView name, const i32 value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform1i(uniform_id, value));
   }
 
   void Shader::setUint(StringView name, const u32 value) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform1ui(uniform_id, value));
   }
 
   void Shader::setIntArray(StringView name, const i32* value, u32 count) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform1iv(uniform_id, count, value));
   }
 
   void Shader::setUintArray(StringView name, const u32* value, u32 count) {
-    u32 programId = mData.id;
+    u32 programId = id;
     u32 uniform_id;
     GAME_GL_CHECK(uniform_id = glGetUniformLocation(programId, name.data()));
     GAME_GL_CHECK(glUniform1uiv(uniform_id, count, value));

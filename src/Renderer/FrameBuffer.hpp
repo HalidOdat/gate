@@ -4,12 +4,13 @@
 #include "Core/Type.hpp"
 #include "Core/Math.hpp"
 #include "Resource/Texture.hpp"
+#include "Resource/Resource.hpp"
 
 namespace Game {
 
   class FrameBuffer {
   public:
-    using Handle = Ref<FrameBuffer>;
+    using Handle = Resource<FrameBuffer>;
 
     struct Specification {
       Vec4 clearColor{1.0f};
@@ -40,6 +41,12 @@ namespace Game {
     u32 mDepthStencilAttachment;
 
     Specification mSpecification;
+
+  private:
+    template<typename T>
+    friend class ResourceFactory;
   };
+
+  GAME_FACTORY_HEADER(FrameBuffer)
 
 } // namespace Game

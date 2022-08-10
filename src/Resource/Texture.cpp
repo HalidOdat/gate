@@ -5,9 +5,33 @@
 #include "Core/Assert.hpp"
 #include "Core/Log.hpp"
 #include "Resource/Texture.hpp"
-#include "Resource/Manager.hpp"
+#include "Resource/Factory.hpp"
 
 namespace Game {
+
+  GAME_FACTORY_IMPLEMENTATION(Texture2D, texture2DFactory)
+
+  template<>
+  struct FactoryCallback<Texture2D> {
+    inline static void created(Texture2D& texture, u32 id) {
+      if (texture.getFilePath()) {
+        Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
+      } else {
+        Logger::trace("Texture #%u created color: #%08x", id, texture.getColor());
+      }
+    }
+    inline static void destroyed(Texture2D& texture, u32 id) {
+     if (texture.getFilePath()) {
+        Logger::trace("Texture #%u destroyed: %s", id, texture.getFilePath()->c_str());
+      } else {
+        Logger::trace("Texture #%u destroyed color: #%08x", id, texture.getColor());
+      }
+    }
+  };
+
+  void Texture2D::reloadAll() {
+    GAME_TODO("not implemented yet!");
+  }
 
   static const u8 defaultTextureData[] = {
     0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
@@ -99,50 +123,76 @@ namespace Game {
       GAME_GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
     }
 
-    return { texture, width, height, specification };
+    return Data{texture, width, height, specification};
   }
 
-  Option<Texture2D::Data> Texture2D::fromFile(const StringView& filepath, Specification specification) {
+  Texture2D::Handle Texture2D::color(u32 color) {
+    u8 a = color & 0xFF; color >>= 8;
+    u8 b = color & 0xFF; color >>= 8;
+    u8 g = color & 0xFF; color >>= 8;
+    u8 r = color & 0xFF;
+    return Texture2D::color(r, g, b, a);
+  }
+
+  Texture2D::Handle Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
+    Texture2D::Specification specification;
+    specification.mipmap = Texture::MipmapMode::None;
+    specification.filtering = Texture::FilteringMode::Nearest;
+
+    const u8 bytes[] = {r, g, b, a};
+    return texture2DFactory.emplace(Texture2D::fromBytes(bytes, 1, 1, 4, specification));
+  }
+
+  Texture2D::Handle Texture2D::load(const StringView& path, Specification specification) {
     stbi_set_flip_vertically_on_load(specification.verticalFlip == Texture::VerticalFlip::True);
+
+    auto filepath = "assets/textures/" + String(path);
 
     int width, height, channels;
     stbi_uc* data = stbi_load(filepath.data(), &width, &height, &channels, 0);
         
     if (!data) {
-      Logger::error("couldn't load image file '%s'", filepath.data());
-      return None;
+      Logger::error("Couldn't load image file '%s'", filepath.data());
+      return {};
     }
 
     auto result = Texture2D::fromBytes(data, width, height, channels, specification);
     result.filePath = filepath;
     stbi_image_free(data);
-    return result;
+    return texture2DFactory.emplace(result);
   }
 
-  Texture2D::Data Texture2D::generateMissingDataPlaceholder() {
+  Texture2D::Handle Texture2D::generateMissingDataPlaceholder() {
     Texture2D::Specification specification;
     specification.filtering.mag = Texture::FilteringMode::Nearest;
     specification.filtering.min = Texture::FilteringMode::Linear;
     specification.mipmap        = Texture::MipmapMode::Linear;
 
-    return Texture2D::fromBytes(defaultTextureData, 2, 2, 4, specification);
+    return texture2DFactory.emplace(Texture2D::fromBytes(defaultTextureData, 2, 2, 4, specification));
   }
 
   bool Texture2D::reload() {
     if (!mData.filePath.has_value()) {
-      return false;
-    }
-
-    auto data = Texture2D::fromFile(*mData.filePath, mData.specification);
-    if (data) {
-      Logger::trace("Reloaded texture: %s", mData.filePath.value().c_str());
-
-      GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
-      mData = *data;
       return true;
     }
 
-    return false;
+    stbi_set_flip_vertically_on_load(mData.specification.verticalFlip == Texture::VerticalFlip::True);
+    int width, height, channels;
+    u8* bytes = stbi_load(mData.filePath->c_str(), &width, &height, &channels, 0);
+
+    if (!bytes) {
+      Logger::error("Couldn't reload image file '%s'", mData.filePath->c_str());
+      return false;
+    }
+
+    auto data = Texture2D::fromBytes(bytes, width, height, channels, mData.specification);
+    stbi_image_free(bytes);
+
+    Logger::trace("Reloaded texture: %s", mData.filePath.value().c_str());
+    GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
+    data.filePath = std::move(mData.filePath);
+    mData = std::move(data);
+    return true;
   }
 
   Texture2D::~Texture2D() {
@@ -170,7 +220,9 @@ namespace Game {
 
   // ---------------------------- CubeMap ---------------------------
 
-  Option<CubeMap::Data> CubeMap::fromFile(FilePaths paths) {
+  GAME_FACTORY_IMPLEMENTATION(CubeMap, cubeMapFactory)
+
+  CubeMap::Handle CubeMap::load(FilePaths paths) {
     GAME_ASSERT(paths.size() == 6);
 
     u32 texture;
@@ -180,7 +232,8 @@ namespace Game {
     int width, height, nrChannels;
     for (u32 i = 0; i < paths.size(); ++i) {
       stbi_set_flip_vertically_on_load(false);
-      u8* data = stbi_load(paths[i].c_str(), &width, &height, &nrChannels, 0);
+      auto path = "assets/textures/" + paths[i];
+      u8* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
       if (data) {
         GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
         stbi_image_free(data);
@@ -195,17 +248,17 @@ namespace Game {
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
     GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)); 
 
-    return Data{texture, std::move(paths)};
+    return cubeMapFactory.emplace(texture, std::move(paths));
 
   }
 
   CubeMap::~CubeMap() {
-    GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
+    GAME_GL_CHECK(glDeleteTextures(1, &id));
   }
 
   void CubeMap::bind() const {
     GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
-    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, mData.id));
+    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
   }
 
   bool CubeMap::reload() {

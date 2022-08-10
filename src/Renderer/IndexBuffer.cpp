@@ -3,17 +3,18 @@
 #include "Core/Assert.hpp"
 #include "Renderer/IndexBuffer.hpp"
 
-namespace Game {
-  IndexBuffer::Handle IndexBuffer::create(Slice<const u32> slice) {
-    return IndexBuffer::Handle(new IndexBuffer(slice));
-  }
+#include "Resource/Factory.hpp"
 
-  IndexBuffer::IndexBuffer(Slice<const u32> slice)
-    : count{u32(slice.size())}
-  {
-    GAME_GL_CHECK(glGenBuffers(1, &this->id));
-    GAME_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id));
+namespace Game {
+
+  GAME_FACTORY_IMPLEMENTATION(IndexBuffer, factory)
+
+  IndexBuffer::Handle IndexBuffer::create(Slice<const u32> slice) {
+    u32 id;
+    GAME_GL_CHECK(glGenBuffers(1, &id));
+    GAME_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
     GAME_GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, slice.sizeInBytes(), slice.data(), GL_STATIC_DRAW));
+    return factory.emplace(id, u32(slice.size()));
   }
   
   IndexBuffer::~IndexBuffer() {

@@ -64,6 +64,10 @@ namespace Game {
     };
 
   public:
+    [[nodiscard]] static Texture2D::Handle load(const StringView& filepath, Specification specification = {});
+    [[nodiscard]] static Texture2D::Handle color(u32 color);
+    [[nodiscard]] static Texture2D::Handle color(u8 r, u8 g, u8 b, u8 a = 0xFF);
+    [[nodiscard]] static Texture2D::Handle generateMissingDataPlaceholder();
     DISALLOW_MOVE_AND_COPY(Texture2D);
     ~Texture2D();
 
@@ -73,16 +77,17 @@ namespace Game {
     u32 getWidth() const;
     u32 getHeight() const;
   
-    inline const Specification& getSpecification() const { return mData.specification; }
-
     bool reload();
 
-
+    inline const Specification& getSpecification() const { return mData.specification; }
     inline const Option<String> getFilePath() const { return mData.filePath; }
 
-  public:
-    static constexpr const bool hasMissingDataPlaceholder = true;
+    inline bool isColor() const { return !mData.filePath.has_value(); }
+    inline u32  getColor() const { return mData.color; }
 
+    static void reloadAll();
+
+  private:
     struct Data {
       u32 id;
       u32 width;
@@ -90,34 +95,32 @@ namespace Game {
 
       Specification specification;
       Option<String> filePath;
+      u32 color;
     };
 
     Texture2D(Data data)
-      : mData{data}
+      : mData{std::move(data)}
     {}
 
-
-  private:
-    static Option<Data> fromFile(const StringView& filepath, Specification specification = {});
     static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, Specification specification = {});
-    static Data generateMissingDataPlaceholder();
 
   private:
     Data mData;
 
-    friend class ResourceManager;
-
+  private:
     template<typename T>
     friend class ResourceFactory;
   };
 
+  GAME_FACTORY_HEADER(Texture2D)
+
   class CubeMap {
   public:
     using Handle = Resource<CubeMap>;
-
     using FilePaths = Array<String, 6>;
 
   public:
+    static CubeMap::Handle load(FilePaths paths);
     DISALLOW_MOVE_AND_COPY(CubeMap);
     ~CubeMap();
 
@@ -126,30 +129,24 @@ namespace Game {
     u32 getId() const;
     bool reload();
 
-    inline const FilePaths& getFilePath() const { return mData.filePaths; }
+    inline const FilePaths& getFilePath() const { return filePaths; }
 
-  public:
-    struct Data {
-      u32 id;
-      FilePaths filePaths;
-    };
-
-    CubeMap(Data data)
-      : mData{data}
+  private:
+    CubeMap(u32 id, FilePaths filePaths)
+      : id{id}
+      , filePaths{std::move(filePaths)}
     {}
 
+  private:
+    u32 id;
+    FilePaths filePaths;
 
   private:
-    static Option<Data> fromFile(FilePaths paths);
-    
-  private:
-    Data mData;
-
-    friend class ResourceManager;
-
     template<typename T>
     friend class ResourceFactory;
   };
+
+  GAME_FACTORY_HEADER(CubeMap)
 
 } // namespace Game
 

@@ -2,12 +2,15 @@
 #include "Core/Assert.hpp"
 #include "Resource/Mesh.hpp"
 #include "Resource/Manager.hpp"
+#include "Resource/Factory.hpp"
 
 #include <sstream>
 #include <fstream>
 #include <optional>
 
 namespace Game {
+
+  GAME_FACTORY_IMPLEMENTATION(Mesh, factory)
 
   struct Vertex {
     Vec3 position;
@@ -95,11 +98,12 @@ namespace Game {
     }
   }
 
-  Option<Mesh::Data> Mesh::fromFile(const std::string& file) {
+  Mesh::Handle Mesh::load(const std::string& filepath) {
+    auto file = "assets/objects/" + String(filepath);
     FileFormat format = FileFormat::Obj;
     auto source = fileToString(file);
     if (!source) {
-      return None;
+      return {};
     }
 
     auto[vertices, indices] = parseObjFile(*source);
@@ -115,10 +119,10 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return Data{vao, vbo, ibo, file};
+    return factory.emplace(vao, vbo, ibo, file);
   }
 
-  Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
+  Mesh::Handle Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
     auto vao = VertexArray::create();
     auto vbo = VertexBuffer::create(vertices);
     vbo->setLayout({
@@ -131,18 +135,19 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return {vao, vbo, ibo};
+    return factory.emplace(vao, vbo, ibo);
   }
 
   bool Mesh::reload() {
-    if (!mData.filePath.has_value()) {
+    if (!mFilePath.has_value()) {
       return false;
     }
 
-    auto data = Mesh::fromFile(*mData.filePath);
+    GAME_TODO("");
+    auto data = Mesh::load(*mFilePath);
     if (data) {
-      Logger::trace("Reloaded mesh: %s", mData.filePath.value().c_str());
-      mData = *data;
+      Logger::trace("Reloaded mesh: %s", mFilePath.value().c_str());
+      // mData = *data;
       return true;
     }
 
@@ -150,7 +155,100 @@ namespace Game {
   }
 
   const VertexArray::Handle Mesh::getVertexArray() const {
-    return mData.vertexArray;
+    return mVertexArray;
+  }
+
+  Mesh::Handle Mesh::cube() {
+    static const f32 vertices[] = {
+      // positions          // normals           // texture coords
+      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,   0.0f,  0.0f, -1.0f,
+       0.5f, -0.5f, -0.5f,   1.0f, 0.0f,   0.0f,  0.0f, -1.0f,
+       0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+       0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,   0.0f,  0.0f, -1.0f,
+
+      -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   0.0f,  0.0f, 1.0f,
+       0.5f, -0.5f,  0.5f,   1.0f, 0.0f,   0.0f,  0.0f, 1.0f,
+       0.5f,  0.5f,  0.5f,   1.0f, 1.0f,   0.0f,  0.0f, 1.0f,
+       0.5f,  0.5f,  0.5f,   1.0f, 1.0f,   0.0f,  0.0f, 1.0f,
+      -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,   0.0f,  0.0f, 1.0f,
+      -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   0.0f,  0.0f, 1.0f,
+
+      -0.5f,  0.5f,  0.5f,   1.0f, 0.0f,  -1.0f,  0.0f,  0.0f, 
+      -0.5f,  0.5f, -0.5f,   1.0f, 1.0f,  -1.0f,  0.0f,  0.0f, 
+      -0.5f, -0.5f, -0.5f,   0.0f, 1.0f,  -1.0f,  0.0f,  0.0f, 
+      -0.5f, -0.5f, -0.5f,   0.0f, 1.0f,  -1.0f,  0.0f,  0.0f, 
+      -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,  -1.0f,  0.0f,  0.0f, 
+      -0.5f,  0.5f,  0.5f,   1.0f, 0.0f,  -1.0f,  0.0f,  0.0f, 
+
+      0.5f,  0.5f,  0.5f,    1.0f, 0.0f,   1.0f,  0.0f,  0.0f,
+      0.5f,  0.5f, -0.5f,    1.0f, 1.0f,   1.0f,  0.0f,  0.0f,
+      0.5f, -0.5f, -0.5f,    0.0f, 1.0f,   1.0f,  0.0f,  0.0f,
+      0.5f, -0.5f, -0.5f,    0.0f, 1.0f,   1.0f,  0.0f,  0.0f,
+      0.5f, -0.5f,  0.5f,    0.0f, 0.0f,   1.0f,  0.0f,  0.0f,
+      0.5f,  0.5f,  0.5f,    1.0f, 0.0f,   1.0f,  0.0f,  0.0f,
+
+      -0.5f, -0.5f, -0.5f,   0.0f, 1.0f,   0.0f, -1.0f,  0.0f,
+       0.5f, -0.5f, -0.5f,   1.0f, 1.0f,   0.0f, -1.0f,  0.0f,
+       0.5f, -0.5f,  0.5f,   1.0f, 0.0f,   0.0f, -1.0f,  0.0f,
+       0.5f, -0.5f,  0.5f,   1.0f, 0.0f,   0.0f, -1.0f,  0.0f,
+      -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,   0.0f, -1.0f,  0.0f,
+      -0.5f, -0.5f, -0.5f,   0.0f, 1.0f,   0.0f, -1.0f,  0.0f,
+
+      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,   0.0f,  1.0f,  0.0f,
+       0.5f,  0.5f, -0.5f,   1.0f, 1.0f,   0.0f,  1.0f,  0.0f,
+       0.5f,  0.5f,  0.5f,   1.0f, 0.0f,   0.0f,  1.0f,  0.0f,
+       0.5f,  0.5f,  0.5f,   1.0f, 0.0f,   0.0f,  1.0f,  0.0f,
+      -0.5f,  0.5f,  0.5f,   0.0f, 0.0f,   0.0f,  1.0f,  0.0f,
+      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,   0.0f,  1.0f,  0.0f,
+    };
+
+    static const u32 indices[] = {
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+
+       6,
+       7,
+       8,
+       9,
+      10,
+      11,
+
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+    };
+
+    return Mesh::fromVertices(vertices, indices);
   }
 
 } // namespace Game

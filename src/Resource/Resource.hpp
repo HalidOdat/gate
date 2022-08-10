@@ -3,8 +3,6 @@
 #include "Core/Type.hpp"
 
 namespace Game {
-  
-  class ResourceManager;
 
   template<typename T>
   class Resource {
@@ -73,8 +71,8 @@ namespace Game {
     inline bool operator==(const Resource& other) const { return mId == other.mId; }
     inline bool operator!=(const Resource& other) const { return mId != other.mId; }
 
-    inline T* get();
-    inline const T* get() const;
+    inline T* get() { return std::launder(reinterpret_cast<T*>(getRaw().data)); }
+    inline const T* get() const { return std::launder(reinterpret_cast<T*>(getRaw().data)); }
 
     inline T* operator->() { return get(); }
     inline T& operator*() { return *get(); }
@@ -82,18 +80,32 @@ namespace Game {
     inline const T& operator*() const { return *get(); }
     
   private:
+    using ReferenceCount = u32;
+
+    struct Data {
+      ReferenceCount referenceCount = 0;
+      alignas(T) u8 data[sizeof(T)] = {0};
+    };
+  
+  private:
     Resource(Id id)
       : mId(id)
     {}
 
-    inline void decrementReferenceCount() const;
-    inline void incrementReferenceCount() const;
+    Data& getRaw() const;
+    void incrementReferenceCount() const { getRaw().referenceCount += 1; }
+    void decrementReferenceCount() const;
 
   private:
     Id mId;
 
+  private:
     template<typename T>
     friend class ResourceFactory;
   };
+
+# define GAME_FACTORY_HEADER(T)                                 \
+  template<> Resource<T>::Data& Resource<T>::getRaw() const;    \
+  template<> void Resource<T>::decrementReferenceCount() const;
 
 } // namespace Game

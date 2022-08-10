@@ -5,6 +5,8 @@
 #include "Core/Assert.hpp"
 #include "Core/Type.hpp"
 
+#include "Resource/Resource.hpp"
+
 namespace Game {
 
   class BufferElement {
@@ -107,11 +109,11 @@ namespace Game {
 
   class VertexBuffer {
   public:
-    using Handle = Ref<VertexBuffer>;
+    using Handle = Resource<VertexBuffer>;
 
   public:
     [[nodiscard]] static VertexBuffer::Handle create(Slice<const void> slice);
-    [[nodiscard]] static VertexBuffer::Handle withSize(const usize size);
+    [[nodiscard]] static VertexBuffer::Handle withSize(const u32 size);
     DISALLOW_COPY_AND_ASSIGN(VertexBuffer);
     ~VertexBuffer();
 
@@ -124,12 +126,19 @@ namespace Game {
     inline void setLayout(BufferLayout layout) { this->layout = std::move(layout); }
 
   private:
-    VertexBuffer(Slice<const void> slice);
-    VertexBuffer(const usize size);
+    VertexBuffer(u32 id)
+      : id{id}
+    {}
 
   private:
     u32 id;
     BufferLayout layout;
+
+  private:
+    template<typename T>
+    friend class ResourceFactory;
   };
+
+  GAME_FACTORY_HEADER(VertexBuffer)
 
 } // namespace Game

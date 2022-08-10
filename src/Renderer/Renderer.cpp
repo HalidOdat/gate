@@ -167,8 +167,7 @@ namespace Game {
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
 
-    static const u8 bytes[] = { 0xFF, 0xFF, 0xFF };
-    auto whiteTexture = ResourceManager::textureFromBytes(bytes, 1, 1, 3);
+    auto whiteTexture = Texture2D::color(0xFF, 0xFF, 0xFF);
 
     auto vertexArray = VertexArray::create();
     auto vertexBuffer = VertexBuffer::withSize(QuadBatch::VERTEX_BUFFER_BYTE_SIZE);
@@ -199,7 +198,7 @@ namespace Game {
     vertexArray->setIndexBuffer(indexBuffer);
     vertexArray->unbind();
 
-    auto shader = ResourceManager::loadShader(QuadBatch::SHADER_PATH);
+    auto shader = Shader::load(QuadBatch::SHADER_PATH);
 
     i32 samples[QuadBatch::MAX_TEXTURES];
     for (u32 i = 0; i < QuadBatch::MAX_TEXTURES; ++i) {
@@ -215,7 +214,7 @@ namespace Game {
     specification.filtering.min = Texture::FilteringMode::Linear;
     specification.mipmap        = Texture::MipmapMode::Linear;
 
-    auto fontTexture = ResourceManager::loadTexture("PixelFont_7x9_112x54.png", specification);
+    auto fontTexture = Texture2D::load("PixelFont_7x9_112x54.png", specification);
     const auto fontTextureWidth  = fontTexture->getWidth();
     const auto fontTextureHeight = fontTexture->getHeight();
     const auto fontCharacterWidth  = 7;
@@ -224,7 +223,7 @@ namespace Game {
     GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
     GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
 
-    auto postProcesingShader = ResourceManager::loadShader("PostProcessing.glsl");
+    auto postProcesingShader = Shader::load("PostProcessing.glsl");
     renderer = new RendererData{
       Mat4(1.0f),
       Mat4(1.0f),
@@ -277,7 +276,7 @@ namespace Game {
     quadVertexArray->unbind();
     renderer->pipeline.quadVertexArray = quadVertexArray;
 
-    renderer->pipeline.skyboxTexture = ResourceManager::loadCubeMap({
+    renderer->pipeline.skyboxTexture = CubeMap::load({
       "skybox/right.jpg",
       "skybox/left.jpg",
       "skybox/top.jpg",
@@ -340,8 +339,8 @@ namespace Game {
     skyboxVertexArray->unbind();
     renderer->pipeline.skyboxVertexArray = skyboxVertexArray;
 
-    renderer->pipeline.skyboxShader = ResourceManager::loadShader("Skybox.glsl");
-    renderer->pipeline.shader = ResourceManager::loadShader("SpotLight.glsl");
+    renderer->pipeline.skyboxShader = Shader::load("Skybox.glsl");
+    renderer->pipeline.shader = Shader::load("SpotLight.glsl");
   }
 
   void Renderer::shutdown() {

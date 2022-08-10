@@ -5,22 +5,24 @@
 #include "Core/Log.hpp"
 #include "Renderer/VertexArray.hpp"
 
+#include "Resource/Factory.hpp"
+
 namespace Game {
   
-  VertexArray::Handle VertexArray::create() {
-    return VertexArray::Handle(new VertexArray());
-  }
+  GAME_FACTORY_IMPLEMENTATION(VertexArray, factory);
 
-  VertexArray::VertexArray() {
-    GAME_GL_CHECK(glCreateVertexArrays(1, &this->id));
+  VertexArray::Handle VertexArray::create() {
+    u32 id;
+    GAME_GL_CHECK(glCreateVertexArrays(1, &id));
+    return factory.emplace(id);
   }
 
   VertexArray::~VertexArray() {
-    GAME_GL_CHECK(glDeleteVertexArrays(1, &this->id));
+    GAME_GL_CHECK(glDeleteVertexArrays(1, &mId));
   }
 
   void VertexArray::bind() {
-    GAME_GL_CHECK(glBindVertexArray(this->id));
+    GAME_GL_CHECK(glBindVertexArray(mId));
   }
 
   void VertexArray::unbind() {
@@ -38,16 +40,16 @@ namespace Game {
         case BufferElement::Type::Float2:
         case BufferElement::Type::Float3:
         case BufferElement::Type::Float4:
-          GAME_GL_CHECK(glEnableVertexAttribArray(this->vertexAttributeIndex));
+          GAME_GL_CHECK(glEnableVertexAttribArray(mVertexAttributeIndex));
 	        GAME_GL_CHECK(glVertexAttribPointer(
-            this->vertexAttributeIndex,
+            mVertexAttributeIndex,
             (GLint)element.getComponentCount(),
             GL_FLOAT,
             element.isNormalized() ? GL_TRUE : GL_FALSE,
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
           ));
-          this->vertexAttributeIndex++;
+          mVertexAttributeIndex++;
           break;
         case BufferElement::Type::Int:
         case BufferElement::Type::Int2:
@@ -67,15 +69,15 @@ namespace Game {
               type = GL_INT;
           }
           
-          GAME_GL_CHECK(glEnableVertexAttribArray(this->vertexAttributeIndex));
+          GAME_GL_CHECK(glEnableVertexAttribArray(mVertexAttributeIndex));
 	        GAME_GL_CHECK(glVertexAttribIPointer(
-            this->vertexAttributeIndex,
+            mVertexAttributeIndex,
             (GLint)element.getComponentCount(),
             type,
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
           ));
-          this->vertexAttributeIndex++;
+          mVertexAttributeIndex++;
           break;
         }
         default:
@@ -83,17 +85,17 @@ namespace Game {
       }
     }
 
-    this->buffers.push_back(buffer);
+    mBuffers.push_back(buffer);
   }
 
   void VertexArray::setIndexBuffer(IndexBuffer::Handle buffer) {
-    this->bind();
+    bind();
     buffer->bind();
-    this->indexBuffer = buffer;
+    mIndexBuffer = buffer;
   }
 
   void VertexArray::drawIndices() {
-    const auto count = this->indexBuffer->getCount();
+    const auto count = mIndexBuffer->getCount();
     this->drawIndices(count);
   }
 

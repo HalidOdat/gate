@@ -23,6 +23,7 @@ namespace Game {
     inline void setAlphaMode(AlphaMode mode) { mAlphaMode = mode; }
 
     inline const Texture2D::Handle& getDiffuseMap()  const { return mDiffuseMap; }
+    inline Texture2D::Handle& getDiffuseMap() { return mDiffuseMap; }
     inline const Texture2D::Handle& getSpecularMap() const { return mSpecularMap; }
     inline const Texture2D::Handle& getEmissionMap() const { return mEmissionMap; }
     inline f32& getShininess() { return mShininess; }

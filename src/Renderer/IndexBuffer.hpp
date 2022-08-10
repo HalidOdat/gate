@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Core/Type.hpp"
+#include "Resource/Resource.hpp"
 
 namespace Game {
-  
+
   // TODO: Support indices of different types, like unsigned short
   class IndexBuffer {
   public:
-    using Handle = Ref<IndexBuffer>;
+    using Handle = Resource<IndexBuffer>;
 
   public:
     [[nodiscard]] static IndexBuffer::Handle create(Slice<const u32> slice);
@@ -19,14 +19,22 @@ namespace Game {
     void unbind();
 
     inline u32 getCount() const { return this->count; }
-  
+
   private:
-    IndexBuffer(Slice<const u32> slice);
+    IndexBuffer(u32 id, u32 count)
+      : id{id}, count{count}
+    {}
 
   private:
     u32 id;
     u32 count;
+
+  private:
+    template<typename T>
+    friend class ResourceFactory;
   };
+
+  GAME_FACTORY_HEADER(IndexBuffer)
 
 } // namespace Game
 

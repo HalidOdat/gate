@@ -26,10 +26,12 @@ namespace Game {
     mActiveScene = mEditorScene;
 
     Material::Handle material(new Material());
-    material->setDiffuseMap(ResourceManager::loadTexture("CrateDiffuse.png"));
-    material->setSpecularMap(ResourceManager::loadTexture("CrateSpecular.png"));
-    material->setEmissionMap(ResourceManager::loadTexture("matrix.jpg"));
+    material->setDiffuseMap(Texture2D::load("CrateDiffuse.png"));
+    material->setSpecularMap(Texture2D::load("CrateSpecular.png"));
+    material->setEmissionMap(Texture2D::load("matrix.jpg"));
     material->setShininess(32.0f);
+
+    material->getDiffuseMap()->reload();
 
     static Vec3 cubePositions[] = {
       Vec3( 0.0f,  0.0f,  0.0f),
@@ -44,7 +46,7 @@ namespace Game {
       Vec3(-1.3f,  1.0f, -1.5f)
     };
     
-    Mesh::Handle mesh = ResourceManager::cubeMesh();
+    Mesh::Handle mesh = Mesh::cube();
 
     for (u32 i = 0; i < 10; i++) {
       Entity entity = mEditorScene->createEntity(String("box ") + std::to_string(i));
@@ -139,18 +141,18 @@ namespace Game {
     }
 
     if (mShow) {
-      if (event.getKey() == Key::T) {
-        ResourceManager::reloadAll<Texture2D>();
-        return true;
-      }
-      if (event.getKey() == Key::Z) {
-        ResourceManager::reloadAll<Shader>();
-        return true;
-      }
-      if (event.getKey() == Key::M) {
-        ResourceManager::reloadAll<Mesh>();
-        return true;
-      }
+      // if (event.getKey() == Key::T) {
+      //   ResourceManager::reloadAll<Texture2D>();
+      //   return true;
+      // }
+      // if (event.getKey() == Key::Z) {
+      //   ResourceManager::reloadAll<Shader>();
+      //   return true;
+      // }
+      // if (event.getKey() == Key::M) {
+      //   ResourceManager::reloadAll<Mesh>();
+      //   return true;
+      // }
     }
 
     return false;

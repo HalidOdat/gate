@@ -1,4 +1,5 @@
 #include "Core/Type.hpp"
+#include "Resource/Resource.hpp"
 
 #include <vector>
 #include <type_traits>
@@ -6,71 +7,19 @@
 namespace Game {
 
   template<typename T>
-  class ManagedResource {
-  public:
-    enum class State : u8 {
-      Mortal,
-      Immortal,
-      Free,
-    };
-
-    using ReferenceCount = u32;
-
-  public:
-    inline ManagedResource()
-      : mState{State::Free}, mReferenceCount{0}
-    {}
-
-    template<typename ...Args>
-    inline ManagedResource(Args&& ...args)
-      : mState{State::Mortal}, mReferenceCount{1}
-    {
-      new (mData) T{std::forward<Args>(args)...};
-    }
-
-    inline T& getResource() { return *std::launder(reinterpret_cast<T*>(mData)); }
-    inline const T& getResource() const { return *std::launder(reinterpret_cast<T*>(mData)); }
-    
-    // TODO: destruct if reference count is 0
-    inline void decrementReferenceCount() { mReferenceCount -= 1; }
-    inline void incrementReferenceCount() { mReferenceCount += 1; }
-
-    inline void makeImmortal() { mState = State::Immortal; }
-
-    inline void destroy() {
-      if (mState != State::Free) {
-        std::launder(reinterpret_cast<T*>(mData))->~T();
-        mState = State::Free;
-      }
-    }
-
-
-    template<typename ...Args>
-    inline void emplace(Args&& ...args) {
-      destroy();
-      new (mData) T{std::forward<Args>(args)...};
-    }
-
-    inline bool isFree() const { return mState == State::Free; }
-    
-  private:
-    State          mState;
-    ReferenceCount mReferenceCount;
-    alignas(T)     u8 mData[sizeof(T)];
-
-  private:
-
-    template<typename T>
-    friend class ResourceFactory;
+  struct FactoryCallback {
+    inline static void created(T&, u32 id) {}
+    inline static void destroyed(T&, u32 id) {}
   };
 
   template<typename T>
   class ResourceFactory {
+  private:
+    using Data = Resource<T>::Data;
   public:
     ResourceFactory() = default;
 
-    ManagedResource<T>& get(Resource<T>::Id id) { return mManagedResources[id]; }
-    const ManagedResource<T>& get(Resource<T>::Id id) const { return mManagedResources[id]; }
+    Resource<T>::Data& get(Resource<T>::Id id) { return mResources[id]; }
 
     template<typename ...Args>
     Resource<T> emplace(Args&&... args) {
@@ -78,53 +27,70 @@ namespace Game {
         u32 index = mFreeList.back();
         mFreeList.pop_back();
 
-        mManagedResources.emplace(mManagedResources.begin() + index, std::forward<Args>(args)...);
+        emplaceAtIndex(index, std::forward<Args>(args)...);
         return index;
       }
 
-      u32 index = (u32)mManagedResources.size();
-      mManagedResources.emplace_back(std::forward<Args>(args)...);
+      u32 index = (u32)mResources.size();
+      mResources.emplace_back();
+
+      emplaceAtIndex(index, std::forward<Args>(args)...);
       return Resource<T>(index);
     }
 
     void clear() {
-      for (auto& managedResource : mManagedResources) {
-        managedResource.destroy();
-      }
-      mManagedResources.clear();
-      mFreeList.clear();
-    }
-
-    bool reload(Resource<T>& resource) {
-      if (!resource) {
-        return false;
-      }
-
-      return reloadById(resource.mId);
-    }
-
-    void reloadAll() {
-      for (u32 i = 0; i < mManagedResources.size(); ++i) {
-        if (mManagedResources[i].isFree()) {
+      for (u32 i = 0; i < mResources.size(); ++i) {
+        if (mResources[i].referenceCount == 0) {
           continue;
         }
 
-        reloadById(i);
+        destroyAtIndex(i);
       }
+      mResources.clear();
+      mFreeList.clear();
     }
-  
-  private:
-    bool reloadById(Resource<T>::Id id) {
-      return mManagedResources[id].getResource().reload();
+
+    void decrementReferenceCountAtIndex(Resource<T>::Id id) {
+      if (mResources[id].referenceCount == 1) {
+        destroyAtIndex(id);
+        mFreeList.emplace_back(id);
+      }
+      mResources[id].referenceCount--;
     }
 
   private:
-    std::vector<ManagedResource<T>> mManagedResources;
-    std::vector<u32>                mFreeList;
-  
-  private:
+    inline bool isFree(Resource<T>::Id id) const { return !mResources[id].referenceCount; }
 
+    inline void destroyAtIndex(Resource<T>::Id id) {
+      T* ptr = std::launder(reinterpret_cast<T*>(mResources[id].data));
+      FactoryCallback<T>::destroyed(*ptr, id);
+      ptr->~T();
+      mResources[id].referenceCount = 0;
+    }
+
+    template<typename ...Args>
+    inline void emplaceAtIndex(Resource<T>::Id id, Args&& ...args) {
+      mResources[id].referenceCount = 1;
+      new (mResources[id].data) T{std::forward<Args>(args)...};
+      T* ptr = std::launder(reinterpret_cast<T*>(mResources[id].data));
+      FactoryCallback<T>::created(*ptr, id);
+    }
+
+  private:
+    std::vector<Data> mResources;
+    std::vector<u32>  mFreeList;
+
+  private:
     friend class ResourceManager;
   };
+
+# define GAME_FACTORY_IMPLEMENTATION(T, name)                    \
+  static ResourceFactory<T> name;                                \
+  template<> Resource<T>::Data& Resource<T>::getRaw() const {    \
+    return name.get(mId);                                        \
+  }                                                              \
+  template<> void Resource<T>::decrementReferenceCount() const { \
+    name.decrementReferenceCountAtIndex(mId);                    \
+  }
 
 }
