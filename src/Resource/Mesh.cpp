@@ -12,6 +12,20 @@ namespace Game {
 
   GAME_FACTORY_IMPLEMENTATION(Mesh, factory)
 
+  template<>
+  struct FactoryCallback<Mesh> {
+    inline static void created(Mesh& mesh, u32 id) {
+      if (mesh.getFilePath()) {
+        Logger::trace("Mesh #%u created: %s", id, mesh.getFilePath()->c_str());
+      }
+    }
+    inline static void destroyed(Mesh& mesh, u32 id) {
+      if (mesh.getFilePath()) {
+        Logger::trace("Mesh #%u destroyed: %s", id, mesh.getFilePath()->c_str());
+      }
+    }
+  };
+
   struct Vertex {
     Vec3 position;
     Vec2 texture;
@@ -30,48 +44,44 @@ namespace Game {
     bool first = true;
     for (std::string line; std::getline(stream, line); ) {
       if (line.starts_with("v ")) {
-        std::stringstream s(line.substr(2));
         Vec3 result;
-        s >> result.x;
-        s >> result.y;
-        s >> result.z;
+        auto count = std::sscanf(line.c_str(), "v %f %f %f", &result.x, &result.y, &result.z);
+        GAME_ASSERT(count == 3);
         vertices.push_back(result);
       } else if (line.starts_with("vt ")) {
-        std::stringstream s(line.substr(3));
-        Vec2 result;
-        s >> result.x;
-        s >> result.y;
+        Vec3 result;
+        auto count = std::sscanf(line.c_str(), "vt %f %f", &result.x, &result.y);
+        GAME_ASSERT(count == 2);
         textures.push_back(result);
       } else if (line.starts_with("vn ")) {
-        std::stringstream s(line.substr(3));
         Vec3 result;
-        s >> result.x;
-        s >> result.y;
-        s >> result.z;
+        auto count = std::sscanf(line.c_str(), "vn %f %f %f", &result.x, &result.y, &result.z);
+        GAME_ASSERT(count == 3);
         normals.push_back(result);
       } else if (line.starts_with("f ")) {
         if (first) {
           result.resize(vertices.size());
           first = false;
         }
-        std::stringstream s(line.substr(2));
 
-        for (std::string line; std::getline(s, line, ' '); ) {
-          std::stringstream temp(line);
-          u32 partCount = 0;
-          u32 parts[3];
-          for (std::string part; std::getline(temp, part, '/');) {
-            parts[partCount++] = std::stoul(part);
-          }
+        u32 faces[9];
+        auto count = std::sscanf(
+          line.c_str(),
+          "f %u/%u/%u %u/%u/%u %u/%u/%u",
+          &faces[0], &faces[1], &faces[2],
+          &faces[3], &faces[4], &faces[5],
+          &faces[6], &faces[7], &faces[8]
+        );
 
-          GAME_DEBUG_ASSERT(partCount == 3);
+        GAME_ASSERT(count == 9);
 
-          u32 vertexNumber = parts[0] - 1;
+        for (u32 i = 0; i < 9; i += 3) {
+          u32 vertexNumber = faces[i + 0] - 1;
 
           auto vertex = Vertex {
             vertices[vertexNumber],
-            textures[parts[1] - 1],
-            normals[parts[2] - 1],
+            textures[faces[i + 1] - 1],
+            normals[faces[i + 2] - 1],
           };
 
           result[vertexNumber] = vertex;
@@ -80,7 +90,7 @@ namespace Game {
       }
     }
     
-    return {result, indices};
+    return {std::move(result), std::move(indices)};
   }
 
   std::optional<std::string> fileToString(const StringView& filename) {
@@ -119,10 +129,10 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return factory.emplace(vao, vbo, ibo, file);
+    return factory.emplace(Data{vao, vbo, ibo, file});
   }
 
-  Mesh::Handle Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
+  Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
     auto vao = VertexArray::create();
     auto vbo = VertexBuffer::create(vertices);
     vbo->setLayout({
@@ -135,27 +145,29 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return factory.emplace(vao, vbo, ibo);
+    return Data{vao, vbo, ibo};
   }
 
   bool Mesh::reload() {
-    if (!mFilePath.has_value()) {
-      return false;
-    }
-
-    GAME_TODO("");
-    auto data = Mesh::load(*mFilePath);
-    if (data) {
-      Logger::trace("Reloaded mesh: %s", mFilePath.value().c_str());
-      // mData = *data;
+    if (!mData.filePath.has_value()) {
       return true;
     }
 
-    return false;
+    auto source = fileToString(*mData.filePath);
+    if (!source) {
+      return false;
+    }
+
+    auto[vertices, indices] = parseObjFile(*source);
+    auto data = Mesh::fromVertices({vertices.data(), vertices.size()}, {indices.data(), indices.size()});
+    data.filePath = std::move(mData.filePath);
+    mData = std::move(data);
+    Logger::trace("Reloaded mesh: %s", mData.filePath.value().c_str());
+    return true;
   }
 
   const VertexArray::Handle Mesh::getVertexArray() const {
-    return mVertexArray;
+    return mData.vertexArray;
   }
 
   Mesh::Handle Mesh::cube() {
@@ -248,7 +260,7 @@ namespace Game {
       35,
     };
 
-    return Mesh::fromVertices(vertices, indices);
+    return factory.emplace(Mesh::fromVertices(vertices, indices));
   }
 
 } // namespace Game

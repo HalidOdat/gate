@@ -46,7 +46,7 @@ namespace Game {
       Vec3(-1.3f,  1.0f, -1.5f)
     };
     
-    Mesh::Handle mesh = Mesh::cube();
+    Mesh::Handle mesh = Mesh::load("sofa.obj");
 
     for (u32 i = 0; i < 10; i++) {
       Entity entity = mEditorScene->createEntity(String("box ") + std::to_string(i));
