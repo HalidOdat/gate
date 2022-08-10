@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Type.hpp"
+#include "Core/Assert.hpp"
 
 namespace Game {
 
@@ -71,8 +72,14 @@ namespace Game {
     inline bool operator==(const Resource& other) const { return mId == other.mId; }
     inline bool operator!=(const Resource& other) const { return mId != other.mId; }
 
-    inline T* get() { return std::launder(reinterpret_cast<T*>(getRaw().data)); }
-    inline const T* get() const { return std::launder(reinterpret_cast<T*>(getRaw().data)); }
+    inline T* get() { 
+      GAME_ASSERT(isValid());
+      return std::launder(reinterpret_cast<T*>(getRaw().data));
+    }
+    inline const T* get() const {
+      GAME_ASSERT(isValid());
+      return std::launder(reinterpret_cast<T*>(getRaw().data));
+    }
 
     inline T* operator->() { return get(); }
     inline T& operator*() { return *get(); }

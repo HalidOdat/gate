@@ -25,10 +25,10 @@ namespace Game {
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
 
-    mMaterial.setDiffuseMap(Texture2D::load("CrateDiffuse.png"));
-    mMaterial.setSpecularMap(Texture2D::load("CrateSpecular.png"));
-    mMaterial.setEmissionMap(Texture2D::load("matrix.jpg"));
-    mMaterial.setShininess(32.0f);
+    mMaterial.diffuseMap  = Texture2D::load("CrateDiffuse.png");
+    mMaterial.specularMap = Texture2D::load("CrateSpecular.png");
+    mMaterial.emissionMap = Texture2D::load("matrix.jpg");
+    mMaterial.shininess   = 32.0f;
 
     static Vec3 cubePositions[] = {
       Vec3( 0.0f,  0.0f,  0.0f),
@@ -99,7 +99,7 @@ namespace Game {
 
   void GameLayer::onUiRender(Ui& ui) {
     ui.begin({0, 200});
-      ui.slider(mMaterial.getTransparency(), 0.0f, 1.0f);
+      ui.slider(mMaterial.transparency, 0.0f, 1.0f);
       ui.slider(mLight.ambient,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.diffuse,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.specular, Vec3(0.1f), Vec3(1.0f));

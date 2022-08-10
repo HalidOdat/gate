@@ -90,11 +90,11 @@ namespace Game {
     struct Convert<Material::Handle> {
       static Node encode(const Material::Handle& material) {
         auto node = Node::object();
-        node["diffuseMap"] = material->getDiffuseMap();
-        node["specularMap"] = material->getSpecularMap();
-        node["emissionMap"] = material->getEmissionMap();
-        node["transparancy"] = material->getTransparency();
-        node["shininess"] = material->getShininess();
+        node["diffuseMap"] = material->diffuseMap;
+        node["specularMap"] = material->specularMap;
+        node["emissionMap"] = material->emissionMap;
+        node["transparancy"] = material->transparency;
+        node["shininess"] = material->shininess;
         return node;
       }
     };

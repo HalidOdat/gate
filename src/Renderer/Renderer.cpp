@@ -116,6 +116,12 @@ namespace Game {
     std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
   };
 
+  struct RenderEnvironment {
+    Texture2D::Handle defaultDiffuseMap;
+    Texture2D::Handle defaultSpecularMap;
+    Texture2D::Handle defaultEmissionMap;
+  };
+
   struct RendererData {
     Mat4 projectionViewMatrix;
     Mat4 projectionMatrix;
@@ -128,7 +134,8 @@ namespace Game {
     FontData font;
 
     // 3D stuff
-    RenderPipeline pipeline;
+    RenderPipeline    pipeline;
+    RenderEnvironment environment;
   };
 
   static RendererData* renderer;
@@ -341,6 +348,10 @@ namespace Game {
 
     renderer->pipeline.skyboxShader = Shader::load("Skybox.glsl");
     renderer->pipeline.shader = Shader::load("SpotLight.glsl");
+
+    renderer->environment.defaultDiffuseMap  = whiteTexture;
+    renderer->environment.defaultSpecularMap = Texture2D::color(0x00'00'00'FF);
+    renderer->environment.defaultEmissionMap = Texture2D::color(128, 128, 128);
   }
 
   void Renderer::shutdown() {
@@ -367,7 +378,7 @@ namespace Game {
 
   void Renderer::submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform) {
     // Don't render fully transparent objects
-    if (material->getTransparency() == 0.0f) {
+    if (material->transparency == 0.0f) {
       return;
     }
 
@@ -379,8 +390,13 @@ namespace Game {
       transform,
       Mat3(glm::transpose(glm::inverse(transform))),
     };
+
+    if (!unit.material.diffuseMap.isValid())  unit.material.diffuseMap  = renderer->environment.defaultDiffuseMap;
+    if (!unit.material.specularMap.isValid()) unit.material.specularMap = renderer->environment.defaultSpecularMap;
+    if (!unit.material.emissionMap.isValid()) unit.material.emissionMap = renderer->environment.defaultEmissionMap;
+
     renderer->pipeline.units.push_back(unit);
-    if (!material->hasTransparency()) {
+    if (!material->transparency) {
       renderer->pipeline.opaqueUnitIndices.emplace_back(index);
     } else {
       Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
@@ -396,16 +412,16 @@ namespace Game {
     renderer->pipeline.shader->setMat3("uNormalMatrix", unit.normalMatrix);
 
     // TODO: Make this more dynamic
-    unit.material.getDiffuseMap()->bind(0);
-    unit.material.getSpecularMap()->bind(1);
-    unit.material.getEmissionMap()->bind(2);
+    unit.material.diffuseMap->bind(0);
+    unit.material.specularMap->bind(1);
+    unit.material.emissionMap->bind(2);
 
     renderer->pipeline.shader->setInt("uMaterial.diffuse",  0);
     renderer->pipeline.shader->setInt("uMaterial.specular", 1);
     renderer->pipeline.shader->setInt("uMaterial.emission", 2);
 
-    renderer->pipeline.shader->setFloat("uMaterial.shininess", unit.material.getShininess());
-    renderer->pipeline.shader->setFloat("uMaterial.transparency", unit.material.getTransparency());
+    renderer->pipeline.shader->setFloat("uMaterial.shininess", unit.material.shininess);
+    renderer->pipeline.shader->setFloat("uMaterial.transparency", unit.material.transparency);
 
     auto vao = unit.mesh->getVertexArray();
     vao->bind();

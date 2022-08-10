@@ -122,7 +122,6 @@ target_precompile_headers(${This}
     <cstdlib>
     <cstdint>
     <cstddef>
-
     <string>
     <string_view>
     <vector>
@@ -134,6 +133,9 @@ target_precompile_headers(${This}
     <map>
     <unordered_map>
     <type_traits>
+
+    <glm/glm.hpp>
+    <glad/glad.h>
 )
 
 add_subdirectory(vendor)

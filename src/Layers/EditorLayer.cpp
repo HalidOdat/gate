@@ -26,12 +26,12 @@ namespace Game {
     mActiveScene = mEditorScene;
 
     Material::Handle material(new Material());
-    material->setDiffuseMap(Texture2D::load("CrateDiffuse.png"));
-    material->setSpecularMap(Texture2D::load("CrateSpecular.png"));
-    material->setEmissionMap(Texture2D::load("matrix.jpg"));
-    material->setShininess(32.0f);
+    // material->diffuseMap  = Texture2D::load("CrateDiffuse.png");
+    material->specularMap = Texture2D::load("CrateSpecular.png");
+    material->emissionMap = Texture2D::load("matrix.jpg");
+    material->shininess   = 32.0f;
 
-    material->getDiffuseMap()->reload();
+    // material->diffuseMap->reload();
 
     static Vec3 cubePositions[] = {
       Vec3( 0.0f,  0.0f,  0.0f),
@@ -46,11 +46,11 @@ namespace Game {
       Vec3(-1.3f,  1.0f, -1.5f)
     };
     
-    Mesh::Handle mesh = Mesh::load("sofa.obj");
+    Mesh::Handle mesh = Mesh::cube();
 
-    for (u32 i = 0; i < 10; i++) {
+    for (u32 i = 0; i < 1000; i++) {
       Entity entity = mEditorScene->createEntity(String("box ") + std::to_string(i));
-      entity.add<TransformComponent>(cubePositions[i % 10] + (f32)i * Vec3(0.2f), Vec3(0.1f, 0.2f, 0.3f) * (f32)i);
+      entity.add<TransformComponent>(cubePositions[i % 10] + (f32)i * Vec3(0.02f), Vec3(0.1f, 0.2f, 0.3f) * (f32)i);
       entity.add<MeshSourceComponent>(mesh);
       entity.add<MeshRendererComponent>(material);
     }

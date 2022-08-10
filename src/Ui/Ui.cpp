@@ -46,6 +46,7 @@ namespace Game {
   }
 
   void Ui::Layout::pushWidget(const Vec2& widgetSize) {
+#   undef max
     switch (this->type) {
       case Type::Horizontal:
         this->size.x = this->size.x + widgetSize.x;
