@@ -156,6 +156,16 @@ namespace Game {
       MouseMoveEvent event(static_cast<f32>(x), static_cast<f32>(y));
       data.eventCallback(event);
     });
+
+    // Center window, if possible.
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    if (monitor) {
+      const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+      if (mode) {
+        glfwSetWindowPos(result->data.window, mode->width/2 - width/2, mode->height/2 - height/2);
+      }
+    }
+
     return result;
   }
 
