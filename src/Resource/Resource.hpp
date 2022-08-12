@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Core/Type.hpp"
-#include "Core/Assert.hpp"
+#include "Core/Base.hpp"
 
 namespace Game {
 

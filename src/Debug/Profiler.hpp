@@ -6,7 +6,33 @@
 #include <cstdio>
 
 namespace Game::Debug {
-  
+
+	namespace Utils {
+
+		template <size_t N>
+		struct ChangeResult {
+			char data[N];
+		};
+
+		template <size_t N, size_t K>
+		constexpr auto cleanupOutputString(const char(&expr)[N], const char(&remove)[K]) {
+			ChangeResult<N> result = {};
+
+			size_t srcIndex = 0;
+			size_t dstIndex = 0;
+			while (srcIndex < N) {
+				size_t matchIndex = 0;
+				while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
+					matchIndex++;
+				if (matchIndex == K - 1)
+					srcIndex += matchIndex;
+				result.data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+				srcIndex++;
+			}
+			return result;
+		}
+	}
+
   using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
 
   class Profiler {
@@ -80,7 +106,9 @@ namespace Game::Debug {
 
 # define GAME_PROFILE_BEGIN_SESSION(name) ::Game::Debug::Profiler::get().beginSession(name)
 # define GAME_PROFILE_END_SESSION()       ::Game::Debug::Profiler::get().endSession()
-# define GAME_PROFILE_FUNCTION()          auto _timer__##__FILE__##__LINE__ = ::Game::Debug::Timer(GAME_FUNCTION_SIGNATURE)
+# define GAME_PROFILE_FUNCTION()                                                                                                                   \
+  constexpr const auto functionFixedName__##__FILE__##__LINE__ = ::Game::Debug::Utils::cleanupOutputString((GAME_FUNCTION_SIGNATURE), "__cdecl "); \
+  [[maybe_unused]] const auto timer__##__FILE__##__LINE__      = ::Game::Debug::Timer((functionFixedName__##__FILE__##__LINE__).data)
 
 #else
 

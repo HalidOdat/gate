@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Resource/Texture.hpp"
+#include "Resource/Resource.hpp"
 
 namespace Game {
   
   class Material {
   public:
-    using Handle = Ref<Material>;
+    using Handle = Resource<Material>;
 
     enum class AlphaMode : u8 {
       Opaque,
@@ -14,6 +15,8 @@ namespace Game {
 
   public:
     Material() {}
+    static Material::Handle create();
+
 
   public:
     Texture2D::Handle diffuseMap;
@@ -23,6 +26,8 @@ namespace Game {
     f32               shininess    = 32.0f;
     f32               transparency = 1.0f;
   };
+
+  GAME_FACTORY_HEADER(Material)
 
 } // namespace Game
 

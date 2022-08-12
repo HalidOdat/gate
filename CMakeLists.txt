@@ -13,8 +13,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(Sources
   src/Core/Type.hpp
-  src/Core/Assert.hpp
-  src/Core/Assert.cpp
+  src/Core/Macros.hpp
+  src/Core/Macros.cpp
   src/Core/Log.hpp
   src/Core/Log.cpp
   src/Core/Math.hpp
@@ -125,27 +125,30 @@ target_link_libraries(${This} PUBLIC
 )
 
 target_precompile_headers(${This}
-  # PUBLIC
-  #   "Core/Type.h"
   PRIVATE
-    <cstdio>
-    <cstdlib>
-    <cstdint>
-    <cstddef>
-    <string>
-    <string_view>
-    <vector>
-    <array>
-    <memory>
-    <optional>
-    <fstream>
-    <sstream>
-    <map>
-    <unordered_map>
-    <type_traits>
+  # Standard library
+  <cstdio>
+  <cstdlib>
+  <cstdint>
+  <cstddef>
+  <string>
+  <string_view>
+  <vector>
+  <array>
+  <memory>
+  <optional>
+  <fstream>
+  <sstream>
+  <map>
+  <unordered_map>
+  <type_traits>
 
-    <glm/glm.hpp>
-    <glad/glad.h>
+  # vendor
+  <glm/glm.hpp>
+  <glad/glad.h>
+
+  # Common include 
+  <Core/Base.hpp>
 )
 
 add_subdirectory(vendor)

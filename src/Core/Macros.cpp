@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-#include "Core/Assert.hpp"
+#include "Core/Macros.hpp"
 #include "Core/Log.hpp"
 #include "Core/Type.hpp"
 

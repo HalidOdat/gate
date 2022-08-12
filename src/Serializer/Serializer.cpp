@@ -1,6 +1,5 @@
+#include "Core/Base.hpp"
 #include "Serializer/Serializer.hpp"
-
-#include "Core/Assert.hpp"
 
 #include <sstream>
 #include <iomanip>

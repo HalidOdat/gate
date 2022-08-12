@@ -21,6 +21,9 @@ namespace Game {
 
   void Scene::onUpdate(Timestep ts) {
     (void)ts;
+
+    GAME_PROFILE_FUNCTION();
+    
     // render();
     GAME_TODO("");
   }

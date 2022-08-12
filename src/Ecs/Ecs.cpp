@@ -7,6 +7,7 @@ namespace Game::Ecs {
 
   // ComponentPool implementation
   ComponentPool::~ComponentPool() {
+    GAME_PROFILE_FUNCTION();
     if (this->storage) {
       if (this->destoryFunction != nullptr) {
         for (usize i = 0; i < this->size; ++i) {
@@ -18,6 +19,7 @@ namespace Game::Ecs {
   }
   
   u32 ComponentPool::allocateComponent() {
+    GAME_PROFILE_FUNCTION();
     if (this->capacity != 0) {
       this->capacity--;
       return this->size++;
@@ -29,6 +31,7 @@ namespace Game::Ecs {
   }
 
   void* ComponentPool::create(const u32 i) {
+    GAME_PROFILE_FUNCTION();
     u32 index = this->allocateComponent();
 
     if (this->sparse.size() <= i) {
@@ -44,6 +47,7 @@ namespace Game::Ecs {
   }
 
   void ComponentPool::destory(const u32 i) {
+    GAME_PROFILE_FUNCTION();
     u32 index = this->sparse[i];
 
     if (index == this->size - 1) {
@@ -70,16 +74,19 @@ namespace Game::Ecs {
   }
 
   void* ComponentPool::get(const u32 i) {
+    GAME_PROFILE_FUNCTION();
     return this->storage + this->sparse[i] * this->componentSize;
   }
 
   // Registry implementation
 
   Registry::Registry() {
+    GAME_PROFILE_FUNCTION();
     this->pools.resize(MAX_COMPONENTS);
   }
 
   Entity Registry::create() {
+    GAME_PROFILE_FUNCTION();
     auto entity = Entity((u32)this->entities.size());
     EntityDescriptor descriptor {
       Requirement()

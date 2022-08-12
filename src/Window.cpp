@@ -2,8 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-#include "Core/Log.hpp"
-#include "Core/Assert.hpp"
+#include "Core/Base.hpp"
 #include "Events/Event.hpp"
 #include "Events/KeyEvent.hpp"
 #include "Events/MouseEvent.hpp"
@@ -19,6 +18,7 @@ namespace Game {
   u32 Window::windowCount = 0;
 
   void Window::initializeWindowSystem() {
+    GAME_PROFILE_FUNCTION();
     if (windowCount == 0) {
       glfwSetErrorCallback(GLFWErrorCallback);
 
@@ -34,6 +34,7 @@ namespace Game {
   }
 
   void Window::deinitializeWindowSystem() {
+    GAME_PROFILE_FUNCTION();
     GAME_ASSERT_WITH_MESSAGE(windowCount >= 1, "Should not call deinit before init");
     windowCount--;
     if (windowCount == 0) {
@@ -44,6 +45,7 @@ namespace Game {
 
 
   Ref<Window> Window::create(const char* title, u32 width, u32 height) {
+    GAME_PROFILE_FUNCTION();
     initializeWindowSystem();
 
     Logger::trace("Creating window...");
@@ -181,20 +183,24 @@ namespace Game {
   }
 
   bool Window::shouldClose() {
+    GAME_PROFILE_FUNCTION();
     return (bool)glfwWindowShouldClose(this->data.window);
   }
 
   void Window::update() {
+    GAME_PROFILE_FUNCTION();
     glfwPollEvents();
     glfwSwapBuffers(this->data.window);
   }
 
   Window::~Window() {
+    GAME_PROFILE_FUNCTION();
     glfwDestroyWindow(this->data.window);
     deinitializeWindowSystem();
   }
 
   void Window::setShouldClose() {
+    GAME_PROFILE_FUNCTION();
     glfwSetWindowShouldClose(this->data.window, true);
   }
 
@@ -207,15 +213,18 @@ namespace Game {
   }
 
   void Window::setEventCallback(EventCallback callback) {
+    GAME_PROFILE_FUNCTION();
     this->data.eventCallback = callback;
   }
 
   bool Window::isKeyPressed(Key key) const {
+    GAME_PROFILE_FUNCTION();
     auto state = glfwGetKey(data.window, (int)key);
     return state == GLFW_PRESS || state == GLFW_REPEAT;
   }
 
   void Window::enableCursor(bool yes) {
+    GAME_PROFILE_FUNCTION();
     if (yes) {
       glfwSetInputMode(this->data.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     } else {

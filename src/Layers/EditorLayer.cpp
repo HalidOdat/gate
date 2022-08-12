@@ -29,7 +29,7 @@ namespace Game {
     mEditorScene.reset(new Scene("New Scene"));
     mActiveScene = mEditorScene;
 
-    Material::Handle material(new Material());
+    Material::Handle material = Material::create();
     // material->diffuseMap  = Texture2D::load("CrateDiffuse.png");
     material->specularMap = Texture2D::load("CrateSpecular.png");
     material->emissionMap = Texture2D::load("matrix.jpg");

@@ -1,5 +1,4 @@
-#include "Core/Log.hpp"
-#include "Core/Assert.hpp"
+#include "Core/Base.hpp"
 #include "Resource/Manager.hpp"
 
 #include <string>

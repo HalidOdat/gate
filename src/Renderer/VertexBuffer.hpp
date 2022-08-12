@@ -1,11 +1,9 @@
 #pragma once
 
-#include <vector>
-
-#include "Core/Assert.hpp"
-#include "Core/Type.hpp"
-
+#include "Core/Base.hpp"
 #include "Resource/Resource.hpp"
+
+#include <vector>
 
 namespace Game {
 

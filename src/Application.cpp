@@ -92,10 +92,13 @@ namespace Game {
   }
 
   void Application::quit() {
+    GAME_PROFILE_FUNCTION();
     this->running = false;
   }
 
   void Application::onEvent(const Event& event) {
+    GAME_PROFILE_FUNCTION();
+
     event.dispatch(&Application::onWindowResizeEvent, this);
     event.dispatch(&Application::onWindowCloseEvent, this);
     event.dispatch(&Application::onWindowMinimizedEvent, this);
@@ -105,11 +108,13 @@ namespace Game {
   }
 
   bool Application::onWindowCloseEvent(const WindowCloseEvent&) {
+    GAME_PROFILE_FUNCTION();
     this->running = false;
     return true;
   }
 
   bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
+    GAME_PROFILE_FUNCTION();
     glViewport(0, 0, event.getWidth(), event.getHeight());
     Renderer::invalidate(event.getWidth(), event.getHeight());
     mWindowMinimized = false;
@@ -117,11 +122,13 @@ namespace Game {
   }
 
   bool Application::onWindowMinimizedEvent(const WindowMinimizedEvent&) {
+    GAME_PROFILE_FUNCTION();
     mWindowMinimized = true;
     return false;
   }
 
   void Application::pushLayer(Layer* layer) {
+    GAME_PROFILE_FUNCTION();
     this->layerStack.push(layer);
   }
 

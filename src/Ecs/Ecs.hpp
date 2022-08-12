@@ -4,7 +4,7 @@
 #include <array>
 #include <bitset>
 
-#include "Core/Assert.hpp"
+#include "Core/Base.hpp"
 
 #include "Ecs/Entity.hpp"
 #include "Ecs/Component.hpp"

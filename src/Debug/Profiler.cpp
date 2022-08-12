@@ -1,5 +1,4 @@
-#include "Core/Assert.hpp"
-#include "Core/Log.hpp"
+#include "Core/Base.hpp"
 #include "Debug/Profiler.hpp"
 
 #include <filesystem>
