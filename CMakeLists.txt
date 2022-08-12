@@ -23,12 +23,16 @@ set(Sources
   src/Core/Input.cpp
   src/Core/Timestep.hpp
   src/Core/Timestep.cpp
+  src/Core/Base.hpp
   
   src/Utils/Color.hpp
   src/Utils/File.hpp
   src/Utils/File.cpp
   src/Utils/String.hpp
   src/Utils/String.cpp
+
+  src/Debug/Profiler.hpp
+  src/Debug/Profiler.cpp
 
   src/Serializer/Serializer.hpp
   src/Serializer/Serializer.cpp

@@ -1,6 +1,6 @@
 #include "Scene/Scene.hpp"
 
-#include "Core/Assert.hpp"
+#include "Core/Base.hpp"
 #include "Renderer/Renderer.hpp"
 
 namespace Game {
@@ -10,6 +10,8 @@ namespace Game {
   {}
 
   void Scene::render(const PerspectiveCameraController& camera) {
+    GAME_PROFILE_FUNCTION();
+
     Renderer::begin3D(camera);
     auto view = mRegistry.view<TransformComponent, MeshSourceComponent, MeshRendererComponent>();
     for (auto[entity, tc, ms, mr] : view) {
@@ -23,6 +25,8 @@ namespace Game {
   }
 
   Entity Scene::createEntity(String tag) {
+    GAME_PROFILE_FUNCTION();
+
     Ecs::Entity entity = mRegistry.create();
     mRegistry.assign<TagComponent>(entity, std::move(tag));
     return Entity(entity, this);

@@ -4,8 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Core/Assert.hpp"
-#include "Core/Log.hpp"
+#include "Core/Base.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Resource/Manager.hpp"
 #include "Renderer/Renderer.hpp"
@@ -19,12 +18,16 @@ namespace Game {
   Application* Application::sInstance = nullptr;
 
   void Application::start() {
+    GAME_PROFILE_FUNCTION();
+    
     this->pushLayer(new EditorLayer());
 
     startGameLoop();
   }
 
   Application::Application(const char *title, const u32 width, const u32 height) {
+    GAME_PROFILE_FUNCTION();
+
     Logger::trace("Game Engine Initializing...");
 
     sInstance = this;
@@ -48,6 +51,8 @@ namespace Game {
   }
 
   Application::~Application() {
+    GAME_PROFILE_FUNCTION();
+
     Logger::trace("Game Engine Terminating...");
 
     this->layerStack.clear();
@@ -60,6 +65,8 @@ namespace Game {
   }
 
   void Application::startGameLoop() {
+    GAME_PROFILE_FUNCTION();
+    
     this->lastFrameTime = (float)glfwGetTime();
     while (running) {
       float time = (float)glfwGetTime();

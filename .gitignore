@@ -41,6 +41,9 @@ build-win/
 .vscode/
 .idea/
 
+#profile results
+profiles/
+
 # Assets directory (for now)
 assets/objects/
 assets/textures/

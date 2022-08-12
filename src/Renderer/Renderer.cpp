@@ -5,12 +5,12 @@
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Core/Assert.hpp"
-#include "Core/Log.hpp"
+#include "Core/Base.hpp"
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Resource/Manager.hpp"
 #include "Application.hpp"
+
 
 namespace Game {
 
@@ -165,6 +165,8 @@ namespace Game {
   }
 
   void Renderer::initialize() {
+    GAME_PROFILE_FUNCTION();
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
@@ -355,21 +357,28 @@ namespace Game {
   }
 
   void Renderer::shutdown() {
+    GAME_PROFILE_FUNCTION();
     delete renderer;
     renderer = nullptr;
   }
 
   void Renderer::invalidate(u32 width, u32 height) {
+    GAME_PROFILE_FUNCTION();
+
     renderer->pipeline.frameBuffer->invalidate(width, height);
   }
 
   void Renderer::begin(const Camera& camera) {
+    GAME_PROFILE_FUNCTION();
+
     renderer->projectionViewMatrix = camera.getProjectionViewMatrix();
     renderer->projectionMatrix     = camera.getProjectionMatrix();
     renderer->ViewMatrix           = camera.getViewMatrix();
   }
   
   void Renderer::begin3D(const PerspectiveCameraController& cameraController) {
+    GAME_PROFILE_FUNCTION();
+
     renderer->pipeline.camera.projection = cameraController.getCamera().getProjectionMatrix();
     renderer->pipeline.camera.view       = cameraController.getCamera().getViewMatrix();
     renderer->pipeline.camera.position   = cameraController.getPosition();
@@ -377,6 +386,8 @@ namespace Game {
   }
 
   void Renderer::submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform) {
+    GAME_PROFILE_FUNCTION();
+
     // Don't render fully transparent objects
     if (material->transparency == 0.0f) {
       return;
@@ -406,6 +417,8 @@ namespace Game {
   }
 
   static void renderUnit(u32 unitIndex) {
+    GAME_PROFILE_FUNCTION();
+
     RenderUnit& unit = renderer->pipeline.units[unitIndex];
 
     renderer->pipeline.shader->setMat4("uModelMatrix", unit.modelMatrix);
@@ -430,6 +443,8 @@ namespace Game {
   }
 
   static void renderAllUnits() {
+    GAME_PROFILE_FUNCTION();
+
     renderer->pipeline.shader->bind();
     renderer->pipeline.shader->setMat4("uProjectionMatrix", renderer->pipeline.camera.projection);
     renderer->pipeline.shader->setMat4("uViewMatrix", renderer->pipeline.camera.view);
@@ -468,6 +483,8 @@ namespace Game {
   }
 
   void renderSkybox() {
+    GAME_PROFILE_FUNCTION();
+
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     renderer->pipeline.skyboxTexture->bind();
     renderer->pipeline.skyboxShader->bind();
@@ -480,6 +497,8 @@ namespace Game {
   }
 
   void Renderer::waitAndRender() {
+    GAME_PROFILE_FUNCTION();
+
     // First Pass
     renderer->pipeline.frameBuffer->bind();
     GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -518,14 +537,17 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     Renderer::drawQuad(Vec3(position, 0.0f), size, color);
   }
 
   void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     Renderer::drawQuad(position, size, renderer->whiteTexture, color);
   }
 
   void Renderer::drawChar(char c, const Vec3& position, const Vec2& size, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, position);
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -533,6 +555,7 @@ namespace Game {
   }
 
   void Renderer::drawChar(char c, const Mat4& transform, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     auto texture = renderer->font.texture;
 
     // TODO: refactor this.
@@ -572,10 +595,12 @@ namespace Game {
   }
 
   void Renderer::drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     Renderer::drawText(text, Vec3(position, 0.1f), {size - size/8.0f, size}, color);
   }
 
   void Renderer::drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     Vec3 start = position;
     Vec3 current = start;
     for (const char c : text) {
@@ -590,6 +615,7 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Vec3& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, position);
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -597,6 +623,7 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Mat4& transform, const Texture2D::Handle& texture, const Vec4& color) {
+    GAME_PROFILE_FUNCTION();
     if (renderer->quad.count == QuadBatch::MAX) {
       Renderer::flush();
     }
@@ -626,6 +653,7 @@ namespace Game {
   }
 
   void Renderer::flush() {
+    GAME_PROFILE_FUNCTION();
     if (renderer->quad.count) {
       renderer->whiteTexture->bind();
 
@@ -648,6 +676,7 @@ namespace Game {
   }
 
   void Renderer::end() {
+    GAME_PROFILE_FUNCTION();
     Renderer::flush();
     // nothing... (for now)
   }

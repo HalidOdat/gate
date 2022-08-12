@@ -2,8 +2,7 @@
 #include <stb_image.h>
 #include <glad/glad.h>
 
-#include "Core/Assert.hpp"
-#include "Core/Log.hpp"
+#include "Core/Base.hpp"
 #include "Resource/Texture.hpp"
 #include "Resource/Factory.hpp"
 
@@ -30,6 +29,8 @@ namespace Game {
   };
 
   void Texture2D::reloadAll() {
+    GAME_PROFILE_FUNCTION();
+
     GAME_TODO("not implemented yet!");
   }
 
@@ -85,6 +86,8 @@ namespace Game {
   }
 
   Texture2D::Data Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Specification specification) {
+    GAME_PROFILE_FUNCTION();
+
     GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
     GLenum internalFormat = 0, dataFormat = 0;
     if (channels == 4) {
@@ -127,6 +130,8 @@ namespace Game {
   }
 
   Texture2D::Handle Texture2D::color(u32 color) {
+    GAME_PROFILE_FUNCTION();
+
     u8 a = color & 0xFF; color >>= 8;
     u8 b = color & 0xFF; color >>= 8;
     u8 g = color & 0xFF; color >>= 8;
@@ -135,6 +140,8 @@ namespace Game {
   }
 
   Texture2D::Handle Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
+    GAME_PROFILE_FUNCTION();
+
     Texture2D::Specification specification;
     specification.mipmap = Texture::MipmapMode::None;
     specification.filtering = Texture::FilteringMode::Nearest;
@@ -144,6 +151,8 @@ namespace Game {
   }
 
   Texture2D::Handle Texture2D::load(const StringView& path, Specification specification) {
+    GAME_PROFILE_FUNCTION();
+
     stbi_set_flip_vertically_on_load(specification.verticalFlip == Texture::VerticalFlip::True);
 
     auto filepath = "assets/textures/" + String(path);
@@ -163,6 +172,8 @@ namespace Game {
   }
 
   Texture2D::Handle Texture2D::generateMissingDataPlaceholder() {
+    GAME_PROFILE_FUNCTION();
+
     Texture2D::Specification specification;
     specification.filtering.mag = Texture::FilteringMode::Nearest;
     specification.filtering.min = Texture::FilteringMode::Linear;
@@ -172,6 +183,8 @@ namespace Game {
   }
 
   bool Texture2D::reload() {
+    GAME_PROFILE_FUNCTION();
+
     if (!mData.filePath.has_value()) {
       return true;
     }
@@ -196,10 +209,14 @@ namespace Game {
   }
 
   Texture2D::~Texture2D() {
+    GAME_PROFILE_FUNCTION();
+
     GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
   }
 
   void Texture2D::bind(const usize slot) const {
+    GAME_PROFILE_FUNCTION();
+
     // TODO: debug check if max texture slot reached
     u32 textureId = mData.id;
     GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0 + (GLenum)slot));
@@ -223,6 +240,8 @@ namespace Game {
   GAME_FACTORY_IMPLEMENTATION(CubeMap, cubeMapFactory)
 
   CubeMap::Handle CubeMap::load(FilePaths paths) {
+    GAME_PROFILE_FUNCTION();
+
     GAME_ASSERT(paths.size() == 6);
 
     u32 texture;
@@ -253,15 +272,21 @@ namespace Game {
   }
 
   CubeMap::~CubeMap() {
+    GAME_PROFILE_FUNCTION();
+
     GAME_GL_CHECK(glDeleteTextures(1, &id));
   }
 
   void CubeMap::bind() const {
+    GAME_PROFILE_FUNCTION();
+
     GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
     GAME_GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
   }
 
   bool CubeMap::reload() {
+    GAME_PROFILE_FUNCTION();
+
     // TODO: implement reloading
     GAME_TODO("not implemented");
     return false;

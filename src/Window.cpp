@@ -162,7 +162,13 @@ namespace Game {
     if (monitor) {
       const GLFWvidmode* mode = glfwGetVideoMode(monitor);
       if (mode) {
-        glfwSetWindowPos(result->data.window, mode->width/2 - width/2, mode->height/2 - height/2);
+        i32 x = mode->width  / 2 - width  / 2;
+        i32 y = mode->height / 2 - height / 2;
+        glfwSetWindowPos(
+          result->data.window,
+          x >= 0 ? x : 0,
+          y >= 0 ? y : 0
+        );
       }
     }
 

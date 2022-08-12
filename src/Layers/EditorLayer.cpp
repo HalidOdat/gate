@@ -14,6 +14,8 @@
 #include "Scene/Scene.hpp"
 #include "Scene/SceneSerializer.hpp"
 
+#include "Core/Base.hpp"
+
 namespace Game {
 
   EditorLayer::EditorLayer()
@@ -22,6 +24,8 @@ namespace Game {
   {}
 
   void EditorLayer::onAttach() {
+    GAME_PROFILE_FUNCTION();
+
     mEditorScene.reset(new Scene("New Scene"));
     mActiveScene = mEditorScene;
 
@@ -62,10 +66,13 @@ namespace Game {
   }
 
   void EditorLayer::onDetach() {
+    GAME_PROFILE_FUNCTION();
     Logger::info("EditorLayer::onDetach was called");
   }
 
   void EditorLayer::onUpdate(Timestep ts) {
+    GAME_PROFILE_FUNCTION();
+    
     mCameraController.onUpdate(ts);
     switch (mState) {
       case State::Edit:
