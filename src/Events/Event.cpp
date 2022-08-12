@@ -17,7 +17,6 @@ namespace Game {
     }
 
     GAME_UNREACHABLE("Unknown event type");
-    return "";
   }
 
 } // namespace Game

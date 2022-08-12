@@ -104,7 +104,7 @@ namespace Game {
     this->layerStack.onEvent(event);
   }
 
-  bool Application::onWindowCloseEvent(const WindowCloseEvent& event) {
+  bool Application::onWindowCloseEvent(const WindowCloseEvent&) {
     this->running = false;
     return true;
   }
@@ -116,7 +116,7 @@ namespace Game {
     return false;
   }
 
-  bool Application::onWindowMinimizedEvent(const WindowMinimizedEvent& event) {
+  bool Application::onWindowMinimizedEvent(const WindowMinimizedEvent&) {
     mWindowMinimized = true;
     return false;
   }

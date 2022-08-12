@@ -121,7 +121,7 @@ namespace Game {
     return false;
   }
 
-  bool GameLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
+  bool GameLayer::onMouseScrollEvent(const MouseScrollEvent&) {
     return false;
   }
 

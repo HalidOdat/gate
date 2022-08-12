@@ -90,8 +90,8 @@ namespace Game {
     using ReferenceCount = u32;
 
     struct Data {
-      ReferenceCount referenceCount = 0;
       alignas(T) u8 data[sizeof(T)] = {0};
+      ReferenceCount referenceCount = 0;
     };
   
   private:

@@ -26,14 +26,14 @@ namespace Game {
 
   public:
     BufferElement(Type type, bool normalized = false)
-      : type{type}, normalized{normalized}
+      : mType{type}, mNormalized{normalized}
     {
     }
 
-    inline Type getType() const { return this->type; }
+    inline Type getType() const { return mType; }
 
     inline constexpr usize getComponentCount() const {
-      switch (type) {
+      switch (mType) {
         case Type::Float:  return 1;
         case Type::Float2: return 2;
         case Type::Float3: return 3;
@@ -45,13 +45,11 @@ namespace Game {
         case Type::Uint:   return 1;
         case Type::Bool:   return 1;
       }
-
       GAME_UNREACHABLE("Unknown shader data type!");
-      return 0;
     }
 
     inline usize getSize() const {
-      switch (type) {
+      switch (mType) {
         case Type::Float:  return sizeof(float)        * 1;
         case Type::Float2: return sizeof(float)        * 2;
         case Type::Float3: return sizeof(float)        * 3;
@@ -63,19 +61,17 @@ namespace Game {
         case Type::Uint:   return sizeof(unsigned int) * 1;
         case Type::Bool:   return sizeof(bool);
       }
-
       GAME_UNREACHABLE("Unknown shader data type!");
-      return 0;
     }
 
-    inline usize getOffset() const { return this->offset; }
-    inline void  setOffset(usize offset) { this->offset = offset; }
+    inline usize getOffset() const { return mOffset; }
+    inline void  setOffset(usize offset) { mOffset = offset; }
 
-    inline bool isNormalized() const { return this->normalized; }
+    inline bool isNormalized() const { return mNormalized; }
   private:
-    Type  type;
-    usize offset = 0;
-    bool  normalized;
+    Type  mType;
+    usize mOffset = 0;
+    bool  mNormalized;
   };
 
   class BufferLayout {
@@ -122,17 +118,17 @@ namespace Game {
 
     void set(const Slice<const void> slice);
 
-    inline const BufferLayout& getLayout() const { return this->layout; }
-    inline void setLayout(BufferLayout layout) { this->layout = std::move(layout); }
+    inline const BufferLayout& getLayout() const { return mLayout; }
+    inline void setLayout(BufferLayout layout) { mLayout = std::move(layout); }
 
   private:
     VertexBuffer(u32 id)
-      : id{id}
+      : mId{id}
     {}
 
   private:
-    u32 id;
-    BufferLayout layout;
+    u32 mId;
+    BufferLayout mLayout;
 
   private:
     template<typename T>

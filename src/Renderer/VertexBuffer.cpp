@@ -26,11 +26,11 @@ namespace Game {
   }
 
   VertexBuffer::~VertexBuffer() {
-    GAME_GL_CHECK(glDeleteBuffers(1, &this->id));
+    GAME_GL_CHECK(glDeleteBuffers(1, &mId));
   }
 
   void VertexBuffer::bind() {
-    GAME_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, this->id));
+    GAME_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mId));
   }
 
   void VertexBuffer::unbind() {
@@ -38,7 +38,7 @@ namespace Game {
   }
 
   void VertexBuffer::set(const Slice<const void> slice) {
-    GAME_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, this->id));
+    GAME_GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mId));
     GAME_GL_CHECK(glBufferSubData(GL_ARRAY_BUFFER, 0, slice.sizeInBytes(), slice.data()));
   }
 

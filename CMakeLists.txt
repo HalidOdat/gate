@@ -107,6 +107,12 @@ set(Sources
   src/Main.cpp
 )
 
+if (MSVC)
+  add_compile_options(/W4)
+else()
+  add_compile_options(-Wall -Wextra -pedantic)
+endif()
+
 add_executable(${This} ${Sources})
 
 target_include_directories(${This} PUBLIC src)

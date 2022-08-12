@@ -61,7 +61,7 @@ namespace Game {
     data.window = nullptr;
     data.width = width;
     data.height = height;
-    data.eventCallback = [](auto& e) {};
+    data.eventCallback = [](auto&) {};
 
     data.window = glfwCreateWindow(width, height, title, nullptr, nullptr);
     if (!data.window) {
@@ -105,6 +105,9 @@ namespace Game {
     });
 
     glfwSetKeyCallback(result->data.window, [](GLFWwindow* window, int keyCode, int scancode, int action, int mods) {
+      (void)scancode;
+      (void)mods;
+
       auto& data = *(Data*)glfwGetWindowUserPointer(window);
 
       const auto key = (Key)keyCode;
@@ -128,6 +131,8 @@ namespace Game {
     });
 
     glfwSetMouseButtonCallback(result->data.window, [](GLFWwindow* window, int button, int action, int mods) {
+      (void)mods;
+
 			auto& data = *(Data*)glfwGetWindowUserPointer(window);
 
 			switch (action) {

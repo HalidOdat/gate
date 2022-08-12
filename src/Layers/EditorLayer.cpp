@@ -76,7 +76,6 @@ namespace Game {
     mCameraController.onUpdate(ts);
     switch (mState) {
       case State::Edit:
-        GAME_TODO("not implemented yet!");
         mActiveScene->render(mCameraController);
         break;
       case State::Play:
@@ -89,13 +88,10 @@ namespace Game {
 
   void EditorLayer::onUiRender(Ui& ui) {
     if (mShow || true) {
-      auto ts = Timestep::get();
-      const auto ar = Application::getWindow().getAspectRatio();
       Renderer::begin(mCameraController.getCamera());
-      auto fps = 1.0f / ts;
       std::stringstream ss;
       ss.precision(2);
-      ss << std::fixed << (1.0f / ts) << "fps" << '\n';
+      ss << std::fixed << (1.0f / Timestep::get()) << "fps" << '\n';
 
       std::string fpsString = ss.str();
 
@@ -134,6 +130,7 @@ namespace Game {
   }
 
   bool EditorLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
+    (void)event;
     return false;
   }
 

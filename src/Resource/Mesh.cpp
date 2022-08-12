@@ -115,7 +115,6 @@ namespace Game {
     GAME_PROFILE_FUNCTION();
 
     auto file = "assets/objects/" + String(filepath);
-    FileFormat format = FileFormat::Obj;
     auto source = fileToString(file);
     if (!source) {
       return {};

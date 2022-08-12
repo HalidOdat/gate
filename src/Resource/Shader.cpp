@@ -23,9 +23,7 @@ namespace Game {
       case Shader::Type::Fragment: return GL_FRAGMENT_SHADER;
       case Shader::Type::Compute:  return GL_COMPUTE_SHADER;
     }
-
     GAME_UNREACHABLE("unknown shader type!");
-    return 0;
   }
 
   static const char* shaderTypeToString(Shader::Type type) {
@@ -34,9 +32,7 @@ namespace Game {
       case Shader::Type::Fragment: return "Fragment";
       case Shader::Type::Compute:  return "Compute";
     }
-
     GAME_UNREACHABLE("unknown shader type!");
-    return 0;
   }
 
   static std::optional<Shader::Type> stringToShaderType(const StringView& string) {
@@ -157,13 +153,13 @@ namespace Game {
   Shader::Handle Shader::load(const StringView& path) {
     auto filepath = "assets/shaders/" + String(path);
     
-    auto content = parse(filepath);
-    if (content.empty()) {
+    auto parts = parse(filepath);
+    if (parts.empty()) {
       return {};
     }
 
     std::array<u32, SHADER_TYPE_COUNT> shaders = {0, 0, 0};
-    for (auto&[type, content] : content) {
+    for (auto&[type, content] : parts) {
       u32 id = Shader::compile(type, content.c_str());;
 
       shaders[(usize)type] = id;

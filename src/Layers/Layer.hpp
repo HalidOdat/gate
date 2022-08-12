@@ -12,9 +12,9 @@ namespace Game {
     
     virtual void onAttach() {}
     virtual void onDetach() {}
-    virtual void onUpdate(Timestep ts) {}
-    virtual void onUiRender(Ui& ui) {}
-    virtual void onEvent(const Event& event) {}
+    virtual void onUpdate([[maybe_unused]] Timestep ts) {}
+    virtual void onUiRender([[maybe_unused]] Ui& ui) {}
+    virtual void onEvent([[maybe_unused]] const Event& event) {}
 
     inline bool isEnabled() const { return this->enabled; }
     inline void enable(const bool yes = true) {

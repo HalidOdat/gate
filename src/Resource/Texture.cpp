@@ -45,20 +45,16 @@ namespace Game {
       case Texture::WrappingMode::MirroredRepeat: return GL_MIRRORED_REPEAT;
       case Texture::WrappingMode::ClampToEdge:    return GL_CLAMP_TO_EDGE;
       case Texture::WrappingMode::ClampToBorder:  return GL_CLAMP_TO_BORDER;
-      default:
-        GAME_UNREACHABLE("unknown texture wrapping type!");
-        return 0;
     }
+    GAME_UNREACHABLE("unknown texture wrapping type!");
   }
 
   static GLenum TextureFilteringToOpenGL(Texture::FilteringMode filtering) {
     switch (filtering) {
       case Texture::FilteringMode::Linear:  return GL_LINEAR;
       case Texture::FilteringMode::Nearest: return GL_NEAREST;
-      default:
-        GAME_UNREACHABLE("unknown texture filtering type!");
-        return 0;
     }
+    GAME_UNREACHABLE("unknown texture filtering type!");
   }
 
   static GLenum TextureFilteringMipmapToOpenGL(Texture::FilteringMode filtering, Texture::MipmapMode mipmap) {
@@ -79,7 +75,6 @@ namespace Game {
         break;
       default:
         GAME_UNREACHABLE("unknown texture filtering type!");
-        return 0;
     }
 
     GAME_UNREACHABLE("unknown texture mipmap type!");

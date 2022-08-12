@@ -10,7 +10,7 @@ namespace Game {
     mCamera(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel, zNear, zFar)
   {}
 
-  void OrthographicCameraController::onUpdate(Timestep ts) {
+  void OrthographicCameraController::onUpdate([[maybe_unused]] Timestep ts) {
     // TODO: Will be used in the future to make smooth camera movement
   }
 
@@ -117,7 +117,7 @@ namespace Game {
     resize(event.getWidth(), event.getHeight());
     return false;
   }
-  bool PerspectiveCameraController::onKeyPressedEvent(const KeyPressedEvent& event) {
+  bool PerspectiveCameraController::onKeyPressedEvent([[maybe_unused]] const KeyPressedEvent& event) {
     
     return false;
   }

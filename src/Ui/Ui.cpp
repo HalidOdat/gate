@@ -35,6 +35,8 @@ namespace Game {
   };
 
   Vec2 Ui::Layout::nextAvailablePosition(bool withPadding) {
+    (void)withPadding;
+
     switch (this->type) {
       case Type::Horizontal:
         return this->position + this->size * Vec2(1.0f, 0.0f);
@@ -331,11 +333,13 @@ namespace Game {
   }
 
   bool Ui::onMouseButtonPressedEvent(const MouseButtonPressedEvent& event) {
+    (void)event;
     this->mouseButton = true;
     return this->hasHot || this->hasActive;
   }
 
   bool Ui::onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event) {
+    (void)event;
     this->mouseButton = false;
     return  this->hasHot || this->hasActive;
   }

@@ -8,8 +8,8 @@ namespace Game {
 
   template<typename T>
   struct FactoryCallback {
-    inline static void created(T&, u32 id) {}
-    inline static void destroyed(T&, u32 id) {}
+    inline static void created(T&, u32) {}
+    inline static void destroyed(T&, u32) {}
   };
 
   template<typename T>

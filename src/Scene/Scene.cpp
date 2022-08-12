@@ -20,6 +20,7 @@ namespace Game {
   }
 
   void Scene::onUpdate(Timestep ts) {
+    (void)ts;
     // render();
     GAME_TODO("");
   }
