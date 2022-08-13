@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Macros.hpp"
+#include "Core/Macro.hpp"
 #include "Core/Log.hpp"
 #include "Core/Timestep.hpp"
 #include "Core/Type.hpp"

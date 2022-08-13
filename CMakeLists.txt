@@ -13,8 +13,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(Sources
   src/Core/Type.hpp
-  src/Core/Macros.hpp
-  src/Core/Macros.cpp
+  src/Core/Macro.hpp
+  src/Core/Macro.cpp
   src/Core/Log.hpp
   src/Core/Log.cpp
   src/Core/Math.hpp

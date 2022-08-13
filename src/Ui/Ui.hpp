@@ -90,12 +90,14 @@ namespace Game {
 
     void begin(const Vec2& position, f32 padding = Layout::DEFAULT_PADDING);
     void beginLayout(Layout::Type type, f32 padding = Layout::DEFAULT_PADDING);
+    void endLayout();
+    void end();
+
+    void image(const Texture2D::Handle& texture, u32 width, u32 height);
     bool button(const StringView& text, u64 id = 0);
     bool slider(f32& value, const f32 min, const f32 max);
     bool slider(Vec3& value, const Vec3& mins, const Vec3& maxs);
     bool checkbox(bool& value);
-    void endLayout();
-    void end();
 
     Config& getConfig() { return mConfig; }
     const Config& getConfig() const { return mConfig; }

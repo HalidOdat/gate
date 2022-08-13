@@ -114,6 +114,10 @@ namespace Game {
     this->layouts.push_back(layout);
   }
 
+  void Ui::image(const Texture2D::Handle& texture, u32 width, u32 height) {
+    
+  }
+
   bool Ui::button(const StringView& text, u64 id) {
     GAME_PROFILE_FUNCTION();
     auto& layout = this->layouts.back();

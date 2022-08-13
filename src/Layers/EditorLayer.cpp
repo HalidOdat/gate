@@ -30,7 +30,7 @@ namespace Game {
     mActiveScene = mEditorScene;
 
     Material::Handle material = Material::create();
-    // material->diffuseMap  = Texture2D::load("CrateDiffuse.png");
+    material->diffuseMap  = Texture2D::load("CrateDiffuse.png");
     material->specularMap = Texture2D::load("CrateSpecular.png");
     material->emissionMap = Texture2D::load("matrix.jpg");
     material->shininess   = 32.0f;
@@ -52,7 +52,7 @@ namespace Game {
     
     Mesh::Handle mesh = Mesh::cube();
 
-    for (u32 i = 0; i < 1000; i++) {
+    for (u32 i = 0; i < 10; i++) {
       Entity entity = mEditorScene->createEntity(String("box ") + std::to_string(i));
       entity.add<TransformComponent>(cubePositions[i % 10] + (f32)i * Vec3(0.02f), Vec3(0.1f, 0.2f, 0.3f) * (f32)i);
       entity.add<MeshSourceComponent>(mesh);
@@ -87,32 +87,28 @@ namespace Game {
   }
 
   void EditorLayer::onUiRender(Ui& ui) {
-    if (mShow || true) {
-      Renderer::begin(mCameraController.getCamera());
-      std::stringstream ss;
-      ss.precision(2);
-      ss << std::fixed << (1.0f / Timestep::get()) << "fps" << '\n';
+    std::stringstream ss;
+    ss.precision(2);
+    ss << std::fixed << (1.0f / Timestep::get()) << "fps" << '\n';
+    std::string fpsString = ss.str();
 
-      std::string fpsString = ss.str();
+    ui.begin({0.0f, 0.0f});
+      if (ui.button(fpsString, 0)) {
+        Logger::info("Button 0 clicked!!!");
+      }
+      if (ui.button("Button 1", 1)) {
+        Logger::info("Button 1 clicked!!!");
+      }
+      if (ui.button("Button 2", 2)) {
+        Logger::info("Button 2 clicked!!!");
+      }
+      if (ui.button("Button 3", 3)) {
+        Logger::info("Button 3 clicked!!!");
+      }
+      if (ui.checkbox(mShow)) {}
+    ui.end();
 
-      ui.begin({0.0f, 0.0f});
-        if (ui.button(fpsString, 0)) {
-          Logger::info("Button 0 clicked!!!");
-        }
-        if (ui.button("Button 1", 1)) {
-          Logger::info("Button 1 clicked!!!");
-        }
-        if (ui.button("Button 2", 2)) {
-          Logger::info("Button 2 clicked!!!");
-        }
-        if (ui.button("Button 3", 3)) {
-          Logger::info("Button 3 clicked!!!");
-        }
-        if (ui.checkbox(mShow)) {
-
-        }
-      ui.end();
-    }
+    
   }
 
   void EditorLayer::onEvent(const Event& event) {
