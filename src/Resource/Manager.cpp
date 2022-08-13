@@ -1,5 +1,6 @@
 #include "Core/Base.hpp"
 #include "Resource/Manager.hpp"
+#include "Resource/Texture.hpp"
 
 #include <string>
 
@@ -18,6 +19,7 @@ namespace Game {
     // sInstance.getFactory<Mesh>().clear();
     // sInstance.getFactory<Texture2D>().clear();
     // sInstance.getFactory<Shader>().clear();
+    Texture2D::destroyAllTextures();
     Logger::info("ResourceManager: Shutdown!");
   }
 

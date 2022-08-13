@@ -23,6 +23,8 @@ namespace Game {
         Logger::trace("Mesh #%u destroyed: %s", id, mesh.getFilePath()->c_str());
       }
     }
+    inline static void clear() {}
+    inline static void postDecrement(const Resource<Mesh>&) {}
   };
 
   struct Vertex {

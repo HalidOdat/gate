@@ -1,3 +1,5 @@
+#include <unordered_map>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <glad/glad.h>
@@ -8,25 +10,63 @@
 
 namespace Game {
 
+  // TODO: key should also have specification
+  static std::unordered_map<String, Texture2D::Handle> cachedImageTexture2D; // Key: Path,  Value: Texture
+  static std::unordered_map<u32,    Texture2D::Handle> cachedColorTexture2D; // Key: Color, Value: Texture
+
   GAME_FACTORY_IMPLEMENTATION(Texture2D, texture2DFactory)
 
   template<>
   struct FactoryCallback<Texture2D> {
+    inline static void postDecrement(const Resource<Texture2D>& resource) {
+      if (resource.getReferenceCount() == 1) {
+        switch (resource->getType()) {
+          case Texture::Type::Image:
+            cachedImageTexture2D.erase(*resource->getFilePath());
+            break;
+          case Texture::Type::Color:
+            cachedColorTexture2D.erase(resource->getColor());
+            break;
+          default:
+            GAME_UNREACHABLE("unknown texture type!");
+        }  
+      }
+    }
     inline static void created(Texture2D& texture, u32 id) {
-      if (texture.getFilePath()) {
-        Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
-      } else {
-        Logger::trace("Texture #%u created color: #%08x", id, texture.getColor());
+      switch (texture.getType()) {
+        case Texture::Type::Image:
+          Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
+          break;
+        case Texture::Type::Color:
+          Logger::trace("Texture #%u created color: #%08X", id, texture.getColor());
+          break;
+        default:
+          GAME_UNREACHABLE("unknown texture type!");
       }
     }
     inline static void destroyed(Texture2D& texture, u32 id) {
-     if (texture.getFilePath()) {
-        Logger::trace("Texture #%u destroyed: %s", id, texture.getFilePath()->c_str());
-      } else {
-        Logger::trace("Texture #%u destroyed color: #%08x", id, texture.getColor());
+      switch (texture.getType()) {
+        case Texture::Type::Image:
+          Logger::trace("Texture #%u destroyed: %s", id, texture.getFilePath()->c_str());
+          break;
+        case Texture::Type::Color:
+          Logger::trace("Texture #%u destroyed color: #%08X", id, texture.getColor());
+          break;
+        default:
+          GAME_UNREACHABLE("unknown texture type!");
       }
     }
+    inline static void clear() {
+      cachedImageTexture2D.clear();
+      cachedColorTexture2D.clear();
+    }
   };
+
+  void Texture2D::destroyAllTextures() {
+    cachedImageTexture2D.clear();
+    cachedColorTexture2D.clear();
+    texture2DFactory.clear();
+  }
 
   void Texture2D::reloadAll() {
     GAME_PROFILE_FUNCTION();
@@ -127,43 +167,68 @@ namespace Game {
   Texture2D::Handle Texture2D::color(u32 color) {
     GAME_PROFILE_FUNCTION();
 
-    u8 a = color & 0xFF; color >>= 8;
-    u8 b = color & 0xFF; color >>= 8;
-    u8 g = color & 0xFF; color >>= 8;
-    u8 r = color & 0xFF;
-    return Texture2D::color(r, g, b, a);
-  }
-
-  Texture2D::Handle Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
-    GAME_PROFILE_FUNCTION();
+    if (cachedColorTexture2D.contains(color)) {
+      return cachedColorTexture2D.at(color);
+    }
 
     Texture2D::Specification specification;
     specification.mipmap = Texture::MipmapMode::None;
     specification.filtering = Texture::FilteringMode::Nearest;
 
+    u8 a = (color >> 0 ) & 0xFF;
+    u8 b = (color >> 8 ) & 0xFF;
+    u8 g = (color >> 16) & 0xFF;
+    u8 r = (color >> 24) & 0xFF;
+
     const u8 bytes[] = {r, g, b, a};
-    return texture2DFactory.emplace(Texture2D::fromBytes(bytes, 1, 1, 4, specification));
+    auto data = Texture2D::fromBytes(bytes, 1, 1, 4, specification);
+    data.type  = Texture::Type::Color;
+    data.color = color;
+
+    auto result = texture2DFactory.emplace(std::move(data));
+    cachedColorTexture2D.emplace(color, result);
+    return result;
   }
 
-  Texture2D::Handle Texture2D::load(const StringView& path, Specification specification) {
+  Texture2D::Handle Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
     GAME_PROFILE_FUNCTION();
+
+    u32 color =  r; color <<= 8;
+        color |= g; color <<= 8;
+        color |= b; color <<= 8;
+        color |= a;
+
+    return Texture2D::color(color);
+  }
+
+  Texture2D::Handle Texture2D::load(const String& path, Specification specification) {
+    GAME_PROFILE_FUNCTION();
+
+    if (cachedImageTexture2D.contains(path)) {
+      return cachedImageTexture2D.at(path);
+    }
 
     stbi_set_flip_vertically_on_load(specification.verticalFlip == Texture::VerticalFlip::True);
 
     auto filepath = "assets/textures/" + String(path);
 
     int width, height, channels;
-    stbi_uc* data = stbi_load(filepath.data(), &width, &height, &channels, 0);
+    stbi_uc* bytes = stbi_load(filepath.data(), &width, &height, &channels, 0);
         
-    if (!data) {
+    if (!bytes) {
       Logger::error("Couldn't load image file '%s'", filepath.data());
       return {};
     }
 
-    auto result = Texture2D::fromBytes(data, width, height, channels, specification);
-    result.filePath = filepath;
-    stbi_image_free(data);
-    return texture2DFactory.emplace(result);
+    auto data = Texture2D::fromBytes(bytes, width, height, channels, specification);
+    data.type     = Texture::Type::Image;
+    data.filePath = filepath;
+
+    stbi_image_free(bytes);
+    
+    auto result = texture2DFactory.emplace(data);
+    cachedImageTexture2D.emplace(String(path), result);
+    return result;
   }
 
   Texture2D::Handle Texture2D::generateMissingDataPlaceholder() {

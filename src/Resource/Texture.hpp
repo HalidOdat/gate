@@ -42,9 +42,9 @@ namespace Game {
       Texture::FilteringMode mag;
     };
 
-    enum class Source {
-      Memory,
-      File,
+    enum class Type {
+      Image,
+      Color,
     };
 
   private:
@@ -64,7 +64,7 @@ namespace Game {
     };
 
   public:
-    [[nodiscard]] static Texture2D::Handle load(const StringView& filepath, Specification specification = {});
+    [[nodiscard]] static Texture2D::Handle load(const String& filepath, Specification specification = {});
     [[nodiscard]] static Texture2D::Handle color(u32 color);
     [[nodiscard]] static Texture2D::Handle color(u8 r, u8 g, u8 b, u8 a = 0xFF);
     [[nodiscard]] static Texture2D::Handle generateMissingDataPlaceholder();
@@ -79,10 +79,9 @@ namespace Game {
   
     bool reload();
 
-    inline const Specification& getSpecification() const { return mData.specification; }
-    inline const Option<String> getFilePath() const { return mData.filePath; }
-
-    inline bool isColor() const { return !mData.filePath.has_value(); }
+    inline const Specification&  getSpecification() const { return mData.specification; }
+    inline const Option<String>& getFilePath() const { return mData.filePath; }
+    inline const Texture::Type   getType() const { return mData.type; }
     inline u32  getColor() const { return mData.color; }
 
     static void reloadAll();
@@ -94,6 +93,7 @@ namespace Game {
       u32 height;
 
       Specification specification;
+      Texture::Type type;
       Option<String> filePath;
       u32 color;
     };
@@ -104,12 +104,15 @@ namespace Game {
 
     static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, Specification specification = {});
 
+    static void destroyAllTextures();
+
   private:
     Data mData;
 
   private:
     template<typename T>
     friend class ResourceFactory;
+    friend class ResourceManager;
   };
 
   GAME_FACTORY_HEADER(Texture2D)

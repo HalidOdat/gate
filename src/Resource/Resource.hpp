@@ -8,6 +8,7 @@ namespace Game {
   class Resource {
   public:
     using Id = u32;
+    using ReferenceCount = u32;
 
   public:
     static constexpr const Id InvalidId = UINT32_MAX;
@@ -84,10 +85,11 @@ namespace Game {
     inline T& operator*() { return *get(); }
     inline const T* operator->() const { return get(); }
     inline const T& operator*() const { return *get(); }
+
+    inline Id getId() const { return mId; }
+    inline ReferenceCount getReferenceCount() const { return getRaw().referenceCount; }
     
   private:
-    using ReferenceCount = u32;
-
     struct Data {
       alignas(T) u8 data[sizeof(T)] = {0};
       ReferenceCount referenceCount = 0;

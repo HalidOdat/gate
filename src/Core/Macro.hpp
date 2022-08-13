@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 // FIXME: always on debug mode
-#define GAME_DEBUG_MODE 1
+#define GAME_DEBUG_MODE _DEBUG
 
 #define GAME_ASSERT_IMPL(type, cond, sep, msg) do { if (!(cond)) { fprintf(stderr, "%s:%d: " type " Failed '%s'%s%s\n", __FILE__, __LINE__, #cond, sep, msg); std::exit(1); } } while(false)
 

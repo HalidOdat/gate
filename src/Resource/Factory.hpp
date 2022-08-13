@@ -8,8 +8,10 @@ namespace Game {
 
   template<typename T>
   struct FactoryCallback {
+    inline static void postDecrement(const Resource<T>&) {}
     inline static void created(T&, u32) {}
     inline static void destroyed(T&, u32) {}
+    inline static void clear() {}
   };
 
   template<typename T>
@@ -39,6 +41,7 @@ namespace Game {
     }
 
     void clear() {
+      FactoryCallback<T>::clear();
       for (u32 i = 0; i < mResources.size(); ++i) {
         if (mResources[i].referenceCount == 0) {
           continue;
@@ -50,12 +53,16 @@ namespace Game {
       mFreeList.clear();
     }
 
-    void decrementReferenceCountAtIndex(Resource<T>::Id id) {
+    void decrementReferenceCountAtIndex(const Resource<T>& resource) {
+      auto id = resource.getId();
       if (mResources[id].referenceCount == 1) {
         destroyAtIndex(id);
         mFreeList.emplace_back(id);
+        return;
       }
       mResources[id].referenceCount--;
+
+      FactoryCallback<T>::postDecrement(resource);
     }
 
   private:
@@ -90,7 +97,7 @@ namespace Game {
     return name.get(mId);                                        \
   }                                                              \
   template<> void Resource<T>::decrementReferenceCount() const { \
-    name.decrementReferenceCountAtIndex(mId);                    \
+    name.decrementReferenceCountAtIndex(*this);                  \
   }
 
 }
