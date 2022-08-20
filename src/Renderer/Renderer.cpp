@@ -60,7 +60,7 @@ namespace Game {
     VertexArray::Handle  vertexArray;
 
     // TODO: Query OpenGL
-    static constexpr const u32 MAX_TEXTURES = 32;
+    static constexpr const u32 MAX_TEXTURES = 16;
 
     std::vector<Texture2D::Handle> textures;
 
@@ -229,8 +229,8 @@ namespace Game {
     const auto fontCharacterWidth  = 7;
     const auto fontCharacterHeight = 9;
 
-    GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
-    GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
+    GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0, "");
+    GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0, "");
 
     auto postProcesingShader = Shader::load("PostProcessing.glsl");
     renderer = new RendererData{
@@ -527,13 +527,11 @@ namespace Game {
     // Prepare 2D rendering
     static const i32 samples2D[] = {
        0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
-      10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-      20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-      30, 31,
+      10, 11, 12, 13, 14, 15,
     };
 
     renderer->quad.shader->bind();
-    renderer->quad.shader->setIntArray("uTextures", samples2D, 32);
+    renderer->quad.shader->setIntArray("uTextures", samples2D, 16);
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {

@@ -42,7 +42,7 @@ namespace Game::Ecs {
 
       std::tuple<Entity, Ts&...> operator*() const {
         auto entity = Entity(this->index);
-        return std::make_tuple(entity, std::ref(this->registry->get<Ts>(entity))...);
+        return std::make_tuple(entity, std::ref(this->registry->template get<Ts>(entity))...);
       }
 
       bool operator==(const Iterator& other) const {

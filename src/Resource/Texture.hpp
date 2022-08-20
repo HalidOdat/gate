@@ -56,6 +56,7 @@ namespace Game {
     using Handle = Resource<Texture2D>;
 
     struct Specification {
+      Specification() {}
       Texture::WrappingMode wrapping       = Texture::WrappingMode::Repeat;
       Texture::Filtering    filtering      = Texture::FilteringMode::Linear;
       Texture::MipmapMode   mipmap         = Texture::MipmapMode::Linear;

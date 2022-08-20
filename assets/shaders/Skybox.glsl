@@ -1,4 +1,8 @@
-#version 330 core
+#version 300 es
+
+precision mediump float;
+precision lowp sampler2D;
+precision lowp samplerCube;
 
 @type vertex
 

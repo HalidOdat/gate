@@ -13,7 +13,8 @@ namespace Game {
 
   VertexArray::Handle VertexArray::create() {
     u32 id;
-    GAME_GL_CHECK(glCreateVertexArrays(1, &id));
+    GAME_GL_CHECK(glGenVertexArrays(1, &id));
+    GAME_GL_CHECK(glBindVertexArray(id));
     return factory.emplace(id);
   }
 

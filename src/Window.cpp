@@ -1,6 +1,10 @@
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#ifdef __EMSCRIPTEN__
+# include <emscripten/emscripten.h>
+// #define GLFW_INCLUDE_ES3
+#endif
 #include <glad/glad.h>
+// #define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 #include "Core/Base.hpp"
 #include "Events/Event.hpp"
@@ -72,7 +76,7 @@ namespace Game {
     auto result = Ref<Window>( new Window(data) );
 
     glfwMakeContextCurrent(result->data.window);
-    GAME_ASSERT(glfwGetError(NULL) == 0);
+    // GAME_ASSERT(glfwGetError(NULL) == 0);
 
     if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
     {
@@ -82,7 +86,7 @@ namespace Game {
 
     Logger::info("OpenGL Version: %s", glGetString(GL_VERSION));
 
-    glfwSwapInterval(1);
+    // glfwSwapInterval(1);
 
     glfwSetWindowUserPointer(result->data.window, &result->data);
 

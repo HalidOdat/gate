@@ -17,11 +17,11 @@ namespace Game {
   template<typename T>
   class ResourceFactory {
   private:
-    using Data = Resource<T>::Data;
+    using Data = typename Resource<T>::Data;
   public:
     ResourceFactory() = default;
 
-    Resource<T>::Data& get(Resource<T>::Id id) { return mResources[id]; }
+    typename Resource<T>::Data& get(typename Resource<T>::Id id) { return mResources[id]; }
 
     template<typename ...Args>
     Resource<T> emplace(Args&&... args) {
@@ -66,9 +66,9 @@ namespace Game {
     }
 
   private:
-    inline bool isFree(Resource<T>::Id id) const { return !mResources[id].referenceCount; }
+    inline bool isFree(typename Resource<T>::Id id) const { return !mResources[id].referenceCount; }
 
-    inline void destroyAtIndex(Resource<T>::Id id) {
+    inline void destroyAtIndex(typename Resource<T>::Id id) {
       T* ptr = std::launder(reinterpret_cast<T*>(mResources[id].data));
       FactoryCallback<T>::destroyed(*ptr, id);
       ptr->~T();
@@ -76,7 +76,7 @@ namespace Game {
     }
 
     template<typename ...Args>
-    inline void emplaceAtIndex(Resource<T>::Id id, Args&& ...args) {
+    inline void emplaceAtIndex(typename Resource<T>::Id id, Args&& ...args) {
       mResources[id].referenceCount = 1;
       new (mResources[id].data) T{std::forward<Args>(args)...};
       T* ptr = std::launder(reinterpret_cast<T*>(mResources[id].data));
@@ -93,7 +93,7 @@ namespace Game {
 
 # define GAME_FACTORY_IMPLEMENTATION(T, name)                    \
   static ResourceFactory<T> name;                                \
-  template<> Resource<T>::Data& Resource<T>::getRaw() const {    \
+  template<> typename Resource<T>::Data& Resource<T>::getRaw() const {    \
     return name.get(mId);                                        \
   }                                                              \
   template<> void Resource<T>::decrementReferenceCount() const { \

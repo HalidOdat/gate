@@ -79,32 +79,32 @@ namespace Game::Serializer {
   }
 
   Node& Node::operator[](usize i) {
-    GAME_DEBUG_ASSERT(is<Node::Array>());
+    GAME_DEBUG_ASSERT(is<Node::Array>(), "");
     Node::Array& array = as<Node::Array>();
     GAME_ASSERT(i < array.size());
     return array[i];
   }
 
   Node& Node::operator[](const String& string) {
-    GAME_DEBUG_ASSERT(is<Node::Object>());
+    GAME_DEBUG_ASSERT(is<Node::Object>(), "");
     Node::Object& object = as<Node::Object>();
     return object[string];
   }
 
   bool Node::contains(const String& key) const {
-    GAME_DEBUG_ASSERT(is<Node::Object>());
+    GAME_DEBUG_ASSERT(is<Node::Object>(), "");
     const Node::Object& object = as<Node::Object>();
     return object.contains(key);
   }
 
   Node& Node::push(Node node) {
-    GAME_DEBUG_ASSERT(is<Node::Array>());
+    GAME_DEBUG_ASSERT(is<Node::Array>(), "");
     Node::Array& array = as<Node::Array>();
     return array.emplace_back(std::move(node));
   }
 
   void Node::pop() {
-    GAME_DEBUG_ASSERT(is<Node::Array>());
+    GAME_DEBUG_ASSERT(is<Node::Array>(), "");
     Node::Array& array = as<Node::Array>();
     GAME_ASSERT(array.size() != 0);
     array.pop_back();

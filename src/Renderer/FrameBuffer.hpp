@@ -13,6 +13,7 @@ namespace Game {
     using Handle = Resource<FrameBuffer>;
 
     struct Specification {
+      Specification() {}
       Vec4 clearColor{1.0f};
     };
 

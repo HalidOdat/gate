@@ -47,6 +47,7 @@ namespace Game {
   }
 
   static std::vector<std::pair<Shader::Type, std::string>> parse(const StringView& filename) {
+    Logger::info("Shader: %s", filename.data());
     const StringView typeDelimiter = "@type ";
 
     std::vector<std::pair<Shader::Type, std::string>> result;

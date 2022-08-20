@@ -108,7 +108,7 @@ namespace Game {
     Id mId;
 
   private:
-    template<typename T>
+    template<typename U>
     friend class ResourceFactory;
   };
 

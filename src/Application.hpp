@@ -29,11 +29,12 @@ namespace Game {
     bool onWindowMinimizedEvent(const WindowMinimizedEvent& event);
 
     void startGameLoop();
+    static void gameLoop();
 
   private:
     static Application* sInstance;
 
-  private:
+  public:
     bool running = true;
     bool mWindowMinimized = false;
     Ref<Window> window = nullptr;

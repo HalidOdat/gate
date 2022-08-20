@@ -15,7 +15,7 @@ namespace Game::Serializer {
     using Null    = std::nullptr_t;
     using Integer = i64;
     using Float   = f64;
-    using String  = String;
+    using String  = std::string;
     using Array   = std::vector<Node>;
     using Object  = std::unordered_map<String, Node>;
   

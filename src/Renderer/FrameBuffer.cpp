@@ -20,7 +20,7 @@ namespace Game {
   }
 
   void FrameBuffer::invalidate(u32 width, u32 height) {
-    GAME_DEBUG_ASSERT(width != 0 && height != 0);
+    GAME_DEBUG_ASSERT(width != 0 && height != 0, "");
 
     if (mId != 0) {
       destroy();

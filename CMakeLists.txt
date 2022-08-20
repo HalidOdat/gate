@@ -11,7 +11,16 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(Sources
+if (${CMAKE_SYSTEM_NAME} STREQUAL Emscripten)
+  set(WEB 1)
+endif()
+
+add_subdirectory(vendor)
+
+set(GAME_ASSETS_DIRECTOY "${PROJECT_SOURCE_DIR}/assets")
+message(STATUS "${This}: Assets directory path: ${GAME_ASSETS_DIRECTOY}")
+
+add_executable(${This}
   src/Core/Type.hpp
   src/Core/Macro.hpp
   src/Core/Macro.cpp
@@ -30,6 +39,8 @@ set(Sources
   src/Utils/File.cpp
   src/Utils/String.hpp
   src/Utils/String.cpp
+  src/Utils/Parsing/Lexer.hpp
+  src/Utils/Parsing/Lexer.cpp
 
   src/Debug/Profiler.hpp
   src/Debug/Profiler.cpp
@@ -107,48 +118,75 @@ set(Sources
   src/Main.cpp
 )
 
-if (MSVC)
-  add_compile_options(/W4)
-else()
-  add_compile_options(-Wall -Wextra -pedantic)
-endif()
-
-add_executable(${This} ${Sources})
-
 target_include_directories(${This} PUBLIC src)
 
+if (MSVC)
+  target_compile_options(${This}
+    PRIVATE
+      /W4
+  )
+else()
+  target_compile_options(${This}
+    PRIVATE
+      -Wall -Wextra -pedantic
+  )
+endif()
+
+if (DEFINED WEB)
+  message(STATUS "${This}: Building for web")
+  if (NOT UNIX)
+    message(FATAL_ERROR "${This}: Building for web on windows could cause some errors. Please build in WSL")
+  endif()
+
+  target_link_options(${This}
+    PUBLIC
+      -sFULL_ES3=1
+      -sUSE_WEBGL2=1
+      -sMIN_WEBGL_VERSION=2
+      -sMAX_WEBGL_VERSION=2
+      -sALLOW_MEMORY_GROWTH=1
+      --preload-file "${GAME_ASSETS_DIRECTOY}@assets"
+  )
+  set_target_properties(${This}
+    PROPERTIES
+      SUFFIX ".html"
+  )
+else()
+  message(STATUS "${This}: Building for native")
+endif()
+
 target_link_libraries(${This} PUBLIC
-  glfw
-  glad
+  glfw::glfw
+  glad::glad
   glm::glm
-  stb
+  stb::stb
 )
 
 target_precompile_headers(${This}
+  PUBLIC
+    # Common include 
+    <Core/Base.hpp>
+
   PRIVATE
-  # Standard library
-  <cstdio>
-  <cstdlib>
-  <cstdint>
-  <cstddef>
-  <string>
-  <string_view>
-  <vector>
-  <array>
-  <memory>
-  <optional>
-  <fstream>
-  <sstream>
-  <map>
-  <unordered_map>
-  <type_traits>
+    # Standard library
+    <cstdio>
+    <cstdlib>
+    <cstdint>
+    <cstddef>
+    <string>
+    <string_view>
+    <vector>
+    <array>
+    <memory>
+    <optional>
+    <fstream>
+    <sstream>
+    <map>
+    <unordered_map>
+    <type_traits>
 
-  # vendor
-  <glm/glm.hpp>
-  <glad/glad.h>
-
-  # Common include 
-  <Core/Base.hpp>
+    # vendor
+    <glm/glm.hpp>
+    <glad/glad.h>
 )
 
-add_subdirectory(vendor)

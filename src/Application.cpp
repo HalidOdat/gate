@@ -1,9 +1,3 @@
-#include <cstdlib>
-#include <filesystem>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "Core/Base.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Resource/Manager.hpp"
@@ -12,6 +6,17 @@
 
 #include "Layers/GameLayer.hpp"
 #include "Layers/EditorLayer.hpp"
+
+#if GAME_PLATFORM_WEB
+# include<emscripten/emscripten.h>
+// # define GLFW_INCLUDE_ES3
+#endif
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <cstdlib>
+#include <filesystem>
 
 namespace Game {
 
@@ -41,8 +46,6 @@ namespace Game {
 
     this->ui = new Ui(width, height);
 
-    std::filesystem::current_path("C:\\linux\\github\\opengl-game");
-
     this->window->setEventCallback(
       [this](const Event& event) { this->onEvent(event); }
     );
@@ -64,31 +67,40 @@ namespace Game {
     Logger::info("Game Engine Terminated!");
   }
 
+  void Application::gameLoop() {
+    Application* self = sInstance;
+    self->window->setVSync(true);
+
+    float time = (float)glfwGetTime();
+    float dt = time - self->lastFrameTime;
+    self->lastFrameTime = time;
+    Timestep::timestep = dt;
+
+    if (!self->mWindowMinimized) {
+      self->layerStack.onUpdate(dt);
+
+      Renderer::waitAndRender();
+
+      self->ui->prepareFrame();
+      self->layerStack.onUiRender(*self->ui);
+      self->ui->endFrame();
+    }
+
+    self->window->update();
+  }
+
   void Application::startGameLoop() {
     GAME_PROFILE_FUNCTION();
-    
+
     this->lastFrameTime = (float)glfwGetTime();
+
+#if GAME_PLATFORM_WEB
+    emscripten_set_main_loop(Application::gameLoop, 0, 1);
+#else
     while (running) {
-      float time = (float)glfwGetTime();
-      float dt = time - this->lastFrameTime;
-      this->lastFrameTime = time;
-      Timestep::timestep = dt;
-
-      // clear all relevant buffers
-      // GAME_GL_CHECK(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
-      // GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-      if (!mWindowMinimized) {
-        this->layerStack.onUpdate(dt);
-
-        Renderer::waitAndRender();
-
-        this->ui->prepareFrame();
-        this->layerStack.onUiRender(*this->ui);
-        this->ui->endFrame();
-      }
-
-      this->window->update();
+      Application::gameLoop();
     }
+#endif
   }
 
   void Application::quit() {
