@@ -115,7 +115,11 @@ namespace Game {
   }
 
   void Ui::image(const Texture2D::Handle& texture, u32 width, u32 height) {
-    
+    (void)texture;
+    (void)width;
+    (void)height;
+
+    GAME_TODO("");
   }
 
   bool Ui::button(const StringView& text, u64 id) {
@@ -321,7 +325,7 @@ namespace Game {
 
   void Ui::end() {
     GAME_PROFILE_FUNCTION();
-    GAME_DEBUG_ASSERT(this->layouts.size() == 1, "");
+    GAME_DEBUG_ASSERT(this->layouts.size() == 1);
     Layout layout = this->layouts.back();
     this->layouts.pop_back();
 

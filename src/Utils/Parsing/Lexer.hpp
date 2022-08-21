@@ -8,6 +8,16 @@ namespace Game::Utils {
   public:
     enum class Type {
       Eof,
+      Integer,
+      Float,
+      Identifier,
+      String,
+      OpenBracket,
+      CloseBracket,
+      OpenBrace,
+      CloseBrace,
+      Comma,
+      Colon,
     };
 
   public:
@@ -18,11 +28,19 @@ namespace Game::Utils {
 
     inline bool is(Type type) const { return mType == type; }
 
+    const String& getString() const { return mString; }
+    f64 getFloat() const { return mFloat; }
+    u64 getInteger() const { return mInteger; }
+
   private:
     Type       mType;
     StringView mRaw;
     u32        mLineNumber;
     u32        mColumnNumber;
+
+    u64    mInteger;
+    f64    mFloat;
+    String mString;
 
   private:
     friend class Lexer;
@@ -37,29 +55,43 @@ namespace Game::Utils {
 
     void enableIgnoreNewline(bool yes = true);
 
-    Token next();
+    const Token& current() const { return mToken; }
+    bool next();
+
+    inline bool hasError() const { return mLexerError; }
 
   private:
+    inline char currentChar() { return mSource[mIndex]; }
     char nextChar();
     char peekChar();
 
     template<typename F>
     inline bool nextCharIf(F& f) {
-      if (f(peekChar())) {
+      if (f(mSource[mIndex])) {
         nextChar();
         return true;
       }
       return false;
     }
 
+    bool lexNumber();
+    bool lexInteger();
+    bool lexFloat();
+    bool lexIdentifier();
+    bool lexString();
+
   private:
     StringView mSource;
-    u32 mIndex = 0;
+    usize      mIndex = 0;
 
     u32 mLineNumber     = 1;
     u32 mColumnNumber   = 1;
 
+    Token mToken;
+
     bool mIgnoreNewline = true;
+
+    bool mLexerError = false;
   };
 
 } // namespace Game::Utils

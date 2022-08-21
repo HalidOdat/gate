@@ -59,8 +59,13 @@ namespace Game {
       entity.add<MeshRendererComponent>(material);
     }
 
-    // auto node = SceneSerializer::serialize(*mEditorScene);
-    // Logger::info("Object: %s", node.c_str());
+    auto node = SceneSerializer::serialize(*mEditorScene);
+    Logger::info("Object: %s", node.c_str());
+
+    auto des = Serializer::Json::parse(node);
+    if (des.has_value()) {
+      Logger::info("Desdddddddddddddddddddddd");
+    }
 
     Logger::info("EditorLayer::onAttach was called");
   }
@@ -107,8 +112,6 @@ namespace Game {
       }
       if (ui.checkbox(mShow)) {}
     ui.end();
-
-    
   }
 
   void EditorLayer::onEvent(const Event& event) {

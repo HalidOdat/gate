@@ -17,7 +17,7 @@
 # define GAME_DEBUG_ASSERT(cond)                   GAME_ASSERT_IMPL("Debug Assert", cond, "", "")
 # define GAME_DEBUG_ASSERT_WITH_MESSAGE(cond, msg) GAME_ASSERT_IMPL("Debug Assert", cond, ": ", msg)
 #else
-# define GAME_DEBUG_ASSERT(cond, msg) (void)(cond)
+# define GAME_DEBUG_ASSERT(cond) (void)(cond)
 # define GAME_DEBUG_ASSERT_WITH_MESSAGE(cond, msg) (void)(cond)
 #endif
 

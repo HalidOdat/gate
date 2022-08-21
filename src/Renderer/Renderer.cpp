@@ -229,8 +229,8 @@ namespace Game {
     const auto fontCharacterWidth  = 7;
     const auto fontCharacterHeight = 9;
 
-    GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0, "");
-    GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0, "");
+    GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
+    GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
 
     auto postProcesingShader = Shader::load("PostProcessing.glsl");
     renderer = new RendererData{

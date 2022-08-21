@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Type.hpp"
+#include "Utils/Parsing/Lexer.hpp"
 #include <variant>
 #include <unordered_map>
 #include <sstream>
@@ -13,6 +14,7 @@ namespace Game::Serializer {
   class Node {
   public:
     using Null    = std::nullptr_t;
+    using Boolean = bool;
     using Integer = i64;
     using Float   = f64;
     using String  = std::string;
@@ -47,6 +49,8 @@ namespace Game::Serializer {
     bool is() const {
       return std::holds_alternative<T>(mValue);
     }
+
+    bool isPrimitive() const;
 
     template<typename T>
     T& as() {
@@ -88,11 +92,12 @@ namespace Game::Serializer {
     String toString() const;
 
   private:
-    void toStringWithIndent(std::stringstream& ss, u32 level) const;
+    void toStringWithIndent(std::stringstream& ss, u32 level, bool isArrayParent = false) const;
 
   private:
     std::variant<
       Null,
+      Boolean,
       Integer,
       Float,
       String,
@@ -104,6 +109,7 @@ namespace Game::Serializer {
   
   private:
 
+    friend struct Convert<Node::Boolean>;
     friend struct Convert<Node::Integer>;
     friend struct Convert<Node::Float>;
     friend struct Convert<f32>;
@@ -127,6 +133,15 @@ namespace Game::Serializer {
   };
 
   template<>
+  struct Convert<Node::Boolean> {
+    static Node encode(Node::Boolean value) {
+      Node node;
+      node.mValue = value;
+      return node;
+    }
+  };
+
+  template<>
   struct Convert<Node::Integer> {
     static Node encode(Node::Integer value) {
       Node node;
@@ -134,6 +149,14 @@ namespace Game::Serializer {
       return node;
     }
   };
+
+  template<>
+  struct Convert<u64> {
+    static Node encode(u64 value) {
+      return (Node::Integer)value;
+    }
+  };
+
 
   template<>
   struct Convert<Node::Float> {
@@ -211,6 +234,26 @@ namespace Game::Serializer {
       }
       return node;
     }
+  };
+
+  class Json {
+  public:
+    static Option<Node> parse(StringView source);
+  
+  private:
+    Json(StringView source);
+
+    bool matchToken(Utils::Token::Type type);
+    bool isToken(Utils::Token::Type type);
+
+    void nextToken();
+    
+    Option<Node> parseNode();
+    Option<Node> parseArray();
+    Option<Node> parseObject();
+
+  private:
+    Utils::Lexer mLexer;
   };
   
 } // namespace Game::Serializer
