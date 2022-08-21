@@ -9,6 +9,7 @@
 namespace Game {
 
   struct TagComponent : Ecs::Component<TagComponent> {
+    TagComponent() {}
     TagComponent(String tag)
       : tag{std::move(tag)}
     {}
@@ -23,6 +24,7 @@ namespace Game {
       const Vec3& scale       = {1.0f, 1.0f, 1.0f}
     ) : translation{translation}, rotation{rotation}, scale{scale}
     {}
+
 
     Vec3 translation;
     Vec3 rotation;
@@ -41,6 +43,7 @@ namespace Game {
   };
 
   struct MeshRendererComponent : Ecs::Component<MeshSourceComponent> {
+    MeshRendererComponent() {}
     MeshRendererComponent(const Material::Handle& material)
       : material{material}
     {}

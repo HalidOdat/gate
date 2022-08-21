@@ -135,7 +135,7 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return factory.emplace(Data{vao, vbo, ibo, file});
+    return factory.emplace(Data{vao, vbo, ibo, file, Type::File});
   }
 
   Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
@@ -171,6 +171,7 @@ namespace Game {
     auto[vertices, indices] = parseObjFile(*source);
     auto data = Mesh::fromVertices({vertices.data(), vertices.size()}, {indices.data(), indices.size()});
     data.filePath = std::move(mData.filePath);
+    data.type = mData.type;
     mData = std::move(data);
     Logger::trace("Reloaded mesh: %s", mData.filePath.value().c_str());
     return true;
@@ -272,7 +273,9 @@ namespace Game {
       35,
     };
 
-    return factory.emplace(Mesh::fromVertices(vertices, indices));
+    Data data = Mesh::fromVertices(vertices, indices);
+    data.type = Type::Cube;
+    return factory.emplace(std::move(data));
   }
 
 } // namespace Game

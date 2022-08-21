@@ -38,48 +38,38 @@ namespace Game::Serializer {
       *this = Convert<T>::encode(value);
     }
 
-    static Node array() {
-      return { Node::Array{} };
-    }
-    static Node object() {
-      return { Node::Object{} };
-    }
+    static Node array();
+    static Node object();
 
-    template<typename T>
-    bool is() const {
-      return std::holds_alternative<T>(mValue);
-    }
+    bool isNull() const;
+    bool isBoolean() const;
+    bool isFloat() const;
+    bool isInteger() const;
+    bool isString() const;
+    bool isArray() const;
+    bool isObject() const;
 
     bool isPrimitive() const;
 
-    template<typename T>
-    T& as() {
-      return std::get<T>(mValue);
-    }
-    template<typename T>
-    const T& as() const {
-      return std::get<T>(mValue);
-    }
+    Node::Boolean* asBoolean();
+    Node::Float*   asFloat();
+    Node::Integer* asInteger();
+    Node::String*  asString();
+    Node::Array*   asArray();
+    Node::Object*  asObject();
+    const Node::Boolean* asBoolean() const;
+    const Node::Float*   asFloat() const;
+    const Node::Integer* asInteger() const;
+    const Node::String*  asString() const;
+    const Node::Array*   asArray() const;
+    const Node::Object*  asObject() const;
 
-    template<typename T>
-    T* as_if() {
-      return std::get_if<T>(&mValue);
-    }
-    template<typename T>
-    const T* as_if() const {
-      return std::get_if<T>(&mValue);
-    }
-
-    // TODO: implement decode
-    // template<typename T>
-    // bool decode(T& value) {
-    //   return Convert<T>::decode(value);
-    // }
-
+    const Node& operator[](usize i) const;
     Node& operator[](usize i);
     Node& operator[](const String& string);
 
     bool contains(const String& key) const;
+    const Node* get(const String& key) const;
 
     Node& push(Node node);
     void pop();
@@ -92,7 +82,7 @@ namespace Game::Serializer {
     String toString() const;
 
   private:
-    void toStringWithIndent(std::stringstream& ss, u32 level, bool isArrayParent = false) const;
+    void toStringWithIndent(std::stringstream& ss, u32 level) const;
 
   private:
     std::variant<
@@ -120,7 +110,13 @@ namespace Game::Serializer {
 
   template<typename T>
   struct Convert {
-    static Node encode(const T&) {
+    static Node encode(const T& value) {
+      (void)value;
+      static_assert(std::is_same_v<T, void>, "Unknown type");
+    }
+    static bool decode(const Node& node, T& value) {
+      (void)node;
+      (void)value;
       static_assert(std::is_same_v<T, void>, "Unknown type");
     }
   };
@@ -129,6 +125,10 @@ namespace Game::Serializer {
   struct Convert<Node> {
     static Node encode(Node value) {
       return value;
+    }
+    static bool decode(const Node& node, Node& value) {
+      value = node;
+      return true;
     }
   };
 
@@ -139,6 +139,13 @@ namespace Game::Serializer {
       node.mValue = value;
       return node;
     }
+    static bool decode(const Node& node, Node::Boolean& value) {
+      if (node.isBoolean()) {
+        value = *node.asBoolean();
+        return true;
+      }
+      return false;
+    }
   };
 
   template<>
@@ -148,12 +155,26 @@ namespace Game::Serializer {
       node.mValue = value;
       return node;
     }
+    static bool decode(const Node& node, Node::Integer& value) {
+      if (node.isInteger()) {
+        value = *node.asInteger();
+        return true;
+      }
+      return false;
+    }
   };
 
   template<>
   struct Convert<u64> {
     static Node encode(u64 value) {
       return (Node::Integer)value;
+    }
+    static bool decode(const Node& node, u64& value) {
+      if (node.isInteger()) {
+        value = *node.asInteger();
+        return true;
+      }
+      return false;
     }
   };
 
@@ -165,6 +186,13 @@ namespace Game::Serializer {
       node.mValue = value;
       return node;
     }
+    static bool decode(const Node& node, Node::Float& value) {
+      if (node.isFloat()) {
+        value = *node.asFloat();
+        return true;
+      }
+      return false;
+    }
   };
 
   template<>
@@ -173,6 +201,13 @@ namespace Game::Serializer {
       Node node;
       node.mValue = (Node::Float)value;
       return node;
+    }
+    static bool decode(const Node& node, f32& value) {
+      if (node.isFloat()) {
+        value = (f32)*node.asFloat();
+        return true;
+      }
+      return false;
     }
   };
 
@@ -183,6 +218,13 @@ namespace Game::Serializer {
       node.mValue = value;
       return node;
     }
+    static bool decode(const Node& node, Node::String& value) {
+      if (node.isString()) {
+        value = *node.asString();
+        return true;
+      }
+      return false;
+    }
   };
 
   template<>
@@ -192,6 +234,13 @@ namespace Game::Serializer {
       node.mValue = value;
       return node;
     }
+    static bool decode(const Node& node, Node::Array& value) {
+      if (node.isArray()) {
+        value = *node.asArray();
+        return true;
+      }
+      return false;
+    }
   };
 
   template<>
@@ -200,6 +249,13 @@ namespace Game::Serializer {
       Node node;
       node.mValue = value;
       return node;
+    }
+    static bool decode(const Node& node, Node::Object& value) {
+      if (node.isObject()) {
+        value = *node.asObject();
+        return true;
+      }
+      return false;
     }
   };
 
@@ -211,6 +267,14 @@ namespace Game::Serializer {
       }
 
       return Node{};
+    }
+    static bool decode(const Node& node, Option<T>& value) {
+      if (node.isNull()) {
+        value = None;
+        return true;
+      }
+
+      return Convert<T>::decode(node, *value);
     }
   };
 
@@ -247,7 +311,7 @@ namespace Game::Serializer {
     bool isToken(Utils::Token::Type type);
 
     void nextToken();
-    
+
     Option<Node> parseNode();
     Option<Node> parseArray();
     Option<Node> parseObject();

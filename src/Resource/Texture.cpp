@@ -222,7 +222,7 @@ namespace Game {
 
     auto data = Texture2D::fromBytes(bytes, width, height, channels, specification);
     data.type     = Texture::Type::Image;
-    data.filePath = filepath;
+    data.filePath = path;
 
     stbi_image_free(bytes);
     
@@ -251,6 +251,7 @@ namespace Game {
 
     stbi_set_flip_vertically_on_load(mData.specification.verticalFlip == Texture::VerticalFlip::True);
     int width, height, channels;
+    auto file = "assets/textures/" + *mData.filePath;
     u8* bytes = stbi_load(mData.filePath->c_str(), &width, &height, &channels, 0);
 
     if (!bytes) {

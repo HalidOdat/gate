@@ -29,43 +29,15 @@ namespace Game {
     mEditorScene.reset(new Scene("New Scene"));
     mActiveScene = mEditorScene;
 
-    Material::Handle material = Material::create();
-    material->diffuseMap  = Texture2D::load("CrateDiffuse.png");
-    material->specularMap = Texture2D::load("CrateSpecular.png");
-    material->emissionMap = Texture2D::load("matrix.jpg");
-    material->shininess   = 32.0f;
+    const auto scenePath = "default.scene.json";
 
-    // material->diffuseMap->reload();
-
-    static Vec3 cubePositions[] = {
-      Vec3( 0.0f,  0.0f,  0.0f),
-      Vec3( 2.0f,  5.0f, -15.0f),
-      Vec3(-1.5f, -2.2f, -2.5f),
-      Vec3(-3.8f, -2.0f, -12.3f),
-      Vec3( 2.4f, -0.4f, -3.5f),
-      Vec3(-1.7f,  3.0f, -7.5f),
-      Vec3( 1.3f, -2.0f, -2.5f),
-      Vec3( 1.5f,  2.0f, -2.5f),
-      Vec3( 1.5f,  0.2f, -1.5f),
-      Vec3(-1.3f,  1.0f, -1.5f)
-    };
-    
-    Mesh::Handle mesh = Mesh::cube();
-
-    for (u32 i = 0; i < 10; i++) {
-      Entity entity = mEditorScene->createEntity(String("box ") + std::to_string(i));
-      entity.add<TransformComponent>(cubePositions[i % 10] + (f32)i * Vec3(0.02f), Vec3(0.1f, 0.2f, 0.3f) * (f32)i);
-      entity.add<MeshSourceComponent>(mesh);
-      entity.add<MeshRendererComponent>(material);
+    if (!SceneSerializer::deserializeFromFile(scenePath, *mEditorScene)) {
+      Logger::error("Editor: Couldn't deserialize scene from file");
+    } else {
+      Logger::info("Editor: Loaded '%s' scene file", scenePath);
     }
 
-    auto node = SceneSerializer::serialize(*mEditorScene);
-    Logger::info("Object: %s", node.c_str());
-
-    auto des = Serializer::Json::parse(node);
-    if (des.has_value()) {
-      Logger::info("Desdddddddddddddddddddddd");
-    }
+    Application::getWindow().setTitle(mEditorScene->getName());
 
     Logger::info("EditorLayer::onAttach was called");
   }

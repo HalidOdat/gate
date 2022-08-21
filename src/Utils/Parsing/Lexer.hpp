@@ -18,6 +18,7 @@ namespace Game::Utils {
       CloseBrace,
       Comma,
       Colon,
+      Minus,
     };
 
   public:
@@ -61,7 +62,7 @@ namespace Game::Utils {
     inline bool hasError() const { return mLexerError; }
 
   private:
-    inline char currentChar() { return mSource[mIndex]; }
+    char currentChar();
     char nextChar();
     char peekChar();
 
@@ -91,6 +92,7 @@ namespace Game::Utils {
 
     bool mIgnoreNewline = true;
 
+    bool mFinished = false;
     bool mLexerError = false;
   };
 

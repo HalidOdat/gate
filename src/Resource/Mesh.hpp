@@ -28,6 +28,7 @@ namespace Game {
     bool reload();
 
     inline const Option<String>& getFilePath() const { return mData.filePath; }
+    inline Type getType() const { return mData.type; }
 
   private:
     enum class FileFormat {
@@ -40,6 +41,7 @@ namespace Game {
       VertexBuffer::Handle vertexBuffer;
       IndexBuffer::Handle  indexBuffer;
       Option<String>       filePath;
+      Type                 type;
     };
 
   private:

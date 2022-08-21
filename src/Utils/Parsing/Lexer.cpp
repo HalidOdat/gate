@@ -5,15 +5,23 @@ namespace Game::Utils {
   Lexer::Lexer(const StringView& source)
     : mSource{source}
   {
-    mLexerError = next();
+    mLexerError = !next();
   }
 
   void Lexer::enableIgnoreNewline(bool yes) {
     mIgnoreNewline = yes;
   }
 
+  char Lexer::currentChar() {
+    if (mFinished) {
+      return '\0';
+    }
+    return mSource[mIndex];
+  }
+
   char Lexer::nextChar() {
     if (mIndex + 1 >= mSource.size()) {
+      mFinished = true;
       return '\0';
     }
     const char result = mSource[++mIndex];
@@ -68,7 +76,6 @@ namespace Game::Utils {
       result = result * base + (u64)(currentChar() - '0');
       nextChar();
     }
-
     usize end = mIndex;
 
     mToken.mType = Token::Type::Integer;
@@ -86,7 +93,6 @@ namespace Game::Utils {
     usize end = mIndex;
 
     double result = strtod(&mSource[start], NULL);
-
     mToken.mType = Token::Type::Float;
     mToken.mRaw = mSource.substr(start, end - start);
     mToken.mFloat = result;
@@ -135,7 +141,7 @@ namespace Game::Utils {
       if (!mIgnoreNewline && currentChar() == '\n') {
         GAME_TODO("");
       }
-    } while (nextCharIf(isSpace));
+    } while (nextCharIf(isSpace) && !mFinished);
 
     mToken.mLineNumber = mLineNumber;
     mToken.mColumnNumber = mColumnNumber;
@@ -190,6 +196,11 @@ namespace Game::Utils {
         mToken.mRaw = mSource.substr(mIndex, 1);
         nextChar();
         return true;
+      case '-':
+        mToken.mType = Token::Type::Minus;
+        mToken.mRaw = mSource.substr(mIndex, 1);
+        nextChar();
+        return true;
 
       case ' ':
       case '!':
@@ -202,7 +213,6 @@ namespace Game::Utils {
       case ')':
       case '*':
       case '+':
-      case '-':
       case '.':
       case '/':
       case ';':
@@ -216,9 +226,11 @@ namespace Game::Utils {
       case '`':
       case '|':
       case '~':
+        Logger::error("Lexer: unknown token");
         return false;
 
       default:
+        Logger::error("Lexer: unknown token");
         return false;
     }
   }

@@ -82,8 +82,8 @@ namespace Game {
 
     inline const Specification&  getSpecification() const { return mData.specification; }
     inline const Option<String>& getFilePath() const { return mData.filePath; }
-    inline const Texture::Type   getType() const { return mData.type; }
-    inline u32  getColor() const { return mData.color; }
+    inline Texture::Type getType() const { return mData.type; }
+    inline u32 getColor() const { return mData.color; }
 
     static void reloadAll();
 

@@ -216,6 +216,10 @@ namespace Game {
     }
   }
 
+  void Window::setTitle(const String& title) {
+    glfwSetWindowTitle(data.window, title.c_str());
+  }
+
   void Window::setEventCallback(EventCallback callback) {
     GAME_PROFILE_FUNCTION();
     this->data.eventCallback = callback;

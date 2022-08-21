@@ -28,6 +28,8 @@ namespace Game {
     void setVSync(bool enable);
     void setEventCallback(EventCallback callback);
 
+    void setTitle(const String& title);
+
     inline u32 getWidth()  const { return this->data.width; }
     inline u32 getHeight() const { return this->data.height; }
     inline f32 getAspectRatio() const { return (f32)this->data.width / (f32)this->data.height; }
