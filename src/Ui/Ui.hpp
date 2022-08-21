@@ -17,10 +17,10 @@ namespace Game {
   public:
     struct Config {
       struct Margin {
-        f32 left   = 4.0f;
-        f32 top    = 2.0f;
-        f32 right  = 4.0f;
-        f32 bottom = 2.0f;
+        f32 left   = 1.0f;
+        f32 top    = 0.5f;
+        f32 right  = 1.0f;
+        f32 bottom = 0.5f;
       };
 
       struct Color {
@@ -36,21 +36,25 @@ namespace Game {
       struct Button {
         Margin margin;
         Color color;
-        Vec2 size { 80, 20 };
+        Vec2 size { 60, 18 };
         Text text;
       };
 
       struct Slider {
         Margin margin;
         Color color;
-        Vec2 size { 100, 20 };
+        Vec2 size { 65, 18 };
         Text text;
       };
 
       struct Checkbox {
         Margin margin;
         Color color;
-        Vec2 size { 20, 20 };
+        Vec2 size { 18, 18 };
+      };
+
+      struct Dock {
+        Vec3 backgroundColor = {0.1f, 0.1f, 0.1f};
       };
 
       struct Window {
@@ -58,9 +62,14 @@ namespace Game {
       };
 
       Window window;
+      Dock dock;
       Button button;
       Slider slider;
       Checkbox checkbox;
+    };
+
+    enum class Dock {
+      Left,
     };
 
     class Layout {
@@ -90,9 +99,12 @@ namespace Game {
 
     void begin(const Vec2& position, f32 padding = Layout::DEFAULT_PADDING);
     void beginLayout(Layout::Type type, f32 padding = Layout::DEFAULT_PADDING);
+    void beginDock(Ui::Dock type, f32 size = 25.0f);
+    void endDock();
     void endLayout();
     void end();
 
+    void label(const StringView& text, const Vec3& foreground = {1.0f, 1.0f, 1.0f}, const Vec4& background = {1.0f, 1.0f, 1.0f, 0.0f});
     void image(const Texture2D::Handle& texture, u32 width, u32 height);
     bool button(const StringView& text, u64 id = 0);
     bool slider(f32& value, const f32 min, const f32 max);
@@ -114,8 +126,9 @@ namespace Game {
     void endFrame();
 
   private:
-    void drawQuad(Vec2 position, Vec2 size, Vec3 color);
-    void drawText(const StringView& text, Vec2 position, f32 size, Vec3 color = Vec3(1.0f, 1.0f, 1.0f));
+    void drawQuad(const Vec2& position, const Vec2& size, const Vec3& color);
+    void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color);
+    void drawText(const StringView& text, const Vec2& position, f32 size, const Vec3& color = Vec3(1.0f, 1.0f, 1.0f));
 
   private:
     OrthographicCamera mCamera;

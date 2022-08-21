@@ -8,6 +8,7 @@
 #include "Renderer/CameraController.hpp"
 #include "Ecs/Ecs.hpp"
 #include "Layers/Layer.hpp"
+#include "Scene/Scene.hpp"
 
 namespace Game {
     
@@ -25,8 +26,10 @@ namespace Game {
   
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
-    bool onMouseScrollEvent(const MouseScrollEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
+    bool onMouseScrollEvent(const MouseScrollEvent& event);
+    bool onMouseButtonPressedEvent(const MouseButtonPressedEvent& event);
+    bool onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event);
   
   private:
     enum class State : u8 {
@@ -38,11 +41,15 @@ namespace Game {
     OrthographicCameraController mEditorCameraController;
     PerspectiveCameraController mCameraController;
     
+    bool mClicked = false;
+
     bool  mShow  = true;
     State mState = State::Play;
 
     Ref<Scene> mEditorScene = nullptr;
     Ref<Scene> mActiveScene = nullptr;
+
+    Entity mSelectedEntity;
   };
 
 } // namespace Game

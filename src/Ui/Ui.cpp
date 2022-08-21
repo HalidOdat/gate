@@ -80,12 +80,17 @@ namespace Game {
     Renderer::enableDepthTest(true);
   }
 
-  void Ui::drawQuad(Vec2 position, Vec2 size, Vec3 color) {
+  void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
     GAME_PROFILE_FUNCTION();
-    Renderer::drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, Vec4(color, 1.0f));
+    Renderer::drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
   }
 
-  void Ui::drawText(const StringView& text, Vec2 position, f32 size, Vec3 color) {
+  void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec3& color) {
+    GAME_PROFILE_FUNCTION();
+    drawQuad(position, size, Vec4(color, 1.0f));
+  }
+
+  void Ui::drawText(const StringView& text, const Vec2& position, f32 size, const Vec3& color) {
     GAME_PROFILE_FUNCTION();
     Renderer::drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
   }
@@ -105,6 +110,7 @@ namespace Game {
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
     GAME_PROFILE_FUNCTION();
+
     Layout layout;
     layout.type     = type;
     layout.position = layouts.back().nextAvailablePosition(false);
@@ -112,6 +118,60 @@ namespace Game {
     layout.padding  = padding;
 
     this->layouts.push_back(layout);
+  }
+
+  void Ui::beginDock(Ui::Dock type, f32 size) {
+    GAME_PROFILE_FUNCTION();
+
+    Renderer::begin(mCamera);
+
+    switch (type) {
+      case Dock::Left: {
+        Layout layout;
+        layout.type     = Layout::Type::Vertical;
+        layout.padding  = 0.0f;
+        layout.position = {0.0f, 0.0f};
+        layout.size     = {0.0f, 0.0f};
+        this->layouts.push_back(layout);
+
+        drawQuad(
+          this->layouts[this->layouts.size() - 1].position,
+          {
+            mConfig.window.size.x / (100.0f / size),
+            mConfig.window.size.y,
+          },
+          mConfig.dock.backgroundColor
+        );
+      }
+        break;
+      default:
+        GAME_UNREACHABLE("");
+    }
+
+    Renderer::enableDepthTest(false);
+    Renderer::enableBlending(true);
+  }
+
+  void Ui::endDock() {
+    this->layouts.pop_back();
+  }
+
+  void Ui::label(const StringView& text, const Vec3& foreground, const Vec4& background) {
+    GAME_PROFILE_FUNCTION();
+    
+    auto& layout = this->layouts.back();
+
+    const auto position = layout.nextAvailablePosition() + Vec2(mConfig.slider.margin.left, mConfig.slider.margin.top);
+    const auto size     = Vec2(mConfig.slider.size.y * (f32)text.size());
+
+    drawQuad(position, size, background);
+    drawText(text, { position.x + 3, position.y + size.y}, size.x / (f32)text.size() - 3, foreground);
+
+    layout.pushWidget(
+      size
+        + Vec2(mConfig.slider.margin.left,  mConfig.slider.margin.top)
+        + Vec2(mConfig.slider.margin.right, mConfig.slider.margin.bottom)
+    );
   }
 
   void Ui::image(const Texture2D::Handle& texture, u32 width, u32 height) {
@@ -252,9 +312,9 @@ namespace Game {
 
     bool changed = false;
     this->beginLayout(Layout::Type::Horizontal);
-      changed = this->slider(value.x, mins.x, maxs.x) || changed;
-      changed = this->slider(value.y, mins.y, maxs.y) || changed;
-      changed = this->slider(value.z, mins.z, maxs.z) || changed;
+      label("X", Vec3{1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}); changed = this->slider(value.x, mins.x, maxs.x) || changed;
+      label("Y", Vec3{1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}); changed = this->slider(value.y, mins.y, maxs.y) || changed;
+      label("Z", Vec3{1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}); changed = this->slider(value.z, mins.z, maxs.z) || changed;
     this->endLayout();
     return changed;
   }
@@ -301,12 +361,12 @@ namespace Game {
       }
     }
 
+    drawQuad(position, size, color);
     if (value) {
       drawQuad(position + Vec2(5.0f), size - Vec2(10.0f), Vec3(0.1f, 0.9f, 0.3f));
     } else {
       drawQuad(position + Vec2(5.0f), size - Vec2(10.0f), Vec3(0.3f, 0.3f, 0.3f));
     }
-    drawQuad(position, size, color);
 
     layout.pushWidget(
       size
@@ -328,12 +388,6 @@ namespace Game {
     GAME_DEBUG_ASSERT(this->layouts.size() == 1);
     Layout layout = this->layouts.back();
     this->layouts.pop_back();
-
-    layout.pushWidget(Vec2{0.0f});
-
-    // TODO: fix this, it's a bit hacky...
-    Renderer::enableDepthTest(true);
-    drawQuad(layout.position, layout.size, {0.1f, 0.1f, 0.1f});
 
     Renderer::end();
   }

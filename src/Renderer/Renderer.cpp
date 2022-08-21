@@ -220,8 +220,8 @@ namespace Game {
 
     Texture2D::Specification specification;
     specification.filtering.mag = Texture::FilteringMode::Nearest;
-    specification.filtering.min = Texture::FilteringMode::Linear;
-    specification.mipmap        = Texture::MipmapMode::Linear;
+    specification.filtering.min = Texture::FilteringMode::Nearest;
+    specification.mipmap        = Texture::MipmapMode::None;
 
     auto fontTexture = Texture2D::load("PixelFont_7x9_112x54.png", specification);
     const auto fontTextureWidth  = fontTexture->getWidth();
@@ -594,7 +594,7 @@ namespace Game {
 
   void Renderer::drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color) {
     GAME_PROFILE_FUNCTION();
-    Renderer::drawText(text, Vec3(position, 0.1f), {size - size/8.0f, size}, color);
+    Renderer::drawText(text, Vec3(position, 0.1f), {size - size/7.0f, size}, color);
   }
 
   void Renderer::drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color) {

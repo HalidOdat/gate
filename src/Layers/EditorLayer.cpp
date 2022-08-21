@@ -69,29 +69,38 @@ namespace Game {
     ss << std::fixed << (1.0f / Timestep::get()) << "fps" << '\n';
     std::string fpsString = ss.str();
 
-    ui.begin({0.0f, 0.0f});
-      if (ui.button(fpsString, 0)) {
+    ui.beginDock(Ui::Dock::Left, 20.0f);
+      if (ui.button(fpsString, 100000)) {
         Logger::info("Button 0 clicked!!!");
       }
-      if (ui.button("Button 1", 1)) {
-        Logger::info("Button 1 clicked!!!");
-      }
-      if (ui.button("Button 2", 2)) {
-        Logger::info("Button 2 clicked!!!");
-      }
-      if (ui.button("Button 3", 3)) {
-        Logger::info("Button 3 clicked!!!");
+      auto view = mEditorScene->mRegistry.view<TagComponent>();
+      for (auto[entity, tag] : view) {
+        if (ui.button(tag.tag, entity.getId())) {
+          mSelectedEntity = Entity(entity, mEditorScene.get());
+        }
       }
       if (ui.checkbox(mShow)) {}
+      if (mSelectedEntity.isValid()) {
+        auto& transform = mSelectedEntity.get<TransformComponent>();
+        ui.slider(transform.translation, Vec3(-20.0f), Vec3(20.0f));
+        ui.slider(transform.rotation, Vec3(-20.0f), Vec3(20.0f));
+        ui.slider(transform.scale, Vec3(-20.0f), Vec3(20.0f));
+      }
     ui.end();
   }
 
   void EditorLayer::onEvent(const Event& event) {
-    mCameraController.onEvent(event);
+    if (mClicked) {
+      mCameraController.onEvent(event);
+    } else {
+      mCameraController.resetLastPosition();
+    }
 
     event.dispatch(&EditorLayer::onWindowResizeEvent, this);
-    event.dispatch(&EditorLayer::onMouseScrollEvent, this);
     event.dispatch(&EditorLayer::onKeyPressedEvent, this);
+    event.dispatch(&EditorLayer::onMouseScrollEvent, this);
+    event.dispatch(&EditorLayer::onMouseButtonPressedEvent, this);
+    event.dispatch(&EditorLayer::onMouseButtonReleasedEvent, this);
   }
 
   bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
@@ -115,6 +124,27 @@ namespace Game {
       return true;
     }
 
+    if (mSelectedEntity.isValid()) {
+      auto ts = Timestep::get();
+      auto& transform = mSelectedEntity.get<TransformComponent>();
+      switch (event.getKey()) {
+        case Key::Up:
+          transform.translation.y += ts * 20;
+          break;
+        case Key::Down:
+          transform.translation.y -= ts * 20;
+          break;
+        case Key::Left:
+          transform.translation.x -= ts * 20;
+          break;
+        case Key::Right:
+          transform.translation.x += ts * 20;
+          break;
+        default:
+          ;
+      }
+    }
+
     if (mShow) {
       // if (event.getKey() == Key::T) {
       //   ResourceManager::reloadAll<Texture2D>();
@@ -130,6 +160,19 @@ namespace Game {
       // }
     }
 
+    return false;
+  }
+
+  bool EditorLayer::onMouseButtonPressedEvent(const MouseButtonPressedEvent& event) {
+    if (event.getButton() == MouseButton::Left) {
+      mClicked = true;
+    }
+    return false;
+  }
+  bool EditorLayer::onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event) {
+    if (event.getButton() == MouseButton::Left) {
+      mClicked = false;
+    }
     return false;
   }
 

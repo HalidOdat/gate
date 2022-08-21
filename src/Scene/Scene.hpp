@@ -28,6 +28,8 @@ namespace Game {
   private:
     friend class Entity;
     friend struct Serializer::Convert<Scene>;
+
+    friend class EditorLayer;
   };
 
   class Entity {
@@ -50,9 +52,11 @@ namespace Game {
     }
 
     template<typename T, typename ...Ts>
-    auto get() {
+    auto& get() {
       return mScene->mRegistry.get<T, Ts...>(Ecs::Entity(mEntityId));
     }
+
+    inline bool isValid() const { return mScene; }
 
   private:
     Entity(Ecs::Entity entity, Scene* scene)
@@ -64,6 +68,7 @@ namespace Game {
     Scene* mScene;
 
   private:
+    friend class EditorLayer;
     friend class  Scene;
     friend struct Serializer::Convert<Scene>;
   };
