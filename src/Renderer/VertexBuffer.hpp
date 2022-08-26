@@ -7,6 +7,28 @@
 
 namespace Game {
 
+  struct Buffer {
+    enum class StorageType : u8 {
+      /// The data store contents will be modified once and used at most a few times.
+      Stream,
+
+      /// The data store contents will be modified once and used many times. 
+      Static,
+
+      // The data store contents will be modified repeatedly and used many times.
+      Dynamic,
+    };
+
+    enum class AccessType : u8 {
+      /// The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.
+      Draw,
+      /// The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.
+      Read,
+      /// The data store contents are modified by reading data from the GL, and used as the source for GL drawing and image specification commands.
+      Copy,
+    };
+  };
+
   class BufferElement {
   public:
     enum class Type {
@@ -25,8 +47,7 @@ namespace Game {
   public:
     BufferElement(Type type, bool normalized = false)
       : mType{type}, mNormalized{normalized}
-    {
-    }
+    {}
 
     inline Type getType() const { return mType; }
 
@@ -81,6 +102,12 @@ namespace Game {
       calculateStride();
     }
 
+    BufferLayout(std::vector<BufferElement> elements)
+      : elements{elements}
+    {
+      calculateStride();
+    }
+
     inline usize getStride() const { return this->stride; }
     inline const std::vector<BufferElement>& getElements() const { return this->elements; }
 
@@ -105,9 +132,32 @@ namespace Game {
   public:
     using Handle = Resource<VertexBuffer>;
 
+    class Builder {
+    public:
+      Builder& data(const void* inData, u32 inSize);
+      Builder& data(const Slice<const void> slice);
+      Builder& size(u32 inSize);
+      Builder& layout(BufferElement::Type type, String name);
+      Builder& storage(Buffer::StorageType type);
+      Builder& access(Buffer::AccessType type);
+      VertexBuffer::Handle build();
+
+    private:
+      Builder() = default;
+
+    private:
+      const void* mData = nullptr;
+      u32 mSize = 0;
+      std::vector<BufferElement> mLayout;
+
+      Buffer::StorageType mStorage = Buffer::StorageType::Static;
+      Buffer::AccessType  mAccess  = Buffer::AccessType::Draw;
+
+      friend class VertexBuffer;
+    };
+
   public:
-    [[nodiscard]] static VertexBuffer::Handle create(Slice<const void> slice);
-    [[nodiscard]] static VertexBuffer::Handle withSize(const u32 size);
+    [[nodiscard]] static VertexBuffer::Builder builder();
     DISALLOW_COPY_AND_ASSIGN(VertexBuffer);
     ~VertexBuffer();
 
@@ -120,8 +170,8 @@ namespace Game {
     inline void setLayout(BufferLayout layout) { mLayout = std::move(layout); }
 
   private:
-    VertexBuffer(u32 id)
-      : mId{id}
+    VertexBuffer(u32 id, BufferLayout layout)
+      : mId{id}, mLayout{std::move(layout)}
     {}
 
   private:

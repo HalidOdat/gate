@@ -179,13 +179,14 @@ namespace Game {
     auto whiteTexture = Texture2D::color(0xFF, 0xFF, 0xFF);
 
     auto vertexArray = VertexArray::create();
-    auto vertexBuffer = VertexBuffer::withSize(QuadBatch::VERTEX_BUFFER_BYTE_SIZE);
-    vertexBuffer->setLayout({
-      { BufferElement::Type::Float3, /* position */ },
-      { BufferElement::Type::Float4  /* color */ },
-      { BufferElement::Type::Float2  /* texture */ },
-      { BufferElement::Type::Uint    /* texIndex */ },
-    });
+    auto vertexBuffer = VertexBuffer::builder()
+      .size(QuadBatch::VERTEX_BUFFER_BYTE_SIZE)
+      .layout(BufferElement::Type::Float3, "position")
+      .layout(BufferElement::Type::Float4, "color")
+      .layout(BufferElement::Type::Float2, "texture")
+      .layout(BufferElement::Type::Uint, "texIndex")
+      .storage(Buffer::StorageType::Dynamic)
+      .build();
     vertexArray->addVertexBuffer(vertexBuffer);
 
     u32* indices = new u32[QuadBatch::INDEX_BUFFER_COUNT];
@@ -280,11 +281,12 @@ namespace Game {
     };
 
     auto quadVertexArray = VertexArray::create();
-    auto quadVertexBuffer = VertexBuffer::create(quadVertices);
-    quadVertexBuffer->setLayout({
-      { BufferElement::Type::Float2, /* position */ },
-      { BufferElement::Type::Float2  /* texture */ },
-    });
+    auto quadVertexBuffer = VertexBuffer::builder()
+      .data(quadVertices)
+      .layout(BufferElement::Type::Float2, "position")
+      .layout(BufferElement::Type::Float2, "texture")
+      .build();
+
     quadVertexArray->addVertexBuffer(quadVertexBuffer);
     quadVertexArray->unbind();
     renderer->pipeline.quadVertexArray = quadVertexArray;
@@ -344,10 +346,10 @@ namespace Game {
     };
 
     auto skyboxVertexArray = VertexArray::create();
-    auto skyboxVertexBuffer = VertexBuffer::create(skyboxVertices);
-    skyboxVertexBuffer->setLayout({
-      { BufferElement::Type::Float3, /* position */ },
-    });
+    auto skyboxVertexBuffer = VertexBuffer::builder()
+      .data(skyboxVertices)
+      .layout(BufferElement::Type::Float3, "position")
+      .build();
     skyboxVertexArray->addVertexBuffer(skyboxVertexBuffer);
     skyboxVertexArray->unbind();
     renderer->pipeline.skyboxVertexArray = skyboxVertexArray;

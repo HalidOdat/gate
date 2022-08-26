@@ -124,12 +124,12 @@ namespace Game {
 
     auto[vertices, indices] = parseObjFile(*source);
     auto vao = VertexArray::create();
-    auto vbo = VertexBuffer::create({vertices.data(), vertices.size()});
-    vbo->setLayout({
-      BufferElement::Type::Float3, // position
-      BufferElement::Type::Float2, // texcoords
-      BufferElement::Type::Float3, // normals
-    });
+    auto vbo = VertexBuffer::builder()
+      .data({vertices.data(), vertices.size()})
+      .layout(BufferElement::Type::Float3, "position")
+      .layout(BufferElement::Type::Float2, "texcoords")
+      .layout(BufferElement::Type::Float3, "normals")
+      .build();
     vao->addVertexBuffer(vbo);
     auto ibo = IndexBuffer::create({indices.data(), indices.size()});
     vao->setIndexBuffer(ibo);
@@ -142,12 +142,12 @@ namespace Game {
     GAME_PROFILE_FUNCTION();
 
     auto vao = VertexArray::create();
-    auto vbo = VertexBuffer::create(vertices);
-    vbo->setLayout({
-      BufferElement::Type::Float3, // position
-      BufferElement::Type::Float2, // texcoords
-      BufferElement::Type::Float3, // normals
-    });
+    auto vbo = VertexBuffer::builder()
+      .data(vertices)
+      .layout(BufferElement::Type::Float3, "position")
+      .layout(BufferElement::Type::Float2, "texcoords")
+      .layout(BufferElement::Type::Float3, "normals")
+      .build();
     vao->addVertexBuffer(vbo);
     auto ibo = IndexBuffer::create(indices);
     vao->setIndexBuffer(ibo);
