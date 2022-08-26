@@ -4,9 +4,9 @@
 #include <cstdlib>
 
 #if defined(__EMSCRIPTEN__)
-# define GAME_PLATFORM_WEB 1
+  #define GAME_PLATFORM_WEB 1
 #else
-# define GAME_PLATFORM_NATIVE 1
+  #define GAME_PLATFORM_NATIVE 1
 #endif
 
 #define GAME_DEBUG_MODE _DEBUG

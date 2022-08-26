@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Core/Timestep.hpp"
 
 namespace Game {

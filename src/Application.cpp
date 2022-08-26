@@ -69,7 +69,9 @@ namespace Game {
 
   void Application::gameLoop() {
     Application* self = sInstance;
-    self->window->setVSync(true);
+    #ifdef GAME_PLATFORM_WEB
+      self->window->setVSync(true);
+    #endif
 
     float time = (float)glfwGetTime();
     float dt = time - self->lastFrameTime;
@@ -94,7 +96,11 @@ namespace Game {
 
     this->lastFrameTime = (float)glfwGetTime();
 
-#if GAME_PLATFORM_WEB
+    #ifndef GAME_PLATFORM_WEB
+      this->window->setVSync(true);
+    #endif
+
+  #if GAME_PLATFORM_WEB
     emscripten_set_main_loop(Application::gameLoop, 0, 1);
 #else
     while (running) {

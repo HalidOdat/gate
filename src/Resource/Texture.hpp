@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Math.hpp"
 #include "Resource/Resource.hpp"
 
 namespace Game {
@@ -45,6 +46,7 @@ namespace Game {
     enum class Type {
       Image,
       Color,
+      Buffer,
     };
 
   private:
@@ -64,8 +66,38 @@ namespace Game {
       bool                  gammaCorrected = false;
     };
 
+    class Builder {
+    public:
+      Builder& load(const StringView& file);
+      Builder& color(u8 r, u8 g, u8 b, u8 a = 0xFF);
+      Builder& color(u32 color);
+      Builder& buffer(u32 width, u32 height);
+      Builder& wrapping(Texture::WrappingMode mode);
+      Builder& filtering(Texture::Filtering filtering);
+      Builder& mipmap(Texture::MipmapMode mode);
+      Builder& verticalFlipOnLoad(bool yes = true);
+      Builder& gammaCorrected(bool yes = true);
+      Texture2D::Handle build();
+
+    private:
+      Builder() = default;
+
+    private:
+      StringView    mFile;
+      u32           mColor    = 0xFFFFFFFF;
+      bool          mIsBuffer = false;
+      Specification mSpecification;
+
+      u32 mWidth;
+      u32 mHeight;
+
+      friend class Texture2D;
+    };
+
   public:
+    [[nodiscard]] static Texture2D::Builder builder();
     [[nodiscard]] static Texture2D::Handle load(const String& filepath, Specification specification = {});
+    [[nodiscard]] static Texture2D::Handle buffer(u32 width, u32 height, Specification specification = {});
     [[nodiscard]] static Texture2D::Handle color(u32 color);
     [[nodiscard]] static Texture2D::Handle color(u8 r, u8 g, u8 b, u8 a = 0xFF);
     [[nodiscard]] static Texture2D::Handle generateMissingDataPlaceholder();
@@ -110,7 +142,6 @@ namespace Game {
   private:
     Data mData;
 
-  private:
     template<typename T>
     friend class ResourceFactory;
     friend class ResourceManager;

@@ -218,12 +218,12 @@ namespace Game {
 
     auto quad = QuadBatch(vertexArray, vertexBuffer, shader, whiteTexture);
 
-    Texture2D::Specification specification;
-    specification.filtering.mag = Texture::FilteringMode::Nearest;
-    specification.filtering.min = Texture::FilteringMode::Nearest;
-    specification.mipmap        = Texture::MipmapMode::None;
+    auto fontTexture = Texture2D::builder()
+      .load("PixelFont_7x9_112x54.png")
+      .filtering(Texture::FilteringMode::Nearest)
+      .mipmap(Texture::MipmapMode::None)
+      .build();
 
-    auto fontTexture = Texture2D::load("PixelFont_7x9_112x54.png", specification);
     const auto fontTextureWidth  = fontTexture->getWidth();
     const auto fontTextureHeight = fontTexture->getHeight();
     const auto fontCharacterWidth  = 7;
@@ -257,12 +257,16 @@ namespace Game {
       }
     }
 
-    auto width = Application::getWindow().getWidth();
-    auto height = Application::getWindow().getHeight();
-
-    FrameBuffer::Specification frameBufferSpecification;
-    frameBufferSpecification.clearColor = {0.2f, 0.2f, 0.2f, 1.0f};
-    renderer->pipeline.frameBuffer = FrameBuffer::create(width, height, frameBufferSpecification);
+    renderer->pipeline.frameBuffer = FrameBuffer::builder()
+      .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
+      .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
+      .clearOnBind(true)
+      .attach(
+        FrameBuffer::Attachment::Type::Texture2D,
+        FrameBuffer::Attachment::Format::RGB8
+      )
+      .attachDefaultDepthStencilBuffer()
+      .build();
 
     static const float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
       // positions   // texCoords
@@ -501,7 +505,6 @@ namespace Game {
 
     // First Pass
     renderer->pipeline.frameBuffer->bind();
-    GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     Renderer::enableDepthTest(true);
     renderAllUnits();
     renderSkybox();
@@ -514,9 +517,8 @@ namespace Game {
     GAME_GL_CHECK(glClearColor(1.0f, 1.0f, 1.0f, 1.0f)); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
     GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-    u32 texture = renderer->pipeline.frameBuffer->getColorAttachmentId();
-    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
-    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
+    auto texture = renderer->pipeline.frameBuffer->getColorAttachment();
+    texture->bind(0);
     renderer->pipeline.postProcesingShader->bind();
     renderer->pipeline.postProcesingShader->setInt("uScreenTexture", 0);
 

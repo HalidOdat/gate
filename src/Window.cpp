@@ -141,7 +141,7 @@ namespace Game {
 
     if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
     {
-      Logger::error("Glad failed");
+      Logger::error("Glad: Failed to initialize");
       return nullptr;
     }
 

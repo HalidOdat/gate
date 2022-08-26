@@ -1,10 +1,11 @@
 #pragma once
 
-#include <vector>
 #include "Core/Type.hpp"
 #include "Core/Math.hpp"
 #include "Resource/Texture.hpp"
 #include "Resource/Resource.hpp"
+
+#include <vector>
 
 namespace Game {
 
@@ -12,13 +13,68 @@ namespace Game {
   public:
     using Handle = Resource<FrameBuffer>;
 
-    struct Specification {
-      Specification() {}
-      Vec4 clearColor{1.0f};
+    enum class Clear : u8 {
+      Color   = 0b0000'0001,
+      Depth   = 0b0000'0010,
+      Stencil = 0b0000'0100,
+    };
+
+    struct Attachment {
+      enum class Type : u8 {
+        Texture2D,
+        RenderBuffer,
+      };
+
+      enum class Format : u8 {
+        RGB8,
+        DefaultColor = RGB8,
+
+        Depth24Stencil8,
+        DefaultDepthStencil = Depth24Stencil8,
+      };
+
+      Type type;
+      Format format;
+      bool isMultisample = false;
+    };
+
+    class Builder {
+    public:
+      Builder& width(u32 width);
+      Builder& height(u32 height);
+      Builder& clearColor(f32 r, f32 g, f32 b, f32 a = 1.0f);
+      Builder& clearColor(const Vec3& color);
+      Builder& clearColor(const Vec4& color);
+      Builder& clear(FrameBuffer::Clear clear);
+      Builder& clearOnBind(bool yes = true);
+      Builder& attach(Attachment::Type type, Attachment::Format format, bool isMultisample = false);
+      Builder& attachDefaultDepthStencilBuffer();
+      FrameBuffer::Handle build();
+
+    private:
+      Builder() = default;
+ 
+    private:
+      u32 mWidth  = 0;
+      u32 mHeight = 0;
+
+      Vec4 mClearColor = {1.0f, 1.0f, 1.0f, 1.0f};
+      FrameBuffer::Clear mClear = FrameBuffer::Clear::Color;
+      bool mClearOnBind = true;
+ 
+      std::vector<Attachment> mAttachments;
+      Attachment mDepthStencilAttachment = {
+        Attachment::Type::RenderBuffer,
+        Attachment::Format::DefaultDepthStencil,
+        false,
+      };
+
+    private:
+      friend class FrameBuffer;
     };
 
   public:
-    [[nodiscard]] static FrameBuffer::Handle create(u32 width, u32 height, Specification specification = {});
+    [[nodiscard]] static Builder builder();
     DISALLOW_MOVE_AND_COPY(FrameBuffer);
     ~FrameBuffer();
 
@@ -27,26 +83,39 @@ namespace Game {
     void bind();
     void unbind();
 
+    void clear();
+    void clear(FrameBuffer::Clear clear);
+
     // TODO: return a Texture2D
-    inline u32 getColorAttachmentId() const { return mColorAttachment; }
+    inline const Texture2D::Handle& getColorAttachment() const { return mColorAttachments[0]; }
 
   private:
-    FrameBuffer(u32 width, u32 height, Specification specification);
+    static FrameBuffer::Handle create(Builder& builder);
+    FrameBuffer(Builder& builder);
     void destroy();
 
   private:
-    u32 mWidth;
-    u32 mHeight;
     u32 mId;
-    u32 mColorAttachment;
+    bool mClearOnBind;
+    FrameBuffer::Clear mClear;
+    Vec4 mClearColor;
+
+    std::vector<Texture2D::Handle> mColorAttachments;
     u32 mDepthStencilAttachment;
 
-    Specification mSpecification;
+    u32 mWidth;
+    u32 mHeight;
 
   private:
     template<typename T>
     friend class ResourceFactory;
   };
+
+  constexpr FrameBuffer::Clear operator|(FrameBuffer::Clear lhs, FrameBuffer::Clear rhs) {
+    return static_cast<FrameBuffer::Clear>(
+      static_cast<u8>(lhs) | static_cast<u8>(rhs)
+    );
+  }
 
   GAME_FACTORY_HEADER(FrameBuffer)
 

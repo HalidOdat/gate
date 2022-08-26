@@ -84,7 +84,7 @@ namespace Game {
         auto& transform = mSelectedEntity.get<TransformComponent>();
         ui.slider(transform.translation, Vec3(-20.0f), Vec3(20.0f));
         ui.slider(transform.rotation, Vec3(-20.0f), Vec3(20.0f));
-        ui.slider(transform.scale, Vec3(-20.0f), Vec3(20.0f));
+        ui.slider(transform.scale, Vec3(1.0f), Vec3(40.0f));
       }
     ui.end();
   }

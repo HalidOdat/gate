@@ -10,6 +10,77 @@
 
 namespace Game {
 
+  Texture2D::Builder& Texture2D::Builder::load(const StringView& file) {
+    mIsBuffer = false;
+    mFile = file;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::color(u8 r, u8 g, u8 b, u8 a) {
+    mIsBuffer = false;
+    mFile = "";
+
+    u32 color =  r; color <<= 8;
+        color |= g; color <<= 8;
+        color |= b; color <<= 8;
+        color |= a;
+
+    mColor = color;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::color(u32 color) {
+    mIsBuffer = false;
+    mFile = "";
+    mColor = color;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::buffer(u32 width, u32 height) {
+    mIsBuffer = true;
+    mWidth = width;
+    mHeight = height;
+    return *this;
+  }
+
+  Texture2D::Builder& Texture2D::Builder::wrapping(Texture::WrappingMode mode) {
+    mSpecification.wrapping = mode;
+    return *this; 
+  }
+  Texture2D::Builder& Texture2D::Builder::filtering(Texture::Filtering filtering) {
+    mSpecification.filtering = filtering;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::mipmap(Texture::MipmapMode mode) {
+    mSpecification.mipmap = mode;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::verticalFlipOnLoad(bool yes) {
+    if (yes) {
+      mSpecification.verticalFlip = Texture::VerticalFlip::True;
+    } else {
+      mSpecification.verticalFlip = Texture::VerticalFlip::False;
+    }
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::gammaCorrected(bool yes) {
+    mSpecification.gammaCorrected = yes;
+    return *this;
+  }
+  Texture2D::Handle Texture2D::Builder::build() {
+    if (mIsBuffer) {
+      GAME_ASSERT(mWidth != 0 || mHeight != 0);
+      return Texture2D::buffer(mWidth, mHeight, mSpecification);
+    }
+    if (!mFile.empty()) {
+      return Texture2D::load(String(mFile), mSpecification);
+    } else {
+      return Texture2D::color(mColor);
+    }
+  }
+
+  Texture2D::Builder Texture2D::builder() {
+    return Texture2D::Builder();
+  }
+
+
   // TODO: key should also have specification
   static std::unordered_map<String, Texture2D::Handle> cachedImageTexture2D; // Key: Path,  Value: Texture
   static std::unordered_map<u32,    Texture2D::Handle> cachedColorTexture2D; // Key: Color, Value: Texture
@@ -27,6 +98,8 @@ namespace Game {
           case Texture::Type::Color:
             cachedColorTexture2D.erase(resource->getColor());
             break;
+          case Texture::Type::Buffer:
+            break;
           default:
             GAME_UNREACHABLE("unknown texture type!");
         }  
@@ -40,6 +113,9 @@ namespace Game {
         case Texture::Type::Color:
           Logger::trace("Texture #%u created color: #%08X", id, texture.getColor());
           break;
+        case Texture::Type::Buffer:
+          Logger::trace("Texture2D #%u created buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
+          break;
         default:
           GAME_UNREACHABLE("unknown texture type!");
       }
@@ -47,10 +123,13 @@ namespace Game {
     inline static void destroyed(Texture2D& texture, u32 id) {
       switch (texture.getType()) {
         case Texture::Type::Image:
-          Logger::trace("Texture #%u destroyed: %s", id, texture.getFilePath()->c_str());
+          Logger::trace("Texture2D #%u destroyed: %s", id, texture.getFilePath()->c_str());
           break;
         case Texture::Type::Color:
-          Logger::trace("Texture #%u destroyed color: #%08X", id, texture.getColor());
+          Logger::trace("Texture2D #%u destroyed color: #%08X", id, texture.getColor());
+          break;
+        case Texture::Type::Buffer:
+          Logger::trace("Texture2D #%u destroyed buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
           break;
         default:
           GAME_UNREACHABLE("unknown texture type!");
@@ -199,6 +278,12 @@ namespace Game {
         color |= a;
 
     return Texture2D::color(color);
+  }
+
+  Texture2D::Handle Texture2D::buffer(u32 width, u32 height, Specification specification) {
+    auto data = Texture2D::fromBytes(nullptr, width, height, 3, specification);
+    data.type = Texture::Type::Buffer;
+    return texture2DFactory.emplace(std::move(data));
   }
 
   Texture2D::Handle Texture2D::load(const String& path, Specification specification) {
