@@ -514,8 +514,8 @@ namespace Game {
     //  glDisable(GL_DEPTH_TEST);
 
     // Second Pass
-    GAME_GL_CHECK(glClearColor(1.0f, 1.0f, 1.0f, 1.0f)); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
-    GAME_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto texture = renderer->pipeline.frameBuffer->getColorAttachment();
     texture->bind(0);

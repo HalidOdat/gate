@@ -11,9 +11,9 @@ namespace Game {
 
   IndexBuffer::Handle IndexBuffer::create(Slice<const u32> slice) {
     u32 id;
-    GAME_GL_CHECK(glGenBuffers(1, &id));
-    GAME_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
-    GAME_GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, slice.sizeInBytes(), slice.data(), GL_STATIC_DRAW));
+    glGenBuffers(1, &id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, slice.sizeInBytes(), slice.data(), GL_STATIC_DRAW);
     return factory.emplace(id, u32(slice.size()));
   }
   
@@ -22,11 +22,11 @@ namespace Game {
   }
 
   void IndexBuffer::bind() {
-    GAME_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
   }
 
   void IndexBuffer::unbind() {
-    GAME_GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   }
 
 } // namespace Game

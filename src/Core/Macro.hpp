@@ -27,19 +27,6 @@
 #define GAME_UNREACHABLE(msg) do { fprintf(stderr, "Unreachable %s:%d: %s\n", __FILE__, __LINE__, (msg)); exit(1); } while(false)
 #define GAME_TODO(msg)        do { fprintf(stderr, "Todo %s:%d: %s\n", __FILE__, __LINE__, (msg)); exit(1); } while(false)
 
-namespace Game {
-  void CheckOpenGLError(const char* stmt, const char* fname, int line);
-} // namespace Game
-
-#if GAME_DEBUG_MODE
-# define GAME_GL_CHECK(stmt) do { \
-    stmt; \
-    Game::CheckOpenGLError(#stmt, __FILE__, __LINE__); \
-  } while (0)
-#else
-# define GAME_GL_CHECK(stmt) stmt
-#endif
-
 #ifdef _MSC_VER
 # define _CRT_SECURE_NO_WARNINGS 1
 #endif

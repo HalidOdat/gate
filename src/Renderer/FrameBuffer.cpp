@@ -119,8 +119,8 @@ namespace Game {
     }
 
     // Create and bind
-    GAME_GL_CHECK(glGenFramebuffers(1, &mId));
-    GAME_GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mId));
+    glGenFramebuffers(1, &mId);
+    glBindFramebuffer(GL_FRAMEBUFFER, mId);
 
     // create color attachment texture
     auto texture = Texture2D::builder()
@@ -129,17 +129,17 @@ namespace Game {
       .build();
 
     // bind color attachment
-    GAME_GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->getId(), 0));
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->getId(), 0);
 
     mColorAttachments.emplace_back(std::move(texture));
 
     // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-    GAME_GL_CHECK(glGenRenderbuffers(1, &mDepthStencilAttachment));
-    GAME_GL_CHECK(glBindRenderbuffer(GL_RENDERBUFFER, mDepthStencilAttachment));
-    GAME_GL_CHECK(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
+    glGenRenderbuffers(1, &mDepthStencilAttachment);
+    glBindRenderbuffer(GL_RENDERBUFFER, mDepthStencilAttachment);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
     
     // bind depth and stencil attachment
-    GAME_GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilAttachment));
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilAttachment);
 
     GAME_ASSERT_WITH_MESSAGE(
       glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
@@ -147,14 +147,14 @@ namespace Game {
     );
 
     // unbind framebuffer
-    GAME_GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
   void FrameBuffer::destroy() {
-    GAME_GL_CHECK(glDeleteFramebuffers(1, &mId));
+    glDeleteFramebuffers(1, &mId);
     mColorAttachments.clear();
 
-    GAME_GL_CHECK(glDeleteRenderbuffers(1, &mDepthStencilAttachment));
+    glDeleteRenderbuffers(1, &mDepthStencilAttachment);
   }
 
   FrameBuffer::~FrameBuffer() {
@@ -162,8 +162,8 @@ namespace Game {
   }
 
   void FrameBuffer::bind() {
-    GAME_GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mId));
-    GAME_GL_CHECK(glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a));
+    glBindFramebuffer(GL_FRAMEBUFFER, mId);
+    glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
 
     if (mClearOnBind) {
       this->clear();
@@ -171,15 +171,15 @@ namespace Game {
   }
 
   void FrameBuffer::clear() {
-    GAME_GL_CHECK(glClear(clearToOpenGLType(mClear)));
+    glClear(clearToOpenGLType(mClear));
   }
 
   void FrameBuffer::clear(FrameBuffer::Clear clear) {
-    GAME_GL_CHECK(glClear(clearToOpenGLType(clear)));
+    glClear(clearToOpenGLType(clear));
   }
 
   void FrameBuffer::unbind() {
-    GAME_GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
 } // namespace Game

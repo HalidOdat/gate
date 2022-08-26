@@ -13,21 +13,21 @@ namespace Game {
 
   VertexArray::Handle VertexArray::create() {
     u32 id;
-    GAME_GL_CHECK(glGenVertexArrays(1, &id));
-    GAME_GL_CHECK(glBindVertexArray(id));
+    glGenVertexArrays(1, &id);
+    glBindVertexArray(id);
     return factory.emplace(id);
   }
 
   VertexArray::~VertexArray() {
-    GAME_GL_CHECK(glDeleteVertexArrays(1, &mId));
+    glDeleteVertexArrays(1, &mId);
   }
 
   void VertexArray::bind() {
-    GAME_GL_CHECK(glBindVertexArray(mId));
+    glBindVertexArray(mId);
   }
 
   void VertexArray::unbind() {
-    GAME_GL_CHECK(glBindVertexArray(0));
+    glBindVertexArray(0);
   }
 
   void VertexArray::addVertexBuffer(VertexBuffer::Handle buffer) {
@@ -41,15 +41,15 @@ namespace Game {
         case BufferElement::Type::Float2:
         case BufferElement::Type::Float3:
         case BufferElement::Type::Float4:
-          GAME_GL_CHECK(glEnableVertexAttribArray(mVertexAttributeIndex));
-	        GAME_GL_CHECK(glVertexAttribPointer(
+          glEnableVertexAttribArray(mVertexAttributeIndex);
+	        glVertexAttribPointer(
             mVertexAttributeIndex,
             (GLint)element.getComponentCount(),
             GL_FLOAT,
             element.isNormalized() ? GL_TRUE : GL_FALSE,
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
-          ));
+          );
           mVertexAttributeIndex++;
           break;
         case BufferElement::Type::Int:
@@ -70,14 +70,14 @@ namespace Game {
               type = GL_INT;
           }
           
-          GAME_GL_CHECK(glEnableVertexAttribArray(mVertexAttributeIndex));
-	        GAME_GL_CHECK(glVertexAttribIPointer(
+          glEnableVertexAttribArray(mVertexAttributeIndex);
+	        glVertexAttribIPointer(
             mVertexAttributeIndex,
             (GLint)element.getComponentCount(),
             type,
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
-          ));
+          );
           mVertexAttributeIndex++;
           break;
         }
@@ -102,11 +102,11 @@ namespace Game {
 
   void VertexArray::drawIndices(const u32 count) {
     this->bind();
-    GAME_GL_CHECK(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
   }
 
   void VertexArray::drawArrays(u32 count) {
-    GAME_GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, count));
+    glDrawArrays(GL_TRIANGLES, 0, count);
   }
 
 } // namespace Game

@@ -227,17 +227,17 @@ namespace Game {
     auto minFilter = TextureFilteringMipmapToOpenGL(specification.filtering.min, specification.mipmap);
 
     u32 texture;
-    GAME_GL_CHECK(glGenTextures(1, &texture));
-    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
     // set the texture wrapping/filtering options (on the currently bound texture object)
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat));	
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat));
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 
-    GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes));
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes);
     if (specification.mipmap != Texture::MipmapMode::None) {
-      GAME_GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+      glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     return Data{texture, width, height, specification};
@@ -348,7 +348,7 @@ namespace Game {
     stbi_image_free(bytes);
 
     Logger::trace("Reloaded texture: %s", mData.filePath.value().c_str());
-    GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
+    glDeleteTextures(1, &mData.id);
     data.filePath = std::move(mData.filePath);
     mData = std::move(data);
     return true;
@@ -357,7 +357,7 @@ namespace Game {
   Texture2D::~Texture2D() {
     GAME_PROFILE_FUNCTION();
 
-    GAME_GL_CHECK(glDeleteTextures(1, &mData.id));
+    glDeleteTextures(1, &mData.id);
   }
 
   void Texture2D::bind(const usize slot) const {
@@ -365,8 +365,8 @@ namespace Game {
 
     // TODO: debug check if max texture slot reached
     u32 textureId = mData.id;
-    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0 + (GLenum)slot));
-    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureId));
+    glActiveTexture(GL_TEXTURE0 + (GLenum)slot);
+    glBindTexture(GL_TEXTURE_2D, textureId);
   }
 
   u32 Texture2D::getId() const {
@@ -391,8 +391,8 @@ namespace Game {
     GAME_ASSERT(paths.size() == 6);
 
     u32 texture;
-    GAME_GL_CHECK(glGenTextures(1, &texture));
-    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, texture));
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
     int width, height, nrChannels;
     for (u32 i = 0; i < paths.size(); ++i) {
@@ -400,18 +400,18 @@ namespace Game {
       auto path = "assets/textures/" + paths[i];
       u8* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
       if (data) {
-        GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
       } else {
-        GAME_GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, defaultTextureData));
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, defaultTextureData);
       }
     }
 
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    GAME_GL_CHECK(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)); 
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return cubeMapFactory.emplace(texture, std::move(paths));
 
@@ -420,14 +420,14 @@ namespace Game {
   CubeMap::~CubeMap() {
     GAME_PROFILE_FUNCTION();
 
-    GAME_GL_CHECK(glDeleteTextures(1, &id));
+    glDeleteTextures(1, &id);
   }
 
   void CubeMap::bind() const {
     GAME_PROFILE_FUNCTION();
 
-    GAME_GL_CHECK(glActiveTexture(GL_TEXTURE0));
-    GAME_GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, id);
   }
 
   bool CubeMap::reload() {
