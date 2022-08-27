@@ -123,8 +123,8 @@ namespace Game {
     glBindFramebuffer(GL_FRAMEBUFFER, mId);
 
     // create color attachment texture
-    auto texture = Texture2D::builder()
-      .buffer(width, height)
+    auto texture = Texture2D::buffer(width, height)
+      .format(Texture::Format::Rgb8)
       .filtering(Texture::FilteringMode::Linear)
       .build();
 

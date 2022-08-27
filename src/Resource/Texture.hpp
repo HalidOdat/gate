@@ -25,11 +25,6 @@ namespace Game {
       Linear,
     };
 
-    enum class VerticalFlip : u8 {
-      False = 0,
-      True  = 1,
-    };
-
     struct Filtering {
       Filtering(FilteringMode filtering = Texture::FilteringMode::Linear)
         : min{filtering}, mag{filtering}
@@ -43,7 +38,27 @@ namespace Game {
       Texture::FilteringMode mag;
     };
 
-    enum class Type {
+    enum class DataType : u8 {
+      UnsignedByte,
+    };
+
+    enum class DataFormat : u8 {
+      Red,
+      Rg,
+      Rgb,
+      Bgr,
+      Rgba,
+      Bgra,
+    };
+
+    enum class Format : u8 {
+      Rgb8,
+      Rgba8,
+      Srgb8,
+      Srgb8Alpha8,
+    };
+
+    enum class Type : u8 {
       Image,
       Color,
       Buffer,
@@ -59,19 +74,19 @@ namespace Game {
 
     struct Specification {
       Specification() {}
-      Texture::WrappingMode wrapping       = Texture::WrappingMode::Repeat;
-      Texture::Filtering    filtering      = Texture::FilteringMode::Linear;
-      Texture::MipmapMode   mipmap         = Texture::MipmapMode::Linear;
-      Texture::VerticalFlip verticalFlip   = Texture::VerticalFlip::True;
-      bool                  gammaCorrected = false;
+
+      Texture::Type           type           = Texture::Type::Color;
+      Texture::Format         internalFormat = Texture::Format::Rgba8;
+      Texture::WrappingMode   wrapping       = Texture::WrappingMode::Repeat;
+      Texture::Filtering      filtering      = Texture::FilteringMode::Linear;
+      Texture::MipmapMode     mipmap         = Texture::MipmapMode::Linear;
+      bool                    verticalFlip   = true;
+      bool                    gammaCorrected = false;
     };
 
     class Builder {
     public:
-      Builder& load(const StringView& file);
-      Builder& color(u8 r, u8 g, u8 b, u8 a = 0xFF);
-      Builder& color(u32 color);
-      Builder& buffer(u32 width, u32 height);
+      Builder& format(Texture::Format internalFormat);
       Builder& wrapping(Texture::WrappingMode mode);
       Builder& filtering(Texture::Filtering filtering);
       Builder& mipmap(Texture::MipmapMode mode);
@@ -83,23 +98,31 @@ namespace Game {
       Builder() = default;
 
     private:
-      StringView    mFile;
-      u32           mColor    = 0xFFFFFFFF;
-      bool          mIsBuffer = false;
+      Texture::Type mType = Texture::Type::Color;
+
+      u32 mWidth = 1;
+      u32 mHeight = 1;
       Specification mSpecification;
 
-      u32 mWidth;
-      u32 mHeight;
+      u32 mColor = 0xFFFFFFFF;
 
+      StringView mFile;
+
+      const void*         mData = nullptr;
+      Texture::DataFormat mDataFormat = Texture::DataFormat::Rgba;
+      Texture::DataType   mDataType = Texture::DataType::UnsignedByte;
+
+    private:
       friend class Texture2D;
     };
 
   public:
     [[nodiscard]] static Texture2D::Builder builder();
-    [[nodiscard]] static Texture2D::Handle load(const String& filepath, Specification specification = {});
-    [[nodiscard]] static Texture2D::Handle buffer(u32 width, u32 height, Specification specification = {});
-    [[nodiscard]] static Texture2D::Handle color(u32 color);
-    [[nodiscard]] static Texture2D::Handle color(u8 r, u8 g, u8 b, u8 a = 0xFF);
+    [[nodiscard]] static Texture2D::Builder load(const String& filepath, bool verticalFlipOnLoad = true);
+    [[nodiscard]] static Texture2D::Builder buffer(u32 width, u32 height);
+    [[nodiscard]] static Texture2D::Builder buffer(const void* inData, u32 width, u32 height, Texture::DataFormat dataFormat, Texture::DataType dataType);
+    [[nodiscard]] static Texture2D::Builder color(u32 color);
+    [[nodiscard]] static Texture2D::Builder color(u8 r, u8 g, u8 b, u8 a = 0xFF);
     [[nodiscard]] static Texture2D::Handle generateMissingDataPlaceholder();
     DISALLOW_MOVE_AND_COPY(Texture2D);
     ~Texture2D();

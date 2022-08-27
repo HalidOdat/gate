@@ -10,149 +10,6 @@
 
 namespace Game {
 
-  Texture2D::Builder& Texture2D::Builder::load(const StringView& file) {
-    mIsBuffer = false;
-    mFile = file;
-    return *this;
-  }
-  Texture2D::Builder& Texture2D::Builder::color(u8 r, u8 g, u8 b, u8 a) {
-    mIsBuffer = false;
-    mFile = "";
-
-    u32 color =  r; color <<= 8;
-        color |= g; color <<= 8;
-        color |= b; color <<= 8;
-        color |= a;
-
-    mColor = color;
-    return *this;
-  }
-  Texture2D::Builder& Texture2D::Builder::color(u32 color) {
-    mIsBuffer = false;
-    mFile = "";
-    mColor = color;
-    return *this;
-  }
-  Texture2D::Builder& Texture2D::Builder::buffer(u32 width, u32 height) {
-    mIsBuffer = true;
-    mWidth = width;
-    mHeight = height;
-    return *this;
-  }
-
-  Texture2D::Builder& Texture2D::Builder::wrapping(Texture::WrappingMode mode) {
-    mSpecification.wrapping = mode;
-    return *this; 
-  }
-  Texture2D::Builder& Texture2D::Builder::filtering(Texture::Filtering filtering) {
-    mSpecification.filtering = filtering;
-    return *this;
-  }
-  Texture2D::Builder& Texture2D::Builder::mipmap(Texture::MipmapMode mode) {
-    mSpecification.mipmap = mode;
-    return *this;
-  }
-  Texture2D::Builder& Texture2D::Builder::verticalFlipOnLoad(bool yes) {
-    if (yes) {
-      mSpecification.verticalFlip = Texture::VerticalFlip::True;
-    } else {
-      mSpecification.verticalFlip = Texture::VerticalFlip::False;
-    }
-    return *this;
-  }
-  Texture2D::Builder& Texture2D::Builder::gammaCorrected(bool yes) {
-    mSpecification.gammaCorrected = yes;
-    return *this;
-  }
-  Texture2D::Handle Texture2D::Builder::build() {
-    if (mIsBuffer) {
-      GAME_ASSERT(mWidth != 0 || mHeight != 0);
-      return Texture2D::buffer(mWidth, mHeight, mSpecification);
-    }
-    if (!mFile.empty()) {
-      return Texture2D::load(String(mFile), mSpecification);
-    } else {
-      return Texture2D::color(mColor);
-    }
-  }
-
-  Texture2D::Builder Texture2D::builder() {
-    return Texture2D::Builder();
-  }
-
-
-  // TODO: key should also have specification
-  static std::unordered_map<String, Texture2D::Handle> cachedImageTexture2D; // Key: Path,  Value: Texture
-  static std::unordered_map<u32,    Texture2D::Handle> cachedColorTexture2D; // Key: Color, Value: Texture
-
-  GAME_FACTORY_IMPLEMENTATION(Texture2D, texture2DFactory)
-
-  template<>
-  struct FactoryCallback<Texture2D> {
-    inline static void postDecrement(const Resource<Texture2D>& resource) {
-      if (resource.getReferenceCount() == 1) {
-        switch (resource->getType()) {
-          case Texture::Type::Image:
-            cachedImageTexture2D.erase(*resource->getFilePath());
-            break;
-          case Texture::Type::Color:
-            cachedColorTexture2D.erase(resource->getColor());
-            break;
-          case Texture::Type::Buffer:
-            break;
-          default:
-            GAME_UNREACHABLE("unknown texture type!");
-        }  
-      }
-    }
-    inline static void created(Texture2D& texture, u32 id) {
-      switch (texture.getType()) {
-        case Texture::Type::Image:
-          Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
-          break;
-        case Texture::Type::Color:
-          Logger::trace("Texture #%u created color: #%08X", id, texture.getColor());
-          break;
-        case Texture::Type::Buffer:
-          Logger::trace("Texture2D #%u created buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
-          break;
-        default:
-          GAME_UNREACHABLE("unknown texture type!");
-      }
-    }
-    inline static void destroyed(Texture2D& texture, u32 id) {
-      switch (texture.getType()) {
-        case Texture::Type::Image:
-          Logger::trace("Texture2D #%u destroyed: %s", id, texture.getFilePath()->c_str());
-          break;
-        case Texture::Type::Color:
-          Logger::trace("Texture2D #%u destroyed color: #%08X", id, texture.getColor());
-          break;
-        case Texture::Type::Buffer:
-          Logger::trace("Texture2D #%u destroyed buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
-          break;
-        default:
-          GAME_UNREACHABLE("unknown texture type!");
-      }
-    }
-    inline static void clear() {
-      cachedImageTexture2D.clear();
-      cachedColorTexture2D.clear();
-    }
-  };
-
-  void Texture2D::destroyAllTextures() {
-    cachedImageTexture2D.clear();
-    cachedColorTexture2D.clear();
-    texture2DFactory.clear();
-  }
-
-  void Texture2D::reloadAll() {
-    GAME_PROFILE_FUNCTION();
-
-    GAME_TODO("not implemented yet!");
-  }
-
   static const u8 defaultTextureData[] = {
     0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
     0xFF, 0x00, 0xFF, 0xFF,   0x00, 0x00, 0x00, 0xFF,
@@ -199,43 +56,295 @@ namespace Game {
     GAME_UNREACHABLE("unknown texture mipmap type!");
   }
 
-  Texture2D::Data Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Specification specification) {
+  static GLenum TextureDataTypeToOpenGL(Texture::DataType format) {
+    switch (format) {
+      case Texture::DataType::UnsignedByte: return GL_UNSIGNED_BYTE;
+    }
+    GAME_UNREACHABLE("unknown data type type!");
+  }
+
+  static GLenum TextureDataFormatToOpenGL(Texture::DataFormat format) {
+    switch (format) {
+      case Texture::DataFormat::Red:  return GL_RED;
+      case Texture::DataFormat::Rg:   return GL_RG;
+      case Texture::DataFormat::Rgb:  return GL_RGB;
+      case Texture::DataFormat::Bgr:  return GL_BGR;
+      case Texture::DataFormat::Rgba: return GL_RGBA;
+      case Texture::DataFormat::Bgra: return GL_BGRA;
+    }
+    GAME_UNREACHABLE("unknown data format type!");
+  }
+
+  static GLenum TextureInternalFormatToOpenGL(Texture::Format format) {
+    switch (format) {
+      case Texture::Format::Rgb8:        return GL_RGB8;
+      case Texture::Format::Rgba8:       return GL_RGBA8;
+      case Texture::Format::Srgb8:       return GL_SRGB8;
+      case Texture::Format::Srgb8Alpha8: return GL_SRGB8_ALPHA8;
+    }
+    GAME_UNREACHABLE("unknown internal format type!");
+  }
+
+  // TODO: key should also have specification
+  static std::unordered_map<String, Texture2D::Handle> cachedImageTexture2D; // Key: Path,  Value: Texture
+  static std::unordered_map<u32,    Texture2D::Handle> cachedColorTexture2D; // Key: Color, Value: Texture
+
+  GAME_FACTORY_IMPLEMENTATION(Texture2D, texture2DFactory)
+
+  template<>
+  struct FactoryCallback<Texture2D> {
+    inline static void postDecrement(const Resource<Texture2D>& resource) {
+      GAME_PROFILE_FUNCTION();
+      if (resource.getReferenceCount() == 1) {
+        switch (resource->getType()) {
+          case Texture::Type::Image:
+            cachedImageTexture2D.erase(*resource->getFilePath());
+            break;
+          case Texture::Type::Color:
+            cachedColorTexture2D.erase(resource->getColor());
+            break;
+          case Texture::Type::Buffer:
+            break;
+          default:
+            GAME_UNREACHABLE("unknown texture type!");
+        }  
+      }
+    }
+    inline static void created(Texture2D& texture, u32 id) {
+      GAME_PROFILE_FUNCTION();
+      switch (texture.getType()) {
+        case Texture::Type::Image:
+          Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
+          break;
+        case Texture::Type::Color:
+          Logger::trace("Texture #%u created color: #%08X", id, texture.getColor());
+          break;
+        case Texture::Type::Buffer:
+          Logger::trace("Texture2D #%u created buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
+          break;
+        default:
+          GAME_UNREACHABLE("unknown texture type!");
+      }
+    }
+    inline static void destroyed(Texture2D& texture, u32 id) {
+      GAME_PROFILE_FUNCTION();
+      switch (texture.getType()) {
+        case Texture::Type::Image:
+          Logger::trace("Texture2D #%u destroyed: %s", id, texture.getFilePath()->c_str());
+          break;
+        case Texture::Type::Color:
+          Logger::trace("Texture2D #%u destroyed color: #%08X", id, texture.getColor());
+          break;
+        case Texture::Type::Buffer:
+          Logger::trace("Texture2D #%u destroyed buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
+          break;
+        default:
+          GAME_UNREACHABLE("unknown texture type!");
+      }
+    }
+    inline static void clear() {
+      GAME_PROFILE_FUNCTION();
+      cachedImageTexture2D.clear();
+      cachedColorTexture2D.clear();
+    }
+  };
+
+  Texture2D::Builder& Texture2D::Builder::format(Texture::Format internalFormat) {
+    mSpecification.internalFormat = internalFormat;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::wrapping(Texture::WrappingMode mode) {
+    mSpecification.wrapping = mode;
+    return *this; 
+  }
+  Texture2D::Builder& Texture2D::Builder::filtering(Texture::Filtering filtering) {
+    mSpecification.filtering = filtering;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::mipmap(Texture::MipmapMode mode) {
+    mSpecification.mipmap = mode;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::verticalFlipOnLoad(bool yes) {
+    mSpecification.verticalFlip = yes;
+    return *this;
+  }
+  Texture2D::Builder& Texture2D::Builder::gammaCorrected(bool yes) {
+    mSpecification.gammaCorrected = yes;
+    return *this;
+  }
+  Texture2D::Handle Texture2D::Builder::build() {
     GAME_PROFILE_FUNCTION();
 
-    GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
-    GLenum internalFormat = 0, dataFormat = 0;
-    if (channels == 4) {
-      internalFormat = GL_RGBA8;
-      dataFormat = GL_RGBA;
-    } else if (channels == 3) {
-      internalFormat = GL_RGB8;
-      dataFormat = GL_RGB;
+    String filepath = String(mFile);
+    switch (mType) {
+      case Texture::Type::Color:
+        if (cachedColorTexture2D.contains(mColor)) {
+          return cachedColorTexture2D.at(mColor);
+        }
+        break;
+      case Texture::Type::Buffer:
+        break;
+      case Texture::Type::Image:
+        if (cachedImageTexture2D.contains(filepath)) {
+          return cachedImageTexture2D.at(filepath);
+        }
+        break;
+      default:
+        GAME_UNREACHABLE("unknown texture type!");
     }
 
-    if (specification.gammaCorrected) {
-      if (internalFormat == GL_RGBA8) {
-        internalFormat = GL_SRGB8_ALPHA8;
-      } else if (internalFormat == GL_RGB8) {
-        internalFormat = GL_SRGB8;
+    mSpecification.type = mType;
+
+    if (mType == Texture::Type::Image) {
+      stbi_set_flip_vertically_on_load(mSpecification.verticalFlip);
+
+      int width, height, channels;
+      stbi_uc* bytes = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+
+      if (!bytes) {
+        Logger::error("Couldn't load image file '%s'", filepath.c_str());
+        return {};
+      }
+
+      mWidth  = width;
+      mHeight = height;
+      mData   = bytes;
+      mDataType = Texture::DataType::UnsignedByte;
+
+      GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
+      if (channels == 4) {
+        mDataFormat = Texture::DataFormat::Rgba;
+      } else if (channels == 3) {
+        mDataFormat = Texture::DataFormat::Rgb;
       }
     }
 
-    GAME_ASSERT_WITH_MESSAGE(internalFormat && dataFormat, "Format not supported!");
+    GAME_ASSERT(mWidth != 0 || mHeight != 0);
 
-    auto repeat    = TextureWrappingToOpenGL(specification.wrapping);
-    auto magFilter = TextureFilteringToOpenGL(specification.filtering.mag);
-    auto minFilter = TextureFilteringMipmapToOpenGL(specification.filtering.min, specification.mipmap);
+    if (mSpecification.gammaCorrected) {
+      if (mSpecification.internalFormat == Texture::Format::Rgba8) {
+        mSpecification.internalFormat = Texture::Format::Srgb8Alpha8;
+      } else if (mSpecification.internalFormat == Texture::Format::Rgb8) {
+        mSpecification.internalFormat = Texture::Format::Srgb8;
+      }
+    }
+
+    auto dataType       = TextureDataTypeToOpenGL(mDataType);
+    auto dataFormat     = TextureDataFormatToOpenGL(mDataFormat);
+    auto internalFormat = TextureInternalFormatToOpenGL(mSpecification.internalFormat);
+    auto wrapping       = TextureWrappingToOpenGL(mSpecification.wrapping);
+    auto magFilter      = TextureFilteringToOpenGL(mSpecification.filtering.mag);
+    auto minFilter      = TextureFilteringMipmapToOpenGL(mSpecification.filtering.min, mSpecification.mipmap);
 
     u32 texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
+
     // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, bytes);
+    u8 colorBytes[4];
+    switch (mType) {
+      case Texture::Type::Color: {
+        colorBytes[3] = (mColor >> 0)  & 0xFF;
+        colorBytes[2] = (mColor >> 8)  & 0xFF;
+        colorBytes[1] = (mColor >> 16) & 0xFF;
+        colorBytes[0] = (mColor >> 24) & 0xFF;
+        mData = colorBytes;
+        break;
+      }
+      case Texture::Type::Buffer:
+        break;
+      case Texture::Type::Image:
+        break;
+      default:
+        GAME_UNREACHABLE("unknown texture type!");
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, dataFormat, dataType, mData);
+
+    if (mSpecification.mipmap != Texture::MipmapMode::None) {
+      glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
+    if (mType == Texture::Type::Image) {
+      stbi_image_free((stbi_uc*)mData);
+    }
+
+    auto data = Data{texture, mWidth, mHeight, mSpecification};
+    data.color = mColor;
+    data.type = mType;
+    data.filePath = filepath;
+    auto handle = texture2DFactory.emplace(std::move(data));
+    switch (mType) {
+      case Texture::Type::Color:
+        cachedColorTexture2D.emplace(mColor, handle);
+        break;
+      case Texture::Type::Buffer:
+        break;
+      case Texture::Type::Image:
+        cachedImageTexture2D.emplace(std::move(filepath), handle);
+        break;
+      default:
+        GAME_UNREACHABLE("unknown texture type!");
+    }
+    return handle;
+  }
+
+  void Texture2D::destroyAllTextures() {
+    GAME_PROFILE_FUNCTION();
+    cachedImageTexture2D.clear();
+    cachedColorTexture2D.clear();
+    texture2DFactory.clear();
+  }
+
+  void Texture2D::reloadAll() {
+    GAME_PROFILE_FUNCTION();
+
+    GAME_TODO("not implemented yet!");
+  }
+
+  Texture2D::Data Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Specification specification) {
+    GAME_PROFILE_FUNCTION();
+
+    GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
+    GLenum dataFormat = 0;
+    if (channels == 4) {
+      dataFormat = GL_RGBA;
+    } else if (channels == 3) {
+      dataFormat = GL_RGB;
+    }
+
+    if (specification.gammaCorrected) {
+      if (specification.internalFormat == Texture::Format::Rgba8) {
+        specification.internalFormat = Texture::Format::Srgb8Alpha8;
+      } else if (specification.internalFormat == Texture::Format::Rgb8) {
+        specification.internalFormat = Texture::Format::Srgb8;
+      }
+    }
+
+    auto dataType       = TextureDataTypeToOpenGL(Texture::DataType::UnsignedByte);
+    // auto dataFormat  = TextureDataFormatToOpenGL(mDataFormat);
+    auto internalFormat = TextureInternalFormatToOpenGL(specification.internalFormat);
+    auto wrapping       = TextureWrappingToOpenGL(specification.wrapping);
+    auto magFilter      = TextureFilteringToOpenGL(specification.filtering.mag);
+    auto minFilter      = TextureFilteringMipmapToOpenGL(specification.filtering.min, specification.mipmap);
+
+    u32 texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, dataType, bytes);
     if (specification.mipmap != Texture::MipmapMode::None) {
       glGenerateMipmap(GL_TEXTURE_2D);
     }
@@ -243,33 +352,18 @@ namespace Game {
     return Data{texture, width, height, specification};
   }
 
-  Texture2D::Handle Texture2D::color(u32 color) {
+  Texture2D::Builder Texture2D::color(u32 color) {
     GAME_PROFILE_FUNCTION();
-
-    if (cachedColorTexture2D.contains(color)) {
-      return cachedColorTexture2D.at(color);
-    }
-
-    Texture2D::Specification specification;
-    specification.mipmap = Texture::MipmapMode::None;
-    specification.filtering = Texture::FilteringMode::Nearest;
-
-    u8 a = (color >> 0 ) & 0xFF;
-    u8 b = (color >> 8 ) & 0xFF;
-    u8 g = (color >> 16) & 0xFF;
-    u8 r = (color >> 24) & 0xFF;
-
-    const u8 bytes[] = {r, g, b, a};
-    auto data = Texture2D::fromBytes(bytes, 1, 1, 4, specification);
-    data.type  = Texture::Type::Color;
-    data.color = color;
-
-    auto result = texture2DFactory.emplace(std::move(data));
-    cachedColorTexture2D.emplace(color, result);
-    return result;
+    Builder builder;
+    builder.mType = Texture::Type::Color;
+    builder.mColor = color;
+    builder.mSpecification.mipmap = Texture::MipmapMode::None;
+    builder.mSpecification.filtering.min = Texture::FilteringMode::Nearest;
+    builder.mSpecification.filtering.mag = Texture::FilteringMode::Nearest;
+    return builder;
   }
 
-  Texture2D::Handle Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
+  Texture2D::Builder Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
     GAME_PROFILE_FUNCTION();
 
     u32 color =  r; color <<= 8;
@@ -280,63 +374,52 @@ namespace Game {
     return Texture2D::color(color);
   }
 
-  Texture2D::Handle Texture2D::buffer(u32 width, u32 height, Specification specification) {
-    auto data = Texture2D::fromBytes(nullptr, width, height, 3, specification);
-    data.type = Texture::Type::Buffer;
-    return texture2DFactory.emplace(std::move(data));
+  Texture2D::Builder Texture2D::buffer(u32 width, u32 height) {
+    Builder builder;
+    builder.mType = Texture::Type::Buffer;
+    builder.mWidth = width;
+    builder.mHeight = height;
+    return builder;
   }
 
-  Texture2D::Handle Texture2D::load(const String& path, Specification specification) {
-    GAME_PROFILE_FUNCTION();
+  Texture2D::Builder Texture2D::buffer(const void* inData, u32 width, u32 height, Texture::DataFormat dataFormat, Texture::DataType dataType) {
+    Builder builder;
+    builder.mType = Texture::Type::Buffer;
+    builder.mData = inData;
+    builder.mWidth = width;
+    builder.mHeight = height;
+    builder.mDataFormat = dataFormat;
+    builder.mDataType = dataType;
+    return builder;
+  }
 
-    if (cachedImageTexture2D.contains(path)) {
-      return cachedImageTexture2D.at(path);
-    }
-
-    stbi_set_flip_vertically_on_load(specification.verticalFlip == Texture::VerticalFlip::True);
-
-    auto filepath = "assets/textures/" + String(path);
-
-    int width, height, channels;
-    stbi_uc* bytes = stbi_load(filepath.data(), &width, &height, &channels, 0);
-        
-    if (!bytes) {
-      Logger::error("Couldn't load image file '%s'", filepath.data());
-      return {};
-    }
-
-    auto data = Texture2D::fromBytes(bytes, width, height, channels, specification);
-    data.type     = Texture::Type::Image;
-    data.filePath = path;
-
-    stbi_image_free(bytes);
-    
-    auto result = texture2DFactory.emplace(data);
-    cachedImageTexture2D.emplace(String(path), result);
-    return result;
+  Texture2D::Builder Texture2D::load(const String& path, bool verticalFlipOnLoad) {
+    Builder builder;
+    builder.mType = Texture::Type::Image;
+    builder.mFile = path;
+    builder.mSpecification.verticalFlip = verticalFlipOnLoad;
+    return builder;
   }
 
   Texture2D::Handle Texture2D::generateMissingDataPlaceholder() {
     GAME_PROFILE_FUNCTION();
 
-    Texture2D::Specification specification;
-    specification.filtering.mag = Texture::FilteringMode::Nearest;
-    specification.filtering.min = Texture::FilteringMode::Linear;
-    specification.mipmap        = Texture::MipmapMode::Linear;
-
-    return texture2DFactory.emplace(Texture2D::fromBytes(defaultTextureData, 2, 2, 4, specification));
+    return Texture2D::buffer(defaultTextureData, 2, 2, Texture::DataFormat::Rgba, Texture::DataType::UnsignedByte)
+      .filtering({Texture::FilteringMode::Nearest, Texture::FilteringMode::Nearest})
+      .mipmap(Texture::MipmapMode::None)
+      .build();
   }
 
   bool Texture2D::reload() {
     GAME_PROFILE_FUNCTION();
 
-    if (!mData.filePath.has_value()) {
+    if (mData.type != Texture::Type::Image) {
       return true;
     }
 
-    stbi_set_flip_vertically_on_load(mData.specification.verticalFlip == Texture::VerticalFlip::True);
+    stbi_set_flip_vertically_on_load(mData.specification.verticalFlip);
     int width, height, channels;
-    auto file = "assets/textures/" + *mData.filePath;
+    auto file = *mData.filePath;
     u8* bytes = stbi_load(mData.filePath->c_str(), &width, &height, &channels, 0);
 
     if (!bytes) {
@@ -397,7 +480,7 @@ namespace Game {
     int width, height, nrChannels;
     for (u32 i = 0; i < paths.size(); ++i) {
       stbi_set_flip_vertically_on_load(false);
-      auto path = "assets/textures/" + paths[i];
+      auto path = paths[i];
       u8* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
       if (data) {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

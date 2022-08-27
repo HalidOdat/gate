@@ -150,7 +150,7 @@ namespace Game {
   }
 
   Shader::Handle Shader::load(const StringView& path) {
-    auto filepath = "assets/shaders/" + String(path);
+    auto filepath = String(path);
     
     auto parts = parse(filepath);
     if (parts.empty()) {

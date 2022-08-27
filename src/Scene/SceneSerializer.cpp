@@ -213,7 +213,8 @@ namespace Game {
           return false;
         }
         // TODO: decode Texture2D specification
-        texture = Texture2D::load(*path->asString());
+        texture = Texture2D::load(*path->asString())
+          .build();
         return true;
       }
     };
@@ -387,7 +388,7 @@ namespace Game {
   bool SceneSerializer::deserializeFromFile(const StringView& file, Scene& scene) {
     GAME_PROFILE_FUNCTION();
     
-    auto filePath = "assets/scenes/" + String(file);
+    auto filePath = String(file);
     auto source = Utils::fileToString(filePath);
     if (!source) {
       Logger::error("Scene serializer: Couldn't open scene file: %s", filePath.c_str());

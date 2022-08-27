@@ -6,13 +6,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "shininess": 32.000000,
             "transparancy": 1.000000
@@ -44,13 +44,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "transparancy": 1.000000,
             "shininess": 32.000000
@@ -66,13 +66,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "shininess": 32.000000,
             "transparancy": 1.000000
@@ -104,13 +104,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "transparancy": 1.000000,
             "shininess": 32.000000
@@ -126,13 +126,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "shininess": 32.000000,
             "transparancy": 1.000000
@@ -156,13 +156,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "shininess": 32.000000,
             "transparancy": 1.000000
@@ -194,13 +194,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "transparancy": 1.000000,
             "shininess": 32.000000
@@ -224,13 +224,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "transparancy": 1.000000,
             "shininess": 32.000000
@@ -254,13 +254,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "transparancy": 1.000000,
             "shininess": 32.000000
@@ -276,13 +276,13 @@
         "MeshRendererComponent": {
           "material": {
             "diffuseMap": {
-              "path": "CrateDiffuse.png"
+              "path": "assets/textures/CrateDiffuse.png"
             },
             "specularMap": {
-              "path": "CrateSpecular.png"
+              "path": "assets/textures/CrateSpecular.png"
             },
             "emissionMap": {
-              "path": "matrix.jpg"
+              "path": "assets/textures/matrix.jpg"
             },
             "shininess": 32.000000,
             "transparancy": 1.000000

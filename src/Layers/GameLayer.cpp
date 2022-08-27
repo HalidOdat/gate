@@ -17,7 +17,7 @@ namespace Game {
 
   GameLayer::GameLayer()
   : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
-    mShader{Shader::load("SpotLight.glsl")},
+    mShader{Shader::load("asserts/shaders/SpotLight.glsl")},
     mCubeMesh{Mesh::cube()},
     mScene{new Scene("Scene")}
   {}
@@ -25,9 +25,9 @@ namespace Game {
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
 
-    mMaterial.diffuseMap  = Texture2D::load("CrateDiffuse.png");
-    mMaterial.specularMap = Texture2D::load("CrateSpecular.png");
-    mMaterial.emissionMap = Texture2D::load("matrix.jpg");
+    mMaterial.diffuseMap  = Texture2D::load("assets/textures/CrateDiffuse.png").build();
+    mMaterial.specularMap = Texture2D::load("assets/textures/CrateSpecular.png").build();
+    mMaterial.emissionMap = Texture2D::load("assets/textures/matrix.jpg").build();
     mMaterial.shininess   = 32.0f;
 
     static Vec3 cubePositions[] = {

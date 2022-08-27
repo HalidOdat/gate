@@ -29,7 +29,7 @@ namespace Game {
     mEditorScene.reset(new Scene("New Scene"));
     mActiveScene = mEditorScene;
 
-    const auto scenePath = "default.scene.json";
+    const auto scenePath = "assets/scenes/default.scene.json";
 
     if (!SceneSerializer::deserializeFromFile(scenePath, *mEditorScene)) {
       Logger::error("Editor: Couldn't deserialize scene from file");

@@ -116,7 +116,7 @@ namespace Game {
   Mesh::Handle Mesh::load(const std::string& filepath) {
     GAME_PROFILE_FUNCTION();
 
-    auto file = "assets/objects/" + String(filepath);
+    auto file = filepath;
     auto source = fileToString(file);
     if (!source) {
       return {};

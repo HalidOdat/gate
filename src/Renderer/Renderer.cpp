@@ -46,7 +46,7 @@ namespace Game {
     static constexpr const u32 VERTICES_COUNT   = 4;
     static constexpr const u32 INDICES_COUNT    = 6;
     
-    static constexpr const auto SHADER_PATH = "renderer/Quad.glsl";
+    static constexpr const auto SHADER_PATH = "assets/shaders/renderer/Quad.glsl";
 
     struct Vertex {
       Vec3 position;
@@ -176,16 +176,16 @@ namespace Game {
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
 
-    auto whiteTexture = Texture2D::color(0xFF, 0xFF, 0xFF);
+    auto whiteTexture = Texture2D::color(0xFF, 0xFF, 0xFF).build();
 
     auto vertexArray = VertexArray::create();
     auto vertexBuffer = VertexBuffer::builder()
       .size(QuadBatch::VERTEX_BUFFER_BYTE_SIZE)
+      .storage(Buffer::StorageType::Dynamic)
       .layout(BufferElement::Type::Float3, "position")
       .layout(BufferElement::Type::Float4, "color")
       .layout(BufferElement::Type::Float2, "texture")
       .layout(BufferElement::Type::Uint, "texIndex")
-      .storage(Buffer::StorageType::Dynamic)
       .build();
     vertexArray->addVertexBuffer(vertexBuffer);
 
@@ -219,8 +219,7 @@ namespace Game {
 
     auto quad = QuadBatch(vertexArray, vertexBuffer, shader, whiteTexture);
 
-    auto fontTexture = Texture2D::builder()
-      .load("PixelFont_7x9_112x54.png")
+    auto fontTexture = Texture2D::load("assets/textures/PixelFont_7x9_112x54.png")
       .filtering(Texture::FilteringMode::Nearest)
       .mipmap(Texture::MipmapMode::None)
       .build();
@@ -233,7 +232,7 @@ namespace Game {
     GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
     GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
 
-    auto postProcesingShader = Shader::load("PostProcessing.glsl");
+    auto postProcesingShader = Shader::load("assets/shaders/PostProcessing.glsl");
     renderer = new RendererData{
       Mat4(1.0f),
       Mat4(1.0f),
@@ -292,12 +291,12 @@ namespace Game {
     renderer->pipeline.quadVertexArray = quadVertexArray;
 
     renderer->pipeline.skyboxTexture = CubeMap::load({
-      "skybox/right.jpg",
-      "skybox/left.jpg",
-      "skybox/top.jpg",
-      "skybox/bottom.jpg",
-      "skybox/front.jpg",
-      "skybox/back.jpg",
+      "assets/textures/skybox/right.jpg",
+      "assets/textures/skybox/left.jpg",
+      "assets/textures/skybox/top.jpg",
+      "assets/textures/skybox/bottom.jpg",
+      "assets/textures/skybox/front.jpg",
+      "assets/textures/skybox/back.jpg",
     });
 
     static const f32 skyboxVertices[] = {
@@ -354,12 +353,12 @@ namespace Game {
     skyboxVertexArray->unbind();
     renderer->pipeline.skyboxVertexArray = skyboxVertexArray;
 
-    renderer->pipeline.skyboxShader = Shader::load("Skybox.glsl");
-    renderer->pipeline.shader = Shader::load("SpotLight.glsl");
+    renderer->pipeline.skyboxShader = Shader::load("assets/shaders/Skybox.glsl");
+    renderer->pipeline.shader = Shader::load("assets/shaders/SpotLight.glsl");
 
     renderer->environment.defaultDiffuseMap  = whiteTexture;
-    renderer->environment.defaultSpecularMap = Texture2D::color(0x00'00'00'FF);
-    renderer->environment.defaultEmissionMap = Texture2D::color(128, 128, 128);
+    renderer->environment.defaultSpecularMap = Texture2D::color(0x00'00'00'FF).build();
+    renderer->environment.defaultEmissionMap = Texture2D::color(128, 128, 128).build();
   }
 
   void Renderer::shutdown() {
