@@ -17,7 +17,7 @@ namespace Game {
 
   GameLayer::GameLayer()
   : mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio()),
-    mShader{Shader::load("asserts/shaders/SpotLight.glsl")},
+    mShader{Shader::load("asserts/shaders/SpotLight.glsl").build()},
     mCubeMesh{Mesh::cube()},
     mScene{new Scene("Scene")}
   {}

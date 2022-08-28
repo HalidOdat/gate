@@ -16,6 +16,17 @@ namespace Game {
 
   GAME_FACTORY_IMPLEMENTATION(Shader, factory)
 
+  std::unordered_map<String, String> Shader::sGlobalDefines;
+
+  bool Shader::globalDefine(String name, String content) {
+    bool replaced = false;
+    if (sGlobalDefines.contains(name)) {
+      replaced = true;
+    }
+    sGlobalDefines.insert_or_assign(std::move(name), std::move(content));
+    return replaced;
+  }
+
   static u32 shaderTypeToOpenGLType(Shader::Type type) {
     switch (type) {
       case Shader::Type::Vertex:   return GL_VERTEX_SHADER;
@@ -34,6 +45,13 @@ namespace Game {
     GAME_UNREACHABLE("unknown shader type!");
   }
 
+  static const char* shaderVersionToStringDirectiveAndVersionMacros(Shader::Version version) {
+    switch (version) {
+      case Shader::Version::Es300: return "#version 300 es\n";
+    }
+    GAME_UNREACHABLE("unknown shader version!");
+  }
+
   static std::optional<Shader::Type> stringToShaderType(const StringView& string) {
     if (Utils::stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Vertex))) {
       return Shader::Type::Vertex;
@@ -46,13 +64,35 @@ namespace Game {
     return std::nullopt;
   }
 
-  static std::vector<std::pair<Shader::Type, std::string>> parse(const StringView& filename) {
+  static std::vector<std::pair<Shader::Type, std::string>> parse(
+    const StringView& filename,
+    Shader::Version version,
+    const std::unordered_map<String, String>& definitions,
+    const std::unordered_map<String, String>& globalDefines
+  ) {
     Logger::info("Shader: %s", filename.data());
     const StringView typeDelimiter = "@type ";
 
     std::vector<std::pair<Shader::Type, std::string>> result;
 
     std::optional<std::string> common = std::nullopt;
+
+    String stringDefinitions;
+    for (auto&[name, content] : globalDefines) {
+      stringDefinitions += "#define ";
+      stringDefinitions += name;
+      stringDefinitions += ' ';
+      stringDefinitions += content;
+      stringDefinitions += '\n';
+    }
+
+    for (auto&[name, content] : definitions) {
+      stringDefinitions += "#define ";
+      stringDefinitions += name;
+      stringDefinitions += ' ';
+      stringDefinitions += content;
+      stringDefinitions += '\n';
+    }
 
     std::ifstream file;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -67,7 +107,7 @@ namespace Game {
       for (std::string line; std::getline(stream, line); ) {
         if (line.starts_with(typeDelimiter)) {
           if (!common) {
-            common = content + '\n';
+            common = String(shaderVersionToStringDirectiveAndVersionMacros(version)) + '\n' + stringDefinitions + content + '\n';
           } else {
             auto shaderType = stringToShaderType(type);
             if (!shaderType) {
@@ -131,28 +171,20 @@ namespace Game {
     return result;
   }
 
-  u32 Shader::compile(Type type, const char* source) noexcept {
-    u32 id = glCreateShader(shaderTypeToOpenGLType(type));
-    glShaderSource(id, 1, &source, NULL);
-    glCompileShader(id);
-
-    // check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(id, 512, NULL, infoLog);
-        Logger::error("%s Shader Compilation:\n%s\n", shaderTypeToString(type), infoLog);
-        return NULL_SHADER;
-    }
-
-    return id;
+  Shader::Builder& Shader::Builder::version(Shader::Version version) {
+    mVersion = version;
+    return *this;
+  }
+  Shader::Builder& Shader::Builder::define(String name, String content) {
+    // TODO: check for valid name
+    mDefinitions.insert_or_assign(name, std::move(content));
+    return *this;
   }
 
-  Shader::Handle Shader::load(const StringView& path) {
-    auto filepath = String(path);
+  Shader::Handle Shader::Builder::build() {
+    auto filepath = String(mFilePath);
     
-    auto parts = parse(filepath);
+    auto parts = parse(filepath, mVersion, mDefinitions, sGlobalDefines);
     if (parts.empty()) {
       return {};
     }
@@ -209,6 +241,30 @@ namespace Game {
     return factory.emplace(shaderProgram, String(filepath));
   }
 
+  u32 Shader::compile(Type type, const char* source) noexcept {
+    u32 id = glCreateShader(shaderTypeToOpenGLType(type));
+    glShaderSource(id, 1, &source, NULL);
+    glCompileShader(id);
+
+    // check for shader compile errors
+    int success;
+    char infoLog[512];
+    glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(id, 512, NULL, infoLog);
+        Logger::error("%s Shader Compilation:\n%s\n", shaderTypeToString(type), infoLog);
+        return NULL_SHADER;
+    }
+
+    return id;
+  }
+
+  Shader::Builder Shader::load(const StringView& path) {
+    Builder builder;
+    builder.mFilePath = path;
+    return builder;
+  }
+
   Shader::~Shader() {
     glDeleteProgram(id);
   }
@@ -220,7 +276,7 @@ namespace Game {
     
     GAME_TODO("");
 
-    auto data = Shader::load(*mFilePath);
+    auto data = Shader::load(*mFilePath).build();
     if (data) {
       Logger::trace("Reloaded shader: %s", mFilePath.value().c_str());
 

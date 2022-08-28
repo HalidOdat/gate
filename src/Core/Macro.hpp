@@ -11,7 +11,7 @@
 
 #define GAME_DEBUG_MODE _DEBUG
 
-#define GAME_ASSERT_IMPL(type, cond, sep, msg) do { if (!(cond)) { fprintf(stderr, "%s:%d: " type " Failed '%s'%s%s\n", __FILE__, __LINE__, #cond, sep, msg); std::exit(1); } } while(false)
+#define GAME_ASSERT_IMPL(type, cond, sep, msg) do { if (!(cond)) { fprintf(stderr, "%s:%d: " type " Failed '%s'%s%s\n", __FILE__, __LINE__, #cond, sep, msg); fflush(stdout); fflush(stderr); std::exit(1); } } while(false)
 
 #if GAME_DEBUG_MODE
 # define GAME_DEBUG_ASSERT(cond)                   GAME_ASSERT_IMPL("Debug Assert", cond, "", "")

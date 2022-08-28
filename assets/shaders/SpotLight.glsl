@@ -1,9 +1,3 @@
-#version 300 es
-
-precision mediump float;
-precision lowp sampler2D;
-precision lowp samplerCube;
-
 @type vertex
 
 layout (location = 0) in vec3 aPosition;
@@ -29,6 +23,8 @@ void main() {
 }
 
 @type fragment
+
+precision mediump float;
 
 struct Material {
   sampler2D diffuse;

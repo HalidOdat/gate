@@ -58,29 +58,68 @@ namespace Game {
 
   static GLenum TextureDataTypeToOpenGL(Texture::DataType format) {
     switch (format) {
-      case Texture::DataType::UnsignedByte: return GL_UNSIGNED_BYTE;
+      case Texture::DataType::UnsignedByte:     return GL_UNSIGNED_BYTE;
+      case Texture::DataType::Float:            return GL_FLOAT;
+      case Texture::DataType::HalfFloat:        return GL_HALF_FLOAT;
+      case Texture::DataType::UnsignedInt_24_8: return GL_UNSIGNED_INT_24_8;
     }
     GAME_UNREACHABLE("unknown data type type!");
   }
 
   static GLenum TextureDataFormatToOpenGL(Texture::DataFormat format) {
     switch (format) {
-      case Texture::DataFormat::Red:  return GL_RED;
-      case Texture::DataFormat::Rg:   return GL_RG;
-      case Texture::DataFormat::Rgb:  return GL_RGB;
-      case Texture::DataFormat::Bgr:  return GL_BGR;
-      case Texture::DataFormat::Rgba: return GL_RGBA;
-      case Texture::DataFormat::Bgra: return GL_BGRA;
+      case Texture::DataFormat::Red:          return GL_RED;
+      case Texture::DataFormat::Rg:           return GL_RG;
+      case Texture::DataFormat::Rgb:          return GL_RGB;
+      case Texture::DataFormat::Bgr:          return GL_BGR;
+      case Texture::DataFormat::Rgba:         return GL_RGBA;
+      case Texture::DataFormat::Bgra:         return GL_BGRA;
+      case Texture::DataFormat::DepthStencil: return GL_DEPTH_STENCIL;
     }
     GAME_UNREACHABLE("unknown data format type!");
   }
 
   static GLenum TextureInternalFormatToOpenGL(Texture::Format format) {
     switch (format) {
-      case Texture::Format::Rgb8:        return GL_RGB8;
-      case Texture::Format::Rgba8:       return GL_RGBA8;
-      case Texture::Format::Srgb8:       return GL_SRGB8;
-      case Texture::Format::Srgb8Alpha8: return GL_SRGB8_ALPHA8;
+      case Texture::Format::Rgb8:            return GL_RGB8;
+      case Texture::Format::Rgba8:           return GL_RGBA8;
+      case Texture::Format::Srgb8:           return GL_SRGB8;
+      case Texture::Format::Srgb8Alpha8:     return GL_SRGB8_ALPHA8;
+      case Texture::Format::Rgb32F:          return GL_RGB32F;
+      case Texture::Format::Rgb16F:          return GL_RGB16F;
+      case Texture::Format::Rgba32F:         return GL_RGBA32F;
+      case Texture::Format::Rgba16F:         return GL_RGBA16F;
+      case Texture::Format::Depth24Stencil8: return GL_DEPTH24_STENCIL8;
+    }
+    GAME_UNREACHABLE("unknown internal format type!");
+  }
+
+  static Texture::DataFormat TextureBaseDataFormatOfInternalFomat(Texture::Format format) {
+    switch (format) {
+      case Texture::Format::Rgb8:            return Texture::DataFormat::Rgb;
+      case Texture::Format::Rgba8:           return Texture::DataFormat::Rgba;
+      case Texture::Format::Srgb8:           return Texture::DataFormat::Rgb;
+      case Texture::Format::Srgb8Alpha8:     return Texture::DataFormat::Rgba;
+      case Texture::Format::Rgb32F:          return Texture::DataFormat::Rgb;
+      case Texture::Format::Rgb16F:          return Texture::DataFormat::Rgb;
+      case Texture::Format::Rgba32F:         return Texture::DataFormat::Rgba;
+      case Texture::Format::Rgba16F:         return Texture::DataFormat::Rgba;
+      case Texture::Format::Depth24Stencil8: return Texture::DataFormat::DepthStencil;
+    }
+    GAME_UNREACHABLE("unknown internal format type!");
+  }
+
+  static Texture::DataType TextureDataTypeOfInternalFomat(Texture::Format format) {
+    switch (format) {
+      case Texture::Format::Rgb8:            return Texture::DataType::UnsignedByte;
+      case Texture::Format::Rgba8:           return Texture::DataType::UnsignedByte;
+      case Texture::Format::Srgb8:           return Texture::DataType::UnsignedByte;
+      case Texture::Format::Srgb8Alpha8:     return Texture::DataType::UnsignedByte;
+      case Texture::Format::Rgb32F:          return Texture::DataType::Float;
+      case Texture::Format::Rgb16F:          return Texture::DataType::HalfFloat;
+      case Texture::Format::Rgba32F:         return Texture::DataType::Float;
+      case Texture::Format::Rgba16F:         return Texture::DataType::HalfFloat;
+      case Texture::Format::Depth24Stencil8: return Texture::DataType::UnsignedInt_24_8;
     }
     GAME_UNREACHABLE("unknown internal format type!");
   }
@@ -184,6 +223,10 @@ namespace Game {
         }
         break;
       case Texture::Type::Buffer:
+        if (!mData) {
+          mDataType   = TextureDataTypeOfInternalFomat(mSpecification.internalFormat);
+          mDataFormat = TextureBaseDataFormatOfInternalFomat(mSpecification.internalFormat);
+        }
         break;
       case Texture::Type::Image:
         if (cachedImageTexture2D.contains(filepath)) {
@@ -482,11 +525,12 @@ namespace Game {
       stbi_set_flip_vertically_on_load(false);
       auto path = paths[i];
       u8* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+
       if (data) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
       } else {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, defaultTextureData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB8_ALPHA8, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, defaultTextureData);
       }
     }
 

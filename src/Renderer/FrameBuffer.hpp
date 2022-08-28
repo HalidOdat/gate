@@ -25,13 +25,7 @@ namespace Game {
         RenderBuffer,
       };
 
-      enum class Format : u8 {
-        RGB8,
-        DefaultColor = RGB8,
-
-        Depth24Stencil8,
-        DefaultDepthStencil = Depth24Stencil8,
-      };
+      using Format = Texture::Format;
 
       Type type;
       Format format;
@@ -86,8 +80,9 @@ namespace Game {
     void clear();
     void clear(FrameBuffer::Clear clear);
 
-    // TODO: return a Texture2D
-    inline const Texture2D::Handle& getColorAttachment() const { return mColorAttachments[0]; }
+    inline const Texture2D::Handle& getColorAttachment(u32 index = 0) const {
+      return mColorAttachments[index];
+    }
 
   private:
     static FrameBuffer::Handle create(Builder& builder);
@@ -100,6 +95,7 @@ namespace Game {
     FrameBuffer::Clear mClear;
     Vec4 mClearColor;
 
+    std::vector<Attachment> mAttachmentsSpecification;
     std::vector<Texture2D::Handle> mColorAttachments;
     u32 mDepthStencilAttachment;
 

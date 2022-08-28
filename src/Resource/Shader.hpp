@@ -3,6 +3,8 @@
 #include "Core/Math.hpp"
 #include "Resource/Resource.hpp"
 
+#include <unordered_map>
+
 namespace Game {
 
   // TODO: shader specification of definitions
@@ -16,13 +18,36 @@ namespace Game {
       Compute,
     };
 
+    enum Version {
+      Es300
+    };
+
     using Handle = Resource<Shader>;
+
+    class Builder {
+    public:
+      Builder& version(Shader::Version version);
+      Builder& define(String name, String content = "");
+      Shader::Handle build();
+
+    private:
+      Builder() = default;
+
+    private:
+      StringView mFilePath;
+      Version mVersion = Version::Es300;
+      std::unordered_map<String, String> mDefinitions;
+
+      friend class Shader;
+    };
   
   public:
     static constexpr const u32 SHADER_TYPE_COUNT = 3;
 
   public:
-    static Shader::Handle load(const StringView& filepath);
+    static bool globalDefine(String name, String content);
+
+    static Shader::Builder load(const StringView& filepath);
     DISALLOW_MOVE_AND_COPY(Shader);
     ~Shader();
 
@@ -54,10 +79,14 @@ namespace Game {
     [[nodiscard]] static u32 compile(Type type, const char* source) noexcept;
 
   private:
+    static std::unordered_map<String, String> sGlobalDefines;
+
+  private:
     u32 id;
     Option<String> mFilePath;
 
   private:
+    friend class Builder;
     template<typename T>
     friend class ResourceFactory;
   };

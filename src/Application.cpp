@@ -41,6 +41,10 @@ namespace Game {
       std::exit(EXIT_FAILURE);
     }
 
+    #ifdef GAME_PLATFORM_WEB
+      Shader::globalDefine("WEB_GL", "1");
+    #endif
+
     ResourceManager::initialize();
     Renderer::initialize();
 
@@ -100,13 +104,13 @@ namespace Game {
       this->window->setVSync(true);
     #endif
 
-  #if GAME_PLATFORM_WEB
-    emscripten_set_main_loop(Application::gameLoop, 0, 1);
-#else
-    while (running) {
-      Application::gameLoop();
-    }
-#endif
+    #if GAME_PLATFORM_WEB
+      emscripten_set_main_loop(Application::gameLoop, 0, 1);
+    #else
+      while (running) {
+        Application::gameLoop();
+      }
+    #endif
   }
 
   void Application::quit() {

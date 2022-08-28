@@ -208,7 +208,8 @@ namespace Game {
     vertexArray->setIndexBuffer(indexBuffer);
     vertexArray->unbind();
 
-    auto shader = Shader::load(QuadBatch::SHADER_PATH);
+    auto shader = Shader::load(QuadBatch::SHADER_PATH)
+      .build();
 
     i32 samples[QuadBatch::MAX_TEXTURES];
     for (u32 i = 0; i < QuadBatch::MAX_TEXTURES; ++i) {
@@ -232,7 +233,9 @@ namespace Game {
     GAME_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
     GAME_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
 
-    auto postProcesingShader = Shader::load("assets/shaders/PostProcessing.glsl");
+    auto postProcesingShader = Shader::load("assets/shaders/PostProcessing.glsl")
+      .build();
+
     renderer = new RendererData{
       Mat4(1.0f),
       Mat4(1.0f),
@@ -263,7 +266,7 @@ namespace Game {
       .clearOnBind(true)
       .attach(
         FrameBuffer::Attachment::Type::Texture2D,
-        FrameBuffer::Attachment::Format::RGB8
+        FrameBuffer::Attachment::Format::Rgba16F
       )
       .attachDefaultDepthStencilBuffer()
       .build();
@@ -353,8 +356,8 @@ namespace Game {
     skyboxVertexArray->unbind();
     renderer->pipeline.skyboxVertexArray = skyboxVertexArray;
 
-    renderer->pipeline.skyboxShader = Shader::load("assets/shaders/Skybox.glsl");
-    renderer->pipeline.shader = Shader::load("assets/shaders/SpotLight.glsl");
+    renderer->pipeline.skyboxShader = Shader::load("assets/shaders/Skybox.glsl").build();
+    renderer->pipeline.shader = Shader::load("assets/shaders/SpotLight.glsl").build();
 
     renderer->environment.defaultDiffuseMap  = whiteTexture;
     renderer->environment.defaultSpecularMap = Texture2D::color(0x00'00'00'FF).build();
@@ -515,6 +518,11 @@ namespace Game {
     //  glDisable(GL_DEPTH_TEST);
 
     // Second Pass
+
+    #ifndef GAME_PLATFORM_WEB
+      glEnable(GL_FRAMEBUFFER_SRGB);
+    #endif
+
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -526,6 +534,10 @@ namespace Game {
     renderer->pipeline.quadVertexArray->bind();
     renderer->pipeline.quadVertexArray->drawArrays(6);
     renderer->pipeline.quadVertexArray->unbind();
+
+    #ifndef GAME_PLATFORM_WEB
+      glDisable(GL_FRAMEBUFFER_SRGB);
+    #endif
 
     // Prepare 2D rendering
     static const i32 samples2D[] = {

@@ -40,6 +40,9 @@ namespace Game {
 
     enum class DataType : u8 {
       UnsignedByte,
+      Float,
+      HalfFloat,
+      UnsignedInt_24_8,
     };
 
     enum class DataFormat : u8 {
@@ -49,6 +52,8 @@ namespace Game {
       Bgr,
       Rgba,
       Bgra,
+
+      DepthStencil,
     };
 
     enum class Format : u8 {
@@ -56,6 +61,14 @@ namespace Game {
       Rgba8,
       Srgb8,
       Srgb8Alpha8,
+      Rgb32F,
+      Rgba32F,
+      Rgb16F,
+      Rgba16F,
+
+      Depth24Stencil8,
+
+      DefaultDepthStencil = Depth24Stencil8,
     };
 
     enum class Type : u8 {
@@ -81,7 +94,7 @@ namespace Game {
       Texture::Filtering      filtering      = Texture::FilteringMode::Linear;
       Texture::MipmapMode     mipmap         = Texture::MipmapMode::Linear;
       bool                    verticalFlip   = true;
-      bool                    gammaCorrected = false;
+      bool                    gammaCorrected = true;
     };
 
     class Builder {

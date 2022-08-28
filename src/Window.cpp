@@ -115,6 +115,9 @@ namespace Game {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
+    #ifndef GAME_PLATFORM_WEB
+      glfwWindowHint(GLFW_SRGB_CAPABLE, true);
+    #endif
 
     #ifdef __APPLE__
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);

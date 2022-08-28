@@ -103,6 +103,7 @@ namespace Game {
     mClearOnBind = builder.mClearOnBind;
     mClear       = builder.mClear;
     mClearColor  = builder.mClearColor;
+    mAttachmentsSpecification = std::move(builder.mAttachments);
 
     invalidate(mWidth, mHeight);
   }
@@ -122,22 +123,33 @@ namespace Game {
     glGenFramebuffers(1, &mId);
     glBindFramebuffer(GL_FRAMEBUFFER, mId);
 
-    // create color attachment texture
-    auto texture = Texture2D::buffer(width, height)
-      .format(Texture::Format::Rgb8)
-      .filtering(Texture::FilteringMode::Linear)
-      .build();
+    for (u32 i = 0; i < mAttachmentsSpecification.size(); ++i) {
+      Attachment& attachment = mAttachmentsSpecification[i];
 
-    // bind color attachment
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->getId(), 0);
+      // TODO: implement other attachment types
+      GAME_ASSERT(attachment.type == Attachment::Type::Texture2D);
 
-    mColorAttachments.emplace_back(std::move(texture));
+      // TODO: implement multisampled attachment types
+      GAME_ASSERT(!attachment.isMultisample);
+
+      // create color attachment texture
+      auto texture = Texture2D::buffer(width, height)
+        .format(attachment.format)
+        .filtering(Texture::FilteringMode::Linear)
+        .gammaCorrected(false)
+        .build();
+
+      // bind color attachment
+      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texture->getId(), 0);
+
+      mColorAttachments.emplace_back(std::move(texture));
+    }
 
     // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
     glGenRenderbuffers(1, &mDepthStencilAttachment);
     glBindRenderbuffer(GL_RENDERBUFFER, mDepthStencilAttachment);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-    
+
     // bind depth and stencil attachment
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilAttachment);
 
@@ -153,7 +165,6 @@ namespace Game {
   void FrameBuffer::destroy() {
     glDeleteFramebuffers(1, &mId);
     mColorAttachments.clear();
-
     glDeleteRenderbuffers(1, &mDepthStencilAttachment);
   }
 
