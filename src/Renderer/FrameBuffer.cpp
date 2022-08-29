@@ -136,6 +136,7 @@ namespace Game {
       auto texture = Texture2D::buffer(width, height)
         .format(attachment.format)
         .filtering(Texture::FilteringMode::Linear)
+        .mipmap(Texture::MipmapMode::Linear)
         .gammaCorrected(false)
         .build();
 

@@ -65,6 +65,7 @@ namespace Game {
       Rgba32F,
       Rgb16F,
       Rgba16F,
+      R11FG11FB10F,
 
       Depth24Stencil8,
 
@@ -95,6 +96,7 @@ namespace Game {
       Texture::MipmapMode     mipmap         = Texture::MipmapMode::Linear;
       bool                    verticalFlip   = true;
       bool                    gammaCorrected = true;
+      u32                     samples        = 0;
     };
 
     class Builder {
@@ -105,6 +107,7 @@ namespace Game {
       Builder& mipmap(Texture::MipmapMode mode);
       Builder& verticalFlipOnLoad(bool yes = true);
       Builder& gammaCorrected(bool yes = true);
+      Builder& samples(u32 inSamples);
       Texture2D::Handle build();
 
     private:

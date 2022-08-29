@@ -14,6 +14,42 @@
 
 namespace Game {
 
+  // TODO: Refactor this
+  class PostProcessing {
+  public:
+    PostProcessing() {
+      glGenFramebuffers(1, &mId);
+      glBindFramebuffer(GL_FRAMEBUFFER, mId);
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    ~PostProcessing() {
+      glDeleteFramebuffers(1, &mId);
+    }
+
+    void bind() {
+      glBindFramebuffer(GL_FRAMEBUFFER, mId);
+    }
+
+    void unbind() {
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void setTexture(Texture2D::Handle& dest) {
+      if (dest->getSpecification().samples == 0) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dest->getId(), 0);
+      } else {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, dest->getId(), 0);
+      }
+    }
+
+    void clear() {
+      glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+  private:
+    u32 mId;
+  };
+
   // TODO: Use uniform buffer for camera and static data
 
   // TODO: Refactor this
@@ -109,6 +145,13 @@ namespace Game {
     CubeMap::Handle  skyboxTexture;
     VertexArray::Handle skyboxVertexArray;
     Shader::Handle   skyboxShader;
+
+    PostProcessing bloomFbo;
+    std::array<Texture2D::Handle, 6> mipmaps;
+    Shader::Handle bloomPreFilterShader;
+    Shader::Handle bloomDownsampleShader;
+    Shader::Handle bloomUpsampleShader;
+    Shader::Handle bloomFinalShader;
 
     Shader::Handle shader;
     std::vector<RenderUnit>          units;
@@ -362,6 +405,44 @@ namespace Game {
     renderer->environment.defaultDiffuseMap  = whiteTexture;
     renderer->environment.defaultSpecularMap = Texture2D::color(0x00'00'00'FF).build();
     renderer->environment.defaultEmissionMap = Texture2D::color(128, 128, 128).build();
+
+    // Bloom
+
+    // renderer->pipeline.bloomFrameBuffer = FrameBuffer::builder()
+    //   .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
+    //   .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
+    //   .clearOnBind(true)
+    //   .attach(
+    //     FrameBuffer::Attachment::Type::Texture2D,
+    //     FrameBuffer::Attachment::Format::Rgba16F
+    //   )
+    //   .attachDefaultDepthStencilBuffer()
+    //   .build();
+
+    renderer->pipeline.bloomPreFilterShader = Shader::load("assets/shaders/Bloom/PreFilter.glsl").build();
+    renderer->pipeline.bloomDownsampleShader = Shader::load("assets/shaders/Bloom/Downsample.glsl").build();
+    renderer->pipeline.bloomUpsampleShader = Shader::load("assets/shaders/Bloom/Upsample.glsl").build();
+    renderer->pipeline.bloomFinalShader = Shader::load("assets/shaders/Bloom/Final.glsl").build();
+
+    for (u32 i = 0; i < renderer->pipeline.mipmaps.size(); ++i) {
+      u32 width;
+      u32 height;
+      if (i == 0) {
+        width = Application::getWindow().getWidth();
+        height = Application::getWindow().getHeight();
+      } else {
+        width  = renderer->pipeline.mipmaps[i - 1]->getWidth() / 2;
+        height = renderer->pipeline.mipmaps[i - 1]->getHeight() / 2;
+      }
+      renderer->pipeline.mipmaps[i] = Texture2D::buffer(width, height)
+        .format(Texture::Format::R11FG11FB10F)
+        .mipmap(Texture::MipmapMode::None)
+        .gammaCorrected(false)
+        .filtering(Texture::FilteringMode::Linear)
+        .wrapping(Texture::WrappingMode::ClampToEdge)
+        // .samples(4)
+        .build();
+    }
   }
 
   void Renderer::shutdown() {
@@ -514,26 +595,80 @@ namespace Game {
     renderSkybox();
     Renderer::enableDepthTest(false);
     renderer->pipeline.frameBuffer->unbind();
-    
+
     //  glDisable(GL_DEPTH_TEST);
 
-    // Second Pass
+    // Bloom Effect
+    renderer->pipeline.quadVertexArray->bind();
 
+    auto texture = renderer->pipeline.frameBuffer->getColorAttachment();
+    texture->bind(0);
+
+    renderer->pipeline.bloomFbo.bind();
+
+      // Pre-Filter Bloom stage
+      renderer->pipeline.bloomPreFilterShader->bind();
+      renderer->pipeline.bloomPreFilterShader->setInt("uScreenTexture", 0);
+
+      renderer->pipeline.bloomFbo.setTexture(renderer->pipeline.mipmaps[0]);
+      renderer->pipeline.quadVertexArray->drawArrays(6);
+
+      // Downsample
+      renderer->pipeline.bloomDownsampleShader->bind();
+      renderer->pipeline.bloomDownsampleShader->setInt("uScreenTexture", 0);
+
+      for (u32 i = 0; i < renderer->pipeline.mipmaps.size() - 1; ++i) {
+        glViewport(0, 0, renderer->pipeline.mipmaps[i + 1]->getWidth(), renderer->pipeline.mipmaps[i + 1]->getHeight());
+        renderer->pipeline.bloomDownsampleShader->setVec2("uResolution", Vec2(renderer->pipeline.mipmaps[i]->getWidth(), renderer->pipeline.mipmaps[i]->getHeight()));
+        renderer->pipeline.bloomFbo.setTexture(renderer->pipeline.mipmaps[i + 1]);
+        renderer->pipeline.mipmaps[i]->bind();
+        renderer->pipeline.quadVertexArray->drawArrays(6);  
+      }
+
+      // Upsample
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_ONE, GL_ONE);
+      glBlendEquation(GL_FUNC_ADD);
+
+      renderer->pipeline.bloomUpsampleShader->bind();
+      renderer->pipeline.bloomUpsampleShader->setInt("uTexture", 0);
+      renderer->pipeline.bloomUpsampleShader->setFloat("uFilterRadius", 0.005f);
+
+      for (u32 i = renderer->pipeline.mipmaps.size() - 1; i > 0; --i) {
+        glViewport(0, 0, renderer->pipeline.mipmaps[i - 1]->getWidth(), renderer->pipeline.mipmaps[i - 1]->getHeight());
+        renderer->pipeline.bloomFbo.setTexture(renderer->pipeline.mipmaps[i - 1]);
+        renderer->pipeline.mipmaps[i]->bind();
+        renderer->pipeline.quadVertexArray->drawArrays(6);
+      }
+
+      renderer->pipeline.bloomFinalShader->bind();
+      renderer->pipeline.bloomFinalShader->setInt("uTexture", 0);
+      texture->bind();
+
+      renderer->pipeline.bloomFbo.setTexture(renderer->pipeline.mipmaps[0]);
+      renderer->pipeline.quadVertexArray->drawArrays(6);
+
+      glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    renderer->pipeline.bloomFbo.unbind();
+
+    // Last pass
     #ifndef GAME_PLATFORM_WEB
       glEnable(GL_FRAMEBUFFER_SRGB);
     #endif
 
+    glViewport(0, 0, renderer->pipeline.mipmaps[0]->getWidth(), renderer->pipeline.mipmaps[0]->getHeight());
+
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    auto texture = renderer->pipeline.frameBuffer->getColorAttachment();
-    texture->bind(0);
+    renderer->pipeline.mipmaps[0]->bind(0);
+
     renderer->pipeline.postProcesingShader->bind();
     renderer->pipeline.postProcesingShader->setInt("uScreenTexture", 0);
-
-    renderer->pipeline.quadVertexArray->bind();
     renderer->pipeline.quadVertexArray->drawArrays(6);
-    renderer->pipeline.quadVertexArray->unbind();
+
 
     #ifndef GAME_PLATFORM_WEB
       glDisable(GL_FRAMEBUFFER_SRGB);

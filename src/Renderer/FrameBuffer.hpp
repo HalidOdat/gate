@@ -84,6 +84,8 @@ namespace Game {
       return mColorAttachments[index];
     }
 
+    inline u32 getId() const { return mId; }
+
   private:
     static FrameBuffer::Handle create(Builder& builder);
     FrameBuffer(Builder& builder);

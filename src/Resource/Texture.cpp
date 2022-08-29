@@ -89,6 +89,7 @@ namespace Game {
       case Texture::Format::Rgb16F:          return GL_RGB16F;
       case Texture::Format::Rgba32F:         return GL_RGBA32F;
       case Texture::Format::Rgba16F:         return GL_RGBA16F;
+      case Texture::Format::R11FG11FB10F:    return GL_R11F_G11F_B10F;
       case Texture::Format::Depth24Stencil8: return GL_DEPTH24_STENCIL8;
     }
     GAME_UNREACHABLE("unknown internal format type!");
@@ -104,6 +105,7 @@ namespace Game {
       case Texture::Format::Rgb16F:          return Texture::DataFormat::Rgb;
       case Texture::Format::Rgba32F:         return Texture::DataFormat::Rgba;
       case Texture::Format::Rgba16F:         return Texture::DataFormat::Rgba;
+      case Texture::Format::R11FG11FB10F:    return Texture::DataFormat::Rgb;
       case Texture::Format::Depth24Stencil8: return Texture::DataFormat::DepthStencil;
     }
     GAME_UNREACHABLE("unknown internal format type!");
@@ -119,6 +121,7 @@ namespace Game {
       case Texture::Format::Rgb16F:          return Texture::DataType::HalfFloat;
       case Texture::Format::Rgba32F:         return Texture::DataType::Float;
       case Texture::Format::Rgba16F:         return Texture::DataType::HalfFloat;
+      case Texture::Format::R11FG11FB10F:    return Texture::DataType::HalfFloat;
       case Texture::Format::Depth24Stencil8: return Texture::DataType::UnsignedInt_24_8;
     }
     GAME_UNREACHABLE("unknown internal format type!");
@@ -212,6 +215,10 @@ namespace Game {
     mSpecification.gammaCorrected = yes;
     return *this;
   }
+  Texture2D::Builder& Texture2D::Builder::samples(u32 inSamples) {
+    mSpecification.samples = inSamples;
+    return *this; 
+  }
   Texture2D::Handle Texture2D::Builder::build() {
     GAME_PROFILE_FUNCTION();
 
@@ -280,15 +287,22 @@ namespace Game {
     auto magFilter      = TextureFilteringToOpenGL(mSpecification.filtering.mag);
     auto minFilter      = TextureFilteringMipmapToOpenGL(mSpecification.filtering.min, mSpecification.mipmap);
 
+    GLenum target;
+    if (mSpecification.samples == 0) {
+      target = GL_TEXTURE_2D;
+    } else {
+      target = GL_TEXTURE_2D_MULTISAMPLE;
+    }
+
     u32 texture;
     glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(target, texture);
 
     // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapping);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, wrapping);
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
 
     u8 colorBytes[4];
     switch (mType) {
@@ -308,10 +322,14 @@ namespace Game {
         GAME_UNREACHABLE("unknown texture type!");
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, dataFormat, dataType, mData);
+    if (mSpecification.samples == 0) {
+      glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, dataFormat, dataType, mData);
+    } else {
+      glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSpecification.samples, internalFormat, mWidth, mHeight, 0);
+    }
 
     if (mSpecification.mipmap != Texture::MipmapMode::None) {
-      glGenerateMipmap(GL_TEXTURE_2D);
+      glGenerateMipmap(target);
     }
 
     if (mType == Texture::Type::Image) {

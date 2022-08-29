@@ -19,7 +19,8 @@ namespace Game {
     };
 
     enum Version {
-      Es300
+      Es300,
+      Core450, 
     };
 
     using Handle = Resource<Shader>;
@@ -78,12 +79,15 @@ namespace Game {
 
     [[nodiscard]] static u32 compile(Type type, const char* source) noexcept;
 
+    i32 getUniformLocation(StringView string);
+
   private:
     static std::unordered_map<String, String> sGlobalDefines;
 
   private:
     u32 id;
     Option<String> mFilePath;
+    std::unordered_map<StringView, i32> mUniformLocations;
 
   private:
     friend class Builder;

@@ -47,7 +47,8 @@ namespace Game {
 
   static const char* shaderVersionToStringDirectiveAndVersionMacros(Shader::Version version) {
     switch (version) {
-      case Shader::Version::Es300: return "#version 300 es\n";
+      case Shader::Version::Es300:   return "#version 300 es\n";
+      case Shader::Version::Core450: return "#version 450 core\n";
     }
     GAME_UNREACHABLE("unknown shader version!");
   }
@@ -296,69 +297,67 @@ namespace Game {
     glUseProgram(NULL_SHADER);
   }
 
+  i32 Shader::getUniformLocation(StringView string) {
+    if (mUniformLocations.contains(string)) {
+      return mUniformLocations.at(string);
+    }
+    i32 location = glGetUniformLocation(id, string.data());
+    mUniformLocations[string] = location;
+    return location;
+  }
+
   void Shader::setFloat(StringView name, const f32 value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniform1f(uniform_id, value);
   }
 
   void Shader::setVec2(StringView name, const Vec2& value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniform2f(uniform_id, value.x, value.y);
   }
 
   void Shader::setVec3(StringView name, const Vec3& value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniform3f(uniform_id, value.x, value.y, value.z);
   }
 
   void Shader::setVec4(StringView name, const Vec4& value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniform4f(uniform_id, value.x, value.y, value.z, value.w);
   }
 
   void Shader::setMat2(StringView name, const Mat2& value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniformMatrix2fv(uniform_id, 1, GL_FALSE, &value[0][0]);
   }
 
   void Shader::setMat3(StringView name, const Mat3& value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniformMatrix3fv(uniform_id, 1, GL_FALSE, &value[0][0]);
   }
 
   void Shader::setMat4(StringView name, const Mat4& value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniformMatrix4fv(uniform_id, 1, GL_FALSE, &value[0][0]);
   }
 
   void Shader::setInt(StringView name, const i32 value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);    
     glUniform1i(uniform_id, value);
   }
 
   void Shader::setUint(StringView name, const u32 value) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniform1ui(uniform_id, value);
   }
 
   void Shader::setIntArray(StringView name, const i32* value, u32 count) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniform1iv(uniform_id, count, value);
   }
 
   void Shader::setUintArray(StringView name, const u32* value, u32 count) {
-    u32 programId = id;
-    u32 uniform_id = glGetUniformLocation(programId, name.data());
+    i32 uniform_id = getUniformLocation(name);
     glUniform1uiv(uniform_id, count, value);
   }
 

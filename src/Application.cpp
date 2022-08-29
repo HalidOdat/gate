@@ -101,7 +101,7 @@ namespace Game {
     this->lastFrameTime = (float)glfwGetTime();
 
     #ifndef GAME_PLATFORM_WEB
-      this->window->setVSync(true);
+      // this->window->setVSync(true);
     #endif
 
     #if GAME_PLATFORM_WEB

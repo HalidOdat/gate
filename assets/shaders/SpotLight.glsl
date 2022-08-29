@@ -76,8 +76,7 @@ void main() {
   float spec = pow(max(dot(viewDir, halfwayDir), 0.0), uMaterial.shininess * 4.0f);
   vec3 specular = uLight.specular * spec * vec3(texture(uMaterial.specular, vTexCoords));
 
-  // emission
-  // vec3 emission = vec3(texture(uMaterial.emission, vTexCoords));
+  vec3 emission = vec3(texture(uMaterial.emission, vTexCoords));
     
   // check if lighting is inside the spotlight cone
   // soft edges
@@ -86,7 +85,7 @@ void main() {
   float intensity = clamp((theta - uLight.outerCutOff) / epsilon, 0.0, 1.0);  
   diffuse  *= intensity;
   specular *= intensity;
-  //emission *= intensity;
+  emission *= intensity;
 
   // light attenuation
   float distance    = length(uLight.position - vFragmentPosition);
@@ -96,6 +95,7 @@ void main() {
   specular *= attenuation;
   //emission *= attenuation;
 
-  vec3 result = ambient + diffuse + specular; // + emission
+  vec3 result = ambient + diffuse + specular + emission;
   vFragmentColor = vec4(result, uMaterial.transparency);
+  vFragmentColor = vec4(1.0f, 3.0f, 1.5f, 1.0f);
 }
