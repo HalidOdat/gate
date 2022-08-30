@@ -112,9 +112,7 @@ add_executable(${This}
   src/Window.cpp
   src/Application.hpp
   src/Application.cpp
-  src/Game.hpp
-  src/Game.cpp
-  
+
   src/Main.cpp
 )
 
