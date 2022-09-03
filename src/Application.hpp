@@ -5,6 +5,7 @@
 #include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Layers/LayerStack.hpp"
+#include "Utils/Memory/BumpAllocator.hpp"
 
 namespace Game {
 
@@ -16,6 +17,7 @@ namespace Game {
 
     inline static Application& get() { return *sInstance; }
     inline static Window& getWindow() { return *sInstance->window; }
+    inline static Utils::BumpAllocator& getFrameAllocator() { return sInstance->mFrameAllocator; }
 
     void start();
     void quit();
@@ -31,6 +33,7 @@ namespace Game {
     void startGameLoop();
     static void gameLoop();
 
+
   private:
     static Application* sInstance;
 
@@ -41,6 +44,8 @@ namespace Game {
     Ui* ui;
     LayerStack layerStack;
     f32 lastFrameTime = 0.0f;
+
+    Utils::BumpAllocator mFrameAllocator;
   };
   
 }

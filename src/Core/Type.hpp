@@ -24,7 +24,8 @@ namespace Game {
   using f32 = float;
   using f64 = double;
 
-  using usize = std::size_t;
+  using usize = size_t;
+  using isize = intptr_t;
 
   #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
     TypeName(const TypeName&) = delete;      \
