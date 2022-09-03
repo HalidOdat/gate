@@ -7,6 +7,7 @@
 
 #include "Core/Base.hpp"
 #include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 #include "Ui/Ui.hpp"
 
@@ -82,7 +83,7 @@ namespace Game {
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
     GAME_PROFILE_FUNCTION();
-    Renderer::drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
+    mRenderer.drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec3& color) {
@@ -92,7 +93,7 @@ namespace Game {
 
   void Ui::drawText(const StringView& text, const Vec2& position, f32 size, const Vec3& color) {
     GAME_PROFILE_FUNCTION();
-    Renderer::drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
+    mRenderer.drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
   }
 
   void Ui::begin(const Vec2& position, f32 padding) {
@@ -105,7 +106,7 @@ namespace Game {
   
     this->layouts.push_back(layout);
 
-    Renderer::begin(mCamera);
+    mRenderer.begin(mCamera);
   }
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
@@ -123,7 +124,7 @@ namespace Game {
   void Ui::beginDock(Ui::Dock type, f32 size) {
     GAME_PROFILE_FUNCTION();
 
-    Renderer::begin(mCamera);
+    mRenderer.begin(mCamera);
 
     switch (type) {
       case Dock::Left: {
@@ -389,7 +390,7 @@ namespace Game {
     Layout layout = this->layouts.back();
     this->layouts.pop_back();
 
-    Renderer::end();
+    mRenderer.end();
   }
 
   void Ui::onEvent(const Event& event) {

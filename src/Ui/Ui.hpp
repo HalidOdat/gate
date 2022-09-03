@@ -6,6 +6,7 @@
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Renderer/CameraController.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 #include "Resource/Manager.hpp"
 
@@ -132,12 +133,12 @@ namespace Game {
 
   private:
     OrthographicCamera mCamera;
+    Renderer2D mRenderer;
 
     bool hasHot    = false;
     bool hasActive = false;
     u64  hot       = 0;
     u64  active    = 0;
-
 
     Vec2 mousePosition = Vec2{0.0f, 0.0f};
     bool mouseButton   = false;

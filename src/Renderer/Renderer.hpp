@@ -15,24 +15,13 @@ namespace Game {
     friend class Application;
 
   public:
-    Renderer() = delete;
+    Renderer();
 
     static void enableBlending(bool  yes = true);
     static void enableDepthTest(bool yes = true);
     static void enableCullFace(bool  yes = true);
 
-    static void begin(const Camera& camera);
     static void begin3D(const PerspectiveCameraController& cameraController);
-    static void drawQuad(const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
-    static void drawQuad(const Vec3& position,  const Vec2& size, const Vec4& color = Color::WHITE);
-    static void drawQuad(const Vec3& position,  const Vec2& size, const Texture2D::Handle& texture, const Vec4& color = Color::WHITE);
-    static void drawQuad(const Mat4& transform, const Texture2D::Handle& texture, const Vec4& color = Color::WHITE);
-
-    static void drawChar(char c, const Vec3& position,  const Vec2& size, const Vec4& color = Color::WHITE);
-    static void drawChar(char c, const Mat4& transform, const Vec4& color = Color::WHITE);
-    static void drawText(const StringView& text, const Vec3& position, const Vec2& size, const Vec4& color = Color::WHITE);
-    static void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE);
-
     static void submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform = Mat4(1.0f));
 
     static void flush();

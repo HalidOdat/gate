@@ -90,6 +90,10 @@ add_executable(${This}
   src/Renderer/Material.cpp
   src/Renderer/Renderer.hpp
   src/Renderer/Renderer.cpp
+  src/Renderer/Renderer2D.hpp
+  src/Renderer/Renderer2D.cpp
+  src/Renderer/Renderer3D.hpp
+  src/Renderer/Renderer3D.cpp
 
   src/Scene/Scene.hpp
   src/Scene/Scene.cpp

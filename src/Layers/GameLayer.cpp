@@ -91,10 +91,10 @@ namespace Game {
     mScene->onUpdate(ts);
     Renderer::end();
 
-    Renderer::begin(mCameraController.getCamera());
-    Renderer::drawText("A B C D E F G H I J K L M N O P", {-4, -4}, 0.5f);
-    Renderer::drawQuad({4, 4}, {0.5f, 0.5f}, Color::GREEN);
-    Renderer::end();
+    // Renderer::begin(mCameraController.getCamera());
+    // Renderer::drawText("A B C D E F G H I J K L M N O P", {-4, -4}, 0.5f);
+    // Renderer::drawQuad({4, 4}, {0.5f, 0.5f}, Color::GREEN);
+    // Renderer::end();
   }
 
   void GameLayer::onUiRender(Ui& ui) {
