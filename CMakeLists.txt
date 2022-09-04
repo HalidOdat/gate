@@ -67,6 +67,8 @@ add_executable(${This}
   src/Resource/Shader.cpp
   src/Resource/Mesh.hpp
   src/Resource/Mesh.cpp
+  src/Resource/UniformBuffer.hpp
+  src/Resource/UniformBuffer.cpp
 
   src/Ecs/Entity.hpp
   src/Ecs/Component.hpp

@@ -4,22 +4,28 @@ layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec2 aTexture;
 layout (location = 2) in vec3 aNormal;
 
-uniform mat4 uProjectionMatrix;
-uniform mat4 uViewMatrix;
-uniform mat4 uModelMatrix;
+layout (std140) uniform Camera {
+  mat4 projectionMatrix;
+  mat4 viewMatrix;
+  vec4 position;
+  vec4 front;
+} uCamera;
 
+uniform mat4 uModelMatrix;
 uniform mat3 uNormalMatrix;
 
 out vec2 vTexCoords;
 out vec3 vNormal;
 out vec3 vFragmentPosition;
+flat out vec3 vViewPosition;
 
 void main() {
   vTexCoords        = aTexture;
   vNormal           = uNormalMatrix * aNormal;
   vFragmentPosition = vec3(uModelMatrix * vec4(aPosition, 1.0));
+  vViewPosition     = vec3(uCamera.position);
 
-  gl_Position       = uProjectionMatrix * uViewMatrix * vec4(vFragmentPosition, 1.0);
+  gl_Position       = uCamera.projectionMatrix * uCamera.viewMatrix * vec4(vFragmentPosition, 1.0);
 }
 
 @type fragment
@@ -44,18 +50,17 @@ struct Light {
   vec3 diffuse;
   vec3 specular;
 
-  float constant;
   float linear;
   float quadratic;
 };
 
-in vec2          vTexCoords;
-in vec3          vNormal;
-in vec3          vFragmentPosition;
+in vec2 vTexCoords;
+in vec3 vNormal;
+in vec3 vFragmentPosition;
+flat in vec3 vViewPosition;
 
 uniform Material uMaterial;
 uniform Light    uLight;
-uniform vec3     uViewPosition;
 
 out vec4 vFragmentColor;
 
@@ -70,7 +75,7 @@ void main() {
   vec3 diffuse = uLight.diffuse * diff * vec3(texture(uMaterial.diffuse, vTexCoords));
     
   // specular
-  vec3 viewDir    = normalize(uViewPosition - vFragmentPosition);
+  vec3 viewDir    = normalize(vViewPosition - vFragmentPosition);
   vec3 halfwayDir = normalize(lightDir + viewDir);
   // vec3 reflectDir = reflect(-lightDir, norm);  
   float spec = pow(max(dot(viewDir, halfwayDir), 0.0), uMaterial.shininess * 4.0f);
@@ -89,7 +94,7 @@ void main() {
 
   // light attenuation
   float distance    = length(uLight.position - vFragmentPosition);
-  float attenuation = 1.0 / (uLight.constant + uLight.linear * distance + uLight.quadratic * (distance * distance));
+  float attenuation = 1.0 / (1.0f + uLight.linear * distance + uLight.quadratic * (distance * distance));
   ambient  *= attenuation;
   diffuse  *= attenuation;
   specular *= attenuation;

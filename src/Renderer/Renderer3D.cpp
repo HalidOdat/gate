@@ -1,5 +1,5 @@
-#include <array>
 #include <cctype>
+#include <array>
 #include <algorithm>
 
 #include <glad/glad.h>
@@ -207,6 +207,11 @@ namespace Game {
         // .samples(4)
         .build();
     }
+
+    mCameraUniformBuffer = UniformBuffer::builder(0)
+      .size(sizeof(RenderCamera))
+      .storage(UniformBuffer::StorageType::Dynamic)
+      .build();
   }
 
   Renderer3D::~Renderer3D() {
@@ -224,8 +229,11 @@ namespace Game {
 
     mPipeline.camera.projection = cameraController.getCamera().getProjectionMatrix();
     mPipeline.camera.view       = cameraController.getCamera().getViewMatrix();
-    mPipeline.camera.position   = cameraController.getPosition();
-    mPipeline.camera.front      = cameraController.getFront();
+    mPipeline.camera.position   = Vec4(cameraController.getPosition(), 0.0f);
+    mPipeline.camera.front      = Vec4(cameraController.getFront(), 0.0f);
+
+    mCameraUniformBuffer->bind();
+    mCameraUniformBuffer->set({&mPipeline.camera, 1});
   }
 
   void Renderer3D::submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform) {
@@ -254,7 +262,7 @@ namespace Game {
       mPipeline.opaqueUnitIndices.emplace_back(index);
     } else {
       Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
-      f32 distance = glm::length(position - mPipeline.camera.position);
+      f32 distance = glm::length(position - Vec3(mPipeline.camera.position));
       mPipeline.transparentUnitIndices.push_back(std::pair(distance, index));
     }
   }
@@ -289,10 +297,7 @@ namespace Game {
     GAME_PROFILE_FUNCTION();
 
     mPipeline.shader->bind();
-    mPipeline.shader->setMat4("uProjectionMatrix", mPipeline.camera.projection);
-    mPipeline.shader->setMat4("uViewMatrix", mPipeline.camera.view);
 
-    mPipeline.shader->setVec3("uViewPosition", mPipeline.camera.position);
     mPipeline.shader->setVec3("uLight.position", mPipeline.camera.position);
     mPipeline.shader->setVec3("uLight.direction", mPipeline.camera.front);
     mPipeline.shader->setFloat("uLight.cutOff", glm::cos(glm::radians(12.5f)));

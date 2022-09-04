@@ -239,6 +239,18 @@ namespace Game {
       return {};
     }
 
+    GLuint cameraBlockIndex = glGetUniformBlockIndex(shaderProgram, "Camera");
+    if (cameraBlockIndex != GL_INVALID_INDEX) {
+      glUniformBlockBinding(shaderProgram, cameraBlockIndex, 0);
+      Logger::trace("Shader: Camera block binding at 0");
+    }
+
+    // GLuint lightsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Lights");
+    // if (lightsBlockIndex != GL_INVALID_INDEX) {
+    //   glUniformBlockBinding(shaderProgram, lightsBlockIndex, 1);
+    //   Logger::trace("Shader: Lights block binding at 1");
+    // }
+
     return factory.emplace(shaderProgram, String(filepath));
   }
 

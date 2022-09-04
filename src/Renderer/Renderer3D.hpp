@@ -4,6 +4,7 @@
 #include "Utils/Color.hpp"
 #include "Resource/Manager.hpp"
 #include "Renderer/VertexArray.hpp"
+#include "Resource/UniformBuffer.hpp"
 #include "Renderer/Material.hpp"
 #include "Renderer/CameraController.hpp"
 
@@ -60,12 +61,15 @@ namespace Game {
       Mat3 normalMatrix;
     };
 
+    // NOTE: This struct must be aligned accroding to the std140 standard.
     struct RenderCamera {
       Mat4 projection;
       Mat4 view;
-      
-      Vec3 position;
-      Vec3 front;
+
+      // Note: Because some implementations get the aligment of vec3 wrong, we advised to use vec4 here instead.
+      //       Check: https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)
+      Vec4 position;
+      Vec4 front;
     };
 
     struct Pipeline {
@@ -100,6 +104,7 @@ namespace Game {
   private:
     Pipeline mPipeline;
     Environment mEnvironment;
+    UniformBuffer::Handle mCameraUniformBuffer;
   };
 
 } // namespace Game
