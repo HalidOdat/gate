@@ -61,8 +61,8 @@ namespace Game {
     return *this;
   }
 
-  FrameBuffer::Builder& FrameBuffer::Builder::attach(Attachment::Type type, Attachment::Format format, bool isMultisample) {
-    mAttachments.push_back(FrameBuffer::Attachment{type, format, isMultisample});
+  FrameBuffer::Builder& FrameBuffer::Builder::attach(Attachment::Type type, Attachment::Format format, bool drawable, bool isMultisample) {
+    mAttachments.push_back(FrameBuffer::Attachment{type, format, drawable, isMultisample});
     return *this;
   }
 
@@ -123,6 +123,11 @@ namespace Game {
     glGenFramebuffers(1, &mId);
     glBindFramebuffer(GL_FRAMEBUFFER, mId);
 
+    u32 drawableAttachmentsCount = 0;
+    GLenum drawableAttachments[32] = {};
+
+    GAME_DEBUG_ASSERT(mAttachmentsSpecification.size() <= 32);
+
     for (u32 i = 0; i < mAttachmentsSpecification.size(); ++i) {
       Attachment& attachment = mAttachmentsSpecification[i];
 
@@ -143,6 +148,10 @@ namespace Game {
       // bind color attachment
       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texture->getId(), 0);
 
+      if (attachment.drawable) {
+        drawableAttachments[drawableAttachmentsCount++] = GL_COLOR_ATTACHMENT0 + i;
+      }
+
       mColorAttachments.emplace_back(std::move(texture));
     }
 
@@ -158,6 +167,8 @@ namespace Game {
       glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
       "framebuffer is not complete!"
     );
+
+    glDrawBuffers(drawableAttachmentsCount, drawableAttachments);
 
     // unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

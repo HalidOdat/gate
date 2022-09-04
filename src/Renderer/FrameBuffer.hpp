@@ -29,6 +29,7 @@ namespace Game {
 
       Type type;
       Format format;
+      bool drawable      = true;
       bool isMultisample = false;
     };
 
@@ -41,7 +42,7 @@ namespace Game {
       Builder& clearColor(const Vec4& color);
       Builder& clear(FrameBuffer::Clear clear);
       Builder& clearOnBind(bool yes = true);
-      Builder& attach(Attachment::Type type, Attachment::Format format, bool isMultisample = false);
+      Builder& attach(Attachment::Type type, Attachment::Format format, bool drawable = true, bool isMultisample = false);
       Builder& attachDefaultDepthStencilBuffer();
       FrameBuffer::Handle build();
 
