@@ -251,6 +251,12 @@ namespace Game {
     //   Logger::trace("Shader: Lights block binding at 1");
     // }
 
+    GLuint materialsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Materials");
+    if (materialsBlockIndex != GL_INVALID_INDEX) {
+      glUniformBlockBinding(shaderProgram, materialsBlockIndex, 2);
+      Logger::trace("Shader: Materials block binding at 2");
+    }
+
     return factory.emplace(shaderProgram, String(filepath));
   }
 

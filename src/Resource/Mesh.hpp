@@ -42,6 +42,8 @@ namespace Game {
       IndexBuffer::Handle  indexBuffer;
       Option<String>       filePath;
       Type                 type;
+
+      bool hasInstanced = false;
     };
 
   private:
@@ -57,6 +59,8 @@ namespace Game {
   private:
     template<typename T>
     friend class ResourceFactory;
+
+    friend class Renderer3D;
   };
 
   GAME_FACTORY_HEADER(Mesh)

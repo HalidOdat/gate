@@ -13,9 +13,25 @@
 #include "Application.hpp"
 
 
-namespace Game {
+namespace std {
 
-  // TODO: Use uniform buffer for camera and static data
+  template<>
+  struct std::hash<Game::Mesh::Handle> {
+    std::size_t operator()(Game::Mesh::Handle const& handle) const noexcept {
+      return std::hash<Game::u32>{}(handle.getId());
+    }
+  };
+
+  template<>
+  struct std::hash<Game::Material::Handle> {
+    std::size_t operator()(Game::Material::Handle const& handle) const noexcept {
+      return std::hash<Game::u32>{}(handle.getId());
+    }
+  };
+
+}
+
+namespace Game {
 
   Renderer3D::PostProcessing::PostProcessing() {
     glGenFramebuffers(1, &mId);
@@ -129,7 +145,6 @@ namespace Game {
          1.0f, -1.0f, -1.0f,
          1.0f,  1.0f, -1.0f,
         -1.0f,  1.0f, -1.0f,
-
         -1.0f, -1.0f,  1.0f,
         -1.0f, -1.0f, -1.0f,
         -1.0f,  1.0f, -1.0f,
@@ -177,11 +192,15 @@ namespace Game {
 
     mPipeline.skyboxShader = Shader::load("assets/shaders/Skybox.glsl").build();
     mPipeline.shader = Shader::load("assets/shaders/SpotLight.glsl").build();
+    mPipeline.shader->bind();
+    i32 samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    mPipeline.shader->setIntArray("uTextures", samples, 16);
 
     mEnvironment.defaultDiffuseMap  = Texture2D::color(0xFF'FF'FF'FF).build();
     mEnvironment.defaultSpecularMap = Texture2D::color(0x00'00'00'FF).build();
     mEnvironment.defaultEmissionMap = Texture2D::color(128, 128, 128).build();
 
+    #if 0
     // Bloom
     mPipeline.bloomPreFilterShader = Shader::load("assets/shaders/Bloom/PreFilter.glsl").build();
     mPipeline.bloomDownsampleShader = Shader::load("assets/shaders/Bloom/Downsample.glsl").build();
@@ -207,15 +226,36 @@ namespace Game {
         // .samples(4)
         .build();
     }
+    #endif
+    
+    mPipeline.instancedBuffer = VertexBuffer::builder()
+      .storage(Buffer::StorageType::Dynamic)
+      .size(INSTANCE_BUFFER_SIZE)
+      .layout(BufferElement::Type::Mat4, "aModelMatrix")
+      .layout(BufferElement::Type::Mat3, "aNormalMatrix")
+      .build();
+
+    mPipeline.instancedBasePtr = new Pipeline::Instance[INSTANCE_COUNT];
+    mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
 
     mCameraUniformBuffer = UniformBuffer::builder(0)
       .size(sizeof(RenderCamera))
       .storage(UniformBuffer::StorageType::Dynamic)
       .build();
+
+    mPipeline.materialsUniformBuffer = UniformBuffer::builder(2)
+      .size(sizeof(MaterialInternal) * MAX_MATERIALS)
+      .storage(UniformBuffer::StorageType::Dynamic)
+      .build();
+    mPipeline.materialsBasePtr = new MaterialInternal[MAX_MATERIALS];
+    mPipeline.materialsCurrentPtr = mPipeline.materialsBasePtr;
   }
 
   Renderer3D::~Renderer3D() {
     GAME_PROFILE_FUNCTION();
+
+    delete mPipeline.instancedBasePtr;
+    delete mPipeline.materialsBasePtr;
   }
 
   void Renderer3D::invalidate(u32 width, u32 height) {
@@ -227,17 +267,29 @@ namespace Game {
   void Renderer3D::begin3D(const PerspectiveCameraController& cameraController) {
     GAME_PROFILE_FUNCTION();
 
-    mPipeline.camera.projection = cameraController.getCamera().getProjectionMatrix();
-    mPipeline.camera.view       = cameraController.getCamera().getViewMatrix();
-    mPipeline.camera.position   = Vec4(cameraController.getPosition(), 0.0f);
-    mPipeline.camera.front      = Vec4(cameraController.getFront(), 0.0f);
+    mPipeline.camera.projection     = cameraController.getCamera().getProjectionMatrix();
+    mPipeline.camera.view           = cameraController.getCamera().getViewMatrix();
+    mPipeline.camera.projectionView = mPipeline.camera.projection * mPipeline.camera.view;
+    mPipeline.camera.position       = Vec4(cameraController.getPosition(), 0.0f);
+    mPipeline.camera.front          = Vec4(cameraController.getFront(), 0.0f);
 
     mCameraUniformBuffer->bind();
     mCameraUniformBuffer->set({&mPipeline.camera, 1});
   }
 
-  void Renderer3D::submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform) {
+  void Renderer3D::submit(const Mesh::Handle& _mesh, const Material::Handle& material, const Mat4& transform) {
     GAME_PROFILE_FUNCTION();
+
+    Mesh::Handle mesh = _mesh;
+
+    if (!mesh->mData.hasInstanced) {
+      mesh->mData.vertexArray->bind();
+      mPipeline.instancedBuffer->bind();
+      mesh->mData.vertexArray->addVertexBuffer(mPipeline.instancedBuffer);
+      mesh->mData.vertexArray->unbind();
+
+      mesh->mData.hasInstanced = true;
+    }
 
     // Don't render fully transparent objects
     if (material->transparency == 0.0f) {
@@ -258,8 +310,8 @@ namespace Game {
     if (!unit.material.emissionMap.isValid()) unit.material.emissionMap = mEnvironment.defaultEmissionMap;
 
     mPipeline.units.push_back(unit);
-    if (!material->transparency) {
-      mPipeline.opaqueUnitIndices.emplace_back(index);
+    if (material->transparency >= 1.0f) {
+      mPipeline.opaqueUnits[material][mesh].push_back(index);
     } else {
       Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
       f32 distance = glm::length(position - Vec3(mPipeline.camera.position));
@@ -268,24 +320,15 @@ namespace Game {
   }
 
   void Renderer3D::renderUnit(u32 unitIndex) {
+    GAME_TODO("Implement transparency in a better way");
     GAME_PROFILE_FUNCTION();
 
     RenderUnit& unit = mPipeline.units[unitIndex];
-
-    mPipeline.shader->setMat4("uModelMatrix", unit.modelMatrix);
-    mPipeline.shader->setMat3("uNormalMatrix", unit.normalMatrix);
 
     // TODO: Make this more dynamic
     unit.material.diffuseMap->bind(0);
     unit.material.specularMap->bind(1);
     unit.material.emissionMap->bind(2);
-
-    mPipeline.shader->setInt("uMaterial.diffuse",  0);
-    mPipeline.shader->setInt("uMaterial.specular", 1);
-    mPipeline.shader->setInt("uMaterial.emission", 2);
-
-    mPipeline.shader->setFloat("uMaterial.shininess", unit.material.shininess);
-    mPipeline.shader->setFloat("uMaterial.transparency", unit.material.transparency);
 
     auto vao = unit.mesh->getVertexArray();
     vao->bind();
@@ -297,7 +340,6 @@ namespace Game {
     GAME_PROFILE_FUNCTION();
 
     mPipeline.shader->bind();
-
     mPipeline.shader->setVec3("uLight.position", mPipeline.camera.position);
     mPipeline.shader->setVec3("uLight.direction", mPipeline.camera.front);
     mPipeline.shader->setFloat("uLight.cutOff", glm::cos(glm::radians(12.5f)));
@@ -309,8 +351,42 @@ namespace Game {
     mPipeline.shader->setFloat("uLight.linear",    0.09f);
     mPipeline.shader->setFloat("uLight.quadratic", 0.032f);
 
-    for (auto& index : mPipeline.opaqueUnitIndices) {
-      renderUnit(index);
+    // Sorted by material
+    for (auto&[material, meshes] : mPipeline.opaqueUnits) {
+      material->diffuseMap->bind(0);
+      material->specularMap->bind(1);
+      material->emissionMap->bind(2);
+
+      *mPipeline.materialsBasePtr = {0, 1, 2, 0, 0, 0, material->shininess, material->transparency};
+      mPipeline.materialsUniformBuffer->bind();
+      mPipeline.materialsUniformBuffer->set({mPipeline.materialsBasePtr, 1});
+
+      // Sorted by mesh
+      mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
+      for (auto&[mesh, unitIndices] : meshes) {
+        usize count = 0;
+        for (auto unitIndex : unitIndices) {
+          *(mPipeline.instancedCurrentPtr++) = {
+            mPipeline.units[unitIndex].modelMatrix,
+            mPipeline.units[unitIndex].normalMatrix,
+          };
+          count++;
+        }
+  
+        auto vao = mesh->getVertexArray();
+        vao->bind();
+        mPipeline.instancedBuffer->bind();
+        mPipeline.instancedBuffer->set({mPipeline.instancedBasePtr, count});
+        glDrawElementsInstanced(
+          GL_TRIANGLES,
+          mesh->mData.indexBuffer->getCount(),
+          GL_UNSIGNED_INT,
+          0,
+          (GLsizei)count
+        );
+  
+        mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
+      }
     }
 
     std::sort(
@@ -326,7 +402,7 @@ namespace Game {
     }
 
     mPipeline.units.clear();
-    mPipeline.opaqueUnitIndices.clear();
+    mPipeline.opaqueUnits.clear();
     mPipeline.transparentUnitIndices.clear();
   }
 
@@ -348,21 +424,23 @@ namespace Game {
     GAME_PROFILE_FUNCTION();
 
     // First Pass
+    glDisable(GL_BLEND);
+
     mPipeline.frameBuffer->bind();
     Renderer3D::enableDepthTest(true);
     renderAllUnits();
     renderSkybox();
     Renderer3D::enableDepthTest(false);
     mPipeline.frameBuffer->unbind();
-
     //  glDisable(GL_DEPTH_TEST);
 
-    // Bloom Effect
     mPipeline.quadVertexArray->bind();
-
+    
     auto texture = mPipeline.frameBuffer->getColorAttachment();
     texture->bind(0);
 
+    #if 0
+    // Bloom Effect
     mPipeline.bloomFbo.bind();
 
       // Pre-Filter Bloom stage
@@ -407,27 +485,31 @@ namespace Game {
       mPipeline.bloomFbo.setTexture(mPipeline.mipmaps[0]);
       mPipeline.quadVertexArray->drawArrays(6);
 
-      glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-
     mPipeline.bloomFbo.unbind();
+  
+    #endif
+    
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     // Last pass
     #ifndef GAME_PLATFORM_WEB
       glEnable(GL_FRAMEBUFFER_SRGB);
     #endif
 
-    glViewport(0, 0, mPipeline.mipmaps[0]->getWidth(), mPipeline.mipmaps[0]->getHeight());
+    // glViewport(0, 0, mPipeline.mipmaps[0]->getWidth(), mPipeline.mipmaps[0]->getHeight());
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    mPipeline.mipmaps[0]->bind(0);
+    #if 0
+      mPipeline.mipmaps[0]->bind(0);
+    #else
+      texture->bind(0);
+    #endif
 
     mPipeline.postProcesingShader->bind();
     mPipeline.postProcesingShader->setInt("uScreenTexture", 0);
     mPipeline.quadVertexArray->drawArrays(6);
-
 
     #ifndef GAME_PLATFORM_WEB
       glDisable(GL_FRAMEBUFFER_SRGB);

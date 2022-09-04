@@ -1,43 +1,12 @@
-@type vertex
-
-layout (location = 0) in vec3 aPosition;
-layout (location = 1) in vec2 aTexture;
-layout (location = 2) in vec3 aNormal;
-
-layout (std140) uniform Camera {
-  mat4 projectionMatrix;
-  mat4 viewMatrix;
-  vec4 position;
-  vec4 front;
-} uCamera;
-
-uniform mat4 uModelMatrix;
-uniform mat3 uNormalMatrix;
-
-out vec2 vTexCoords;
-out vec3 vNormal;
-out vec3 vFragmentPosition;
-flat out vec3 vViewPosition;
-
-void main() {
-  vTexCoords        = aTexture;
-  vNormal           = uNormalMatrix * aNormal;
-  vFragmentPosition = vec3(uModelMatrix * vec4(aPosition, 1.0));
-  vViewPosition     = vec3(uCamera.position);
-
-  gl_Position       = uCamera.projectionMatrix * uCamera.viewMatrix * vec4(vFragmentPosition, 1.0);
-}
-
-@type fragment
-
-precision mediump float;
-
 struct Material {
-  sampler2D diffuse;
-  sampler2D specular;
-  sampler2D emission;
-  float     shininess;
-  float     transparency;
+  uint  diffuse;
+  uint  specular;
+  uint  emission;
+  uint  padding0;
+  uint  padding1;
+  uint  padding2;
+  float shininess;
+  float transparency;
 };
 
 struct Light {
@@ -54,53 +23,98 @@ struct Light {
   float quadratic;
 };
 
+@type vertex
+
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec2 aTexture;
+layout (location = 2) in vec3 aNormal;
+layout (location = 3) in mat4 aModelMatrix;  // 3, 4, 5, 6
+layout (location = 7) in mat3 aNormalMatrix; // 7, 8, 9
+
+layout (std140) uniform Camera {
+  mat4 projectionMatrix;
+  mat4 viewMatrix;
+  mat4 projectionViewMatrix;
+  vec4 position;
+  vec4 front;
+} uCamera;
+
+layout (std140) uniform Materials {
+  Material uMaterials[];
+};
+
+uniform Light uLight;
+
+out vec2 vTexCoords;
+out vec3 vNormal;
+out vec3 vFragmentPosition;
+flat out vec3 vViewPosition;
+flat out Material vMaterial;
+flat out Light vLight;
+
+void main() {
+  vTexCoords        = aTexture;
+  vNormal           = aNormalMatrix * aNormal;
+  vFragmentPosition = vec3(aModelMatrix * vec4(aPosition, 1.0));
+  vViewPosition     = vec3(uCamera.position);
+  vMaterial         = uMaterials[0];
+  vLight            = uLight;
+
+  gl_Position       = uCamera.projectionViewMatrix * vec4(vFragmentPosition, 1.0);
+}
+
+@type fragment
+
+precision mediump float;
+
 in vec2 vTexCoords;
 in vec3 vNormal;
 in vec3 vFragmentPosition;
 flat in vec3 vViewPosition;
+flat in Material vMaterial;
+flat in Light vLight;
 
-uniform Material uMaterial;
-uniform Light    uLight;
+uniform sampler2D uTextures[16];
 
 out vec4 vFragmentColor;
 
 void main() {
+  vec3 diffuseColor = vec3(texture(uTextures[vMaterial.diffuse], vTexCoords));
+
   // ambient
-  vec3 ambient = uLight.ambient * vec3(texture(uMaterial.diffuse, vTexCoords));
+  vec3 ambient = vLight.ambient * diffuseColor;
   
   // diffuse 
-  vec3 lightDir = normalize(uLight.position - vFragmentPosition);
+  vec3 lightDir = normalize(vLight.position - vFragmentPosition);
   vec3 norm = normalize(vNormal);
   float diff = max(dot(norm, lightDir), 0.0);
-  vec3 diffuse = uLight.diffuse * diff * vec3(texture(uMaterial.diffuse, vTexCoords));
-    
+  vec3 diffuse = vLight.diffuse * diff * diffuseColor;
+
   // specular
   vec3 viewDir    = normalize(vViewPosition - vFragmentPosition);
   vec3 halfwayDir = normalize(lightDir + viewDir);
-  // vec3 reflectDir = reflect(-lightDir, norm);  
-  float spec = pow(max(dot(viewDir, halfwayDir), 0.0), uMaterial.shininess * 4.0f);
-  vec3 specular = uLight.specular * spec * vec3(texture(uMaterial.specular, vTexCoords));
+  float spec = pow(max(dot(viewDir, halfwayDir), 0.0), vMaterial.shininess * 4.0f);
+  vec3 specular = vLight.specular * spec * vec3(texture(uTextures[vMaterial.specular], vTexCoords));
 
-  vec3 emission = vec3(texture(uMaterial.emission, vTexCoords));
+  vec3 emission = vec3(texture(uTextures[vMaterial.emission], vTexCoords));
     
   // check if lighting is inside the spotlight cone
   // soft edges
-  float theta = dot(lightDir, normalize(-uLight.direction)); 
-  float epsilon   = uLight.cutOff - uLight.outerCutOff;
-  float intensity = clamp((theta - uLight.outerCutOff) / epsilon, 0.0, 1.0);  
+  float theta = dot(lightDir, normalize(-vLight.direction)); 
+  float epsilon   = vLight.cutOff - vLight.outerCutOff;
+  float intensity = clamp((theta - vLight.outerCutOff) / epsilon, 0.0, 1.0);
   diffuse  *= intensity;
   specular *= intensity;
   emission *= intensity;
 
   // light attenuation
-  float distance    = length(uLight.position - vFragmentPosition);
-  float attenuation = 1.0 / (1.0f + uLight.linear * distance + uLight.quadratic * (distance * distance));
+  float distance    = length(vLight.position - vFragmentPosition);
+  float attenuation = 1.0 / (1.0f + vLight.linear * distance + vLight.quadratic * (distance * distance));
   ambient  *= attenuation;
   diffuse  *= attenuation;
   specular *= attenuation;
-  //emission *= attenuation;
+  emission *= attenuation;
 
   vec3 result = ambient + diffuse + specular + emission;
-  vFragmentColor = vec4(result, uMaterial.transparency);
-  vFragmentColor = vec4(1.0f, 3.0f, 1.5f, 1.0f);
+  vFragmentColor = vec4(result, vMaterial.transparency);
 }

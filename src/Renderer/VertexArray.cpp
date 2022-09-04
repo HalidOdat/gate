@@ -81,6 +81,23 @@ namespace Game {
           mVertexAttributeIndex++;
           break;
         }
+        case BufferElement::Type::Mat3:
+        case BufferElement::Type::Mat4: {
+          auto count = element.getComponentCount();
+          for (uint8_t i = 0; i < count; i++) {
+            glEnableVertexAttribArray(mVertexAttributeIndex);
+            glVertexAttribPointer(mVertexAttributeIndex,
+              4,
+              GL_FLOAT,
+              element.isNormalized() ? GL_TRUE : GL_FALSE,
+              layout.getStride(),
+              (const void*)(element.getOffset() + sizeof(float) * count * i)
+            );
+            glVertexAttribDivisor(mVertexAttributeIndex, 1);
+            mVertexAttributeIndex++;
+          }
+          break;
+        }
         default:
           GAME_UNREACHABLE("Unknown buffer element type!");
       }

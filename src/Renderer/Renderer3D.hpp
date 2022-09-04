@@ -8,6 +8,8 @@
 #include "Renderer/Material.hpp"
 #include "Renderer/CameraController.hpp"
 
+#include <unordered_map>
+
 namespace Game {
   
   class Application;
@@ -31,6 +33,12 @@ namespace Game {
 
     void waitAndRender();
     void invalidate(u32 width, u32 height);
+
+  private:
+    static constexpr const auto INSTANCE_COUNT       = 1024;
+    static constexpr const auto INSTANCE_BUFFER_SIZE = (sizeof(Mat4) + sizeof(Mat3)) * INSTANCE_COUNT;
+
+    static constexpr const auto MAX_MATERIALS = 32;
 
   private:
     void renderAllUnits();
@@ -61,16 +69,33 @@ namespace Game {
       Mat3 normalMatrix;
     };
 
+    using Sampler2D = u64;
+
     // NOTE: This struct must be aligned accroding to the std140 standard.
     struct RenderCamera {
       Mat4 projection;
       Mat4 view;
+      Mat4 projectionView;
 
-      // Note: Because some implementations get the aligment of vec3 wrong, we advised to use vec4 here instead.
+      // Note: Because some implementations get the aligment of vec3 wrong, we are advised to use vec4 here instead.
       //       Check: https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)
       Vec4 position;
       Vec4 front;
     };
+
+    // NOTE: This struct must be aligned accroding to the std140 standard.
+    struct MaterialInternal {
+      u32 diffuse;
+      u32 specular;
+      u32 emission;
+      u32 padding0;
+      u32 padding1;
+      u32 padding2;
+      f32 shininess;
+      f32 transparency;
+    };
+
+    static_assert(sizeof(MaterialInternal) == 32);
 
     struct Pipeline {
       Shader::Handle postProcesingShader;
@@ -90,9 +115,24 @@ namespace Game {
       Shader::Handle bloomFinalShader;
 
       Shader::Handle shader;
-      std::vector<RenderUnit>          units;
-      std::vector<u32>                 opaqueUnitIndices;
+
+      std::vector<RenderUnit>                               units;
+      std::map<Material::Handle, std::map<Mesh::Handle, std::vector<u32>>> opaqueUnits;
+
       std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
+
+      struct Instance {
+        Mat4 transformMatrix;
+        Mat3 normalMatrix;
+      };
+
+      VertexBuffer::Handle instancedBuffer;
+      Instance* instancedBasePtr    = nullptr;
+      Instance* instancedCurrentPtr = nullptr;
+
+      UniformBuffer::Handle materialsUniformBuffer;
+      MaterialInternal* materialsBasePtr = nullptr;
+      MaterialInternal* materialsCurrentPtr = nullptr;
     };
 
     struct Environment {

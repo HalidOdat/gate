@@ -42,6 +42,8 @@ namespace Game {
       Int4,
       Uint,
       Bool,
+      Mat3,
+      Mat4,
     };
 
   public:
@@ -63,6 +65,9 @@ namespace Game {
         case Type::Int4:   return 4;
         case Type::Uint:   return 1;
         case Type::Bool:   return 1;
+
+        case Type::Mat3:   return 3;
+        case Type::Mat4:   return 4;
       }
       GAME_UNREACHABLE("Unknown shader data type!");
     }
@@ -79,6 +84,8 @@ namespace Game {
         case Type::Int4:   return sizeof(int)          * 4;
         case Type::Uint:   return sizeof(unsigned int) * 1;
         case Type::Bool:   return sizeof(bool);
+        case Type::Mat3:   return sizeof(float) * 3 * 3;
+        case Type::Mat4:   return sizeof(float) * 4 * 4;
       }
       GAME_UNREACHABLE("Unknown shader data type!");
     }
