@@ -49,8 +49,9 @@ namespace Game {
 
   void EditorLayer::onUpdate(Timestep ts) {
     GAME_PROFILE_FUNCTION();
-    
-    mCameraController.onUpdate(ts);
+    if (!Input::isKeyPressed(Key::LeftControl) && !Input::isKeyPressed(Key::RightControl)) {
+      mCameraController.onUpdate(ts);
+    }
     switch (mState) {
       case State::Edit:
         mActiveScene->render(mCameraController);
@@ -63,6 +64,33 @@ namespace Game {
         break;
       default:
         GAME_UNREACHABLE("Unknown state!");
+    }
+
+    if (mSelectedEntity.isValid()) {
+      if (Input::isKeyPressed(Key::LeftControl) || Input::isKeyPressed(Key::RightControl)) {
+        auto& transform = mSelectedEntity.get<TransformComponent>();
+        if (Input::isKeyPressed(Key::Left)) {
+            transform.translation.x -= ts * 20;
+        }
+        if (Input::isKeyPressed(Key::Right)) {
+            transform.translation.x += ts * 20;
+        }
+        if (Input::isKeyPressed(Key::LeftShift) || Input::isKeyPressed(Key::RightShift)) {
+          if (Input::isKeyPressed(Key::Up)) {
+            transform.translation.z -= ts * 20;
+          }
+          if (Input::isKeyPressed(Key::Down)) {
+            transform.translation.z += ts * 20;
+          }
+        } else {
+          if (Input::isKeyPressed(Key::Up)) {
+            transform.translation.y += ts * 20;
+          }
+          if (Input::isKeyPressed(Key::Down)) {
+            transform.translation.y -= ts * 20;
+          }
+        }
+      }
     }
   }
 
@@ -125,27 +153,6 @@ namespace Game {
     if (event.getKey() == Key::F3) {
       mShow = !mShow;
       return true;
-    }
-
-    if (mSelectedEntity.isValid()) {
-      auto ts = Timestep::get();
-      auto& transform = mSelectedEntity.get<TransformComponent>();
-      switch (event.getKey()) {
-        case Key::Up:
-          transform.translation.y += ts * 20;
-          break;
-        case Key::Down:
-          transform.translation.y -= ts * 20;
-          break;
-        case Key::Left:
-          transform.translation.x -= ts * 20;
-          break;
-        case Key::Right:
-          transform.translation.x += ts * 20;
-          break;
-        default:
-          ;
-      }
     }
 
     if (event.getModifier() == KeyModifier::Control) {
