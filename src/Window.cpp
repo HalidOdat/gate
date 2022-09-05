@@ -189,14 +189,14 @@ namespace Game {
 
     glfwSetKeyCallback(result->data.window, [](GLFWwindow* window, int keyCode, int scancode, int action, int mods) {
       (void)scancode;
-      (void)mods;
 
       auto& data = *(Data*)glfwGetWindowUserPointer(window);
 
-      const auto key = (Key)keyCode;
+      const auto key      = (Key)keyCode;
+      const auto modifier = (KeyModifier)mods;
       switch (action) {
 				case GLFW_PRESS: {
-					KeyPressedEvent event(key, false);
+					KeyPressedEvent event(key, modifier, false);
 					data.eventCallback(event);
 					break;
 				}
@@ -206,7 +206,7 @@ namespace Game {
 					break;
 				}
 				case GLFW_REPEAT: {
-					KeyPressedEvent event(key, true);
+					KeyPressedEvent event(key, modifier, true);
 					data.eventCallback(event);
 					break;
 				}

@@ -148,14 +148,14 @@ namespace Game {
       }
     }
 
-    if (event.getKey() == Key::S) {
-      if (Input::isKeyPressed(Key::LeftControl) || Input::isKeyPressed(Key::RightControl)) {
+    if (event.getModifier() == KeyModifier::Control) {
+      if (event.getKey() == Key::S) {
         mState = State::Simulate;
         Logger::trace("Editor: Simulation has started");
+        return true;
       }
-      return true;
     }
-
+    
     if (mShow) {
       // if (event.getKey() == Key::T) {
       //   ResourceManager::reloadAll<Texture2D>();

@@ -125,7 +125,23 @@ namespace Game {
     RightAlt           = 346,
     RightSuper         = 347,
     Menu               = 348,
-    Last               = Key::Menu, // Must be last
   };
+
+  enum class KeyModifier : u8 {
+    None     = 0x0000,
+    Shift    = 0x0001,
+    Control  = 0x0002,
+    Alt      = 0x0004,
+    Super    = 0x0008,
+    CapsLock = 0x0010,
+    NumsLock = 0x0020,
+  };
+
+  inline KeyModifier operator|(KeyModifier lhs, KeyModifier rhs) {
+    return static_cast<KeyModifier>(static_cast<u8>(lhs) | static_cast<u8>(rhs));
+  }
+  inline KeyModifier operator&(KeyModifier lhs, KeyModifier rhs) {
+    return static_cast<KeyModifier>(static_cast<u8>(lhs) & static_cast<u8>(rhs));
+  }
 
 }
