@@ -6,10 +6,14 @@
 #include <sstream>
 #include <fstream>
 #include <optional>
+#include <unordered_map>
 
 namespace Game {
 
   GAME_FACTORY_IMPLEMENTATION(Mesh, factory)
+
+  static std::unordered_map<String, Mesh::Handle> cachedMeshes;
+  static Mesh::Handle cachedCube;
 
   template<>
   struct FactoryCallback<Mesh> {
@@ -23,9 +27,22 @@ namespace Game {
         Logger::trace("Mesh #%u destroyed: %s", id, mesh.getFilePath()->c_str());
       }
     }
-    inline static void clear() {}
-    inline static void postDecrement(const Resource<Mesh>&) {}
+    inline static void postDecrement(const Resource<Mesh>& resource) {
+      if (resource.getReferenceCount() == 1) {
+        if (resource->getFilePath()) {
+          cachedMeshes.erase(*resource->getFilePath());
+        }
+      }
+    }
+    inline static void clear() {
+      cachedMeshes.clear();
+      cachedCube = {};
+    }
   };
+
+  void Mesh::destroyAllMeshes() {
+    factory.clear();
+  }
 
   struct Vertex {
     Vec3 position;
@@ -116,6 +133,10 @@ namespace Game {
   Mesh::Handle Mesh::load(const std::string& filepath) {
     GAME_PROFILE_FUNCTION();
 
+    if (cachedMeshes.contains(filepath)) {
+      return cachedMeshes.at(filepath);
+    }
+
     auto file = filepath;
     auto source = fileToString(file);
     if (!source) {
@@ -135,7 +156,9 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return factory.emplace(Data{vao, vbo, ibo, file, Type::File});
+    auto result = factory.emplace(Data{vao, vbo, ibo, file, Type::File});
+    cachedMeshes[file] = result;
+    return result;
   }
 
   Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
@@ -183,6 +206,10 @@ namespace Game {
 
   Mesh::Handle Mesh::cube() {
     GAME_PROFILE_FUNCTION();
+
+    if (cachedCube) {
+      return cachedCube;
+    }
 
     static const f32 vertices[] = {
       // positions          // normals     // texture coords
@@ -275,7 +302,8 @@ namespace Game {
 
     Data data = Mesh::fromVertices(vertices, indices);
     data.type = Type::Cube;
-    return factory.emplace(std::move(data));
+    cachedCube = factory.emplace(std::move(data));
+    return cachedCube;
   }
 
 } // namespace Game

@@ -49,7 +49,7 @@ namespace Game {
     u32            mCount = 1;
     bool mMoveLight = true;
 
-    Material mMaterial;
+    Material::Handle mMaterial;
 
     constexpr static const auto lightColor = Vec3{1.0f, 1.0f, 1.0f};
     Light mLight = {

@@ -1,25 +1,24 @@
 #include "Core/Base.hpp"
 #include "Resource/Manager.hpp"
 #include "Resource/Texture.hpp"
+#include "Renderer/Material.hpp"
 
 #include <string>
 
 namespace Game {
 
-  constexpr const auto         ASSETS_DIRECTORY = "assets/";
-  constexpr const auto  SHADER_ASSETS_DIRECTORY = "assets/shaders/";
-  constexpr const auto TEXTURE_ASSETS_DIRECTORY = "assets/textures/";
-  constexpr const auto MESH_ASSETS_DIRECTORY    = "assets/objects/";
-
   void ResourceManager::initialize() {
     Logger::info("ResourceManager: Initialized!");
+    Material::initialize();
   }
 
   void ResourceManager::shutdown() {
     // sInstance.getFactory<Mesh>().clear();
     // sInstance.getFactory<Texture2D>().clear();
     // sInstance.getFactory<Shader>().clear();
+    Material::destroy();
     Texture2D::destroyAllTextures();
+    Mesh::destroyAllMeshes();
     Logger::info("ResourceManager: Shutdown!");
   }
 

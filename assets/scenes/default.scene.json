@@ -4,19 +4,7 @@
     {
       "components": {
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "shininess": 32.000000,
-            "transparancy": 1.000000
-          }
+          "material": "Crate"
         },
         "TransformComponent": {
           "translation": [ 0.000000, 0.000000, 0.000000 ],
@@ -42,19 +30,7 @@
           "scale": [ 1.000000, 1.000000, 1.000000 ]
         },
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "transparancy": 1.000000,
-            "shininess": 32.000000
-          }
+          "material": "Crate"
         },
         "MeshSourceComponent": {
           "type": "Cube"
@@ -64,19 +40,7 @@
     {
       "components": {
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "shininess": 32.000000,
-            "transparancy": 1.000000
-          }
+          "material": "Crate"
         },
         "TransformComponent": {
           "translation": [ -1.460000, -2.160000, -2.460000 ],
@@ -102,19 +66,7 @@
           "scale": [ 1.000000, 1.000000, 1.000000 ]
         },
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "transparancy": 1.000000,
-            "shininess": 32.000000
-          }
+          "material": "Crate"
         },
         "MeshSourceComponent": {
           "type": "Cube"
@@ -124,19 +76,7 @@
     {
       "components": {
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "shininess": 32.000000,
-            "transparancy": 1.000000
-          }
+          "material": "Crate"
         },
         "TransformComponent": {
           "translation": [ 2.480000, -0.320000, -3.420000 ],
@@ -154,19 +94,7 @@
     {
       "components": {
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "shininess": 32.000000,
-            "transparancy": 1.000000
-          }
+          "material": "Crate"
         },
         "TransformComponent": {
           "translation": [ -1.600000, 3.100000, -7.400000 ],
@@ -192,19 +120,7 @@
           "scale": [ 1.000000, 1.000000, 1.000000 ]
         },
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "transparancy": 1.000000,
-            "shininess": 32.000000
-          }
+          "material": "Crate"
         },
         "MeshSourceComponent": {
           "type": "Cube"
@@ -222,19 +138,7 @@
           "scale": [ 1.000000, 1.000000, 1.000000 ]
         },
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "transparancy": 1.000000,
-            "shininess": 32.000000
-          }
+          "material": "Crate"
         },
         "MeshSourceComponent": {
           "type": "Cube"
@@ -252,19 +156,7 @@
           "scale": [ 1.000000, 1.000000, 1.000000 ]
         },
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "transparancy": 1.000000,
-            "shininess": 32.000000
-          }
+          "material": "Crate"
         },
         "MeshSourceComponent": {
           "type": "Cube"
@@ -274,19 +166,7 @@
     {
       "components": {
         "MeshRendererComponent": {
-          "material": {
-            "diffuseMap": {
-              "path": "assets/textures/CrateDiffuse.png"
-            },
-            "specularMap": {
-              "path": "assets/textures/CrateSpecular.png"
-            },
-            "emissionMap": {
-              "path": "assets/textures/matrix.jpg"
-            },
-            "shininess": 32.000000,
-            "transparancy": 1.000000
-          }
+          "material": "Crate"
         },
         "TransformComponent": {
           "translation": [ -1.120000, 1.180000, -1.320000 ],

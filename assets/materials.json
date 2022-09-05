@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Default"
+  },
+  {
+    "name": "Crate",
+    "diffuseMap": {
+      "path": "assets/textures/CrateDiffuse.png"
+    },
+    "specularMap": {
+      "path": "assets/textures/CrateSpecular.png"
+    },
+    "emissionMap": {
+      "path": "assets/textures/matrix.jpg"
+    },
+    "shininess": 32.000000,
+    "transparancy": 1.000000
+  }
+]

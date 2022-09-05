@@ -22,13 +22,6 @@ namespace std {
     }
   };
 
-  template<>
-  struct std::hash<Game::Material::Handle> {
-    std::size_t operator()(Game::Material::Handle const& handle) const noexcept {
-      return std::hash<Game::u32>{}(handle.getId());
-    }
-  };
-
 }
 
 namespace Game {
@@ -300,14 +293,14 @@ namespace Game {
     u32 index = (u32)mPipeline.units.size();
     RenderUnit unit {
       mesh,
-      *material, // Copy material
+      material,
       transform,
       Mat3(glm::transpose(glm::inverse(transform))),
     };
 
-    if (!unit.material.diffuseMap.isValid())  unit.material.diffuseMap  = mEnvironment.defaultDiffuseMap;
-    if (!unit.material.specularMap.isValid()) unit.material.specularMap = mEnvironment.defaultSpecularMap;
-    if (!unit.material.emissionMap.isValid()) unit.material.emissionMap = mEnvironment.defaultEmissionMap;
+    if (!unit.material->diffuseMap.isValid())  unit.material->diffuseMap  = mEnvironment.defaultDiffuseMap;
+    if (!unit.material->specularMap.isValid()) unit.material->specularMap = mEnvironment.defaultSpecularMap;
+    if (!unit.material->emissionMap.isValid()) unit.material->emissionMap = mEnvironment.defaultEmissionMap;
 
     mPipeline.units.push_back(unit);
     if (material->transparency >= 1.0f) {
@@ -326,9 +319,9 @@ namespace Game {
     RenderUnit& unit = mPipeline.units[unitIndex];
 
     // TODO: Make this more dynamic
-    unit.material.diffuseMap->bind(0);
-    unit.material.specularMap->bind(1);
-    unit.material.emissionMap->bind(2);
+    unit.material->diffuseMap->bind(0);
+    unit.material->specularMap->bind(1);
+    unit.material->emissionMap->bind(2);
 
     auto vao = unit.mesh->getVertexArray();
     vao->bind();
@@ -362,8 +355,8 @@ namespace Game {
       mPipeline.materialsUniformBuffer->set({mPipeline.materialsBasePtr, 1});
 
       // Sorted by mesh
-      mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
       for (auto&[mesh, unitIndices] : meshes) {
+        mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
         usize count = 0;
         for (auto unitIndex : unitIndices) {
           *(mPipeline.instancedCurrentPtr++) = {
@@ -384,8 +377,6 @@ namespace Game {
           0,
           (GLsizei)count
         );
-  
-        mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
       }
     }
 

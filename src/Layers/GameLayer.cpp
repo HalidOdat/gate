@@ -25,10 +25,11 @@ namespace Game {
   void GameLayer::onAttach() {
     Logger::info("GameLayer::onAttach was called");
 
-    mMaterial.diffuseMap  = Texture2D::load("assets/textures/CrateDiffuse.png").build();
-    mMaterial.specularMap = Texture2D::load("assets/textures/CrateSpecular.png").build();
-    mMaterial.emissionMap = Texture2D::load("assets/textures/matrix.jpg").build();
-    mMaterial.shininess   = 32.0f;
+    mMaterial = Material::create("Crate");
+    mMaterial->diffuseMap  = Texture2D::load("assets/textures/CrateDiffuse.png").build();
+    mMaterial->specularMap = Texture2D::load("assets/textures/CrateSpecular.png").build();
+    mMaterial->emissionMap = Texture2D::load("assets/textures/matrix.jpg").build();
+    mMaterial->shininess   = 32.0f;
 
     static Vec3 cubePositions[] = {
       Vec3( 0.0f,  0.0f,  0.0f),
@@ -55,7 +56,7 @@ namespace Game {
       Entity entity = mScene->createEntity(String("box ") + std::to_string(i));
       entity.add<TransformComponent>(cubePositions[i]);
       entity.add<MeshSourceComponent>(mCubeMesh);
-      // entity.add<MeshRendererComponent>(mMaterial);
+      entity.add<MeshRendererComponent>(mMaterial);
       mEntity = entity;
     }
   }
@@ -99,7 +100,7 @@ namespace Game {
 
   void GameLayer::onUiRender(Ui& ui) {
     ui.begin({0, 200});
-      ui.slider(mMaterial.transparency, 0.0f, 1.0f);
+      ui.slider(mMaterial->transparency, 0.0f, 1.0f);
       ui.slider(mLight.ambient,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.diffuse,  Vec3(0.1f), Vec3(1.0f));
       ui.slider(mLight.specular, Vec3(0.1f), Vec3(1.0f));

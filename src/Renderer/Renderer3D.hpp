@@ -11,8 +11,6 @@
 #include <unordered_map>
 
 namespace Game {
-  
-  class Application;
 
   class Renderer3D {
     friend class Application;
@@ -46,7 +44,7 @@ namespace Game {
     void renderSkybox();
 
   private:
-    
+
     class PostProcessing {
     public:
       PostProcessing();
@@ -62,14 +60,12 @@ namespace Game {
     };
 
     struct RenderUnit {
-      Mesh::Handle mesh;
-      Material     material;
+      Mesh::Handle     mesh;
+      Material::Handle material;
 
       Mat4 modelMatrix;
       Mat3 normalMatrix;
     };
-
-    using Sampler2D = u64;
 
     // NOTE: This struct must be aligned accroding to the std140 standard.
     struct RenderCamera {
@@ -117,7 +113,7 @@ namespace Game {
       Shader::Handle shader;
 
       std::vector<RenderUnit>                               units;
-      std::map<Material::Handle, std::map<Mesh::Handle, std::vector<u32>>> opaqueUnits;
+      std::unordered_map<Material::Handle, std::unordered_map<Mesh::Handle, std::vector<u32>>> opaqueUnits;
 
       std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
 

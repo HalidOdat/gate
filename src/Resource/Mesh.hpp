@@ -47,6 +47,7 @@ namespace Game {
     };
 
   private:
+    static void destroyAllMeshes();
     static Mesh::Data fromVertices(const Slice<const void> vertices, const Slice<const u32> indices);
 
     Mesh(Data data)
@@ -59,6 +60,7 @@ namespace Game {
   private:
     template<typename T>
     friend class ResourceFactory;
+    friend class ResourceManager;
 
     friend class Renderer3D;
   };
