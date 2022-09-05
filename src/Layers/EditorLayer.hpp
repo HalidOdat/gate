@@ -34,6 +34,7 @@ namespace Game {
   private:
     enum class State : u8 {
       Edit,
+      Simulate,
       Play,
     };
 

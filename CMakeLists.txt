@@ -97,6 +97,9 @@ add_executable(${This}
   src/Renderer/Renderer3D.hpp
   src/Renderer/Renderer3D.cpp
 
+  src/Physics/Engine.hpp
+  src/Physics/Engine.cpp
+
   src/Scene/Scene.hpp
   src/Scene/Scene.cpp
   src/Scene/Components.hpp

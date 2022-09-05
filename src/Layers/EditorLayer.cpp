@@ -4,7 +4,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
 
-#include "Core/Log.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Resource/Manager.hpp"
 #include "Layers/EditorLayer.hpp"
@@ -15,6 +14,7 @@
 #include "Scene/SceneSerializer.hpp"
 
 #include "Core/Base.hpp"
+#include "Core/Input.hpp"
 
 namespace Game {
 
@@ -54,6 +54,9 @@ namespace Game {
     switch (mState) {
       case State::Edit:
         mActiveScene->render(mCameraController);
+        break;
+      case State::Simulate:
+        mActiveScene->onSimulateUpdate(ts, mCameraController);
         break;
       case State::Play:
         mActiveScene->render(mCameraController);
@@ -143,6 +146,14 @@ namespace Game {
         default:
           ;
       }
+    }
+
+    if (event.getKey() == Key::S) {
+      if (Input::isKeyPressed(Key::LeftControl) || Input::isKeyPressed(Key::RightControl)) {
+        mState = State::Simulate;
+        Logger::trace("Editor: Simulation has started");
+      }
+      return true;
     }
 
     if (mShow) {

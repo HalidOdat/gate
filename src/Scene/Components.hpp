@@ -33,6 +33,15 @@ namespace Game {
     Mat4 getTranformMatrix() const;
   };
 
+  struct VelocityComponent : Ecs::Component<VelocityComponent> {
+    VelocityComponent() {}
+    VelocityComponent(const Vec3& velocity)
+      : velocity{velocity}
+    {}
+
+    Vec3 velocity = {0.0f, 0.0f, 0.0f};
+  };
+
   struct MeshSourceComponent : Ecs::Component<MeshSourceComponent> {
     MeshSourceComponent() = default;
     MeshSourceComponent(const Mesh::Handle& mesh)
