@@ -184,12 +184,16 @@ namespace Game {
     destroy();
   }
 
-  void FrameBuffer::bind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, mId);
-    glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
+  void FrameBuffer::bind(bool forDraw) {
+    if (forDraw) {
+      glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mId);
+      glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
 
-    if (mClearOnBind) {
-      this->clear();
+      if (mClearOnBind) {
+        this->clear();
+      }
+    } else {
+      glBindFramebuffer(GL_READ_FRAMEBUFFER, mId);
     }
   }
 

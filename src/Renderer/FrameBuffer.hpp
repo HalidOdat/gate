@@ -75,7 +75,7 @@ namespace Game {
 
     void invalidate(u32 width, u32 height);
 
-    void bind();
+    void bind(bool forDraw = true);
     void unbind();
 
     void clear();

@@ -112,7 +112,7 @@ namespace Game {
 
       Shader::Handle shader;
 
-      std::vector<RenderUnit>                               units;
+      std::vector<RenderUnit> units;
       std::unordered_map<Material::Handle, std::unordered_map<Mesh::Handle, std::vector<u32>>> opaqueUnits;
 
       std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
