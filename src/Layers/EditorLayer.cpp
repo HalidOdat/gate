@@ -69,25 +69,26 @@ namespace Game {
     if (mSelectedEntity.isValid()) {
       if (Input::isKeyPressed(Key::LeftControl) || Input::isKeyPressed(Key::RightControl)) {
         auto& transform = mSelectedEntity.get<TransformComponent>();
+        auto amount = ts * 20.0f;
         if (Input::isKeyPressed(Key::Left)) {
-            transform.translation.x -= ts * 20;
+          transform.offsetTranslation({-amount, 0.0f, 0.0f});
         }
         if (Input::isKeyPressed(Key::Right)) {
-            transform.translation.x += ts * 20;
+          transform.offsetTranslation({amount, 0.0f, 0.0f});
         }
         if (Input::isKeyPressed(Key::LeftShift) || Input::isKeyPressed(Key::RightShift)) {
           if (Input::isKeyPressed(Key::Up)) {
-            transform.translation.z -= ts * 20;
+            transform.offsetTranslation({0.0f, 0.0f, -amount});
           }
           if (Input::isKeyPressed(Key::Down)) {
-            transform.translation.z += ts * 20;
+            transform.offsetTranslation({0.0f, 0.0f, amount});
           }
         } else {
           if (Input::isKeyPressed(Key::Up)) {
-            transform.translation.y += ts * 20;
+            transform.offsetTranslation({0.0f, amount, 0.0f});
           }
           if (Input::isKeyPressed(Key::Down)) {
-            transform.translation.y -= ts * 20;
+            transform.offsetTranslation({0.0f, -amount, 0.0f});
           }
         }
       }
@@ -113,9 +114,15 @@ namespace Game {
       if (ui.checkbox(mShow)) {}
       if (mSelectedEntity.isValid()) {
         auto& transform = mSelectedEntity.get<TransformComponent>();
-        ui.slider(transform.translation, Vec3(-20.0f), Vec3(20.0f));
-        ui.slider(transform.rotation, Vec3(-20.0f), Vec3(20.0f));
-        ui.slider(transform.scale, Vec3(1.0f), Vec3(40.0f));
+        auto translation = transform.getTranslation();
+        auto rotation = transform.getRotation();
+        auto scale = transform.getScale();
+        ui.slider(translation, Vec3(-20.0f), Vec3(20.0f));
+        ui.slider(rotation, Vec3(-20.0f), Vec3(20.0f));
+        ui.slider(scale, Vec3(1.0f), Vec3(40.0f));
+        transform.setTranslation(translation);
+        transform.setRotation(rotation);
+        transform.setScale(scale);
       }
     ui.end();
   }

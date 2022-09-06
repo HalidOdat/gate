@@ -3,6 +3,7 @@
 #include "Core/Type.hpp"
 #include "Core/Timestep.hpp"
 #include "Ecs/Ecs.hpp"
+#include "Scene/Entity.hpp"
 #include "Scene/Components.hpp"
 #include "Serializer/Serializer.hpp"
 #include "Physics/Engine.hpp"
@@ -35,45 +36,22 @@ namespace Game {
     friend class EditorLayer;
   };
 
-  class Entity {
-  public:
-    Entity()
-      : mEntityId{0}, mScene{nullptr}
-    {}
+  template<typename T, typename ...Args>
+  T& Entity::add(Args&&... args) {
+    return mScene->mRegistry.assign<T>(
+      Ecs::Entity(mEntityId),
+      std::forward<Args>(args)...
+    );
+  }
 
-    template<typename T, typename ...Args>
-    T& add(Args&&... args) {
-      return mScene->mRegistry.assign<T>(
-        Ecs::Entity(mEntityId),
-        std::forward<Args>(args)...
-      );
-    }
+  template<typename T, typename ...Ts>
+  bool Entity::has() {
+    return mScene->mRegistry.hasComponent<T, Ts...>(Ecs::Entity(mEntityId));
+  }
 
-    template<typename T, typename ...Ts>
-    bool has() {
-      return mScene->mRegistry.hasComponent<T, Ts...>(Ecs::Entity(mEntityId));
-    }
-
-    template<typename T, typename ...Ts>
-    auto& get() {
-      return mScene->mRegistry.get<T, Ts...>(Ecs::Entity(mEntityId));
-    }
-
-    inline bool isValid() const { return mScene; }
-
-  private:
-    Entity(Ecs::Entity entity, Scene* scene)
-      : mEntityId{entity.getId()}, mScene{scene}
-    {}
-
-  private:
-    Ecs::Entity::Id mEntityId;
-    Scene* mScene;
-
-  private:
-    friend class EditorLayer;
-    friend class  Scene;
-    friend struct Serializer::Convert<Scene>;
-  };
+  template<typename T, typename ...Ts>
+  T& Entity::get() {
+    return mScene->mRegistry.get<T, Ts...>(Ecs::Entity(mEntityId));
+  }
 
 } // namespace Game

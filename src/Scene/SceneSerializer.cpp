@@ -118,9 +118,9 @@ namespace Game {
         GAME_PROFILE_FUNCTION();
 
         auto node = Node::object();
-        node["translation"] = component.translation;
-        node["rotation"]    = component.rotation;
-        node["scale"]       = component.scale;
+        node["translation"] = component.getTranslation();
+        node["rotation"]    = component.getRotation();
+        node["scale"]       = component.getScale();
         return node;
       }
       static bool decode(const Node& node, TransformComponent& component) {
@@ -129,21 +129,25 @@ namespace Game {
         if (!node.isObject()) {
           return false;
         }
-        if (auto translation = node.get("translation"); translation) {
-          if (!Convert<Vec3>::decode(*translation, component.translation)) {
+        Vec3 translation;
+        Vec3 rotation;
+        Vec3 scale;
+        if (auto translationNode = node.get("translation"); translationNode) {
+          if (!Convert<Vec3>::decode(*translationNode, translation)) {
             return false;
           }
         }
-        if (auto rotation = node.get("rotation"); rotation) {
-          if (!Convert<Vec3>::decode(*rotation, component.rotation)) {
+        if (auto rotationNode = node.get("rotation"); rotationNode) {
+          if (!Convert<Vec3>::decode(*rotationNode, rotation)) {
             return false;
           }
         }
-        if (auto scale = node.get("scale"); scale) {
-          if (!Convert<Vec3>::decode(*scale, component.scale)) {
+        if (auto scaleNode = node.get("scale"); scaleNode) {
+          if (!Convert<Vec3>::decode(*scaleNode, scale)) {
             return false;
           }
         }
+        component = TransformComponent(translation, rotation, scale);
         return true;
       }
     };

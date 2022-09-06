@@ -3,8 +3,9 @@
 #include "Core/Math.hpp"
 #include "Resource/Mesh.hpp"
 #include "Renderer/Material.hpp"
-#include "Ecs/Component.hpp"
 #include "Renderer/CameraController.hpp"
+#include "Ecs/Component.hpp"
+#include "Scene/Entity.hpp"
 
 namespace Game {
 
@@ -17,20 +18,43 @@ namespace Game {
     String tag;
   };
 
-  struct TransformComponent : Ecs::Component<TransformComponent> {
+  struct RelationshipComponent {
+    RelationshipComponent(Entity parent)
+      : parent{parent}
+    {}
+    Entity parent;
+  };
+
+  class TransformComponent : Ecs::Component<TransformComponent> {
+  public:
     TransformComponent(
       const Vec3& translation = {0.0f, 0.0f, 0.0f},
       const Vec3& rotation    = {0.0f, 0.0f, 0.0f},
       const Vec3& scale       = {1.0f, 1.0f, 1.0f}
-    ) : translation{translation}, rotation{rotation}, scale{scale}
-    {}
+    );
 
+    inline const Vec3& getTranslation() const { return mTranslation; }
+    inline const Vec3& getRotation() const { return mRotation; }
+    inline const Vec3& getScale() const { return mScale; }
 
-    Vec3 translation;
-    Vec3 rotation;
-    Vec3 scale;
+    inline void offsetTranslation(const Vec3& offset) { setTranslation(mTranslation + offset); }
+    inline void offsetRotation(const Vec3& offset) { setRotation(mRotation + offset); }
+    inline void offsetScale(const Vec3& offset) { setScale(mScale + offset); }
 
-    Mat4 getTranformMatrix() const;
+    void setTranslation(const Vec3& value);
+    void setRotation(const Vec3& value);
+    void setScale(const Vec3& value);
+
+    inline const Mat4& getTransform() const { return mTransform; }
+
+  private:
+    void recalculateTransform();
+
+  private:
+    Mat4 mTransform;
+    Vec3 mTranslation;
+    Vec3 mRotation;
+    Vec3 mScale;
   };
 
   struct VelocityComponent : Ecs::Component<VelocityComponent> {
