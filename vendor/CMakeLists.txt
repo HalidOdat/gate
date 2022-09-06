@@ -42,3 +42,10 @@ add_library(${This} INTERFACE)
 target_include_directories(${This} INTERFACE stb)
 
 add_library(${This}::${This} ALIAS ${This})
+
+# Assimp image
+set(BUILD_SHARED_LIBS         OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS        OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL            OFF CACHE BOOL "" FORCE)
+set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+add_subdirectory(assimp)

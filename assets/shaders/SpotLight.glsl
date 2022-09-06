@@ -98,14 +98,14 @@ void main() {
 
   vec3 emission = vec3(texture(uTextures[vMaterial.emission], vTexCoords));
     
-  // check if lighting is inside the spotlight cone
-  // soft edges
-  float theta = dot(lightDir, normalize(-vLight.direction)); 
-  float epsilon   = vLight.cutOff - vLight.outerCutOff;
-  float intensity = clamp((theta - vLight.outerCutOff) / epsilon, 0.0, 1.0);
-  diffuse  *= intensity;
-  specular *= intensity;
-  emission *= intensity;
+  // // check if lighting is inside the spotlight cone
+  // // soft edges
+  // float theta = dot(lightDir, normalize(-vLight.direction)); 
+  // float epsilon   = vLight.cutOff - vLight.outerCutOff;
+  // float intensity = clamp((theta - vLight.outerCutOff) / epsilon, 0.0, 1.0);
+  // diffuse  *= intensity;
+  // specular *= intensity;
+  // emission *= intensity;
 
   // light attenuation
   float distance    = length(vLight.position - vFragmentPosition);
@@ -113,7 +113,7 @@ void main() {
   ambient  *= attenuation;
   diffuse  *= attenuation;
   specular *= attenuation;
-  emission *= attenuation;
+  // emission *= attenuation;
 
   vec3 result = ambient + diffuse + specular + emission;
   vFragmentColor = vec4(result, vMaterial.transparency);
