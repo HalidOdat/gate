@@ -15,6 +15,7 @@ namespace Game {
     enum class Type {
       Vertex = 0,
       Fragment,
+      Geometry,
       Compute,
     };
 
@@ -43,7 +44,7 @@ namespace Game {
     };
   
   public:
-    static constexpr const u32 SHADER_TYPE_COUNT = 3;
+    static constexpr const u32 SHADER_TYPE_COUNT = 4;
 
   public:
     static bool globalDefine(String name, String content);

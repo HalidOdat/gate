@@ -31,6 +31,7 @@ namespace Game {
     switch (type) {
       case Shader::Type::Vertex:   return GL_VERTEX_SHADER;
       case Shader::Type::Fragment: return GL_FRAGMENT_SHADER;
+      case Shader::Type::Geometry: return GL_GEOMETRY_SHADER;
       case Shader::Type::Compute:  return GL_COMPUTE_SHADER;
     }
     GAME_UNREACHABLE("unknown shader type!");
@@ -40,6 +41,7 @@ namespace Game {
     switch (type) {
       case Shader::Type::Vertex:   return "Vertex";
       case Shader::Type::Fragment: return "Fragment";
+      case Shader::Type::Geometry: return "Geometry";
       case Shader::Type::Compute:  return "Compute";
     }
     GAME_UNREACHABLE("unknown shader type!");
@@ -58,6 +60,8 @@ namespace Game {
       return Shader::Type::Vertex;
     } else if (Utils::stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Fragment))) {
       return Shader::Type::Fragment;
+    } else if (Utils::stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Geometry))) {
+      return Shader::Type::Geometry;
     } else if (Utils::stringIsEqualIgnoreCase(string, shaderTypeToString(Shader::Type::Compute))) {
       return Shader::Type::Compute;
     }
@@ -190,9 +194,9 @@ namespace Game {
       return {};
     }
 
-    std::array<u32, SHADER_TYPE_COUNT> shaders = {0, 0, 0};
+    std::array<u32, SHADER_TYPE_COUNT> shaders = {0, 0, 0, 0};
     for (auto&[type, content] : parts) {
-      u32 id = Shader::compile(type, content.c_str());;
+      u32 id = Shader::compile(type, content.c_str());
 
       shaders[(usize)type] = id;
 
