@@ -26,6 +26,8 @@ namespace Game {
     template<typename T, typename ...Ts>
     T& get();
 
+    Entity duplicate();
+
     inline bool isValid() const { return mScene; }
     inline operator bool() const { return isValid(); }
   private:

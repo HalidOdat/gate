@@ -105,6 +105,7 @@ add_executable(${This}
   src/Scene/Components.hpp
   src/Scene/Components.cpp
   src/Scene/Entity.hpp
+  src/Scene/Entity.cpp
   src/Scene/SceneSerializer.hpp
   src/Scene/SceneSerializer.cpp
 

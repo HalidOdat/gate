@@ -164,10 +164,18 @@ namespace Game {
     }
 
     if (event.getModifier() == KeyModifier::Control) {
-      if (event.getKey() == Key::S) {
-        mState = State::Simulate;
-        Logger::trace("Editor: Simulation has started");
-        return true;
+      switch (event.getKey()) {
+        case Key::S:
+          mState = State::Simulate;
+          Logger::trace("Editor: Simulation has started");
+          break;
+        case Key::D:
+          if (mSelectedEntity) {
+            mSelectedEntity.duplicate();
+          }
+          break;
+        default:
+          return false;
       }
     }
     

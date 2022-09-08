@@ -237,8 +237,6 @@ namespace Game {
     #endif
     
     #if GAME_EDITOR
-      glLineWidth(1.5f);
-
       mOutlineShader = Shader::load("assets/shaders/Outline.glsl")
         .define("EDITOR", "1")
         .build();
