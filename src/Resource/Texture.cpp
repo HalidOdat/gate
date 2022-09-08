@@ -59,6 +59,7 @@ namespace Game {
   static GLenum TextureDataTypeToOpenGL(Texture::DataType format) {
     switch (format) {
       case Texture::DataType::UnsignedByte:     return GL_UNSIGNED_BYTE;
+      case Texture::DataType::UnsignedInt:      return GL_UNSIGNED_INT;
       case Texture::DataType::Float:            return GL_FLOAT;
       case Texture::DataType::HalfFloat:        return GL_HALF_FLOAT;
       case Texture::DataType::UnsignedInt_24_8: return GL_UNSIGNED_INT_24_8;
@@ -74,6 +75,7 @@ namespace Game {
       case Texture::DataFormat::Bgr:          return GL_BGR;
       case Texture::DataFormat::Rgba:         return GL_RGBA;
       case Texture::DataFormat::Bgra:         return GL_BGRA;
+      case Texture::DataFormat::RedInteger:   return GL_RED_INTEGER;
       case Texture::DataFormat::DepthStencil: return GL_DEPTH_STENCIL;
     }
     GAME_UNREACHABLE("unknown data format type!");
@@ -90,6 +92,7 @@ namespace Game {
       case Texture::Format::Rgba32F:         return GL_RGBA32F;
       case Texture::Format::Rgba16F:         return GL_RGBA16F;
       case Texture::Format::R11FG11FB10F:    return GL_R11F_G11F_B10F;
+      case Texture::Format::R32UI:           return GL_R32UI;
       case Texture::Format::Depth24Stencil8: return GL_DEPTH24_STENCIL8;
     }
     GAME_UNREACHABLE("unknown internal format type!");
@@ -106,6 +109,7 @@ namespace Game {
       case Texture::Format::Rgba32F:         return Texture::DataFormat::Rgba;
       case Texture::Format::Rgba16F:         return Texture::DataFormat::Rgba;
       case Texture::Format::R11FG11FB10F:    return Texture::DataFormat::Rgb;
+      case Texture::Format::R32UI:           return Texture::DataFormat::RedInteger;
       case Texture::Format::Depth24Stencil8: return Texture::DataFormat::DepthStencil;
     }
     GAME_UNREACHABLE("unknown internal format type!");
@@ -122,6 +126,7 @@ namespace Game {
       case Texture::Format::Rgba32F:         return Texture::DataType::Float;
       case Texture::Format::Rgba16F:         return Texture::DataType::HalfFloat;
       case Texture::Format::R11FG11FB10F:    return Texture::DataType::HalfFloat;
+      case Texture::Format::R32UI:           return Texture::DataType::UnsignedInt;
       case Texture::Format::Depth24Stencil8: return Texture::DataType::UnsignedInt_24_8;
     }
     GAME_UNREACHABLE("unknown internal format type!");

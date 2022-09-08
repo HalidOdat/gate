@@ -40,6 +40,7 @@ namespace Game {
 
     enum class DataType : u8 {
       UnsignedByte,
+      UnsignedInt,
       Float,
       HalfFloat,
       UnsignedInt_24_8,
@@ -52,6 +53,7 @@ namespace Game {
       Bgr,
       Rgba,
       Bgra,
+      RedInteger,
 
       DepthStencil,
     };
@@ -66,6 +68,8 @@ namespace Game {
       Rgb16F,
       Rgba16F,
       R11FG11FB10F,
+
+      R32UI,
 
       Depth24Stencil8,
 
