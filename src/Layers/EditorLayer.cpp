@@ -137,6 +137,7 @@ namespace Game {
     event.dispatch(&EditorLayer::onWindowResizeEvent, this);
     event.dispatch(&EditorLayer::onKeyPressedEvent, this);
     event.dispatch(&EditorLayer::onMouseScrollEvent, this);
+    event.dispatch(&EditorLayer::onMouseMoveEvent, this);
     event.dispatch(&EditorLayer::onMouseButtonPressedEvent, this);
     event.dispatch(&EditorLayer::onMouseButtonReleasedEvent, this);
   }
@@ -191,6 +192,12 @@ namespace Game {
   bool EditorLayer::onMouseButtonPressedEvent(const MouseButtonPressedEvent& event) {
     if (event.getButton() == MouseButton::Left) {
       mClicked = true;
+
+      u32 entityId = Renderer::readPixel(mLastMousePosition.x, mLastMousePosition.y);
+      if (entityId != UINT32_MAX) {
+        Logger::trace("Editor: Selected entity id: 0x%x", entityId);
+        mSelectedEntity = {entityId, mEditorScene.get()};
+      }
     }
     return false;
   }
@@ -198,6 +205,10 @@ namespace Game {
     if (event.getButton() == MouseButton::Left) {
       mClicked = false;
     }
+    return false;
+  }
+  bool EditorLayer::onMouseMoveEvent(const MouseMoveEvent& event) {
+    mLastMousePosition = {event.getX(), event.getY()};
     return false;
   }
 

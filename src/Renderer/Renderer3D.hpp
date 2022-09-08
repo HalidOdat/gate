@@ -24,7 +24,8 @@ namespace Game {
     void enableCullFace(bool  yes = true);
 
     void begin3D(const PerspectiveCameraController& cameraController);
-    void submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform = Mat4(1.0f));
+    // TODO: accept an entity
+    void submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform = Mat4(1.0f), u32 entityId = 0);
 
     void flush();
     void end();
@@ -32,11 +33,9 @@ namespace Game {
     void waitAndRender();
     void invalidate(u32 width, u32 height);
 
-  private:
-    static constexpr const auto INSTANCE_COUNT       = 1024;
-    static constexpr const auto INSTANCE_BUFFER_SIZE = (sizeof(Mat4) + sizeof(Mat3)) * INSTANCE_COUNT;
-
-    static constexpr const auto MAX_MATERIALS = 32;
+    #if GAME_EDITOR
+      u32 readPixel(u32 x, u32 y);
+    #endif
 
   private:
     void renderAllUnits();
@@ -65,6 +64,8 @@ namespace Game {
 
       Mat4 modelMatrix;
       Mat3 normalMatrix;
+
+      u32 entityId;
     };
 
     // NOTE: This struct must be aligned accroding to the std140 standard.
@@ -120,10 +121,14 @@ namespace Game {
       struct Instance {
         Mat4 transformMatrix;
         Mat3 normalMatrix;
+
+        #if GAME_EDITOR
+          u32 entityId;
+        #endif
       };
 
       VertexBuffer::Handle instancedBuffer;
-      Instance* instancedBasePtr    = nullptr;
+      Instance* instancedBasePtr = nullptr;
       Instance* instancedCurrentPtr = nullptr;
 
       UniformBuffer::Handle materialsUniformBuffer;
@@ -136,6 +141,11 @@ namespace Game {
       Texture2D::Handle defaultSpecularMap;
       Texture2D::Handle defaultEmissionMap;
     };
+  private:
+    static constexpr const auto INSTANCE_COUNT       = 1024;
+    static constexpr const auto INSTANCE_BUFFER_SIZE = sizeof(Pipeline::Instance) * INSTANCE_COUNT;
+
+    static constexpr const auto MAX_MATERIALS = 32;
 
   private:
     Pipeline mPipeline;

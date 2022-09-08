@@ -28,6 +28,7 @@ namespace Game {
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
     bool onMouseScrollEvent(const MouseScrollEvent& event);
+    bool onMouseMoveEvent(const MouseMoveEvent& event);
     bool onMouseButtonPressedEvent(const MouseButtonPressedEvent& event);
     bool onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event);
   
@@ -50,6 +51,7 @@ namespace Game {
     Ref<Scene> mEditorScene = nullptr;
     Ref<Scene> mActiveScene = nullptr;
 
+    Vec2 mLastMousePosition{0.0f};
     Entity mSelectedEntity;
   };
 

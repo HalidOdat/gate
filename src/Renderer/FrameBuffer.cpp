@@ -186,7 +186,7 @@ namespace Game {
 
   void FrameBuffer::bind(bool forDraw) {
     if (forDraw) {
-      glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mId);
+      glBindFramebuffer(GL_FRAMEBUFFER, mId);
       glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
 
       if (mClearOnBind) {

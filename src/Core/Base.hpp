@@ -9,6 +9,9 @@
 #define GAME_PROFILE 0
 #include "Debug/Profiler.hpp"
 
+
+#define GAME_EDITOR 1
+
 namespace Game {
 
 } // namespace Game

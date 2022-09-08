@@ -63,11 +63,17 @@ namespace Game {
             case BufferElement::Type::Bool:
               type = GL_BOOL;
               break;
+            case BufferElement::Type::Int:
+            case BufferElement::Type::Int2:
+            case BufferElement::Type::Int3:
+            case BufferElement::Type::Int4:
+              type = GL_INT;
+              break;
             case BufferElement::Type::Uint:
               type = GL_UNSIGNED_INT;
               break;
             default:
-              type = GL_INT;
+              GAME_UNREACHABLE("Unknown buffer element type!");
           }
           
           glEnableVertexAttribArray(mVertexAttributeIndex);
@@ -78,22 +84,27 @@ namespace Game {
             (GLsizei)layout.getStride(),
             (const void*)element.getOffset()
           );
+          if (element.getAttributeDivisor() != 0) {
+            glVertexAttribDivisor(mVertexAttributeIndex, element.getAttributeDivisor());
+          }
           mVertexAttributeIndex++;
           break;
         }
         case BufferElement::Type::Mat3:
         case BufferElement::Type::Mat4: {
           auto count = element.getComponentCount();
-          for (uint8_t i = 0; i < count; i++) {
+          for (usize i = 0; i < count; i++) {
             glEnableVertexAttribArray(mVertexAttributeIndex);
             glVertexAttribPointer(mVertexAttributeIndex,
-              4,
+              (GLint)count,
               GL_FLOAT,
               element.isNormalized() ? GL_TRUE : GL_FALSE,
               layout.getStride(),
               (const void*)(element.getOffset() + sizeof(float) * count * i)
             );
-            glVertexAttribDivisor(mVertexAttributeIndex, 1);
+            if (element.getAttributeDivisor() != 0) {
+              glVertexAttribDivisor(mVertexAttributeIndex, element.getAttributeDivisor());
+            }
             mVertexAttributeIndex++;
           }
           break;

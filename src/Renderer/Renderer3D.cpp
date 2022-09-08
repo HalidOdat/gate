@@ -1,6 +1,7 @@
 #include <cctype>
 #include <array>
 #include <algorithm>
+#include <stdint.h>
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -96,6 +97,12 @@ namespace Game {
         FrameBuffer::Attachment::Type::Texture2D,
         FrameBuffer::Attachment::Format::Rgba16F
       )
+      #if GAME_EDITOR
+        .attach(
+          FrameBuffer::Attachment::Type::Texture2D,
+          FrameBuffer::Attachment::Format::R32UI
+        )
+      #endif
       .attachDefaultDepthStencilBuffer()
       .build();
 
@@ -184,7 +191,11 @@ namespace Game {
     mPipeline.skyboxVertexArray = skyboxVertexArray;
 
     mPipeline.skyboxShader = Shader::load("assets/shaders/Skybox.glsl").build();
-    mPipeline.shader = Shader::load("assets/shaders/SpotLight.glsl").build();
+    mPipeline.shader = Shader::load("assets/shaders/SpotLight.glsl")
+      #if GAME_EDITOR
+        .define("EDITOR", "1")
+      #endif
+      .build();
     mPipeline.shader->bind();
     i32 samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     mPipeline.shader->setIntArray("uTextures", samples, 16);
@@ -224,8 +235,11 @@ namespace Game {
     mPipeline.instancedBuffer = VertexBuffer::builder()
       .storage(Buffer::StorageType::Dynamic)
       .size(INSTANCE_BUFFER_SIZE)
-      .layout(BufferElement::Type::Mat4, "aModelMatrix")
-      .layout(BufferElement::Type::Mat3, "aNormalMatrix")
+      .layout(BufferElement::Type::Mat4, "aModelMatrix", 1)
+      .layout(BufferElement::Type::Mat3, "aNormalMatrix", 1)
+      #if GAME_EDITOR
+        .layout(BufferElement::Type::Int, "aEntityId", 1)
+      #endif
       .build();
 
     mPipeline.instancedBasePtr = new Pipeline::Instance[INSTANCE_COUNT];
@@ -270,7 +284,7 @@ namespace Game {
     mCameraUniformBuffer->set({&mPipeline.camera, 1});
   }
 
-  void Renderer3D::submit(const Mesh::Handle& _mesh, const Material::Handle& material, const Mat4& transform) {
+  void Renderer3D::submit(const Mesh::Handle& _mesh, const Material::Handle& material, const Mat4& transform, u32 entityId) {
     GAME_PROFILE_FUNCTION();
 
     Mesh::Handle mesh = _mesh;
@@ -296,6 +310,7 @@ namespace Game {
       material,
       transform,
       Mat3(glm::transpose(glm::inverse(transform))),
+      entityId,
     };
 
     if (!unit.material->diffuseMap.isValid())  unit.material->diffuseMap  = mEnvironment.defaultDiffuseMap;
@@ -344,6 +359,8 @@ namespace Game {
     mPipeline.shader->setFloat("uLight.linear",    0.09f);
     mPipeline.shader->setFloat("uLight.quadratic", 0.032f);
 
+    u32 drawCalls = 0;
+
     // Sorted by material
     for (auto&[material, meshes] : mPipeline.opaqueUnits) {
       material->diffuseMap->bind(0);
@@ -359,10 +376,14 @@ namespace Game {
         mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
         usize count = 0;
         for (auto unitIndex : unitIndices) {
-          *(mPipeline.instancedCurrentPtr++) = {
+          *mPipeline.instancedCurrentPtr = {
             mPipeline.units[unitIndex].modelMatrix,
             mPipeline.units[unitIndex].normalMatrix,
+            #if GAME_EDITOR
+              mPipeline.units[unitIndex].entityId,
+            #endif
           };
+          mPipeline.instancedCurrentPtr++;
           count++;
         }
   
@@ -377,8 +398,12 @@ namespace Game {
           0,
           (GLsizei)count
         );
+
+        drawCalls++;
       }
     }
+
+    // Logger::trace("Draw calls: %d", drawCalls);
 
     std::sort(
       mPipeline.transparentUnitIndices.begin(),
@@ -418,10 +443,16 @@ namespace Game {
     glDisable(GL_BLEND);
 
     mPipeline.frameBuffer->bind();
+    #if GAME_EDITOR
+      u32 clearValue = UINT32_MAX;
+      glClearTexImage(mPipeline.frameBuffer->getColorAttachment(1)->getId(), 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &clearValue);
+    #endif
+
     Renderer3D::enableDepthTest(true);
     renderAllUnits();
     renderSkybox();
     Renderer3D::enableDepthTest(false);
+
     mPipeline.frameBuffer->unbind();
     //  glDisable(GL_DEPTH_TEST);
 
@@ -509,5 +540,18 @@ namespace Game {
 
   void Renderer3D::end() {
   }
+
+  #if GAME_EDITOR
+    u32 Renderer3D::readPixel(u32 x, u32 y) {
+      u32 entity = 0;
+      
+      mPipeline.frameBuffer->bind(false);
+      glReadBuffer(GL_COLOR_ATTACHMENT1);
+      glReadPixels(x, Application::getWindow().getHeight() - y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &entity);
+      glReadBuffer(GL_NONE);
+
+      return entity;
+    }
+  #endif
 
 } // namespace Game

@@ -30,6 +30,9 @@ layout (location = 1) in vec2 aTexture;
 layout (location = 2) in vec3 aNormal;
 layout (location = 3) in mat4 aModelMatrix;  // 3, 4, 5, 6
 layout (location = 7) in mat3 aNormalMatrix; // 7, 8, 9
+#if EDITOR
+  layout (location = 10) in highp uint aEntityId;
+#endif
 
 layout (std140) uniform Camera {
   mat4 projectionMatrix;
@@ -52,6 +55,10 @@ flat out vec3 vViewPosition;
 flat out Material vMaterial;
 flat out Light vLight;
 
+#if EDITOR
+  flat out highp uint vEntityId;
+#endif
+
 void main() {
   vTexCoords        = aTexture;
   vNormal           = aNormalMatrix * aNormal;
@@ -60,12 +67,21 @@ void main() {
   vMaterial         = uMaterials[0];
   vLight            = uLight;
 
+  #if EDITOR
+    vEntityId       = aEntityId;
+  #endif
+
   gl_Position       = uCamera.projectionViewMatrix * vec4(vFragmentPosition, 1.0);
 }
 
 @type fragment
 
+#if !GL_ES
+  layout(early_fragment_tests) in;
+#endif
+
 precision mediump float;
+precision highp int;
 
 in vec2 vTexCoords;
 in vec3 vNormal;
@@ -74,9 +90,18 @@ flat in vec3 vViewPosition;
 flat in Material vMaterial;
 flat in Light vLight;
 
+#if EDITOR
+  flat in highp uint vEntityId;
+#endif
+
 uniform sampler2D uTextures[16];
 
-out vec4 vFragmentColor;
+#if EDITOR
+  layout (location = 0) out vec4 vFragmentColor;
+  layout (location = 1) out highp uint vEntityIdOut;
+#else
+  out vec4 vFragmentColor;
+#endif
 
 void main() {
   vec3 diffuseColor = vec3(texture(uTextures[vMaterial.diffuse], vTexCoords));
@@ -117,4 +142,8 @@ void main() {
 
   vec3 result = ambient + diffuse + specular + emission;
   vFragmentColor = vec4(result, vMaterial.transparency);
+
+  #if EDITOR
+    vEntityIdOut = vEntityId;
+  #endif
 }

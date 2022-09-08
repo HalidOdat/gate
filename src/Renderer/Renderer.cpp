@@ -64,8 +64,8 @@ namespace Game {
     renderer->begin3D(cameraController);
   }
 
-  void Renderer::submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform) {
-    renderer->submit(mesh, material, transform);
+  void Renderer::submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform, u32 entityId) {
+    renderer->submit(mesh, material, transform, entityId);
   }
   
   void Renderer::waitAndRender() {
@@ -75,5 +75,11 @@ namespace Game {
   void Renderer::end() {
     renderer->end();
   }
+
+  #if GAME_EDITOR
+    u32 Renderer::readPixel(u32 x, u32 y) {
+      return renderer->readPixel(x, y);
+    }
+  #endif
 
 } // namespace Game

@@ -47,56 +47,25 @@ namespace Game {
     };
 
   public:
-    BufferElement(Type type, bool normalized = false)
-      : mType{type}, mNormalized{normalized}
+    BufferElement(Type type, u32 attributeDivisor, bool normalized = false)
+      : mType{type}, mAttributeDivisor{attributeDivisor},  mNormalized{normalized}
     {}
 
     inline Type getType() const { return mType; }
 
-    inline constexpr usize getComponentCount() const {
-      switch (mType) {
-        case Type::Float:  return 1;
-        case Type::Float2: return 2;
-        case Type::Float3: return 3;
-        case Type::Float4: return 4;
-        case Type::Int:    return 1;
-        case Type::Int2:   return 2;
-        case Type::Int3:   return 3;
-        case Type::Int4:   return 4;
-        case Type::Uint:   return 1;
-        case Type::Bool:   return 1;
-
-        case Type::Mat3:   return 3;
-        case Type::Mat4:   return 4;
-      }
-      GAME_UNREACHABLE("Unknown shader data type!");
-    }
-
-    inline usize getSize() const {
-      switch (mType) {
-        case Type::Float:  return sizeof(float)        * 1;
-        case Type::Float2: return sizeof(float)        * 2;
-        case Type::Float3: return sizeof(float)        * 3;
-        case Type::Float4: return sizeof(float)        * 4;
-        case Type::Int:    return sizeof(int)          * 1;
-        case Type::Int2:   return sizeof(int)          * 2;
-        case Type::Int3:   return sizeof(int)          * 3;
-        case Type::Int4:   return sizeof(int)          * 4;
-        case Type::Uint:   return sizeof(unsigned int) * 1;
-        case Type::Bool:   return sizeof(bool);
-        case Type::Mat3:   return sizeof(float) * 3 * 3;
-        case Type::Mat4:   return sizeof(float) * 4 * 4;
-      }
-      GAME_UNREACHABLE("Unknown shader data type!");
-    }
+    usize getComponentCount() const;
+    usize getSize() const;
 
     inline usize getOffset() const { return mOffset; }
     inline void  setOffset(usize offset) { mOffset = offset; }
+
+    inline usize getAttributeDivisor() const { return mAttributeDivisor; }
 
     inline bool isNormalized() const { return mNormalized; }
   private:
     Type  mType;
     usize mOffset = 0;
+    u32   mAttributeDivisor;
     bool  mNormalized;
   };
 
@@ -119,16 +88,7 @@ namespace Game {
     inline const std::vector<BufferElement>& getElements() const { return this->elements; }
 
   private:
-    void calculateStride() {
-			this->stride = 0;
-      usize offset = 0;
-			for (auto& element : this->elements) {
-        element.setOffset(offset);
-
-				offset       += element.getSize();
-        this->stride += element.getSize();
-			}
-		}
+    void calculateStride();
 
   private:
     usize                      stride = 0;
@@ -144,7 +104,7 @@ namespace Game {
       Builder& data(const void* inData, u32 inSize);
       Builder& data(const Slice<const void> slice);
       Builder& size(u32 inSize);
-      Builder& layout(BufferElement::Type type, String name);
+      Builder& layout(BufferElement::Type type, String name, u32 attributeDivisor = 0);
       Builder& storage(Buffer::StorageType type);
       Builder& access(Buffer::AccessType type);
       VertexBuffer::Handle build();

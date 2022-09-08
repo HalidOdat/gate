@@ -15,7 +15,7 @@ namespace Game {
     Renderer::begin3D(camera);
     auto view = mRegistry.view<TransformComponent, MeshSourceComponent, MeshRendererComponent>();
     for (auto[entity, tc, ms, mr] : view) {
-      Renderer::submit(ms.mesh, mr.material, tc.getTransform());
+      Renderer::submit(ms.mesh, mr.material, tc.getTransform(), entity.getId());
     }
   }
 
