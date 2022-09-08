@@ -35,6 +35,7 @@ namespace Game {
 
     #if GAME_EDITOR
       u32 readPixel(u32 x, u32 y);
+      void setSelectedEntity(u32 entityId);
     #endif
 
   private:
@@ -151,6 +152,11 @@ namespace Game {
     Pipeline mPipeline;
     Environment mEnvironment;
     UniformBuffer::Handle mCameraUniformBuffer;
+
+    #if GAME_EDITOR
+      u32 mSelectedEntity = UINT32_MAX;
+      Shader::Handle mOutlineShader;
+    #endif
   };
 
 } // namespace Game

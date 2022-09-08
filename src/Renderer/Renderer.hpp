@@ -29,6 +29,7 @@ namespace Game {
 
     #if GAME_EDITOR
       static u32 readPixel(u32 x, u32 y);
+      static void setSelectedEntity(u32 entityId);
     #endif
 
   private:

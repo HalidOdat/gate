@@ -197,6 +197,7 @@ namespace Game {
       if (entityId != UINT32_MAX) {
         Logger::trace("Editor: Selected entity id: 0x%x", entityId);
         mSelectedEntity = {entityId, mEditorScene.get()};
+        Renderer::setSelectedEntity(entityId);
       }
     }
     return false;

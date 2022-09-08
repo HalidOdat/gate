@@ -80,6 +80,10 @@ namespace Game {
     u32 Renderer::readPixel(u32 x, u32 y) {
       return renderer->readPixel(x, y);
     }
+
+    void Renderer::setSelectedEntity(u32 entityId) {
+      renderer->setSelectedEntity(entityId);
+    }
   #endif
 
 } // namespace Game

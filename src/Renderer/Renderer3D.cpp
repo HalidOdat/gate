@@ -91,7 +91,11 @@ namespace Game {
 
     mPipeline.frameBuffer = FrameBuffer::builder()
       .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
-      .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
+      #if GAME_EDITOR
+        .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth | FrameBuffer::Clear::Stencil)
+      #else
+        .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
+      #endif
       .clearOnBind(true)
       .attach(
         FrameBuffer::Attachment::Type::Texture2D,
@@ -232,6 +236,14 @@ namespace Game {
     }
     #endif
     
+    #if GAME_EDITOR
+      glLineWidth(1.5f);
+
+      mOutlineShader = Shader::load("assets/shaders/Outline.glsl")
+        .define("EDITOR", "1")
+        .build();
+    #endif
+
     mPipeline.instancedBuffer = VertexBuffer::builder()
       .storage(Buffer::StorageType::Dynamic)
       .size(INSTANCE_BUFFER_SIZE)
@@ -347,6 +359,58 @@ namespace Game {
   void Renderer3D::renderAllUnits() {
     GAME_PROFILE_FUNCTION();
 
+    u32 drawCalls = 0;
+
+    #if GAME_EDITOR
+
+    // Editor selected entity outline
+    if (mSelectedEntity != UINT32_MAX) {
+      mOutlineShader->bind();
+
+      glEnable(GL_STENCIL_TEST);
+      glStencilMask(0xFF);
+      glStencilFunc(GL_ALWAYS, 1, 0xFF);
+      glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+      for (auto&[material, meshes] : mPipeline.opaqueUnits) {
+        // Sorted by mesh
+        for (auto&[mesh, unitIndices] : meshes) {
+          mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
+          usize count = 0;
+          for (auto unitIndex : unitIndices) {
+            if (mPipeline.units[unitIndex].entityId == mSelectedEntity) {
+              *mPipeline.instancedCurrentPtr = {
+                mPipeline.units[unitIndex].modelMatrix,
+                mPipeline.units[unitIndex].normalMatrix,
+                #if GAME_EDITOR
+                  mPipeline.units[unitIndex].entityId,
+                #endif
+              };
+              mPipeline.instancedCurrentPtr++;
+              count++;
+            }
+          }
+          
+          auto vao = mesh->getVertexArray();
+          vao->bind();
+          mPipeline.instancedBuffer->bind();
+          mPipeline.instancedBuffer->set({mPipeline.instancedBasePtr, count});
+          glDrawElementsInstanced(
+            GL_LINE_STRIP,
+            mesh->mData.indexBuffer->getCount(),
+            GL_UNSIGNED_INT,
+            0,
+            (GLsizei)count
+          );
+
+          drawCalls++;
+        }
+      }
+      glStencilFunc(GL_EQUAL, 0, 0xFF);
+      glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+    }
+    #endif
+
     mPipeline.shader->bind();
     mPipeline.shader->setVec3("uLight.position", mPipeline.camera.position);
     mPipeline.shader->setVec3("uLight.direction", mPipeline.camera.front);
@@ -358,8 +422,6 @@ namespace Game {
     mPipeline.shader->setFloat("uLight.constant",  1.0f);
     mPipeline.shader->setFloat("uLight.linear",    0.09f);
     mPipeline.shader->setFloat("uLight.quadratic", 0.032f);
-
-    u32 drawCalls = 0;
 
     // Sorted by material
     for (auto&[material, meshes] : mPipeline.opaqueUnits) {
@@ -402,6 +464,10 @@ namespace Game {
         drawCalls++;
       }
     }
+
+    #if GAME_EDITOR
+      glDisable(GL_STENCIL_TEST);
+    #endif
 
     // Logger::trace("Draw calls: %d", drawCalls);
 
@@ -551,6 +617,10 @@ namespace Game {
       glReadBuffer(GL_NONE);
 
       return entity;
+    }
+
+    void Renderer3D::setSelectedEntity(u32 entityId) {
+      mSelectedEntity = entityId;
     }
   #endif
 
