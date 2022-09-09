@@ -44,6 +44,7 @@ namespace Game {
       Builder& clearOnBind(bool yes = true);
       Builder& attach(Attachment::Type type, Attachment::Format format, bool drawable = true, bool isMultisample = false);
       Builder& attachDefaultDepthStencilBuffer();
+      Builder& depthStencilType(Attachment::Type type);
       FrameBuffer::Handle build();
 
     private:
@@ -85,6 +86,10 @@ namespace Game {
       return mColorAttachments[index];
     }
 
+    inline const Texture2D::Handle& getDepthAttachment() const {
+      return mDepthStencilTexture;
+    }
+
     inline u32 getId() const { return mId; }
 
   private:
@@ -99,8 +104,11 @@ namespace Game {
     Vec4 mClearColor;
 
     std::vector<Attachment> mAttachmentsSpecification;
+    Attachment mDepthStencilAttachmentSpecification;
+
     std::vector<Texture2D::Handle> mColorAttachments;
-    u32 mDepthStencilAttachment;
+    Texture2D::Handle mDepthStencilTexture;
+    u32 mDepthStencilAttachment = 0;
 
     u32 mWidth;
     u32 mHeight;

@@ -79,6 +79,7 @@ namespace Game {
       //       Check: https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)
       Vec4 position;
       Vec4 front;
+      Vec4 clippingPlane;
     };
 
     // NOTE: This struct must be aligned accroding to the std140 standard.

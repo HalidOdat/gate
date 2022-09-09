@@ -15,6 +15,7 @@ layout (std140) uniform Camera {
   mat4 projectionViewMatrix;
   vec4 position;
   vec4 front;
+  vec4 clippingPlane;
 } uCamera;
 
 void main() {

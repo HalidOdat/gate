@@ -93,18 +93,16 @@ namespace Game {
         }
       }
     }
+
+    std::stringstream ss;
+    ss.precision(2);
+    ss << mEditorScene->getName() << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";
+    std::string fpsString = ss.str();
+    Application::getWindow().setTitle(fpsString.c_str());
   }
 
   void EditorLayer::onUiRender(Ui& ui) {
-    std::stringstream ss;
-    ss.precision(2);
-    ss << std::fixed << (1.0f / Timestep::get()) << "fps" << '\n';
-    std::string fpsString = ss.str();
-
     ui.beginDock(Ui::Dock::Left, 20.0f);
-      if (ui.button(fpsString, 100000)) {
-        Logger::info("Button 0 clicked!!!");
-      }
       auto view = mEditorScene->mRegistry.view<TagComponent>();
       for (auto[entity, tag] : view) {
         if (ui.button(tag.tag, entity.getId())) {

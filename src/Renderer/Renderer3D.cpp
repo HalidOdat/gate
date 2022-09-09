@@ -107,7 +107,7 @@ namespace Game {
           FrameBuffer::Attachment::Format::R32UI
         )
       #endif
-      .attachDefaultDepthStencilBuffer()
+      .depthStencilType(FrameBuffer::Attachment::Type::Texture2D)
       .build();
 
     static const float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
@@ -289,6 +289,7 @@ namespace Game {
     mPipeline.camera.projectionView = mPipeline.camera.projection * mPipeline.camera.view;
     mPipeline.camera.position       = Vec4(cameraController.getPosition(), 0.0f);
     mPipeline.camera.front          = Vec4(cameraController.getFront(), 0.0f);
+    mPipeline.camera.clippingPlane  = Vec4(cameraController.getNear(), cameraController.getFar(), 0.0f, 0.0f);
 
     mCameraUniformBuffer->bind();
     mCameraUniformBuffer->set({&mPipeline.camera, 1});
@@ -593,8 +594,11 @@ namespace Game {
       texture->bind(0);
     #endif
 
+    mPipeline.frameBuffer->getDepthAttachment()->bind(1);
+
     mPipeline.postProcesingShader->bind();
     mPipeline.postProcesingShader->setInt("uScreenTexture", 0);
+    mPipeline.postProcesingShader->setInt("uDepthMap", 1);
     mPipeline.quadVertexArray->drawArrays(6);
 
     #ifndef GAME_PLATFORM_WEB

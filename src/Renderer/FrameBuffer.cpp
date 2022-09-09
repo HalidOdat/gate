@@ -75,6 +75,11 @@ namespace Game {
     return *this;
   }
 
+  FrameBuffer::Builder& FrameBuffer::Builder::depthStencilType(Attachment::Type type) {
+    mDepthStencilAttachment.type = type;
+    return *this;
+  }
+
   FrameBuffer::Handle FrameBuffer::Builder::build() {
     if (mWidth == 0) {
       mWidth = Application::getWindow().getWidth();
@@ -104,6 +109,7 @@ namespace Game {
     mClear       = builder.mClear;
     mClearColor  = builder.mClearColor;
     mAttachmentsSpecification = std::move(builder.mAttachments);
+    mDepthStencilAttachmentSpecification = builder.mDepthStencilAttachment;
 
     invalidate(mWidth, mHeight);
   }
@@ -155,13 +161,28 @@ namespace Game {
       mColorAttachments.emplace_back(std::move(texture));
     }
 
-    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-    glGenRenderbuffers(1, &mDepthStencilAttachment);
-    glBindRenderbuffer(GL_RENDERBUFFER, mDepthStencilAttachment);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    if (mDepthStencilAttachmentSpecification.type == Attachment::Type::RenderBuffer) {
+      // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+      glGenRenderbuffers(1, &mDepthStencilAttachment);
+      glBindRenderbuffer(GL_RENDERBUFFER, mDepthStencilAttachment);
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 
-    // bind depth and stencil attachment
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilAttachment);
+      // bind depth and stencil attachment
+      glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilAttachment);
+    } else {
+      mDepthStencilTexture = Texture2D::buffer(width, height)
+        .format(mDepthStencilAttachmentSpecification.format)
+        .filtering(Texture::FilteringMode::Linear)
+        .mipmap(Texture::MipmapMode::None)
+        .gammaCorrected(false)
+        .build();
+
+      mDepthStencilTexture->bind(0);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);      
+
+      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, mDepthStencilTexture->getId(), 0);
+    }
 
     GAME_ASSERT_WITH_MESSAGE(
       glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
@@ -178,6 +199,7 @@ namespace Game {
     glDeleteFramebuffers(1, &mId);
     mColorAttachments.clear();
     glDeleteRenderbuffers(1, &mDepthStencilAttachment);
+    mDepthStencilTexture = {};
   }
 
   FrameBuffer::~FrameBuffer() {
