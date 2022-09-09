@@ -40,6 +40,17 @@ namespace Game {
     Application::getWindow().setTitle(mEditorScene->getName());
 
     Logger::info("EditorLayer::onAttach was called");
+
+    // Entity ent{0, mEditorScene.get()};
+    // for (int i = 0; i < 100; i++) {
+    //   for (int j = 0; j < 100; j++) {
+    //     for (int k = 0; k < 10; k++) {
+    //       Entity newEnt = ent.duplicate();
+    //       auto& transform = newEnt.get<TransformComponent>();
+    //       transform.setTranslation({i * 2.0f, j * 2.0f, k * 2.0f});
+    //     }
+    //   }
+    // }
   }
 
   void EditorLayer::onDetach() {

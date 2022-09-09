@@ -437,6 +437,7 @@ namespace Game {
         mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
         usize count = 0;
         for (auto unitIndex : unitIndices) {
+          GAME_ASSERT(count + 1 < INSTANCE_COUNT);
           *mPipeline.instancedCurrentPtr = {
             mPipeline.units[unitIndex].modelMatrix,
             mPipeline.units[unitIndex].normalMatrix,

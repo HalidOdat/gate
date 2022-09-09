@@ -37,7 +37,7 @@ namespace Game {
 
     private:
       StringView mFilePath;
-      Version mVersion = Version::Es300;
+      Version mVersion = Version::Core450;
       std::unordered_map<String, String> mDefinitions;
 
       friend class Shader;
