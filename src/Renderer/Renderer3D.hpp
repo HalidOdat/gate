@@ -40,7 +40,6 @@ namespace Game {
 
   private:
     void renderAllUnits();
-    void renderUnit(u32 unitIndex);
     void renderSkybox();
 
   private:
@@ -60,9 +59,6 @@ namespace Game {
     };
 
     struct RenderUnit {
-      Mesh::Handle     mesh;
-      Material::Handle material;
-
       Mat4 modelMatrix;
       Mat3 normalMatrix;
 
@@ -117,8 +113,6 @@ namespace Game {
 
       std::vector<RenderUnit> units;
       std::unordered_map<Material::Handle, std::unordered_map<Mesh::Handle, std::vector<u32>>> opaqueUnits;
-
-      std::vector<std::pair<f32, u32>> transparentUnitIndices; // distance from camera and index
 
       struct Instance {
         Mat4 transformMatrix;

@@ -295,10 +295,11 @@ namespace Game {
     mCameraUniformBuffer->set({&mPipeline.camera, 1});
   }
 
-  void Renderer3D::submit(const Mesh::Handle& _mesh, const Material::Handle& material, const Mat4& transform, u32 entityId) {
+  void Renderer3D::submit(const Mesh::Handle& _mesh, const Material::Handle& _material, const Mat4& transform, u32 entityId) {
     GAME_PROFILE_FUNCTION();
 
     Mesh::Handle mesh = _mesh;
+    Material::Handle material = _material;
 
     if (!mesh->mData.hasInstanced) {
       mesh->mData.vertexArray->bind();
@@ -314,45 +315,27 @@ namespace Game {
       return;
     }
 
-    // TODO: Sort by shader
     u32 index = (u32)mPipeline.units.size();
     RenderUnit unit {
-      mesh,
-      material,
       transform,
       Mat3(glm::transpose(glm::inverse(transform))),
       entityId,
     };
 
-    if (!unit.material->diffuseMap.isValid())  unit.material->diffuseMap  = mEnvironment.defaultDiffuseMap;
-    if (!unit.material->specularMap.isValid()) unit.material->specularMap = mEnvironment.defaultSpecularMap;
-    if (!unit.material->emissionMap.isValid()) unit.material->emissionMap = mEnvironment.defaultEmissionMap;
+    // TODO: don't change material
+    if (!material->diffuseMap.isValid())  material->diffuseMap  = mEnvironment.defaultDiffuseMap;
+    if (!material->specularMap.isValid()) material->specularMap = mEnvironment.defaultSpecularMap;
+    if (!material->emissionMap.isValid()) material->emissionMap = mEnvironment.defaultEmissionMap;
 
     mPipeline.units.push_back(unit);
     if (material->transparency >= 1.0f) {
       mPipeline.opaqueUnits[material][mesh].push_back(index);
     } else {
-      Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
-      f32 distance = glm::length(position - Vec3(mPipeline.camera.position));
-      mPipeline.transparentUnitIndices.push_back(std::pair(distance, index));
+      // Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
+      // f32 distance = glm::length(position - Vec3(mPipeline.camera.position));
+      // mPipeline.transparentUnitIndices.push_back(std::pair(distance, index));
+      GAME_TODO("Support transparent objects");
     }
-  }
-
-  void Renderer3D::renderUnit(u32 unitIndex) {
-    GAME_TODO("Implement transparency in a better way");
-    GAME_PROFILE_FUNCTION();
-
-    RenderUnit& unit = mPipeline.units[unitIndex];
-
-    // TODO: Make this more dynamic
-    unit.material->diffuseMap->bind(0);
-    unit.material->specularMap->bind(1);
-    unit.material->emissionMap->bind(2);
-
-    auto vao = unit.mesh->getVertexArray();
-    vao->bind();
-    vao->drawIndices();
-    vao->unbind();
   }
 
   void Renderer3D::renderAllUnits() {
@@ -471,21 +454,8 @@ namespace Game {
 
     // Logger::trace("Draw calls: %d", drawCalls);
 
-    std::sort(
-      mPipeline.transparentUnitIndices.begin(),
-      mPipeline.transparentUnitIndices.end(),
-      [](auto& a, auto& b) {
-        return a.first > b.first;
-      }
-    );
-
-    for (auto& unitIndex : mPipeline.transparentUnitIndices) {
-      renderUnit(unitIndex.second);
-    }
-
     mPipeline.units.clear();
     mPipeline.opaqueUnits.clear();
-    mPipeline.transparentUnitIndices.clear();
   }
 
   void Renderer3D::renderSkybox() {
@@ -586,7 +556,6 @@ namespace Game {
 
     // glViewport(0, 0, mPipeline.mipmaps[0]->getWidth(), mPipeline.mipmaps[0]->getHeight());
 
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     #if 0

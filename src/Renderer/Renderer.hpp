@@ -8,12 +8,8 @@
 #include "Renderer/CameraController.hpp"
 
 namespace Game {
-  
-  class Application;
 
   class Renderer {
-    friend class Application;
-
   public:
     Renderer();
 
@@ -37,6 +33,8 @@ namespace Game {
     static void initialize();
     static void shutdown();
     static void invalidate(u32 width, u32 height);
+
+    friend class Application;
   };
 
 } // namespace Game
