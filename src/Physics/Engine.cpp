@@ -7,8 +7,8 @@ namespace Game::Physics {
   Engine::Engine() {}
 
   void Engine::tick(Timestep ts, Ecs::Registry& registry) {
-    auto view = registry.view<TransformComponent, VelocityComponent>();
-    for (auto[entity, transform, velocity] : view) {
+    auto view = registry.view<VelocityComponent, TransformComponent>();
+    for (auto[entity, velocity, transform] : view) {
       transform.offsetTranslation(velocity.velocity * (f32)ts);
     }
   }
