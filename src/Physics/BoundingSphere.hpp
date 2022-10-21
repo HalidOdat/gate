@@ -9,11 +9,14 @@ namespace Game::Physics {
 
   class BoundingSphere {
   public:
-    inline BoundingSphere(const Vec3& center, f32 radius)
+    BoundingSphere() = default;
+    BoundingSphere(const Vec3& center, f32 radius)
       : mCenter{center}, mRadius{radius}
     {}
 
     Intersection intersectBoundingSphere(const BoundingSphere& other) const;
+
+    void offsetTranslation(const Vec3& offset) { mCenter += offset; }
 
     inline const Vec3& getCenter() const { return mCenter; } 
     inline f32 getRadius() const { return mRadius; } 

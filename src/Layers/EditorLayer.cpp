@@ -41,6 +41,12 @@ namespace Game {
 
     Logger::info("EditorLayer::onAttach was called");
 
+    for (u32 i = 0; i < 10; i++) {
+      Entity ent{i, mEditorScene.get()};
+      Vec3 position = ent.get<TransformComponent>().getTranslation();
+      ent.add<CollisionComponent>(Physics::BoundingSphere(position, 4.0f));
+    }
+
     // Entity ent{0, mEditorScene.get()};
     // for (int i = 0; i < 100; i++) {
     //   for (int j = 0; j < 100; j++) {

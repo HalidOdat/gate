@@ -11,6 +11,7 @@ namespace Game::Physics {
   
   class Plane {
   public:
+    Plane() = default;
     Plane(const Vec3& normal, f32 distance)
       : mNormal{normal}, mDistance{distance}
     {}

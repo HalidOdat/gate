@@ -104,6 +104,8 @@ add_executable(${This}
   src/Physics/Plane.cpp
   src/Physics/AABB.hpp
   src/Physics/AABB.cpp
+  src/Physics/Collider.hpp
+  src/Physics/Collider.cpp
   src/Physics/Engine.hpp
   src/Physics/Engine.cpp
 

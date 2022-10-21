@@ -9,6 +9,7 @@ namespace Game::Physics {
 
   class AABB {
   public:
+    AABB() = default;
     AABB(const Vec3& min, const Vec3& max)
       : mMin{min}, mMax{max}
     {}
