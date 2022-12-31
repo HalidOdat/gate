@@ -11,7 +11,7 @@ namespace Game {
   static_assert(sizeof(GLuint) == sizeof(u32), "GLuints should be unsigned 32-bit numbers");
   static_assert(sizeof(GLint)  == sizeof(i32), "GLuints should be singned 32-bit numbers");
 
-  static const char* glErrorToString(GLenum value) {
+  const char* glErrorToString(GLenum value) {
     switch (value) {
       case GL_NO_ERROR:                      return "no error";
       case GL_INVALID_ENUM:                  return "invalid enum";

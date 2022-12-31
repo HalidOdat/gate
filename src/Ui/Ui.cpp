@@ -387,7 +387,7 @@ namespace Game {
   void Ui::end() {
     GAME_PROFILE_FUNCTION();
     GAME_DEBUG_ASSERT(this->layouts.size() == 1);
-    Layout layout = this->layouts.back();
+    // Layout layout = this->layouts.back();
     this->layouts.pop_back();
 
     mRenderer.end();

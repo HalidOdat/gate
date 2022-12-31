@@ -67,7 +67,7 @@ namespace Game::Debug {
     fprintf(mCurrentSession->fd,
       ",{"
       "\"cat\":\"function\","
-      "\"dur\":%llu,"
+      "\"dur\":%lu,"
       "\"name\":\"%s\","
       "\"ph\":\"X\","
       "\"pid\":0,"
@@ -82,7 +82,6 @@ namespace Game::Debug {
   }
 
   Timer::~Timer() {
-    auto finishTime   = std::chrono::steady_clock::now();
     auto endTimepoint = std::chrono::steady_clock::now();
 		auto highResStart = FloatingPointMicroseconds{ mStartPoint.time_since_epoch() };
 		auto elapsedTime  = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(mStartPoint).time_since_epoch();

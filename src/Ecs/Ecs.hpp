@@ -15,83 +15,6 @@ namespace Game::Ecs {
   constexpr const auto MAX_COMPONENTS = 32;
 
   using Requirement = std::bitset<MAX_COMPONENTS>;
-  
-  class Registry;
-
-  template<typename ...Ts>
-  class RegistryView {
-    friend class Registry;
-  public:
-    class Iterator {
-      friend class RegistryView;
-    public:
-      Iterator& operator++() {
-        do {
-          this->index++;
-        } while (
-          this->index < this->registry->entities.size()
-          && (this->registry->entities[this->index].mask & this->requirements) != this->requirements
-        );
-        return *this;
-      }
-
-      Iterator operator++(int) {
-        auto result = *this;
-        ++(*this);
-        return result;
-      }
-
-      std::tuple<Entity, Ts&...> operator*() const {
-        auto entity = Entity(this->index);
-        return std::make_tuple(entity, std::ref(this->registry->template get<Ts>(entity))...);
-      }
-
-      bool operator==(const Iterator& other) const {
-        return this->index == other.index || this->index == this->registry->entities.size();
-      }
-
-      bool operator!=(const Iterator& other) const {
-        return this->index != other.index && this->index != this->registry->entities.size();
-      }
-    
-    private:
-      Iterator(Registry* registry, Requirement requirements, u32 index)
-        : registry{registry}, requirements{requirements}, index{index}
-      {}
-
-    public:
-      Registry* registry;
-      Requirement requirements;
-      u32 index;
-    };
-
-  public:
-    Iterator begin() {
-      u32 firstIndex = 0;
-      while (firstIndex < this->registry->entities.size() &&
-        (this->requirements != (this->requirements & this->registry->entities[firstIndex].mask))
-      )
-      {
-        firstIndex++;
-      }
-      return Iterator(this->registry, this->requirements, firstIndex);
-    }
-
-    Iterator end() {
-      return Iterator(this->registry, this->requirements, (u32)this->registry->entities.size());
-    }
-
-  private:
-    RegistryView(const Registry* registry)
-      : registry{(Registry*)registry}
-    {
-      (this->requirements.set(Component<Ts>::getId()),...);
-    }
-
-  private:
-    Registry* registry;
-    Requirement requirements;
-  };
 
   class Registry {
     template<typename ...Ts>
@@ -99,6 +22,82 @@ namespace Game::Ecs {
 
     template<typename ...Ts>
     friend class RegistryView;
+
+  public:
+    template<typename ...Ts>
+    class RegistryView {
+      friend class Registry;
+    public:
+      class Iterator {
+        friend class RegistryView;
+      public:
+        Iterator& operator++() {
+          do {
+            this->index++;
+          } while (
+            this->index < this->registry->entities.size()
+            && (this->registry->entities[this->index].mask & this->requirements) != this->requirements
+          );
+          return *this;
+        }
+
+        Iterator operator++(int) {
+          auto result = *this;
+          ++(*this);
+          return result;
+        }
+
+        std::tuple<Entity, Ts&...> operator*() const {
+          auto entity = Entity(this->index);
+          return std::make_tuple(entity, std::ref(this->registry->template get<Ts>(entity))...);
+        }
+
+        bool operator==(const Iterator& other) const {
+          return this->index == other.index || this->index == this->registry->entities.size();
+        }
+
+        bool operator!=(const Iterator& other) const {
+          return this->index != other.index && this->index != this->registry->entities.size();
+        }
+      
+      private:
+        Iterator(Registry* registry, Requirement requirements, u32 index)
+          : registry{registry}, requirements{requirements}, index{index}
+        {}
+
+      public:
+        Registry* registry;
+        Requirement requirements;
+        u32 index;
+      };
+
+    public:
+      Iterator begin() {
+        u32 firstIndex = 0;
+        while (firstIndex < this->registry->entities.size() &&
+          (this->requirements != (this->requirements & this->registry->entities[firstIndex].mask))
+        )
+        {
+          firstIndex++;
+        }
+        return Iterator(this->registry, this->requirements, firstIndex);
+      }
+
+      Iterator end() {
+        return Iterator(this->registry, this->requirements, (u32)this->registry->entities.size());
+      }
+
+    private:
+      RegistryView(const Registry* registry)
+        : registry{(Registry*)registry}
+      {
+        (this->requirements.set(Component<Ts>::getId()),...);
+      }
+
+    private:
+      Registry* registry;
+      Requirement requirements;
+    };
 
   public:
     Registry();

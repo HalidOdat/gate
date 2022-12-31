@@ -16,7 +16,7 @@ namespace Game {
           stream << file.rdbuf();
           file.close();
           return stream.str();
-        } catch (std::ifstream::failure e) {
+        } catch (std::ifstream::failure& e) {
           return std::nullopt;
         }
       }

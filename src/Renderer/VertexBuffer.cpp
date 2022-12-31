@@ -102,6 +102,7 @@ namespace Game {
     return *this;
   }
   VertexBuffer::Builder& VertexBuffer::Builder::layout(BufferElement::Type type, String name, u32 attributeDivisor) {
+    (void) name;
     mLayout.push_back({type, /* name, */ attributeDivisor});
     return *this;
   }

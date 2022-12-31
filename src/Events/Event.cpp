@@ -15,6 +15,7 @@ namespace Game {
       case Type::MouseButtonReleased: return "MouseButtonReleased";
       case Type::WindowResize:        return "WindowResize";
       case Type::WindowClose:         return "WindowClose";
+      case Type::WindowMinimized:     return "WindowMinimized";
     }
 
     GAME_UNREACHABLE("Unknown event type");

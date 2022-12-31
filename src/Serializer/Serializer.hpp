@@ -113,11 +113,13 @@ namespace Game::Serializer {
     static Node encode(const T& value) {
       (void)value;
       static_assert(std::is_same_v<T, void>, "Unknown type");
+      return {};
     }
     static bool decode(const Node& node, T& value) {
       (void)node;
       (void)value;
       static_assert(std::is_same_v<T, void>, "Unknown type");
+      return false;
     }
   };
 

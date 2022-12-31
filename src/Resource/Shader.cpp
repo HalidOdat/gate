@@ -152,7 +152,7 @@ namespace Game {
       }
 
       result.emplace_back(std::make_pair(*shaderType, *common + content));
-    } catch (std::ifstream::failure e) {
+    } catch (std::ifstream::failure& e) {
       Logger::error("Couldn't open file '%s': %s", filename.data(), e.what());
       return {};
     }

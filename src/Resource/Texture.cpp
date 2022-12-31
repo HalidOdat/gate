@@ -341,10 +341,7 @@ namespace Game {
       stbi_image_free((stbi_uc*)mData);
     }
 
-    auto data = Data{texture, mWidth, mHeight, mSpecification};
-    data.color = mColor;
-    data.type = mType;
-    data.filePath = filepath;
+    auto data = Data{texture, mWidth, mHeight, mSpecification, mType, filepath, mColor};
     auto handle = texture2DFactory.emplace(std::move(data));
     switch (mType) {
       case Texture::Type::Color:
@@ -415,7 +412,7 @@ namespace Game {
       glGenerateMipmap(GL_TEXTURE_2D);
     }
 
-    return Data{texture, width, height, specification};
+    return Data{texture, width, height, specification, Texture::Type::Color};
   }
 
   Texture2D::Builder Texture2D::color(u32 color) {

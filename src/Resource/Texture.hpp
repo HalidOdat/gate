@@ -170,8 +170,8 @@ namespace Game {
 
       Specification specification;
       Texture::Type type;
-      Option<String> filePath;
-      u32 color;
+      Option<String> filePath = std::nullopt;
+      u32 color{};
     };
 
     Texture2D(Data data)

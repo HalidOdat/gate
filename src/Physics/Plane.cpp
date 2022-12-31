@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Physics/Plane.hpp"
 #include "Physics/BoundingSphere.hpp"
 

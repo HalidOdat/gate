@@ -49,7 +49,7 @@ namespace Game {
   }
 
   PerspectiveCameraController::PerspectiveCameraController(Vec3 position, f32 fov, f32 aspectRatio, f32 zNear, f32 zFar)
-    : mPosition{position}, mFov{fov}, mAspectRatio{aspectRatio}, mZNear{zNear}, mZFar{zFar},
+    : mPosition{position}, mAspectRatio{aspectRatio}, mFov{fov}, mZNear{zNear}, mZFar{zFar},
       mFront{0.0f, 0.0f, -1.0f}, mUp{0.0f, 1.0f, 0.0f}, mWorldUp{mUp},
       mCamera{mPosition, mFront, mUp, mFov, mAspectRatio, mZNear, mZFar}
   {

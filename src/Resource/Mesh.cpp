@@ -124,7 +124,7 @@ namespace Game {
       stream << file.rdbuf();
       file.close();
       return stream.str();
-    } catch (std::ifstream::failure e) {
+    } catch (std::ifstream::failure& e) {
       Logger::error("Couldn't load file '%s': %s", filename.data(), e.what());
       return std::nullopt;
     }
@@ -176,7 +176,7 @@ namespace Game {
     vao->setIndexBuffer(ibo);
     vao->unbind();
 
-    return Data{vao, vbo, ibo};
+    return Data{vao, vbo, ibo, "", Type::Cube};
   }
 
   bool Mesh::reload() {

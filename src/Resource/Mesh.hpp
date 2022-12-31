@@ -29,12 +29,6 @@ namespace Game {
 
     inline const Option<String>& getFilePath() const { return mData.filePath; }
     inline Type getType() const { return mData.type; }
-
-  private:
-    enum class FileFormat {
-      Obj,
-    };
-
   private:
     struct Data {
       VertexArray::Handle  vertexArray;

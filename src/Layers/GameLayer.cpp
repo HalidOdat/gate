@@ -136,6 +136,8 @@ namespace Game {
       case Key::Escape:
         Application::get().quit();
         break;
+      default:
+        break;
     }
     if (event.getKey() == Key::Escape) {
       Application::get().quit();

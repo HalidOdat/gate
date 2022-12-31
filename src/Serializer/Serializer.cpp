@@ -19,7 +19,7 @@ namespace Game::Serializer {
     Style style = this->mStyle;
     std::visit(overloaded {
       [&](Null) { ss << "null"; },
-      [&](Boolean value) { ss << value ? "true" : "false"; },
+      [&](Boolean value) { ss << (value ? "true" : "false"); },
       [&](Integer value) { ss << value; },
       [&](Float value) { ss << std::fixed << value; },
       [&](const String& value) { ss << std::quoted(value); },
@@ -327,7 +327,7 @@ namespace Game::Serializer {
       return None;
     }
 
-    return std::move(node);
+    return node;
   }
   Option<Node> Json::parseObject() {
     if (!matchToken(Utils::Token::Type::OpenBrace)) {
@@ -362,7 +362,7 @@ namespace Game::Serializer {
       return None;
     }
 
-    return std::move(node);
+    return node;
   }
 
   Option<Node> Json::parse(StringView source) {
@@ -372,7 +372,7 @@ namespace Game::Serializer {
       Logger::error("Json: Lexer: error");
       return None;
     }
-    return std::move(result);
+    return result;
   }
 
 } // namespace Game::Serializer
