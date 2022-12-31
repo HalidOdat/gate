@@ -92,7 +92,7 @@ namespace Game {
 
   Renderer2D::~Renderer2D() {
     GAME_PROFILE_FUNCTION();
-    delete mQuadBasePtr;
+    delete[] mQuadBasePtr;
   }
 
   void Renderer2D::begin(const Camera& camera) {

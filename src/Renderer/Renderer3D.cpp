@@ -271,8 +271,8 @@ namespace Game {
   Renderer3D::~Renderer3D() {
     GAME_PROFILE_FUNCTION();
 
-    delete mPipeline.instancedBasePtr;
-    delete mPipeline.materialsBasePtr;
+    delete[] mPipeline.instancedBasePtr;
+    delete[] mPipeline.materialsBasePtr;
   }
 
   void Renderer3D::invalidate(u32 width, u32 height) {
