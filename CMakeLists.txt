@@ -33,7 +33,7 @@ add_executable(${This}
   src/Core/Timestep.hpp
   src/Core/Timestep.cpp
   src/Core/Base.hpp
-  
+
   src/Utils/Color.hpp
   src/Utils/File.hpp
   src/Utils/File.cpp
@@ -55,7 +55,7 @@ add_executable(${This}
   src/Events/KeyEvent.hpp
   src/Events/MouseEvent.hpp
   src/Events/WindowEvent.hpp
-  
+
   src/Resource/Manager.hpp
   src/Resource/Manager.cpp
   src/Resource/Resource.hpp
@@ -73,9 +73,11 @@ add_executable(${This}
   src/Ecs/Entity.hpp
   src/Ecs/Component.hpp
   src/Ecs/Component.cpp
+  src/Ecs/ComponentPool.hpp
+  src/Ecs/ComponentPool.cpp
   src/Ecs/Ecs.hpp
   src/Ecs/Ecs.cpp
-  
+
   src/Renderer/VertexBuffer.hpp
   src/Renderer/VertexBuffer.cpp
   src/Renderer/IndexBuffer.hpp
@@ -147,7 +149,7 @@ if (MSVC)
 else()
   target_compile_options(${This}
     PRIVATE
-      -Wall -Wextra -pedantic
+      -Wall -Wextra -pedantic -ggdb -fsanitize=address -fsanitize=undefined
   )
 endif()
 
@@ -174,6 +176,12 @@ else()
   message(STATUS "${This}: Building for native")
 endif()
 
+target_link_options(${This}
+  PRIVATE
+    -fsanitize=address
+    -fsanitize=undefined
+)
+
 target_link_libraries(${This} PUBLIC
   glfw::glfw
   glad::glad
@@ -183,7 +191,7 @@ target_link_libraries(${This} PUBLIC
 
 target_precompile_headers(${This}
   PUBLIC
-    # Common include 
+    # Common include
     <Core/Base.hpp>
 
   PRIVATE

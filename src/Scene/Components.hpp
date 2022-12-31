@@ -69,6 +69,7 @@ namespace Game {
   };
 
   struct CollisionComponent : Ecs::Component<CollisionComponent> {
+    CollisionComponent() = default;
     CollisionComponent(const Physics::BoundingSphere& sphere)
       : collider{sphere}
     {}

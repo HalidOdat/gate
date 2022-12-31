@@ -24,7 +24,7 @@ namespace Game {
 
   void Application::start() {
     GAME_PROFILE_FUNCTION();
-    
+
     this->pushLayer(new EditorLayer());
 
     startGameLoop();
@@ -55,7 +55,7 @@ namespace Game {
     this->window->setEventCallback(
       [this](const Event& event) { this->onEvent(event); }
     );
-    
+
     Logger::info("Game Engine Initialized!");
   }
 
@@ -159,3 +159,4 @@ namespace Game {
   }
 
 } // namespace Game
+

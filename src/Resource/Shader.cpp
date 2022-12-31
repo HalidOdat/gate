@@ -125,7 +125,7 @@ namespace Game {
               Logger::error("Duplicate shader type '%s' in %s", shaderTypeToString(*shaderType), filename.data());
               return {};
             }
-            
+
             result.emplace_back(std::make_pair(*shaderType, *common + content));
           }
 
@@ -188,7 +188,7 @@ namespace Game {
 
   Shader::Handle Shader::Builder::build() {
     auto filepath = String(mFilePath);
-    
+
     auto parts = parse(filepath, mVersion, mDefinitions, sGlobalDefines);
     if (parts.empty()) {
       return {};
@@ -296,7 +296,7 @@ namespace Game {
     if (!mFilePath.has_value()) {
       return false;
     }
-    
+
     GAME_TODO("");
 
     auto data = Shader::load(*mFilePath).build();
@@ -364,7 +364,7 @@ namespace Game {
   }
 
   void Shader::setInt(StringView name, const i32 value) {
-    i32 uniform_id = getUniformLocation(name);    
+    i32 uniform_id = getUniformLocation(name);
     glUniform1i(uniform_id, value);
   }
 

@@ -8,6 +8,7 @@
 
 #include "Ecs/Entity.hpp"
 #include "Ecs/Component.hpp"
+#include "Ecs/ComponentPool.hpp"
 
 namespace Game::Ecs {
 
@@ -92,51 +93,6 @@ namespace Game::Ecs {
     Requirement requirements;
   };
 
-  class ComponentPool {
-  public:
-    ComponentPool() {}
-
-    ComponentPool(u32 componentSize, BaseComponent::DestroyFunction fn)
-      : storage{nullptr}, size{0}, capacity{0}, componentSize{componentSize}, initialized{true}
-    {
-      this->destoryFunction = fn;
-    }
-
-    ~ComponentPool();
-    
-    u32 allocateComponent();
-
-    /// Must not have the component
-    void* create(const u32 i);
-
-    // Must have the component
-    void destory(const u32 i);
-
-    // Must have the component
-    void* get(const u32 i);
-
-
-    bool isInitialzed() { return initialized; }
-
-  private:
-    BaseComponent* getComponentAtIndex(const u32 index) {
-      return reinterpret_cast<BaseComponent*>(
-        this->storage + index * this->componentSize
-      );
-    }
-
-  private:
-    u8* storage = nullptr;
-    u32 size;
-    u32 capacity;
-    u32 componentSize;
-    bool initialized = false;
-    
-    std::vector<u32> sparse;
-
-    BaseComponent::DestroyFunction destoryFunction;
-  };
-
   class Registry {
     template<typename ...Ts>
     friend class Iterator;
@@ -165,10 +121,12 @@ namespace Game::Ecs {
       this->entities[entity.id].mask.set(cid);
 
       auto pool = &this->pools[cid];
-      if (!pool->isInitialzed()) {
-        *pool = ComponentPool(sizeof(T), Component<T>::destroyFunction);
+      if (!(*pool)) {
+        *pool = std::make_unique<ComponentPool<T>>();
       }
-      return *new (pool->create(entity.id)) T{std::forward<Args>(args)...};
+
+      auto* componentPool = reinterpret_cast<ComponentPool<T>*>(this->pools[cid].get());
+      return *componentPool->construct(entity.id, std::forward<Args>(args)...);
     }
 
     template<typename T>
@@ -178,7 +136,7 @@ namespace Game::Ecs {
         GAME_ASSERT(false);
       }
 
-      return *reinterpret_cast<T*>(this->pools[cid].get(entity.id));
+      return *reinterpret_cast<T*>(this->pools[cid]->get(entity.id));
     }
 
     template<typename T0, typename T1, typename ...Ts>
@@ -203,7 +161,7 @@ namespace Game::Ecs {
 
   private:
     std::vector<EntityDescriptor> entities;
-    std::vector<ComponentPool> pools;
+    std::vector<std::unique_ptr<IComponentPool>> pools;
   };
 
 } // namespace Game::Ecs

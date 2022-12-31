@@ -19,7 +19,9 @@ namespace Game {
   private:
     using Data = typename Resource<T>::Data;
   public:
-    ResourceFactory() = default;
+    ResourceFactory() {
+        mResources.reserve(30);
+    };
 
     typename Resource<T>::Data& get(typename Resource<T>::Id id) { return mResources[id]; }
 

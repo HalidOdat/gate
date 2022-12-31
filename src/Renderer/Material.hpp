@@ -51,9 +51,9 @@ namespace Game {
 
 namespace std {
   template<>
-  struct std::hash<Game::Material::Handle> {
-    std::size_t operator()(Game::Material::Handle const& handle) const noexcept {
-      return std::hash<Game::u32>{}(handle.getId());
+  struct hash<Game::Material::Handle> {
+    size_t operator()(Game::Material::Handle const& handle) const noexcept {
+      return hash<Game::u32>{}(handle.getId());
     }
   };
 }

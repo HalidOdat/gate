@@ -17,9 +17,9 @@
 namespace std {
 
   template<>
-  struct std::hash<Game::Mesh::Handle> {
-    std::size_t operator()(Game::Mesh::Handle const& handle) const noexcept {
-      return std::hash<Game::u32>{}(handle.getId());
+  struct hash<Game::Mesh::Handle> {
+    size_t operator()(Game::Mesh::Handle const& handle) const noexcept {
+      return hash<Game::u32>{}(handle.getId());
     }
   };
 
@@ -142,7 +142,7 @@ namespace Game {
     });
 
     static const f32 skyboxVertices[] = {
-        // positions          
+        // positions
         -1.0f,  1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,
@@ -235,7 +235,7 @@ namespace Game {
         .build();
     }
     #endif
-    
+
     #if GAME_EDITOR
       mOutlineShader = Shader::load("assets/shaders/Outline.glsl")
         .define("EDITOR", "1")
@@ -280,7 +280,7 @@ namespace Game {
 
     mPipeline.frameBuffer->invalidate(width, height);
   }
-  
+
   void Renderer3D::begin3D(const PerspectiveCameraController& cameraController) {
     GAME_PROFILE_FUNCTION();
 
@@ -372,7 +372,7 @@ namespace Game {
               count++;
             }
           }
-          
+
           auto vao = mesh->getVertexArray();
           vao->bind();
           mPipeline.instancedBuffer->bind();
@@ -431,7 +431,7 @@ namespace Game {
           mPipeline.instancedCurrentPtr++;
           count++;
         }
-  
+
         auto vao = mesh->getVertexArray();
         vao->bind();
         mPipeline.instancedBuffer->bind();
@@ -493,7 +493,7 @@ namespace Game {
     //  glDisable(GL_DEPTH_TEST);
 
     mPipeline.quadVertexArray->bind();
-    
+
     auto texture = mPipeline.frameBuffer->getColorAttachment();
     texture->bind(0);
 
@@ -517,7 +517,7 @@ namespace Game {
         mPipeline.bloomDownsampleShader->setVec2("uResolution", Vec2(mPipeline.mipmaps[i]->getWidth(), mPipeline.mipmaps[i]->getHeight()));
         mPipeline.bloomFbo.setTexture(mPipeline.mipmaps[i + 1]);
         mPipeline.mipmaps[i]->bind();
-        mPipeline.quadVertexArray->drawArrays(6);  
+        mPipeline.quadVertexArray->drawArrays(6);
       }
 
       // Upsample
@@ -544,9 +544,9 @@ namespace Game {
       mPipeline.quadVertexArray->drawArrays(6);
 
     mPipeline.bloomFbo.unbind();
-  
+
     #endif
-    
+
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     // Last pass
@@ -582,7 +582,7 @@ namespace Game {
   #if GAME_EDITOR
     u32 Renderer3D::readPixel(u32 x, u32 y) {
       u32 entity = 0;
-      
+
       mPipeline.frameBuffer->bind(false);
       glReadBuffer(GL_COLOR_ATTACHMENT1);
       glReadPixels(x, Application::getWindow().getHeight() - y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &entity);

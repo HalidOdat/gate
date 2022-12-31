@@ -10,7 +10,7 @@ namespace Game {
   // TODO: shader specification of definitions
   class Shader {
     friend class ResourceManager;
-    
+
   public:
     enum class Type {
       Vertex = 0,
@@ -21,7 +21,7 @@ namespace Game {
 
     enum Version {
       Es300,
-      Core450, 
+      Core450,
     };
 
     using Handle = Resource<Shader>;
@@ -42,7 +42,7 @@ namespace Game {
 
       friend class Shader;
     };
-  
+
   public:
     static constexpr const u32 SHADER_TYPE_COUNT = 4;
 
@@ -69,7 +69,7 @@ namespace Game {
     void setUint(StringView name,  const u32 value);
     void setIntArray(StringView name, const i32* value, u32 count);
     void setUintArray(StringView name, const u32* value, u32 count);
-  
+
   private:
     static constexpr const u32 NULL_SHADER = 0;
 
