@@ -25,7 +25,8 @@ namespace Game {
   void Application::start() {
     GAME_PROFILE_FUNCTION();
 
-    this->pushLayer(new EditorLayer());
+    this->layer = new EditorLayer();
+    this->layer->onAttach();
 
     startGameLoop();
   }
@@ -64,7 +65,10 @@ namespace Game {
 
     Logger::trace("Game Engine Terminating...");
 
-    this->layerStack.clear();
+    // TOOD: use unique_ptr here
+    this->layer->onDetach();
+    delete this->layer;
+
     delete this->ui;
     Renderer::shutdown();
     ResourceManager::shutdown();
@@ -85,12 +89,12 @@ namespace Game {
     Timestep::timestep = dt;
 
     if (!self->mWindowMinimized) {
-      self->layerStack.onUpdate(dt);
+      self->layer->onUpdate(dt);
 
       Renderer::waitAndRender();
 
       self->ui->prepareFrame();
-      self->layerStack.onUiRender(*self->ui);
+      self->layer->onUiRender(*self->ui);
       self->ui->endFrame();
     }
 
@@ -130,7 +134,7 @@ namespace Game {
     event.dispatch(&Application::onWindowMinimizedEvent, this);
 
     this->ui->onEvent(event);
-    this->layerStack.onEvent(event);
+    this->layer->onEvent(event);
   }
 
   bool Application::onWindowCloseEvent(const WindowCloseEvent&) {
@@ -151,11 +155,6 @@ namespace Game {
     GAME_PROFILE_FUNCTION();
     mWindowMinimized = true;
     return false;
-  }
-
-  void Application::pushLayer(Layer* layer) {
-    GAME_PROFILE_FUNCTION();
-    this->layerStack.push(layer);
   }
 
 } // namespace Game

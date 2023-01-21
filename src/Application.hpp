@@ -4,7 +4,7 @@
 #include "Window.hpp"
 #include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
-#include "Layers/LayerStack.hpp"
+#include "Layers/Layer.hpp"
 #include "Utils/Memory/BumpAllocator.hpp"
 
 namespace Game {
@@ -21,9 +21,6 @@ namespace Game {
 
     void start();
     void quit();
-
-    void pushLayer(Layer* layer);
-
   private:
     void onEvent(const Event& event);
     bool onWindowCloseEvent(const WindowCloseEvent& event);
@@ -42,7 +39,7 @@ namespace Game {
     bool mWindowMinimized = false;
     Ref<Window> window = nullptr;
     Ui* ui;
-    LayerStack layerStack;
+    Layer *layer;
     f32 lastFrameTime = 0.0f;
 
     Utils::BumpAllocator mFrameAllocator;
