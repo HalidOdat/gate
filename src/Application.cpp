@@ -23,8 +23,6 @@ namespace Game {
   Application* Application::sInstance = nullptr;
 
   void Application::start() {
-    GAME_PROFILE_FUNCTION();
-
     this->layer = new EditorLayer();
     this->layer->onAttach();
 
@@ -34,8 +32,6 @@ namespace Game {
   Application::Application(const char *title, const u32 width, const u32 height)
     : mFrameAllocator(1 * 1024 * 1024)
   {
-    GAME_PROFILE_FUNCTION();
-
     Logger::trace("Game Engine Initializing...");
 
     sInstance = this;
@@ -61,8 +57,6 @@ namespace Game {
   }
 
   Application::~Application() {
-    GAME_PROFILE_FUNCTION();
-
     Logger::trace("Game Engine Terminating...");
 
     // TOOD: use unique_ptr here
@@ -104,8 +98,6 @@ namespace Game {
   }
 
   void Application::startGameLoop() {
-    GAME_PROFILE_FUNCTION();
-
     this->lastFrameTime = (float)glfwGetTime();
 
     #ifndef GAME_PLATFORM_WEB
@@ -122,13 +114,10 @@ namespace Game {
   }
 
   void Application::quit() {
-    GAME_PROFILE_FUNCTION();
     this->running = false;
   }
 
   void Application::onEvent(const Event& event) {
-    GAME_PROFILE_FUNCTION();
-
     event.dispatch(&Application::onWindowResizeEvent, this);
     event.dispatch(&Application::onWindowCloseEvent, this);
     event.dispatch(&Application::onWindowMinimizedEvent, this);
@@ -138,13 +127,11 @@ namespace Game {
   }
 
   bool Application::onWindowCloseEvent(const WindowCloseEvent&) {
-    GAME_PROFILE_FUNCTION();
     this->running = false;
     return true;
   }
 
   bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
-    GAME_PROFILE_FUNCTION();
     glViewport(0, 0, event.getWidth(), event.getHeight());
     Renderer::invalidate(event.getWidth(), event.getHeight());
     mWindowMinimized = false;
@@ -152,7 +139,6 @@ namespace Game {
   }
 
   bool Application::onWindowMinimizedEvent(const WindowMinimizedEvent&) {
-    GAME_PROFILE_FUNCTION();
     mWindowMinimized = true;
     return false;
   }

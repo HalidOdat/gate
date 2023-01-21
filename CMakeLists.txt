@@ -44,9 +44,6 @@ add_executable(${This}
   src/Utils/Parsing/Lexer.hpp
   src/Utils/Parsing/Lexer.cpp
 
-  src/Debug/Profiler.hpp
-  src/Debug/Profiler.cpp
-
   src/Serializer/Serializer.hpp
   src/Serializer/Serializer.cpp
 
@@ -59,7 +56,6 @@ add_executable(${This}
   src/Resource/Manager.hpp
   src/Resource/Manager.cpp
   src/Resource/Resource.hpp
-  src/Resource/Resource.cpp
   src/Resource/Factory.hpp
   src/Resource/Texture.hpp
   src/Resource/Texture.cpp

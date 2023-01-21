@@ -51,8 +51,6 @@ namespace Game {
   };
 
   static std::pair<std::vector<Vertex>, std::vector<u32>> parseObjFile(const std::string& source) {
-    GAME_PROFILE_FUNCTION();
-
     std::stringstream stream(source);
 
     std::vector<Vec3> vertices;
@@ -114,8 +112,6 @@ namespace Game {
   }
 
   std::optional<std::string> fileToString(const StringView& filename) {
-    GAME_PROFILE_FUNCTION();
-
     std::ifstream file;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
@@ -131,8 +127,6 @@ namespace Game {
   }
 
   Mesh::Handle Mesh::load(const std::string& filepath) {
-    GAME_PROFILE_FUNCTION();
-
     if (cachedMeshes.contains(filepath)) {
       return cachedMeshes.at(filepath);
     }
@@ -162,8 +156,6 @@ namespace Game {
   }
 
   Mesh::Data Mesh::fromVertices(const Slice<const void> vertices, const Slice<const u32> indices) {
-    GAME_PROFILE_FUNCTION();
-
     auto vao = VertexArray::create();
     auto vbo = VertexBuffer::builder()
       .data(vertices)
@@ -180,8 +172,6 @@ namespace Game {
   }
 
   bool Mesh::reload() {
-    GAME_PROFILE_FUNCTION();
-
     if (!mData.filePath.has_value()) {
       return true;
     }
@@ -205,8 +195,6 @@ namespace Game {
   }
 
   Mesh::Handle Mesh::cube() {
-    GAME_PROFILE_FUNCTION();
-
     if (cachedCube) {
       return cachedCube;
     }

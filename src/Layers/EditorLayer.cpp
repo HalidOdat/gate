@@ -24,8 +24,6 @@ namespace Game {
   {}
 
   void EditorLayer::onAttach() {
-    GAME_PROFILE_FUNCTION();
-
     mEditorScene.reset(new Scene("New Scene"));
     mActiveScene = mEditorScene;
 
@@ -60,12 +58,10 @@ namespace Game {
   }
 
   void EditorLayer::onDetach() {
-    GAME_PROFILE_FUNCTION();
     Logger::info("EditorLayer::onDetach was called");
   }
 
   void EditorLayer::onUpdate(Timestep ts) {
-    GAME_PROFILE_FUNCTION();
     if (!Input::isKeyPressed(Key::LeftControl) && !Input::isKeyPressed(Key::RightControl)) {
       mCameraController.onUpdate(ts);
     }

@@ -12,8 +12,6 @@
 namespace Game {
 
   Renderer2D::Renderer2D() {
-    GAME_PROFILE_FUNCTION();
-
     mWhiteTexture = Texture2D::color(0xFF, 0xFF, 0xFF).build();
 
     mQuadVertexArray = VertexArray::create();
@@ -91,18 +89,14 @@ namespace Game {
   }
 
   Renderer2D::~Renderer2D() {
-    GAME_PROFILE_FUNCTION();
     delete[] mQuadBasePtr;
   }
 
   void Renderer2D::begin(const Camera& camera) {
-    GAME_PROFILE_FUNCTION();
     mProjectionViewMatrix = camera.getProjectionViewMatrix();
   }
 
   void Renderer2D::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color) {
-    GAME_PROFILE_FUNCTION();
-
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, Vec3(position, 0.0f));
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -146,7 +140,6 @@ namespace Game {
   }
 
   void Renderer2D::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color) {
-    GAME_PROFILE_FUNCTION();
     Vec2 size = {_size - _size/7.0f, _size};
 
     Vec2 start = position;
@@ -167,8 +160,6 @@ namespace Game {
   }
 
   void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
-    GAME_PROFILE_FUNCTION();
-
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, Vec3(position, 1.0f));
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -202,7 +193,6 @@ namespace Game {
   }
 
   void Renderer2D::flush() {
-    GAME_PROFILE_FUNCTION();
     if (mQuadCount) {
       mWhiteTexture->bind();
 

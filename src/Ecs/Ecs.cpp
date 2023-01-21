@@ -7,12 +7,10 @@
 namespace Game::Ecs {
 
   Registry::Registry() {
-    GAME_PROFILE_FUNCTION();
     this->pools.resize(MAX_COMPONENTS);
   }
 
   Entity Registry::create() {
-    GAME_PROFILE_FUNCTION();
     auto entity = Entity((u32)this->entities.size());
     EntityDescriptor descriptor {
       Requirement()

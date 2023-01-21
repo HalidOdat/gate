@@ -44,19 +44,15 @@ namespace Game {
   Renderer3D* renderer = nullptr;
 
   void Renderer::initialize() {
-    GAME_PROFILE_FUNCTION();
     renderer = new Renderer3D();
   }
 
   void Renderer::shutdown() {
-    GAME_PROFILE_FUNCTION();
     delete renderer;
     renderer = nullptr;
   }
 
   void Renderer::invalidate(u32 width, u32 height) {
-    GAME_PROFILE_FUNCTION();
-
     renderer->invalidate(width, height);
   }
   

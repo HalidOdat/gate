@@ -141,7 +141,6 @@ namespace Game {
   template<>
   struct FactoryCallback<Texture2D> {
     inline static void postDecrement(const Resource<Texture2D>& resource) {
-      GAME_PROFILE_FUNCTION();
       if (resource.getReferenceCount() == 1) {
         switch (resource->getType()) {
           case Texture::Type::Image:
@@ -158,7 +157,6 @@ namespace Game {
       }
     }
     inline static void created(Texture2D& texture, u32 id) {
-      GAME_PROFILE_FUNCTION();
       switch (texture.getType()) {
         case Texture::Type::Image:
           Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
@@ -174,7 +172,6 @@ namespace Game {
       }
     }
     inline static void destroyed(Texture2D& texture, u32 id) {
-      GAME_PROFILE_FUNCTION();
       switch (texture.getType()) {
         case Texture::Type::Image:
           Logger::trace("Texture2D #%u destroyed: %s", id, texture.getFilePath()->c_str());
@@ -190,7 +187,6 @@ namespace Game {
       }
     }
     inline static void clear() {
-      GAME_PROFILE_FUNCTION();
       cachedImageTexture2D.clear();
       cachedColorTexture2D.clear();
     }
@@ -225,8 +221,6 @@ namespace Game {
     return *this; 
   }
   Texture2D::Handle Texture2D::Builder::build() {
-    GAME_PROFILE_FUNCTION();
-
     String filepath = String(mFile);
     switch (mType) {
       case Texture::Type::Color:
@@ -359,21 +353,16 @@ namespace Game {
   }
 
   void Texture2D::destroyAllTextures() {
-    GAME_PROFILE_FUNCTION();
     cachedImageTexture2D.clear();
     cachedColorTexture2D.clear();
     texture2DFactory.clear();
   }
 
   void Texture2D::reloadAll() {
-    GAME_PROFILE_FUNCTION();
-
     GAME_TODO("not implemented yet!");
   }
 
   Texture2D::Data Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Specification specification) {
-    GAME_PROFILE_FUNCTION();
-
     GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
     GLenum dataFormat = 0;
     if (channels == 4) {
@@ -416,7 +405,6 @@ namespace Game {
   }
 
   Texture2D::Builder Texture2D::color(u32 color) {
-    GAME_PROFILE_FUNCTION();
     Builder builder;
     builder.mType = Texture::Type::Color;
     builder.mColor = color;
@@ -427,8 +415,6 @@ namespace Game {
   }
 
   Texture2D::Builder Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
-    GAME_PROFILE_FUNCTION();
-
     u32 color =  r; color <<= 8;
         color |= g; color <<= 8;
         color |= b; color <<= 8;
@@ -465,8 +451,6 @@ namespace Game {
   }
 
   Texture2D::Handle Texture2D::generateMissingDataPlaceholder() {
-    GAME_PROFILE_FUNCTION();
-
     return Texture2D::buffer(defaultTextureData, 2, 2, Texture::DataFormat::Rgba, Texture::DataType::UnsignedByte)
       .filtering({Texture::FilteringMode::Nearest, Texture::FilteringMode::Nearest})
       .mipmap(Texture::MipmapMode::None)
@@ -474,8 +458,6 @@ namespace Game {
   }
 
   bool Texture2D::reload() {
-    GAME_PROFILE_FUNCTION();
-
     if (mData.type != Texture::Type::Image) {
       return true;
     }
@@ -501,14 +483,10 @@ namespace Game {
   }
 
   Texture2D::~Texture2D() {
-    GAME_PROFILE_FUNCTION();
-
     glDeleteTextures(1, &mData.id);
   }
 
   void Texture2D::bind(const usize slot) const {
-    GAME_PROFILE_FUNCTION();
-
     // TODO: debug check if max texture slot reached
     u32 textureId = mData.id;
     glActiveTexture(GL_TEXTURE0 + (GLenum)slot);
@@ -532,8 +510,6 @@ namespace Game {
   GAME_FACTORY_IMPLEMENTATION(CubeMap, cubeMapFactory)
 
   CubeMap::Handle CubeMap::load(FilePaths paths) {
-    GAME_PROFILE_FUNCTION();
-
     GAME_ASSERT(paths.size() == 6);
 
     u32 texture;
@@ -565,21 +541,15 @@ namespace Game {
   }
 
   CubeMap::~CubeMap() {
-    GAME_PROFILE_FUNCTION();
-
     glDeleteTextures(1, &id);
   }
 
   void CubeMap::bind() const {
-    GAME_PROFILE_FUNCTION();
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
   }
 
   bool CubeMap::reload() {
-    GAME_PROFILE_FUNCTION();
-
     // TODO: implement reloading
     GAME_TODO("not implemented");
     return false;

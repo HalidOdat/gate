@@ -35,7 +35,6 @@ namespace Game {
   };
 
   Vec2 Ui::Layout::nextAvailablePosition(bool withPadding) {
-    GAME_PROFILE_FUNCTION();
     (void)withPadding;
 
     switch (this->type) {
@@ -49,7 +48,6 @@ namespace Game {
   }
 
   void Ui::Layout::pushWidget(const Vec2& widgetSize) {
-    GAME_PROFILE_FUNCTION();
 #   undef max
     switch (this->type) {
       case Type::Horizontal:
@@ -72,32 +70,26 @@ namespace Game {
   }
 
   void Ui::prepareFrame() {
-    GAME_PROFILE_FUNCTION();
     Renderer::enableBlending(true);
   }
 
   void Ui::endFrame() {
-    GAME_PROFILE_FUNCTION();
     Renderer::enableDepthTest(true);
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    GAME_PROFILE_FUNCTION();
     mRenderer.drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec3& color) {
-    GAME_PROFILE_FUNCTION();
     drawQuad(position, size, Vec4(color, 1.0f));
   }
 
   void Ui::drawText(const StringView& text, const Vec2& position, f32 size, const Vec3& color) {
-    GAME_PROFILE_FUNCTION();
     mRenderer.drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
   }
 
   void Ui::begin(const Vec2& position, f32 padding) {
-    GAME_PROFILE_FUNCTION();
     Layout layout;
     layout.type     = Layout::Type::Vertical;
     layout.size     = Vec2(0.0f);
@@ -110,8 +102,6 @@ namespace Game {
   }
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
-    GAME_PROFILE_FUNCTION();
-
     Layout layout;
     layout.type     = type;
     layout.position = layouts.back().nextAvailablePosition(false);
@@ -122,8 +112,6 @@ namespace Game {
   }
 
   void Ui::beginDock(Ui::Dock type, f32 size) {
-    GAME_PROFILE_FUNCTION();
-
     mRenderer.begin(mCamera);
 
     switch (type) {
@@ -158,8 +146,6 @@ namespace Game {
   }
 
   void Ui::label(const StringView& text, const Vec3& foreground, const Vec4& background) {
-    GAME_PROFILE_FUNCTION();
-    
     auto& layout = this->layouts.back();
 
     const auto position = layout.nextAvailablePosition() + Vec2(mConfig.slider.margin.left, mConfig.slider.margin.top);
@@ -184,7 +170,6 @@ namespace Game {
   }
 
   bool Ui::button(const StringView& text, u64 id) {
-    GAME_PROFILE_FUNCTION();
     auto& layout = this->layouts.back();
 
     const auto position = layout.nextAvailablePosition() + Vec2(mConfig.button.margin.left, mConfig.button.margin.top);
@@ -235,13 +220,10 @@ namespace Game {
   }
 
   static f32 scale(f32 value, std::pair<f32, f32> src, std::pair<f32, f32> dst) {
-    GAME_PROFILE_FUNCTION();
     return ((value - src.first) / (src.second - src.first)) * (dst.second - dst.first) + dst.first;
   }
 
   bool Ui::slider(f32& value, const f32 min, const f32 max) {
-    GAME_PROFILE_FUNCTION();
-
     const u64 id = (u64)(void*)&value;
 
     auto& layout = this->layouts.back();
@@ -309,8 +291,6 @@ namespace Game {
   }
 
   bool Ui::slider(Vec3& value, const Vec3& mins, const Vec3& maxs) {
-    GAME_PROFILE_FUNCTION();
-
     bool changed = false;
     this->beginLayout(Layout::Type::Horizontal);
       label("X", Vec3{1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}); changed = this->slider(value.x, mins.x, maxs.x) || changed;
@@ -321,8 +301,6 @@ namespace Game {
   }
 
   bool Ui::checkbox(bool& value) {
-    GAME_PROFILE_FUNCTION();
-
     u64 id = (u64)(void*)&value;
 
     auto& layout = this->layouts.back();
@@ -378,14 +356,12 @@ namespace Game {
   }
 
   void Ui::endLayout() {
-    GAME_PROFILE_FUNCTION();
     auto size = this->layouts.back().size;
     this->layouts.pop_back();
     this->layouts.back().pushWidget(size);
   }
 
   void Ui::end() {
-    GAME_PROFILE_FUNCTION();
     GAME_DEBUG_ASSERT(this->layouts.size() == 1);
     // Layout layout = this->layouts.back();
     this->layouts.pop_back();
@@ -394,7 +370,6 @@ namespace Game {
   }
 
   void Ui::onEvent(const Event& event) {
-    GAME_PROFILE_FUNCTION();
     event.dispatch(&Ui::onWindowResizeEvent, this);
     event.dispatch(&Ui::onMouseMoveEvent, this);
     event.dispatch(&Ui::onMouseButtonPressedEvent, this);
@@ -402,7 +377,6 @@ namespace Game {
   }
 
   bool Ui::onWindowResizeEvent(const WindowResizeEvent& event) {
-    GAME_PROFILE_FUNCTION();
     auto[width, height] = event.getSize();
     mConfig.window.size = { (f32)width, (f32)height };
     mCamera.setProjection(0.0f, (f32)width, 0.0f, (f32)height);
@@ -410,20 +384,17 @@ namespace Game {
   }
 
   bool Ui::onMouseMoveEvent(const MouseMoveEvent& event) {
-    GAME_PROFILE_FUNCTION();
     this->mousePosition = {event.getX(), event.getY()};
     return this->hasHot || this->hasActive;
   }
 
   bool Ui::onMouseButtonPressedEvent(const MouseButtonPressedEvent& event) {
-    GAME_PROFILE_FUNCTION();
     (void)event;
     this->mouseButton = true;
     return this->hasHot || this->hasActive;
   }
 
   bool Ui::onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event) {
-    GAME_PROFILE_FUNCTION();
     (void)event;
     this->mouseButton = false;
     return  this->hasHot || this->hasActive;

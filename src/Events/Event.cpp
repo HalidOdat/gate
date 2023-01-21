@@ -5,7 +5,6 @@
 namespace Game {
   
   const char* Event::getName() const {
-    GAME_PROFILE_FUNCTION();
     switch (this->type) {
       case Type::KeyPressed:          return "KeyPressed";
       case Type::KeyReleased:         return "KeyReleased";

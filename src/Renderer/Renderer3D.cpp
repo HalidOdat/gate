@@ -82,8 +82,6 @@ namespace Game {
   }
 
   Renderer3D::Renderer3D() {
-    GAME_PROFILE_FUNCTION();
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -269,21 +267,15 @@ namespace Game {
   }
 
   Renderer3D::~Renderer3D() {
-    GAME_PROFILE_FUNCTION();
-
     delete[] mPipeline.instancedBasePtr;
     delete[] mPipeline.materialsBasePtr;
   }
 
   void Renderer3D::invalidate(u32 width, u32 height) {
-    GAME_PROFILE_FUNCTION();
-
     mPipeline.frameBuffer->invalidate(width, height);
   }
 
   void Renderer3D::begin3D(const PerspectiveCameraController& cameraController) {
-    GAME_PROFILE_FUNCTION();
-
     mPipeline.camera.projection     = cameraController.getCamera().getProjectionMatrix();
     mPipeline.camera.view           = cameraController.getCamera().getViewMatrix();
     mPipeline.camera.projectionView = mPipeline.camera.projection * mPipeline.camera.view;
@@ -296,8 +288,6 @@ namespace Game {
   }
 
   void Renderer3D::submit(const Mesh::Handle& _mesh, const Material::Handle& _material, const Mat4& transform, u32 entityId) {
-    GAME_PROFILE_FUNCTION();
-
     Mesh::Handle mesh = _mesh;
     Material::Handle material = _material;
 
@@ -339,8 +329,6 @@ namespace Game {
   }
 
   void Renderer3D::renderAllUnits() {
-    GAME_PROFILE_FUNCTION();
-
     u32 drawCalls = 0;
 
     #if GAME_EDITOR
@@ -459,8 +447,6 @@ namespace Game {
   }
 
   void Renderer3D::renderSkybox() {
-    GAME_PROFILE_FUNCTION();
-
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     mPipeline.skyboxTexture->bind();
     mPipeline.skyboxShader->bind();
@@ -473,8 +459,6 @@ namespace Game {
   }
 
   void Renderer3D::waitAndRender() {
-    GAME_PROFILE_FUNCTION();
-
     // First Pass
     glDisable(GL_BLEND);
 

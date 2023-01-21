@@ -25,7 +25,6 @@ namespace Game::Ecs {
 
     template<typename ...Args>
     T* construct(const u32 i, Args&& ...args) {
-      GAME_PROFILE_FUNCTION();
       u32 index = (u32)components.size();
       components.emplace_back(std::forward<Args>(args)...);
 
@@ -43,7 +42,6 @@ namespace Game::Ecs {
 
     // Must have the component
     void destory(const u32 i) override {
-      GAME_PROFILE_FUNCTION();
       u32 index = this->sparse[i];
 
       if (index + 1 == components.size()) {
@@ -59,7 +57,6 @@ namespace Game::Ecs {
 
     // Must have the component
     void* get(const u32 i) override {
-      GAME_PROFILE_FUNCTION();
       return &components[this->sparse[i]];
     }
 

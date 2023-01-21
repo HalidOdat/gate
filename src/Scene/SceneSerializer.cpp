@@ -5,7 +5,6 @@
 namespace Game {
   
   String SceneSerializer::serialize(Scene& scene) {
-    GAME_PROFILE_FUNCTION();
     return Serializer::Node(scene).toString();
   }
 
@@ -14,8 +13,6 @@ namespace Game {
     template<>
     struct Convert<Entity> {
       static Node encode(Entity entity) {
-        GAME_PROFILE_FUNCTION();
-
         auto node = Node::object();
 
         auto components = Node::object();
@@ -42,8 +39,6 @@ namespace Game {
     template<>
     struct Convert<Vec3> {
       static Node encode(const Vec3& vec) {
-        GAME_PROFILE_FUNCTION();
-
         auto node = Node::array();
         node.push(vec.x);
         node.push(vec.y);
@@ -52,8 +47,6 @@ namespace Game {
         return node;
       }
       static bool decode(const Node& node, Vec3& value) {
-        GAME_PROFILE_FUNCTION();
-
         if (!node.isArray() || node.asArray()->size() != 3) {
           return false;
         }
@@ -91,13 +84,11 @@ namespace Game {
     template<>
     struct Convert<TagComponent> {
       static Node encode(const TagComponent& component) {
-        GAME_PROFILE_FUNCTION();
         auto node = Node::object();
         node["tag"] = component.tag;
         return node;
       }
       static bool decode(const Node& node, TagComponent& component) {
-        GAME_PROFILE_FUNCTION();
         if (!node.isObject()) {
           return false;
         }
@@ -115,8 +106,6 @@ namespace Game {
     template<>
     struct Convert<TransformComponent> {
       static Node encode(const TransformComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         auto node = Node::object();
         node["translation"] = component.getTranslation();
         node["rotation"]    = component.getRotation();
@@ -124,8 +113,6 @@ namespace Game {
         return node;
       }
       static bool decode(const Node& node, TransformComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         if (!node.isObject()) {
           return false;
         }
@@ -155,15 +142,11 @@ namespace Game {
     template<>
     struct Convert<VelocityComponent> {
       static Node encode(const VelocityComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         auto node = Node::object();
         node["velocity"] = component.velocity;
         return node;
       }
       static bool decode(const Node& node, VelocityComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         if (!node.isObject()) {
           return false;
         }
@@ -179,8 +162,6 @@ namespace Game {
     template<>
     struct Convert<MeshSourceComponent> {
       static Node encode(const MeshSourceComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         auto node = Node::object();
         switch (component.mesh->getType()) {
           case Mesh::Type::Cube:
@@ -196,8 +177,6 @@ namespace Game {
         return node;
       }
       static bool decode(const Node& node, MeshSourceComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         if (!node.isObject()) {
           return false;
         }
@@ -227,15 +206,11 @@ namespace Game {
     template<>
     struct Convert<MeshRendererComponent> {
       static Node encode(const MeshRendererComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         auto node = Node::object();
         node["material"] = component.material->name;
         return node;
       }
       static bool decode(const Node& node, MeshRendererComponent& component) {
-        GAME_PROFILE_FUNCTION();
-
         if (!node.isObject()) {
           return false;
         }
@@ -253,8 +228,6 @@ namespace Game {
     template<>
     struct Convert<Scene> {
       static Node encode(const Scene& scene) {
-        GAME_PROFILE_FUNCTION();
-
         auto node = Node::object();
         node["name"] = scene.getName();
 
@@ -268,8 +241,6 @@ namespace Game {
       }
 
       static bool decode(const Node& node, Scene& scene) {
-        GAME_PROFILE_FUNCTION();
-
         if (!node.isObject()) {
           return false;
         }
@@ -341,8 +312,6 @@ namespace Game {
   }
 
   bool SceneSerializer::deserializeFromFile(const StringView& file, Scene& scene) {
-    GAME_PROFILE_FUNCTION();
-    
     auto filePath = String(file);
     auto source = Utils::fileToString(filePath);
     if (!source) {
