@@ -95,18 +95,6 @@ add_executable(${This}
   src/Renderer/Renderer3D.hpp
   src/Renderer/Renderer3D.cpp
 
-  src/Physics/Intersection.hpp
-  src/Physics/BoundingSphere.hpp
-  src/Physics/BoundingSphere.cpp
-  src/Physics/Plane.hpp
-  src/Physics/Plane.cpp
-  src/Physics/AABB.hpp
-  src/Physics/AABB.cpp
-  src/Physics/Collider.hpp
-  src/Physics/Collider.cpp
-  src/Physics/Engine.hpp
-  src/Physics/Engine.cpp
-
   src/Scene/Scene.hpp
   src/Scene/Scene.cpp
   src/Scene/Components.hpp

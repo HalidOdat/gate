@@ -6,7 +6,6 @@
 #include "Scene/Entity.hpp"
 #include "Scene/Components.hpp"
 #include "Serializer/Serializer.hpp"
-#include "Physics/Engine.hpp"
 
 namespace Game {
   
@@ -27,7 +26,6 @@ namespace Game {
   private:
     String mName;
     Ecs::Registry mRegistry;
-    Physics::Engine mPhysicsEngine;
 
   private:
     friend class Entity;

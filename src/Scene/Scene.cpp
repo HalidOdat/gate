@@ -18,7 +18,6 @@ namespace Game {
   }
 
   void Scene::onSimulateUpdate(Timestep ts, const PerspectiveCameraController& camera) {
-    mPhysicsEngine.tick(ts, mRegistry);
     render(camera);
   }
 

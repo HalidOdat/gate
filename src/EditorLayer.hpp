@@ -30,22 +30,13 @@ namespace Game {
     bool onMouseMoveEvent(const MouseMoveEvent& event);
     bool onMouseButtonPressedEvent(const MouseButtonPressedEvent& event);
     bool onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event);
-  
-  private:
-    enum class State : u8 {
-      Edit,
-      Simulate,
-      Play,
-    };
 
   private:
     OrthographicCameraController mEditorCameraController;
     PerspectiveCameraController mCameraController;
 
     bool mClicked = false;
-
-    bool  mShow  = true;
-    State mState = State::Play;
+    bool mShow    = true;
 
     Ref<Scene> mEditorScene = nullptr;
     Ref<Scene> mActiveScene = nullptr;

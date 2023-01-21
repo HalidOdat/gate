@@ -39,46 +39,16 @@ namespace Game {
     Application::getWindow().setTitle(mEditorScene->getName());
 
     Logger::info("EditorLayer::onAttach was called");
-
-    for (u32 i = 0; i < 10; i++) {
-      Entity ent{i, mEditorScene.get()};
-      Vec3 position = ent.get<TransformComponent>().getTranslation();
-      ent.add<CollisionComponent>(Physics::BoundingSphere(position, 4.0f));
-    }
-
-    // Entity ent{0, mEditorScene.get()};
-    // for (int i = 0; i < 100; i++) {
-    //   for (int j = 0; j < 100; j++) {
-    //     for (int k = 0; k < 10; k++) {
-    //       Entity newEnt = ent.duplicate();
-    //       auto& transform = newEnt.get<TransformComponent>();
-    //       transform.setTranslation({i * 2.0f, j * 2.0f, k * 2.0f});
-    //     }
-    //   }
-    // }
   }
 
   void EditorLayer::onDetach() {
-    Logger::info("EditorLayer::onDetach was called");
   }
 
   void EditorLayer::onUpdate(Timestep ts) {
     if (!Input::isKeyPressed(Key::LeftControl) && !Input::isKeyPressed(Key::RightControl)) {
       mCameraController.onUpdate(ts);
     }
-    switch (mState) {
-      case State::Edit:
-        mActiveScene->render(mCameraController);
-        break;
-      case State::Simulate:
-        mActiveScene->onSimulateUpdate(ts, mCameraController);
-        break;
-      case State::Play:
-        mActiveScene->render(mCameraController);
-        break;
-      default:
-        GAME_UNREACHABLE("Unknown state!");
-    }
+    mActiveScene->render(mCameraController);
 
     if (mSelectedEntity.isValid()) {
       if (Input::isKeyPressed(Key::LeftControl) || Input::isKeyPressed(Key::RightControl)) {
@@ -178,7 +148,6 @@ namespace Game {
     if (event.getModifier() == KeyModifier::Control) {
       switch (event.getKey()) {
         case Key::S:
-          mState = State::Simulate;
           Logger::trace("Editor: Simulation has started");
           break;
         case Key::D:

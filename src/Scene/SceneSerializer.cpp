@@ -22,9 +22,6 @@ namespace Game {
         if (entity.has<TransformComponent>()) {
           components["TransformComponent"] = entity.get<TransformComponent>();
         }
-        if (entity.has<VelocityComponent>()) {
-          components["VelocityComponent"] = entity.get<VelocityComponent>();
-        }
         if (entity.has<MeshRendererComponent>()) {
           components["MeshRendererComponent"] = entity.get<MeshRendererComponent>();
         }
@@ -135,26 +132,6 @@ namespace Game {
           }
         }
         component = TransformComponent(translation, rotation, scale);
-        return true;
-      }
-    };
-
-    template<>
-    struct Convert<VelocityComponent> {
-      static Node encode(const VelocityComponent& component) {
-        auto node = Node::object();
-        node["velocity"] = component.velocity;
-        return node;
-      }
-      static bool decode(const Node& node, VelocityComponent& component) {
-        if (!node.isObject()) {
-          return false;
-        }
-        if (auto velocity = node.get("velocity"); velocity) {
-          if (!Convert<Vec3>::decode(*velocity, component.velocity)) {
-            return false;
-          }
-        }
         return true;
       }
     };
@@ -281,13 +258,6 @@ namespace Game {
                 return false;
               }
               scene.mRegistry.assign<TransformComponent>(entityId, transform);
-            }
-            if (const auto component = components->get("VelocityComponent"); component) {
-              VelocityComponent velocity;
-              if (!Convert<VelocityComponent>::decode(*component, velocity)) {
-                return false;
-              }
-              scene.mRegistry.assign<VelocityComponent>(entityId, velocity);
             }
             if (const auto component = components->get("MeshSourceComponent"); component) {
               MeshSourceComponent meshSource;

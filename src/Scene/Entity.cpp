@@ -22,10 +22,6 @@ namespace Game {
       auto component = get<MeshRendererComponent>();
       newEntity.add<MeshRendererComponent>(component);
     }
-    if (has<VelocityComponent>()) {
-      auto component = get<VelocityComponent>();
-      newEntity.add<VelocityComponent>(component);
-    }
     return newEntity;
   }
 

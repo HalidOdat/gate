@@ -7,8 +7,6 @@
 #include "Ecs/Component.hpp"
 #include "Scene/Entity.hpp"
 
-#include "Physics/Collider.hpp"
-
 namespace Game {
 
   struct TagComponent : Ecs::Component<TagComponent> {
@@ -18,13 +16,6 @@ namespace Game {
     {}
 
     String tag;
-  };
-
-  struct RelationshipComponent {
-    RelationshipComponent(Entity parent)
-      : parent{parent}
-    {}
-    Entity parent;
   };
 
   class TransformComponent : Ecs::Component<TransformComponent> {
@@ -57,30 +48,6 @@ namespace Game {
     Vec3 mTranslation;
     Vec3 mRotation;
     Vec3 mScale;
-  };
-
-  struct VelocityComponent : Ecs::Component<VelocityComponent> {
-    VelocityComponent() {}
-    VelocityComponent(const Vec3& velocity)
-      : velocity{velocity}
-    {}
-
-    Vec3 velocity = {0.0f, 0.0f, 0.0f};
-  };
-
-  struct CollisionComponent : Ecs::Component<CollisionComponent> {
-    CollisionComponent() = default;
-    CollisionComponent(const Physics::BoundingSphere& sphere)
-      : collider{sphere}
-    {}
-    CollisionComponent(const Physics::AABB& aabb)
-      : collider{aabb}
-    {}
-    CollisionComponent(const Physics::Plane& plane)
-      : collider{plane}
-    {}
-
-    Physics::Collider collider;
   };
 
   struct MeshSourceComponent : Ecs::Component<MeshSourceComponent> {
