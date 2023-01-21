@@ -17,7 +17,6 @@ namespace Game {
 
     inline static Application& get() { return *sInstance; }
     inline static Window& getWindow() { return *sInstance->window; }
-    inline static Utils::BumpAllocator& getFrameAllocator() { return sInstance->mFrameAllocator; }
 
     void start();
     void quit();
@@ -41,8 +40,6 @@ namespace Game {
     Ui* ui;
     Layer *layer;
     f32 lastFrameTime = 0.0f;
-
-    Utils::BumpAllocator mFrameAllocator;
   };
   
 }

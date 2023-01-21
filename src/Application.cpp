@@ -29,9 +29,7 @@ namespace Game {
     startGameLoop();
   }
 
-  Application::Application(const char *title, const u32 width, const u32 height)
-    : mFrameAllocator(1 * 1024 * 1024)
-  {
+  Application::Application(const char *title, const u32 width, const u32 height) {
     Logger::trace("Game Engine Initializing...");
 
     sInstance = this;
@@ -91,9 +89,6 @@ namespace Game {
       self->layer->onUiRender(*self->ui);
       self->ui->endFrame();
     }
-
-    self->mFrameAllocator.clear();
-
     self->window->update();
   }
 
