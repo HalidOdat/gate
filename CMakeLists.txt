@@ -116,13 +116,11 @@ add_executable(${This}
   src/Scene/SceneSerializer.hpp
   src/Scene/SceneSerializer.cpp
 
-  src/Layers/Layer.hpp
-  src/Layers/EditorLayer.hpp
-  src/Layers/EditorLayer.cpp
-
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp
 
+  src/EditorLayer.hpp
+  src/EditorLayer.cpp
   src/Window.hpp
   src/Window.cpp
   src/Application.hpp

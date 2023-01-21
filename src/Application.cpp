@@ -4,7 +4,7 @@
 #include "Renderer/Renderer.hpp"
 #include "Application.hpp"
 
-#include "Layers/EditorLayer.hpp"
+#include "EditorLayer.hpp"
 
 #if GAME_PLATFORM_WEB
 # include<emscripten/emscripten.h>

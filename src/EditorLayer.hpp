@@ -7,22 +7,21 @@
 #include "Resource/Texture.hpp"
 #include "Renderer/CameraController.hpp"
 #include "Ecs/Ecs.hpp"
-#include "Layers/Layer.hpp"
 #include "Scene/Scene.hpp"
 
 namespace Game {
     
   class Scene;
 
-  class EditorLayer : public Layer {
+  class EditorLayer {
   public:
     EditorLayer();
 
-    virtual void onAttach() override;
-    virtual void onDetach() override;
-    virtual void onUpdate(Timestep ts) override;
-    virtual void onUiRender(Ui& ui) override;
-    virtual void onEvent(const Event& event) override;
+    void onAttach();
+    void onDetach();
+    void onUpdate(Timestep ts);
+    void onUiRender(Ui& ui);
+    void onEvent(const Event& event);
   
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
@@ -42,7 +41,7 @@ namespace Game {
   private:
     OrthographicCameraController mEditorCameraController;
     PerspectiveCameraController mCameraController;
-    
+
     bool mClicked = false;
 
     bool  mShow  = true;

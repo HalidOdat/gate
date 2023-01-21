@@ -6,7 +6,6 @@
 
 #include "Renderer/Renderer.hpp"
 #include "Resource/Manager.hpp"
-#include "Layers/EditorLayer.hpp"
 
 #include "Application.hpp"
 
@@ -15,6 +14,8 @@
 
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
+
+#include "EditorLayer.hpp"
 
 namespace Game {
 

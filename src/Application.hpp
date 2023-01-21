@@ -4,7 +4,8 @@
 #include "Window.hpp"
 #include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
-#include "Layers/Layer.hpp"
+
+#include "EditorLayer.hpp"
 
 namespace Game {
 
@@ -37,7 +38,7 @@ namespace Game {
     bool mWindowMinimized = false;
     Ref<Window> window = nullptr;
     Ui* ui;
-    Layer *layer;
+    EditorLayer *layer;
     f32 lastFrameTime = 0.0f;
   };
   
