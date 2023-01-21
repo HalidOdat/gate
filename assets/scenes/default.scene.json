@@ -7,33 +7,33 @@
           "material": "Crate"
         },
         "TransformComponent": {
-          "translation": [ 0.000000, 0.000000, 0.000000 ],
+          "translation": [ 1.875, 1.875, 1.875 ],
           "rotation": [ 0.000000, 0.000000, 0.000000 ],
-          "scale": [ 1.000000, 1.000000, 1.000000 ]
+          "scale": [ 1, 1, 1 ]
         },
         "VelocityComponent": {
-          "velocity": [ 1.000000, 1.000000, 0.000000 ],
+          "velocity": [ 1.000000, 1.000000, 0.000000 ]
         },
         "TagComponent": {
           "tag": "box 0"
         },
         "MeshSourceComponent": {
-          "type": "Cube"
+          "type": "Cube",
         }
       }
     },
     {
       "components": {
         "TagComponent": {
-          "tag": "box 1"
+          "tag": "Board"
         },
         "TransformComponent": {
           "translation": [ 2.020000, 5.020000, -14.980000 ],
-          "rotation": [ 0.100000, 0.200000, 0.300000 ],
-          "scale": [ 1.000000, 1.000000, 1.000000 ]
+          "rotation": [ 0.000000, 0.000000, 0.000000 ],
+          "scale": [ 30.000000, 1.000000, 30.000000 ]
         },
         "MeshRendererComponent": {
-          "material": "Crate"
+          "material": "board"
         },
         "MeshSourceComponent": {
           "type": "Cube"

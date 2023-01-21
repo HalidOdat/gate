@@ -15,5 +15,19 @@
     },
     "shininess": 32.000000,
     "transparancy": 1.000000
+  },
+  {
+    "name": "board",
+    "diffuseMap": {
+      "path": "assets/textures/chess/board.png"
+    },
+    "specularMap": {
+      "path": "assets/textures/chess/512-spec.jpg"
+    },
+    "emissionMap": {
+      "path": "assets/textures/matrix.jpg"
+    },
+    "shininess": 16.000000,
+    "transparancy": 1.000000
   }
 ]
