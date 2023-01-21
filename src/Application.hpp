@@ -5,7 +5,6 @@
 #include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Layers/Layer.hpp"
-#include "Utils/Memory/BumpAllocator.hpp"
 
 namespace Game {
 

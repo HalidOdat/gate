@@ -4,7 +4,6 @@
 #include "Renderer/Renderer.hpp"
 #include "Application.hpp"
 
-#include "Layers/GameLayer.hpp"
 #include "Layers/EditorLayer.hpp"
 
 #if GAME_PLATFORM_WEB

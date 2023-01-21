@@ -117,8 +117,6 @@ add_executable(${This}
   src/Scene/SceneSerializer.cpp
 
   src/Layers/Layer.hpp
-  src/Layers/GameLayer.hpp
-  src/Layers/GameLayer.cpp
   src/Layers/EditorLayer.hpp
   src/Layers/EditorLayer.cpp
 
