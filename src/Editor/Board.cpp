@@ -1,5 +1,7 @@
 #include "Editor/Board.hpp"
 
+#include "Application.hpp"
+
 namespace Game {
 
   Board::~Board() {
@@ -22,10 +24,25 @@ namespace Game {
     return index;
   }
 
+  void Board::renderAll(Renderer& renderer) {
+    renderGrid(renderer);
+    render(renderer);
+  }
+
   void Board::render(Renderer& renderer) {
     for (auto component : components) {
       if (component) {
         component->render(renderer);
+      }
+    }
+  }
+
+  void Board::renderGrid(Renderer& renderer) {
+    auto width  = Application::getWindow().getWidth();
+    auto height = Application::getWindow().getHeight();
+    for (int i = 0; i < width; i += GRID_SIZE) {
+      for (int j = 0; j < height; j += GRID_SIZE) {
+        renderer.drawQuad({i, j}, {1.5, 1.5}, Color::BLACK);
       }
     }
   }

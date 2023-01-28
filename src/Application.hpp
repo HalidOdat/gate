@@ -30,7 +30,6 @@ namespace Game {
     void startGameLoop();
     static void gameLoop();
 
-
   private:
     static Application* sInstance;
 

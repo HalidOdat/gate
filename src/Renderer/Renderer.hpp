@@ -43,7 +43,7 @@ namespace Game {
     };
 
   private:
-    static constexpr const u32 QUAD_MAX              = 512;
+    static constexpr const u32 QUAD_MAX              = 1024;
     static constexpr const u32 QUAD_VERTICES_COUNT   = 4;
     static constexpr const u32 QUAD_INDICES_COUNT    = 6;
     static constexpr const u32 QUAD_VERTEX_BUFFER_BYTE_SIZE = QUAD_MAX * QUAD_VERTICES_COUNT * sizeof(QuadVertex);
