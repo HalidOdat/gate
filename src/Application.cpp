@@ -1,7 +1,6 @@
 #include "Core/Base.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Resource/Manager.hpp"
-#include "Renderer/Renderer.hpp"
 #include "Application.hpp"
 
 #include "EditorLayer.hpp"
@@ -42,7 +41,6 @@ namespace Game {
     #endif
 
     ResourceManager::initialize();
-    Renderer::initialize();
 
     this->ui = new Ui(width, height);
 
@@ -61,7 +59,6 @@ namespace Game {
     delete this->layer;
 
     delete this->ui;
-    Renderer::shutdown();
     ResourceManager::shutdown();
     this->window.reset();
 
@@ -81,8 +78,6 @@ namespace Game {
 
     if (!self->mWindowMinimized) {
       self->layer->onUpdate(dt);
-
-      Renderer::waitAndRender();
 
       self->ui->prepareFrame();
       self->layer->onUiRender(*self->ui);
@@ -127,7 +122,6 @@ namespace Game {
 
   bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
     glViewport(0, 0, event.getWidth(), event.getHeight());
-    Renderer::invalidate(event.getWidth(), event.getHeight());
     mWindowMinimized = false;
     return false;
   }

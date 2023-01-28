@@ -4,14 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
 
-#include "Renderer/Renderer.hpp"
-#include "Resource/Manager.hpp"
-
-#include "Application.hpp"
-
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
-
+#include "Resource/Manager.hpp"
+#include "Application.hpp"
 #include "EditorLayer.hpp"
 
 namespace Game {
@@ -89,12 +85,12 @@ namespace Game {
     if (event.getButton() == MouseButton::Left) {
       mClicked = true;
 
-      u32 entityId = Renderer::readPixel(mLastMousePosition.x, mLastMousePosition.y);
-      if (entityId != UINT32_MAX) {
-        Logger::trace("Editor: Selected entity id: 0x%x", entityId);
-        // mSelectedEntity = {entityId, mEditorScene.get()};
-        Renderer::setSelectedEntity(entityId);
-      }
+      // u32 entityId = Renderer::readPixel(mLastMousePosition.x, mLastMousePosition.y);
+      // if (entityId != UINT32_MAX) {
+      //   Logger::trace("Editor: Selected entity id: 0x%x", entityId);
+      //   // mSelectedEntity = {entityId, mEditorScene.get()};
+      //   // Renderer::setSelectedEntity(entityId);
+      // }
     }
     return false;
   }

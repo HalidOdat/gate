@@ -6,7 +6,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/Base.hpp"
-#include "Renderer/Renderer.hpp"
 #include "Renderer/Renderer2D.hpp"
 
 #include "Ui/Ui.hpp"
@@ -70,11 +69,11 @@ namespace Game {
   }
 
   void Ui::prepareFrame() {
-    Renderer::enableBlending(true);
+    // Renderer::enableBlending(true);
   }
 
   void Ui::endFrame() {
-    Renderer::enableDepthTest(true);
+    // Renderer::enableDepthTest(true);
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
@@ -137,8 +136,8 @@ namespace Game {
         GAME_UNREACHABLE("");
     }
 
-    Renderer::enableDepthTest(false);
-    Renderer::enableBlending(true);
+    // Renderer::enableDepthTest(false);
+    // Renderer::enableBlending(true);
   }
 
   void Ui::endDock() {

@@ -8,7 +8,6 @@
 
 #include "Core/Base.hpp"
 #include "Renderer/FrameBuffer.hpp"
-#include "Renderer/Renderer.hpp"
 #include "Renderer/Renderer3D.hpp"
 #include "Resource/Manager.hpp"
 #include "Application.hpp"
