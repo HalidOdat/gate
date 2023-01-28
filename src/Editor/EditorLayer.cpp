@@ -8,7 +8,7 @@
 #include "Core/Input.hpp"
 #include "Resource/Manager.hpp"
 #include "Application.hpp"
-#include "EditorLayer.hpp"
+#include "Editor/EditorLayer.hpp"
 
 namespace Game {
 
@@ -30,10 +30,11 @@ namespace Game {
     if (!Input::isKeyPressed(Key::LeftControl) && !Input::isKeyPressed(Key::RightControl)) {
       mCameraController.onUpdate(ts);
     }
-    
+    glEnable(GL_BLEND);
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     Application::getRenderer().clearScreen();
+    Application::getRenderer().drawText("This is a square", {200, 200}, 20, Color::BLACK);
     std::stringstream ss;
     ss.precision(2);
     ss << "Title" << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";

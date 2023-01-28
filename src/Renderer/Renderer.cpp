@@ -156,16 +156,11 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    Renderer::drawQuad(position, size, mWhiteTexture, Color::RED);
+    Renderer::drawQuad(position, size, mWhiteTexture, color);
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
-    // Vec2 position = {position_.x, position_.y};
     Mat4 transform = Mat4(1.0f);
-
-    // transform      = glm::translate(transform, Vec3(position.x, -position.y, 1.0f));
-    // transform      = glm::scale(transform, Vec3(1.0f - size, 1.0f));
-
     transform = glm::translate(transform, glm::vec3(position, 0.0f));  
 
     // transform = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); 
@@ -203,7 +198,7 @@ namespace Game {
   }
 
   void Renderer::clearScreen(const Vec4& color) {
-    drawQuad({100.0, 100.0}, {100.0, 100.0}, color);
+    drawQuad(Vec2{0, 0}, Vec2{Application::getWindow().getWidth(), Application::getWindow().getHeight()}, color);
   }
 
   void Renderer::flush() {
@@ -242,6 +237,7 @@ namespace Game {
     mBlending = yes;
     if (mBlending) {
       glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
     } else {
       glDisable(GL_BLEND);
     }

@@ -5,7 +5,7 @@
 #include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
 
-#include "EditorLayer.hpp"
+#include "Editor/EditorLayer.hpp"
 
 namespace Game {
 

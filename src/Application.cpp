@@ -3,8 +3,6 @@
 #include "Resource/Manager.hpp"
 #include "Application.hpp"
 
-#include "EditorLayer.hpp"
-
 #if GAME_PLATFORM_WEB
 # include<emscripten/emscripten.h>
 // # define GLFW_INCLUDE_ES3
@@ -97,6 +95,8 @@ namespace Game {
     #ifndef GAME_PLATFORM_WEB
       // this->window->setVSync(true);
     #endif
+
+    getRenderer().blending(true);
 
     #if GAME_PLATFORM_WEB
       emscripten_set_main_loop(Application::gameLoop, 0, 1);

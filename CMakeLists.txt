@@ -86,8 +86,9 @@ add_executable(${This}
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp
 
-  src/EditorLayer.hpp
-  src/EditorLayer.cpp
+  src/Editor/EditorLayer.hpp
+  src/Editor/EditorLayer.cpp
+
   src/Window.hpp
   src/Window.cpp
   src/Application.hpp
