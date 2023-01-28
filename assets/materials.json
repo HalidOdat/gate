@@ -5,10 +5,10 @@
   {
     "name": "Crate",
     "diffuseMap": {
-      "path": "assets/textures/CrateDiffuse.png"
+      "path": "assets/textures/matrix.jpg"
     },
     "specularMap": {
-      "path": "assets/textures/CrateSpecular.png"
+      "path": "assets/textures/matrix.jpg"
     },
     "emissionMap": {
       "path": "assets/textures/matrix.jpg"
@@ -19,10 +19,10 @@
   {
     "name": "board",
     "diffuseMap": {
-      "path": "assets/textures/chess/board.png"
+      "path": "assets/textures/matrix.jpg"
     },
     "specularMap": {
-      "path": "assets/textures/chess/512-spec.jpg"
+      "path": "assets/textures/matrix.jpg"
     },
     "emissionMap": {
       "path": "assets/textures/matrix.jpg"

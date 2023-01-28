@@ -25,14 +25,6 @@ namespace Game {
     Mat4 mProjectionViewMatrix;
   };
 
-  class PerspectiveCamera : public Camera {
-  public:
-    PerspectiveCamera(const Vec3& position, const Vec3& target, const Vec3& up, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
-
-    void setProjection(f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
-    void lookAt(const Vec3& position, const Vec3& target, const Vec3& up = Vec3{0.0f, 0.0f, 1.0f});
-  };
-
   class OrthographicCamera : public Camera {
   public:
     OrthographicCamera(f32 left, f32 right, f32 bottom, f32 top, f32 zNear = -1.0f, f32 zFar = 1.0f);
@@ -53,6 +45,14 @@ namespace Game {
   private:
     Vec3 mPosition = {0.0f, 0.0f, 0.0f};
     f32  mRotation = 0.0f; // rotation on the z-axis
+  };
+
+  class PerspectiveCamera : public Camera {
+  public:
+    PerspectiveCamera(const Vec3& position, const Vec3& target, const Vec3& up, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
+
+    void setProjection(f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
+    void lookAt(const Vec3& position, const Vec3& target, const Vec3& up = Vec3{0.0f, 0.0f, 1.0f});
   };
 
 } // namespace Game

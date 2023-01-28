@@ -3,11 +3,14 @@
 #include "Core/Input.hpp"
 #include "Renderer/CameraController.hpp"
 
+#include "Application.hpp"
+
 namespace Game {
 
   OrthographicCameraController::OrthographicCameraController(f32 aspectRatio, f32 zNear, f32 zFar)
     : mAspectRatio{aspectRatio},
-    mCamera(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel, zNear, zFar)
+    // mCamera(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel, zNear, zFar)
+    mCamera(0.0f, Application::getWindow().getWidth(), Application::getWindow().getHeight(), 0.0f, zNear, zFar)
   {}
 
   void OrthographicCameraController::onUpdate([[maybe_unused]] Timestep ts) {
@@ -16,7 +19,8 @@ namespace Game {
 
   void OrthographicCameraController::resize(u32 width, u32 height) {
     mAspectRatio = (f32)width / (f32)height;
-		mCamera.setProjection(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel);
+		// mCamera.setProjection(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel);
+    mCamera.setProjection(0.0f, Application::getWindow().getWidth(), Application::getWindow().getHeight(), 0.0f);
   }
 
   void OrthographicCameraController::setZoomLevel(const f32 zoomLevel) {

@@ -77,12 +77,16 @@ namespace Game {
     self->lastFrameTime = time;
     Timestep::timestep = dt;
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     if (!self->mWindowMinimized) {
       self->layer->onUpdate(dt);
 
-      self->ui->prepareFrame();
-      self->layer->onUiRender(*self->ui);
-      self->ui->endFrame();
+      // self->ui->prepareFrame();
+      // self->layer->onUiRender(*self->ui);
+      // self->ui->endFrame();
+
+      self->mRenderer->end();
     }
     self->window->update();
   }

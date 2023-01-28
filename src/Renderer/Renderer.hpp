@@ -25,6 +25,8 @@ namespace Game {
     void begin(const Camera& camera);
     void end();
 
+    void clearScreen(const Vec4& color = Color::WHITE);
+
     void drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color = Color::WHITE);
     void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
     void drawChar(char c, const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
@@ -48,16 +50,18 @@ namespace Game {
     static constexpr const u32 QUAD_INDEX_BUFFER_COUNT      = QUAD_MAX * QUAD_INDICES_COUNT;
 
     static constexpr const std::array<Vec4, 4> QUAD_POSITIONS = {
-      Vec4{ 1.0f,  1.0f, 0.0f, 1.0f }, // top    right
-      Vec4{ 1.0f,  0.0f, 0.0f, 1.0f }, // bottom right
-      Vec4{ 0.0f,  0.0f, 0.0f, 1.0f }, // bottom left
-      Vec4{ 0.0f,  1.0f, 0.0f, 1.0f }, // top    left 
+      Vec4{  1.0f,  0.0f, 0.0f, 1.0f }, // top    right
+      Vec4{  1.0f,  1.0f, 0.0f, 1.0f }, // bottom right
+      Vec4{  0.0f,  1.0f, 0.0f, 1.0f }, // bottom left
+      Vec4{  0.0f,  0.0f, 0.0f, 1.0f }, // top    left 
     };
 
     static constexpr const u32 MAX_TEXTURES = 16;
 
 
   private:
+    bool mBlending = false;
+
     // Camera
     Mat4 mProjectionViewMatrix;
 
@@ -83,8 +87,6 @@ namespace Game {
     u32 mFontCharacterWidth;
     u32 mFontCharacterHeight;
     std::array<Vec4, 96> mFontCoords;
-
-    bool mBlending = false;
   };
 
 } // namespace Game

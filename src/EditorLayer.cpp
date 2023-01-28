@@ -30,7 +30,10 @@ namespace Game {
     if (!Input::isKeyPressed(Key::LeftControl) && !Input::isKeyPressed(Key::RightControl)) {
       mCameraController.onUpdate(ts);
     }
+    
+    Application::getRenderer().begin(mEditorCameraController.getCamera());
 
+    Application::getRenderer().clearScreen();
     std::stringstream ss;
     ss.precision(2);
     ss << "Title" << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";
@@ -39,8 +42,8 @@ namespace Game {
   }
 
   void EditorLayer::onUiRender(Ui& ui) {
-    ui.beginDock(Ui::Dock::Left, 20.0f);
-    ui.end();
+    // ui.beginDock(Ui::Dock::Left, 20.0f);
+    // ui.end();
   }
 
   void EditorLayer::onEvent(const Event& event) {

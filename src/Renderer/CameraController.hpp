@@ -12,6 +12,7 @@ namespace Game {
   
   class OrthographicCameraController {
   public:
+    // TODO: Make this a bit more flexible
     OrthographicCameraController(f32 aspectRatio, f32 zNear = -1.0f, f32 zFar = 100.0f);
 
     const OrthographicCamera& getCamera() const { return mCamera; }

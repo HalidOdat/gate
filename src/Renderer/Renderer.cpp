@@ -156,15 +156,25 @@ namespace Game {
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    Renderer::drawQuad(position, size, mWhiteTexture, color);
+    Renderer::drawQuad(position, size, mWhiteTexture, Color::RED);
   }
 
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
+    // Vec2 position = {position_.x, position_.y};
     Mat4 transform = Mat4(1.0f);
-    transform      = glm::translate(transform, Vec3(position, 1.0f));
-    transform      = glm::scale(transform, Vec3(size, 1.0f));
 
-    if (mQuadCount == QUAD_MAX) {
+    // transform      = glm::translate(transform, Vec3(position.x, -position.y, 1.0f));
+    // transform      = glm::scale(transform, Vec3(1.0f - size, 1.0f));
+
+    transform = glm::translate(transform, glm::vec3(position, 0.0f));  
+
+    // transform = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); 
+    // transform = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f)); 
+    // transform = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
+
+    transform = glm::scale(transform, glm::vec3(size, 1.0f)); 
+
+    if (mQuadCount >= QUAD_MAX) {
       flush();
     }
 
@@ -190,6 +200,10 @@ namespace Game {
     *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {0.0f, 1.0f}, index }; // top-left
 
     mQuadCount++;
+  }
+
+  void Renderer::clearScreen(const Vec4& color) {
+    drawQuad({100.0, 100.0}, {100.0, 100.0}, color);
   }
 
   void Renderer::flush() {
