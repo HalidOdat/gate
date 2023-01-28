@@ -8,6 +8,7 @@
 #include "Core/Input.hpp"
 #include "Resource/Manager.hpp"
 #include "Application.hpp"
+
 #include "Editor/EditorLayer.hpp"
 
 namespace Game {
@@ -21,6 +22,8 @@ namespace Game {
     Application::getWindow().setTitle("Hi");
 
     Logger::info("EditorLayer::onAttach was called");
+
+    board.push_component(new Component{"Hello"});
   }
 
   void EditorLayer::onDetach() {
@@ -34,7 +37,8 @@ namespace Game {
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     Application::getRenderer().clearScreen();
-    Application::getRenderer().drawText("This is a square", {200, 200}, 20, Color::BLACK);
+    // Application::getRenderer().drawText("This is a square", {200, 200}, 20, Color::BLACK);
+    board.render(Application::getRenderer());
     std::stringstream ss;
     ss.precision(2);
     ss << "Title" << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";

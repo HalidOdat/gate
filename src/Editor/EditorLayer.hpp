@@ -7,6 +7,8 @@
 #include "Resource/Texture.hpp"
 #include "Renderer/CameraController.hpp"
 
+#include "Editor/Board.hpp"
+
 namespace Game {
     
   class Scene;
@@ -37,6 +39,8 @@ namespace Game {
     bool mShow    = true;
 
     Vec2 mLastMousePosition{0.0f};
+
+    Board board;
   };
 
 } // namespace Game
