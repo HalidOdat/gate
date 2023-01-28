@@ -66,14 +66,6 @@ add_executable(${This}
   src/Resource/UniformBuffer.hpp
   src/Resource/UniformBuffer.cpp
 
-  src/Ecs/Entity.hpp
-  src/Ecs/Component.hpp
-  src/Ecs/Component.cpp
-  src/Ecs/ComponentPool.hpp
-  src/Ecs/ComponentPool.cpp
-  src/Ecs/Ecs.hpp
-  src/Ecs/Ecs.cpp
-
   src/Renderer/VertexBuffer.hpp
   src/Renderer/VertexBuffer.cpp
   src/Renderer/IndexBuffer.hpp
@@ -94,15 +86,6 @@ add_executable(${This}
   src/Renderer/Renderer2D.cpp
   src/Renderer/Renderer3D.hpp
   src/Renderer/Renderer3D.cpp
-
-  src/Scene/Scene.hpp
-  src/Scene/Scene.cpp
-  src/Scene/Components.hpp
-  src/Scene/Components.cpp
-  src/Scene/Entity.hpp
-  src/Scene/Entity.cpp
-  src/Scene/SceneSerializer.hpp
-  src/Scene/SceneSerializer.cpp
 
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp

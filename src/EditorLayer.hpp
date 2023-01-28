@@ -6,8 +6,6 @@
 #include "Events/MouseEvent.hpp"
 #include "Resource/Texture.hpp"
 #include "Renderer/CameraController.hpp"
-#include "Ecs/Ecs.hpp"
-#include "Scene/Scene.hpp"
 
 namespace Game {
     
@@ -38,11 +36,7 @@ namespace Game {
     bool mClicked = false;
     bool mShow    = true;
 
-    Ref<Scene> mEditorScene = nullptr;
-    Ref<Scene> mActiveScene = nullptr;
-
     Vec2 mLastMousePosition{0.0f};
-    Entity mSelectedEntity;
   };
 
 } // namespace Game

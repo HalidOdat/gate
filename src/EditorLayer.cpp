@@ -9,9 +9,6 @@
 
 #include "Application.hpp"
 
-#include "Scene/Scene.hpp"
-#include "Scene/SceneSerializer.hpp"
-
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
 
@@ -25,18 +22,7 @@ namespace Game {
   {}
 
   void EditorLayer::onAttach() {
-    mEditorScene.reset(new Scene("New Scene"));
-    mActiveScene = mEditorScene;
-
-    const auto scenePath = "assets/scenes/default.scene.json";
-
-    if (!SceneSerializer::deserializeFromFile(scenePath, *mEditorScene)) {
-      Logger::error("Editor: Couldn't deserialize scene from file");
-    } else {
-      Logger::info("Editor: Loaded '%s' scene file", scenePath);
-    }
-
-    Application::getWindow().setTitle(mEditorScene->getName());
+    Application::getWindow().setTitle("Hi");
 
     Logger::info("EditorLayer::onAttach was called");
   }
@@ -48,64 +34,16 @@ namespace Game {
     if (!Input::isKeyPressed(Key::LeftControl) && !Input::isKeyPressed(Key::RightControl)) {
       mCameraController.onUpdate(ts);
     }
-    mActiveScene->render(mCameraController);
-
-    if (mSelectedEntity.isValid()) {
-      if (Input::isKeyPressed(Key::LeftControl) || Input::isKeyPressed(Key::RightControl)) {
-        auto& transform = mSelectedEntity.get<TransformComponent>();
-        auto amount = ts * 20.0f;
-        if (Input::isKeyPressed(Key::Left)) {
-          transform.offsetTranslation({-amount, 0.0f, 0.0f});
-        }
-        if (Input::isKeyPressed(Key::Right)) {
-          transform.offsetTranslation({amount, 0.0f, 0.0f});
-        }
-        if (Input::isKeyPressed(Key::LeftShift) || Input::isKeyPressed(Key::RightShift)) {
-          if (Input::isKeyPressed(Key::Up)) {
-            transform.offsetTranslation({0.0f, 0.0f, -amount});
-          }
-          if (Input::isKeyPressed(Key::Down)) {
-            transform.offsetTranslation({0.0f, 0.0f, amount});
-          }
-        } else {
-          if (Input::isKeyPressed(Key::Up)) {
-            transform.offsetTranslation({0.0f, amount, 0.0f});
-          }
-          if (Input::isKeyPressed(Key::Down)) {
-            transform.offsetTranslation({0.0f, -amount, 0.0f});
-          }
-        }
-      }
-    }
 
     std::stringstream ss;
     ss.precision(2);
-    ss << mEditorScene->getName() << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";
+    ss << "Title" << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";
     std::string fpsString = ss.str();
     Application::getWindow().setTitle(fpsString.c_str());
   }
 
   void EditorLayer::onUiRender(Ui& ui) {
     ui.beginDock(Ui::Dock::Left, 20.0f);
-      auto view = mEditorScene->mRegistry.view<TagComponent>();
-      for (auto[entity, tag] : view) {
-        if (ui.button(tag.tag, entity.getId())) {
-          mSelectedEntity = Entity(entity, mEditorScene.get());
-        }
-      }
-      if (ui.checkbox(mShow)) {}
-      if (mSelectedEntity.isValid()) {
-        auto& transform = mSelectedEntity.get<TransformComponent>();
-        auto translation = transform.getTranslation();
-        auto rotation = transform.getRotation();
-        auto scale = transform.getScale();
-        ui.slider(translation, Vec3(-20.0f), Vec3(20.0f));
-        ui.slider(rotation, Vec3(-20.0f), Vec3(20.0f));
-        ui.slider(scale, Vec3(1.0f), Vec3(40.0f));
-        transform.setTranslation(translation);
-        transform.setRotation(rotation);
-        transform.setScale(scale);
-      }
     ui.end();
   }
 
@@ -144,37 +82,6 @@ namespace Game {
       mShow = !mShow;
       return true;
     }
-
-    if (event.getModifier() == KeyModifier::Control) {
-      switch (event.getKey()) {
-        case Key::S:
-          Logger::trace("Editor: Simulation has started");
-          break;
-        case Key::D:
-          if (mSelectedEntity) {
-            mSelectedEntity.duplicate();
-          }
-          break;
-        default:
-          return false;
-      }
-    }
-    
-    if (mShow) {
-      // if (event.getKey() == Key::T) {
-      //   ResourceManager::reloadAll<Texture2D>();
-      //   return true;
-      // }
-      // if (event.getKey() == Key::Z) {
-      //   ResourceManager::reloadAll<Shader>();
-      //   return true;
-      // }
-      // if (event.getKey() == Key::M) {
-      //   ResourceManager::reloadAll<Mesh>();
-      //   return true;
-      // }
-    }
-
     return false;
   }
 
@@ -185,7 +92,7 @@ namespace Game {
       u32 entityId = Renderer::readPixel(mLastMousePosition.x, mLastMousePosition.y);
       if (entityId != UINT32_MAX) {
         Logger::trace("Editor: Selected entity id: 0x%x", entityId);
-        mSelectedEntity = {entityId, mEditorScene.get()};
+        // mSelectedEntity = {entityId, mEditorScene.get()};
         Renderer::setSelectedEntity(entityId);
       }
     }

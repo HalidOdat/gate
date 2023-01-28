@@ -117,6 +117,7 @@ namespace Game {
 
     void onEvent(const Event& event);
 
+    Renderer2D& renderer() { return mRenderer; }
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onMouseMoveEvent(const MouseMoveEvent& event);
