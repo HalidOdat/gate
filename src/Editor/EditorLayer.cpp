@@ -36,8 +36,8 @@ namespace Game {
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     Application::getRenderer().clearScreen();
-    Application::getRenderer().drawQuad(mLastMousePosition - Vec2{5, 5}/2.0f, {5, 5}, Color::BLACK);
     board.renderAll(Application::getRenderer());
+    Application::getRenderer().drawQuad(mLastMousePosition - Vec2{5, 5}/2.0f, {5, 5}, Color::BLACK);
     std::stringstream ss;
     ss.precision(2);
     ss << "Title" << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";
@@ -68,6 +68,7 @@ namespace Game {
   bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
     auto[width, height] = event.getSize();
     mEditorCameraController.resize(width, height);
+    board.invalidate(width, height);
     return false;
   }
 

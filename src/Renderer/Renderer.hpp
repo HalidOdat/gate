@@ -58,7 +58,6 @@ namespace Game {
 
     static constexpr const u32 MAX_TEXTURES = 16;
 
-
   private:
     bool mBlending = false;
 
