@@ -116,8 +116,6 @@ namespace Game {
     const Config& getConfig() const { return mConfig; }
 
     void onEvent(const Event& event);
-
-    Renderer& renderer() { return mRenderer; }
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onMouseMoveEvent(const MouseMoveEvent& event);
@@ -134,7 +132,6 @@ namespace Game {
 
   private:
     OrthographicCamera mCamera;
-    Renderer mRenderer;
 
     bool hasHot    = false;
     bool hasActive = false;

@@ -20,6 +20,8 @@ namespace Game {
     DISALLOW_MOVE_AND_COPY(Renderer);
     ~Renderer();
 
+    void blending(bool yes = true);
+
     void begin(const Camera& camera);
     void end();
 
@@ -81,6 +83,8 @@ namespace Game {
     u32 mFontCharacterWidth;
     u32 mFontCharacterHeight;
     std::array<Vec4, 96> mFontCoords;
+
+    bool mBlending = false;
   };
 
 } // namespace Game

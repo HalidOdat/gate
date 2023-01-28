@@ -10,6 +10,8 @@
 
 #include "Ui/Ui.hpp"
 
+#include "Application.hpp"
+
 namespace Game {
 
   class AABB {
@@ -69,13 +71,14 @@ namespace Game {
   }
 
   void Ui::prepareFrame() {
+    Application::getRenderer().blending(true);
   }
 
   void Ui::endFrame() {
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    mRenderer.drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
+    Application::getRenderer().drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec3& color) {
@@ -83,7 +86,7 @@ namespace Game {
   }
 
   void Ui::drawText(const StringView& text, const Vec2& position, f32 size, const Vec3& color) {
-    mRenderer.drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
+    Application::getRenderer().drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
   }
 
   void Ui::begin(const Vec2& position, f32 padding) {
@@ -95,7 +98,7 @@ namespace Game {
   
     this->layouts.push_back(layout);
 
-    mRenderer.begin(mCamera);
+    Application::getRenderer().begin(mCamera);
   }
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
@@ -109,7 +112,7 @@ namespace Game {
   }
 
   void Ui::beginDock(Ui::Dock type, f32 size) {
-    mRenderer.begin(mCamera);
+    Application::getRenderer().begin(mCamera);
 
     switch (type) {
       case Dock::Left: {
@@ -360,7 +363,7 @@ namespace Game {
     // Layout layout = this->layouts.back();
     this->layouts.pop_back();
 
-    mRenderer.end();
+    Application::getRenderer().end();
   }
 
   void Ui::onEvent(const Event& event) {

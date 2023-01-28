@@ -218,4 +218,19 @@ namespace Game {
     flush();
   }
 
+  void Renderer::blending(bool yes) {
+    if (mBlending == yes) {
+      return;
+    }
+
+    flush();
+
+    mBlending = yes;
+    if (mBlending) {
+      glEnable(GL_BLEND);
+    } else {
+      glDisable(GL_BLEND);
+    }
+  }
+
 } // namespace Game

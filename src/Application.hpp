@@ -17,6 +17,7 @@ namespace Game {
 
     inline static Application& get() { return *sInstance; }
     inline static Window& getWindow() { return *sInstance->window; }
+    inline static Renderer& getRenderer() { return *sInstance->mRenderer; }
 
     void start();
     void quit();
@@ -37,6 +38,8 @@ namespace Game {
     bool running = true;
     bool mWindowMinimized = false;
     Ref<Window> window = nullptr;
+    
+    Renderer* mRenderer;
     Ui* ui;
     EditorLayer *layer;
     f32 lastFrameTime = 0.0f;

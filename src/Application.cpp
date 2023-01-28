@@ -42,6 +42,7 @@ namespace Game {
 
     ResourceManager::initialize();
 
+    this->mRenderer = new Renderer();
     this->ui = new Ui(width, height);
 
     this->window->setEventCallback(
@@ -57,7 +58,7 @@ namespace Game {
     // TOOD: use unique_ptr here
     this->layer->onDetach();
     delete this->layer;
-
+    delete this->mRenderer;
     delete this->ui;
     ResourceManager::shutdown();
     this->window.reset();
