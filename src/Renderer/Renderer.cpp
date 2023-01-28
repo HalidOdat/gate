@@ -7,11 +7,11 @@
 #include "Core/Base.hpp"
 #include "Application.hpp"
 
-#include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer.hpp"
 
 namespace Game {
 
-  Renderer2D::Renderer2D() {
+  Renderer::Renderer() {
     mWhiteTexture = Texture2D::color(0xFF, 0xFF, 0xFF).build();
 
     mQuadVertexArray = VertexArray::create();
@@ -54,7 +54,7 @@ namespace Game {
     mQuadTextures.push_back(mWhiteTexture);
 
     i32 samples[MAX_TEXTURES];
-    for (u32 i = 0; i < Renderer2D::MAX_TEXTURES; ++i) {
+    for (u32 i = 0; i < Renderer::MAX_TEXTURES; ++i) {
       samples[i] = i;
     }
     mQuadShader->bind();
@@ -88,15 +88,15 @@ namespace Game {
     }
   }
 
-  Renderer2D::~Renderer2D() {
+  Renderer::~Renderer() {
     delete[] mQuadBasePtr;
   }
 
-  void Renderer2D::begin(const Camera& camera) {
+  void Renderer::begin(const Camera& camera) {
     mProjectionViewMatrix = camera.getProjectionViewMatrix();
   }
 
-  void Renderer2D::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color) {
+  void Renderer::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color) {
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, Vec3(position, 0.0f));
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -139,7 +139,7 @@ namespace Game {
     mQuadCount++;
   }
 
-  void Renderer2D::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color) {
+  void Renderer::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color) {
     Vec2 size = {_size - _size/7.0f, _size};
 
     Vec2 start = position;
@@ -155,11 +155,11 @@ namespace Game {
     }
   }
 
-  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    Renderer2D::drawQuad(position, size, mWhiteTexture, color);
+  void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
+    Renderer::drawQuad(position, size, mWhiteTexture, color);
   }
 
-  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
+  void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, Vec3(position, 1.0f));
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -192,7 +192,7 @@ namespace Game {
     mQuadCount++;
   }
 
-  void Renderer2D::flush() {
+  void Renderer::flush() {
     if (mQuadCount) {
       mWhiteTexture->bind();
 
@@ -214,7 +214,7 @@ namespace Game {
     }
   }
 
-  void Renderer2D::end() {
+  void Renderer::end() {
     flush();
   }
 

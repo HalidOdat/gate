@@ -6,7 +6,7 @@
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Renderer/CameraController.hpp"
-#include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer.hpp"
 
 #include "Resource/Manager.hpp"
 
@@ -117,7 +117,7 @@ namespace Game {
 
     void onEvent(const Event& event);
 
-    Renderer2D& renderer() { return mRenderer; }
+    Renderer& renderer() { return mRenderer; }
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onMouseMoveEvent(const MouseMoveEvent& event);
@@ -134,7 +134,7 @@ namespace Game {
 
   private:
     OrthographicCamera mCamera;
-    Renderer2D mRenderer;
+    Renderer mRenderer;
 
     bool hasHot    = false;
     bool hasActive = false;

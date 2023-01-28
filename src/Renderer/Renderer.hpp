@@ -14,11 +14,11 @@ namespace Game {
   
   class Application;
 
-  class Renderer2D {
+  class Renderer {
   public:
-    Renderer2D();
-    DISALLOW_MOVE_AND_COPY(Renderer2D);
-    ~Renderer2D();
+    Renderer();
+    DISALLOW_MOVE_AND_COPY(Renderer);
+    ~Renderer();
 
     void begin(const Camera& camera);
     void end();
