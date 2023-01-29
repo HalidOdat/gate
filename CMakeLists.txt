@@ -79,12 +79,10 @@ add_executable(${This}
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp
 
-  src/Editor/Board.hpp
-  src/Editor/Board.cpp
+  src/Editor/Point.hpp
+  src/Editor/Line.hpp
   src/Editor/Component.hpp
   src/Editor/Component.cpp
-  src/Editor/Line.hpp
-  src/Editor/Point.hpp
   src/Editor/EditorLayer.hpp
   src/Editor/EditorLayer.cpp
 

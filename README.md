@@ -2,10 +2,16 @@
 
 # TODO
 
+- [ ] Only quit with `q` on native platform.
+- [ ] Better grid cell selection
+- [ ] Align drawnlines better
 - [ ] Draw line on click from one to another
 - [ ] Draw inputs and outputs on a component
-- [ ] Add a toggleable switch componenet.
-- [ ] Connect toggleable component with wire 
+- [ ] Add a toggleable switch componenet
+- [ ] Connect toggleable component with wire
+- [ ] Serializable board.
+- [ ] Merge Board into EditorLayer
+- [ ] Rename Line to Wire
 
 This project uses [`cmake`](https://cmake.org/download/) for project building
 so it must be installed as well a `c++17` (or greater) compliant `c++` compiler.
@@ -13,13 +19,10 @@ so it must be installed as well a `c++17` (or greater) compliant `c++` compiler.
 ## Quick start
 
 ```console
-$ mkdir build
-$ cd build
-$ cmake ..
-$ cmake --build .
+$ cmake . -B build
+$ cmake --build build
+$ ./build/gate
 ```
-
-In the build directory there should be the `gate` executable.
 
 ## Compiling to Wasm
 
