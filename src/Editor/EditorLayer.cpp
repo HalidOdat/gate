@@ -138,9 +138,12 @@ namespace Gate {
           break;
       }
     }
-    if (event.getKey() == Key::Q) {
-      Application::get().quit();
-    }
+    
+    #ifndef GATE_PLATFORM_WEB
+      if (event.getKey() == Key::Q) {
+        Application::get().quit();
+      }
+    #endif
     return false;
   }
 

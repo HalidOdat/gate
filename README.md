@@ -2,7 +2,7 @@
 
 # TODO
 
-- [ ] Only quit with `q` on native platform.
+- [x] Only quit with `q` on native platform.
 - [ ] Better grid cell selection
 - [ ] Align drawnlines better
 - [ ] Draw line on click from one to another
