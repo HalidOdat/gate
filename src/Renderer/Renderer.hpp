@@ -4,7 +4,6 @@
 #include "Utils/Color.hpp"
 #include "Resource/Manager.hpp"
 #include "Renderer/VertexArray.hpp"
-#include "Renderer/Material.hpp"
 #include "Renderer/CameraController.hpp"
 
 #include <vector>
