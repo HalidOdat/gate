@@ -8,7 +8,7 @@
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/CameraController.hpp"
 
-#include "Editor/Line.hpp"
+#include "Editor/Wire.hpp"
 #include "Editor/Component.hpp"
 
 namespace Gate {
@@ -29,7 +29,7 @@ namespace Gate {
   private:
     void renderAll(Renderer& renderer);
     void renderComponents(Renderer& renderer);
-    void renderLines(Renderer& renderer);
+    void renderWires(Renderer& renderer);
     void renderGrid(Renderer& renderer);
 
     void invalidate(u32 width, u32 height);
@@ -44,7 +44,7 @@ namespace Gate {
   private:
       enum class Mode {
         Select,
-        LineDraw,
+        WireDraw,
       };
 
   private:
@@ -61,11 +61,11 @@ namespace Gate {
     Vec2 mSelectorSize     = { 8.0f, 8.0f };
     Vec4 mSelectorColor    = Color::BLUE;
 
-    // Line drawing
-    f32  mLineWidth{5.0f};
-    Vec2 mLineStartPosition{0.0f};
-    Vec2 mLineEndPosition{0.0f};
-    Vec2 mLineSize{0.0f};
+    // Wire drawing
+    f32  mWireWidth{5.0f};
+    Vec2 mWireStartPosition{0.0f};
+    Vec2 mWireEndPosition{0.0f};
+    Vec2 mWireSize{0.0f};
 
     // Grid drawing
     u32                 mGridCellSize = 20;
@@ -75,7 +75,7 @@ namespace Gate {
     // Board parts/components
     std::vector<Component*>       mComponents;
     std::vector<std::vector<u32>> mConnections;
-    std::vector<Line>             mLines;
+    std::vector<Wire>             mWires;
   };
 
 } // namespace Gate

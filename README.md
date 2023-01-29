@@ -10,8 +10,8 @@
 - [ ] Add a toggleable switch componenet
 - [ ] Connect toggleable component with wire
 - [ ] Serializable board.
-- [ ] Merge Board into EditorLayer
-- [ ] Rename Line to Wire
+- [x] Merge Board into EditorLayer
+- [x] Rename Line to Wire
 
 This project uses [`cmake`](https://cmake.org/download/) for project building
 so it must be installed as well a `c++17` (or greater) compliant `c++` compiler.

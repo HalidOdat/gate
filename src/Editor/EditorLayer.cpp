@@ -44,7 +44,7 @@ namespace Gate {
   void EditorLayer::renderAll(Renderer& renderer) {
     renderGrid(renderer);
     renderComponents(renderer);
-    renderLines(renderer);
+    renderWires(renderer);
   }
 
   void EditorLayer::renderComponents(Renderer& renderer) {
@@ -55,15 +55,15 @@ namespace Gate {
     }
   }
 
-  void EditorLayer::renderLines(Renderer& renderer) {
-    for (auto line : mLines) {
-      Vec2 size = line.to.toVec2();
-      if (line.from.x == line.to.x) {
+  void EditorLayer::renderWires(Renderer& renderer) {
+    for (auto wire : mWires) {
+      Vec2 size = wire.to.toVec2();
+      if (wire.from.x == wire.to.x) {
         size.x = 5;
       } else {
         size.y = 5;
       }
-      renderer.drawQuad(line.from.toVec2(), size, Color::BLACK);
+      renderer.drawQuad(wire.from.toVec2(), size, Color::BLACK);
     }
   }
 
@@ -103,9 +103,9 @@ namespace Gate {
 
     auto height = Application::getWindow().getHeight();
 
-    // Line Draw
-    if (mMode == Mode::LineDraw) {
-      Application::getRenderer().drawQuad(mLineStartPosition - Vec2{mLineWidth}/2.0f, mLineSize, Color::BLACK);
+    // Wire Draw
+    if (mMode == Mode::WireDraw) {
+      Application::getRenderer().drawQuad(mWireStartPosition - Vec2{mWireWidth}/2.0f, mWireSize, Color::BLACK);
     }
 
     // Selector
@@ -115,7 +115,7 @@ namespace Gate {
     switch (mMode) {
       case Mode::Select:
         break;
-      case Mode::LineDraw:
+      case Mode::WireDraw:
         const StringView text = "Press <ESCAPE> to cancel wire drawing";
         const auto size = 20;
         const auto x = size * (text.size()/2);
@@ -130,10 +130,10 @@ namespace Gate {
         case Mode::Select:
           // TODO: deselect
           break;
-        case Mode::LineDraw:
-          // TODO: Check if lines intersect
+        case Mode::WireDraw:
+          // TODO: Check if wires intersect
           // TODO: assert from is smaller than to
-          mLines.push_back(Line{Point(mLineStartPosition), Point(mLineEndPosition)});
+          mWires.push_back(Wire{Point(mWireStartPosition), Point(mWireEndPosition)});
           mMode = Mode::Select;
           break;
       }
@@ -155,15 +155,15 @@ namespace Gate {
       //   // Renderer::setSelectedEntity(entityId);
       // }
 
-      mLineStartPosition = gridAlginPosition(mLastMousePosition);
+      mWireStartPosition = gridAlginPosition(mLastMousePosition);
 
       switch (mMode) {
         case Mode::Select:
           // TODO: Check for collision
-          mMode = Mode::LineDraw;
+          mMode = Mode::WireDraw;
           break;
-        case Mode::LineDraw:
-          // TODO: Save line, if valid
+        case Mode::WireDraw:
+          // TODO: Save wire, if valid
           break;
       }
     }
@@ -182,14 +182,14 @@ namespace Gate {
       case Mode::Select:
         mSelectorPosition = gridPosition;
         break;
-      case Mode::LineDraw:
-        mLineEndPosition = gridPosition;
+      case Mode::WireDraw:
+        mWireEndPosition = gridPosition;
 
-        Vec2 temp = mLineStartPosition - mLineEndPosition;
+        Vec2 temp = mWireStartPosition - mWireEndPosition;
         if (temp.x < temp.y) {
-          mLineSize = {mLineEndPosition.x - mLineStartPosition.x, mLineWidth};
+          mWireSize = {mWireEndPosition.x - mWireStartPosition.x, mWireWidth};
         } else {
-          mLineSize = {mLineWidth, mLineEndPosition.y - mLineStartPosition.y};
+          mWireSize = {mWireWidth, mWireEndPosition.y - mWireStartPosition.y};
         }
         break;
     }

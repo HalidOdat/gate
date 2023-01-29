@@ -4,7 +4,7 @@
 
 namespace Gate {
   
-  struct Line {
+  struct Wire {
     Point from;
     Point to;
   };

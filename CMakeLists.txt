@@ -80,7 +80,7 @@ add_executable(${This}
   src/Ui/Ui.cpp
 
   src/Editor/Point.hpp
-  src/Editor/Line.hpp
+  src/Editor/Wire.hpp
   src/Editor/Component.hpp
   src/Editor/Component.cpp
   src/Editor/EditorLayer.hpp
