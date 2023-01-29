@@ -201,9 +201,10 @@ namespace Gate {
   }
 
   Vec2 EditorLayer::gridAlginPosition(Vec2 position) {
+    Vec2 offsetPosition = position + (mGridCellSize / 2.0f);
     return Vec2{
-      u32(position.x) - u32(position.x) % mGridCellSize,
-      u32(position.y) - u32(position.y) % mGridCellSize
+      u32(offsetPosition.x) - u32(offsetPosition.x) % mGridCellSize,
+      u32(offsetPosition.y) - u32(offsetPosition.y) % mGridCellSize
     };
   }
   Vec2 EditorLayer::getGridAlignedMousePosition() {

@@ -3,7 +3,7 @@
 # TODO
 
 - [x] Only quit with `q` on native platform.
-- [ ] Better grid cell selection
+- [x] Better grid cell selection
 - [ ] Align drawnlines better
 - [ ] Draw line on click from one to another
 - [ ] Draw inputs and outputs on a component

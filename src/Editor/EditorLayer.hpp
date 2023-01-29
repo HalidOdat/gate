@@ -32,8 +32,6 @@ namespace Gate {
     void renderWires(Renderer& renderer);
     void renderGrid(Renderer& renderer);
 
-    void invalidate(u32 width, u32 height);
-
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
     bool onMouseScrollEvent(const MouseScrollEvent& event);
