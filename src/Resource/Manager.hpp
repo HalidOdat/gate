@@ -2,7 +2,6 @@
 
 #include "Resource/Texture.hpp"
 #include "Resource/Shader.hpp"
-#include "Resource/Mesh.hpp"
 
 namespace Game {
 

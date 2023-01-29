@@ -15,7 +15,6 @@ namespace Game {
     // sInstance.getFactory<Texture>().clear();
     // sInstance.getFactory<Shader>().clear();
     Texture::destroyAllTextures();
-    Mesh::destroyAllMeshes();
     Logger::info("ResourceManager: Shutdown!");
   }
 
