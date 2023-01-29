@@ -23,6 +23,9 @@ namespace Gate {
     void onUiRender(Ui& ui);
     void onEvent(const Event& event);
   
+    Vec2 gridAlginPosition(Vec2 position);
+    Vec2 getGridAlignedMousePosition();
+
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
@@ -41,7 +44,7 @@ namespace Gate {
     Vec2 mLastMousePosition{0.0f};
     Vec2 mSize{5.0f};
 
-    Board board;
+    Board mBoard;
   };
 
 } // namespace Gate

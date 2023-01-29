@@ -155,6 +155,14 @@ namespace Gate {
     }
   }
 
+  void Renderer::drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
+    drawQuad(position - size / 2.0f, size, color);
+  }
+
+  void Renderer::drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
+    drawQuad(position - size / 2.0f, size, texture, color);
+  }
+  
   void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
     Renderer::drawQuad(position, size, mWhiteTexture, color);
   }
@@ -198,7 +206,11 @@ namespace Gate {
   }
 
   void Renderer::clearScreen(const Vec4& color) {
-    drawQuad(Vec2{0, 0}, Vec2{Application::getWindow().getWidth(), Application::getWindow().getHeight()}, color);
+    clearScreen(mWhiteTexture, color);
+  }
+
+  void Renderer::clearScreen(const Texture::Handle& texture, const Vec4& color) {
+    drawQuad(Vec2{0, 0}, Vec2{Application::getWindow().getWidth(), Application::getWindow().getHeight()}, texture, color);
   }
 
   void Renderer::flush() {

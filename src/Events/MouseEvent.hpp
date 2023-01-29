@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Type.hpp"
+#include "Core/Base.hpp"
 #include "Events/Event.hpp"
 
 namespace Gate {
@@ -36,6 +36,10 @@ namespace Gate {
         mPosition.x     / ((f32)width / 2.0f) - 1,
         1 - mPosition.y / ((f32)height / 2.0f)
       };
+    }
+
+    Vec2 toVec2() const {
+      return {mPosition.x, mPosition.y};
     }
 
   private:

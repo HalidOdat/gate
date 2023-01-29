@@ -63,8 +63,7 @@ namespace Gate {
       gridFrameBuffer->bind();
       for (int i = 0; i < width; i += GRID_SIZE) {
         for (int j = 0; j < height; j += GRID_SIZE) {
-          Vec2 size = {2.0f, 2.0f};
-          renderer.drawQuad(Vec2{i, j} - size/2.0f, size, Color::BLACK);
+          renderer.drawCenteredQuad({i, j}, {2.0f, 2.0f}, Color::BLACK);
         }
       }
       renderer.flush();
@@ -73,7 +72,7 @@ namespace Gate {
       gridTexture = gridFrameBuffer->getColorAttachment(0);
     }
 
-    renderer.drawQuad({0, 0}, {width, height}, gridTexture, Color::WHITE);
+    renderer.clearScreen(gridTexture);
   }
 
 }

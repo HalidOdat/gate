@@ -22,7 +22,7 @@ namespace Gate {
 
     Logger::info("EditorLayer::onAttach was called");
 
-    board.push_component(new Component{"Hello"});
+    mBoard.push_component(new Component{"Hello"});
   }
 
   void EditorLayer::onDetach() {
@@ -32,13 +32,16 @@ namespace Gate {
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     Application::getRenderer().clearScreen();
-    board.renderAll(Application::getRenderer());
+    mBoard.renderAll(Application::getRenderer());
     Application::getRenderer().drawQuad(mLastPosition - Vec2{5, 5}/2.0f, mSize, Color::BLACK);
 
     auto width  = Application::getWindow().getWidth();
     auto height = Application::getWindow().getHeight();
 
-    // Move to UI
+    // Selector
+    Application::getRenderer().drawCenteredQuad(getGridAlignedMousePosition(), {8, 8}, Color::BLUE);
+
+    // TODO: Move to UI
     if (mClicked) {
       const StringView text = "Press <ESCAPE> to cancel";
       const auto size = 20;
@@ -69,7 +72,7 @@ namespace Gate {
   bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
     auto[width, height] = event.getSize();
     mEditorCameraController.resize(width, height);
-    board.invalidate(width, height);
+    mBoard.invalidate(width, height);
     return false;
   }
 
@@ -112,17 +115,27 @@ namespace Gate {
     return false;
   }
   bool EditorLayer::onMouseMoveEvent(const MouseMoveEvent& event) {
-    Vec2 position = Vec2{u32(event.getX()) - u32(event.getX()) % Board::GRID_SIZE, u32(event.getY()) - u32(event.getY()) % Board::GRID_SIZE};
-    // if (mClicked) {
+    Vec2 position = gridAlginPosition(event.toVec2());
+    if (mClicked) {
       Vec2 temp = mLastPosition - position;
       if (temp.x < temp.y) {
         mSize = {position.x - mLastPosition.x, 5};
       } else {
         mSize = {5, position.y - mLastPosition.y};
       }
-    // }
+    }
     mLastMousePosition = position;
     return false;
+  }
+
+  Vec2 EditorLayer::gridAlginPosition(Vec2 position) {
+    return Vec2{
+      u32(position.x) - u32(position.x) % Board::GRID_SIZE,
+      u32(position.y) - u32(position.y) % Board::GRID_SIZE
+    };
+  }
+  Vec2 EditorLayer::getGridAlignedMousePosition() {
+    return gridAlginPosition(mLastMousePosition);
   }
 
 } // namespace Gate

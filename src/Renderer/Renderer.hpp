@@ -25,7 +25,10 @@ namespace Gate {
     void end();
 
     void clearScreen(const Vec4& color = Color::WHITE);
+    void clearScreen(const Texture::Handle& texture, const Vec4& color = Color::WHITE);
 
+    void drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
+    void drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE);
     void drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE);
     void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
     void drawChar(char c, const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
