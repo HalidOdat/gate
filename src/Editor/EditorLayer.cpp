@@ -59,11 +59,17 @@ namespace Gate {
     for (auto wire : mWires) {
       Vec2 size = wire.to.toVec2();
       if (wire.from.x == wire.to.x) {
-        size.x = 5;
+        size.x  = 5;
+        size.y += mWireWidth;
       } else {
+        size.x += mWireWidth;
         size.y = 5;
       }
-      renderer.drawQuad(wire.from.toVec2(), size, Color::BLACK);
+      renderer.drawQuad(
+        wire.from.toVec2() - Vec2(mWireWidth / 2.0f),
+        size,
+        Color::BLACK
+      );
     }
   }
 
