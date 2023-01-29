@@ -37,7 +37,18 @@ namespace Game {
 
     Application::getRenderer().clearScreen();
     board.renderAll(Application::getRenderer());
-    Application::getRenderer().drawQuad(mLastMousePosition - Vec2{5, 5}/2.0f, {5, 5}, Color::BLACK);
+    Application::getRenderer().drawQuad(mLastPosition - Vec2{5, 5}/2.0f, mSize, Color::BLACK);
+
+    auto width  = Application::getWindow().getWidth();
+    auto height = Application::getWindow().getHeight();
+
+    // Move to UI
+    if (mClicked) {
+      const StringView text = "Press <ESCAPE> to cancel";
+      const auto size = 20;
+      const auto x = size * (text.size()/2);
+      Application::getRenderer().drawText(text, {x, height - size*2}, 20, Color::BLACK);
+    }
     std::stringstream ss;
     ss.precision(2);
     ss << "Title" << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";
@@ -99,6 +110,8 @@ namespace Game {
       //   // mSelectedEntity = {entityId, mEditorScene.get()};
       //   // Renderer::setSelectedEntity(entityId);
       // }
+
+      mLastPosition = mLastMousePosition;
     }
     return false;
   }
@@ -109,7 +122,16 @@ namespace Game {
     return false;
   }
   bool EditorLayer::onMouseMoveEvent(const MouseMoveEvent& event) {
-    mLastMousePosition = Vec2{u32(event.getX()) - u32(event.getX()) % Board::GRID_SIZE, u32(event.getY()) - u32(event.getY()) % Board::GRID_SIZE};
+    Vec2 position = Vec2{u32(event.getX()) - u32(event.getX()) % Board::GRID_SIZE, u32(event.getY()) - u32(event.getY()) % Board::GRID_SIZE};
+    // if (mClicked) {
+      Vec2 temp = mLastPosition - position;
+      if (temp.x < temp.y) {
+        mSize = {position.x - mLastPosition.x, 5};
+      } else {
+        mSize = {5, position.y - mLastPosition.y};
+      }
+    // }
+    mLastMousePosition = position;
     return false;
   }
 

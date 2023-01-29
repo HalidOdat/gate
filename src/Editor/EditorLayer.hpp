@@ -35,10 +35,12 @@ namespace Game {
     OrthographicCameraController mEditorCameraController;
     PerspectiveCameraController mCameraController;
 
-    bool mClicked = false;
-    bool mShow    = true;
+    bool mShow = true;
 
+    bool mClicked = false;
+    Vec2 mLastPosition{1.0f};
     Vec2 mLastMousePosition{0.0f};
+    Vec2 mSize{5.0f};
 
     Board board;
   };
