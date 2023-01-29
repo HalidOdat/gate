@@ -1,9 +1,6 @@
 #include <string>
 #include <sstream>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glad/glad.h>
-
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
 #include "Resource/Manager.hpp"
@@ -29,13 +26,13 @@ namespace Gate {
   }
 
   void EditorLayer::onUpdate(Timestep ts) {
+    (void)ts;
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     Application::getRenderer().clearScreen();
     mBoard.renderAll(Application::getRenderer());
     Application::getRenderer().drawQuad(mLastPosition - Vec2{5, 5}/2.0f, mSize, Color::BLACK);
 
-    auto width  = Application::getWindow().getWidth();
     auto height = Application::getWindow().getHeight();
 
     // Selector
@@ -56,6 +53,7 @@ namespace Gate {
   }
 
   void EditorLayer::onUiRender(Ui& ui) {
+    (void) ui;
     // ui.beginDock(Ui::Dock::Left, 20.0f);
     // ui.end();
   }

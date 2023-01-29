@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Core/Math.hpp"
+#include "Core/Base.hpp"
 
 namespace Gate {
-
-  // TODO: Camera should only contain projection and view matrix
 
   class Camera {
   public:

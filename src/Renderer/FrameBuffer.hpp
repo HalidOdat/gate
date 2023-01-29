@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Core/Type.hpp"
-#include "Core/Math.hpp"
+#include "Core/Base.hpp"
 #include "Resource/Texture.hpp"
-#include "Resource/Resource.hpp"
 
 #include <vector>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Math.hpp"
+#include "Core/Base.hpp"
 #include "Resource/Resource.hpp"
 
 #include <unordered_map>

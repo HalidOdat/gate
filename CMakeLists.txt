@@ -26,7 +26,6 @@ add_executable(${This}
   src/Core/Macro.cpp
   src/Core/Log.hpp
   src/Core/Log.cpp
-  src/Core/Math.hpp
   src/Core/KeyCode.hpp
   src/Core/Input.hpp
   src/Core/Input.cpp

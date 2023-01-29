@@ -61,8 +61,8 @@ namespace Gate {
     if (!gridTexture) {
       renderer.end();
       gridFrameBuffer->bind();
-      for (int i = 0; i < width; i += GRID_SIZE) {
-        for (int j = 0; j < height; j += GRID_SIZE) {
+      for (u32 i = 0; i < width; i += GRID_SIZE) {
+        for (u32 j = 0; j < height; j += GRID_SIZE) {
           renderer.drawCenteredQuad({i, j}, {2.0f, 2.0f}, Color::BLACK);
         }
       }

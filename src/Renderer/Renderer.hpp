@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Core/Math.hpp"
 #include "Utils/Color.hpp"
 #include "Resource/Manager.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/CameraController.hpp"
+
+#include "Core/Base.hpp"
 
 #include <vector>
 #include <array>
