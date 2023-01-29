@@ -9,7 +9,7 @@ namespace Gate {
   struct Component {
     String name;
 
-    void render(Renderer& renderer);
+    void render(Renderer& renderer, u32 gridSize);
   };
 
 }

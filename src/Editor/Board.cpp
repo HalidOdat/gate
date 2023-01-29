@@ -44,7 +44,7 @@ namespace Gate {
   void Board::render(Renderer& renderer) {
     for (auto component : components) {
       if (component) {
-        component->render(renderer);
+        component->render(renderer, GRID_SIZE);
       }
     }
   }
@@ -63,7 +63,8 @@ namespace Gate {
       gridFrameBuffer->bind();
       for (int i = 0; i < width; i += GRID_SIZE) {
         for (int j = 0; j < height; j += GRID_SIZE) {
-          renderer.drawQuad({i, j}, {2.0f, 2.0f}, Color::BLACK);
+          Vec2 size = {2.0f, 2.0f};
+          renderer.drawQuad(Vec2{i, j} - size/2.0f, size, Color::BLACK);
         }
       }
       renderer.flush();
