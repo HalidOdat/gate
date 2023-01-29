@@ -2,13 +2,8 @@
 
 #include "Core/Type.hpp"
 
-namespace Gate {
-  
-  namespace Utils {
+namespace Gate::Utils {
 
-    Option<String> fileToString(const StringView& filename);
+  Option<String> fileToString(const StringView& filename);
 
-  } // namespace Utils
-  
-
-} // namespace Gate
+} // namespace Gate::Utils

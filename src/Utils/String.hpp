@@ -2,13 +2,8 @@
 
 #include "Core/Type.hpp"
 
-namespace Gate {
-  
-  namespace Utils {
+namespace Gate::Utils {
     
-    bool stringIsEqualIgnoreCase(const StringView& rhs, const StringView& lhs);
+  bool stringIsEqualIgnoreCase(const StringView& rhs, const StringView& lhs);
 
-  } // namespace Utils
-  
-
-} // namespace Gate
+} // namespace Gate::Utils

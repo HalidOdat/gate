@@ -39,8 +39,6 @@ add_executable(${This}
   src/Utils/File.cpp
   src/Utils/String.hpp
   src/Utils/String.cpp
-  src/Utils/Memory/BumpAllocator.hpp
-  src/Utils/Memory/BumpAllocator.cpp
   src/Utils/Parsing/Lexer.hpp
   src/Utils/Parsing/Lexer.cpp
 
