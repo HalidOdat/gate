@@ -55,7 +55,7 @@ namespace Gate::Utils {
   }
 
   bool Lexer::lexNumber() {
-    GAME_DEBUG_ASSERT(isDigit(currentChar()));
+    GATE_DEBUG_ASSERT(isDigit(currentChar()));
     usize start = mIndex;
     while (nextCharIf(isDigit)) {}
     if (currentChar() == '.') {
@@ -67,7 +67,7 @@ namespace Gate::Utils {
   }
 
   bool Lexer::lexInteger() {
-    GAME_DEBUG_ASSERT(isDigit(currentChar()));
+    GATE_DEBUG_ASSERT(isDigit(currentChar()));
     usize start = mIndex;
 
     u64 base = 10;
@@ -87,7 +87,7 @@ namespace Gate::Utils {
   bool Lexer::lexFloat() {
     usize start = mIndex;
     while (nextCharIf(isDigit)) {}
-    GAME_DEBUG_ASSERT(currentChar() == '.');
+    GATE_DEBUG_ASSERT(currentChar() == '.');
     nextChar();
     while (nextCharIf(isDigit)) {}
     usize end = mIndex;
@@ -112,7 +112,7 @@ namespace Gate::Utils {
   bool Lexer::lexString() {
     usize start = mIndex;
     String string;
-    GAME_DEBUG_ASSERT(currentChar() == '"');
+    GATE_DEBUG_ASSERT(currentChar() == '"');
     nextChar();
     while (currentChar() != '"') {
       if (currentChar() == '\n' || currentChar() == '\r' || currentChar() == '\t') {
@@ -126,7 +126,7 @@ namespace Gate::Utils {
 
       nextChar();
     }
-    GAME_DEBUG_ASSERT(currentChar() == '"');
+    GATE_DEBUG_ASSERT(currentChar() == '"');
     nextChar();
     usize end = mIndex;
 
@@ -139,7 +139,7 @@ namespace Gate::Utils {
   bool Lexer::next() {
     do {
       if (!mIgnoreNewline && currentChar() == '\n') {
-        GAME_TODO("");
+        GATE_TODO("");
       }
     } while (nextCharIf(isSpace) && !mFinished);
 

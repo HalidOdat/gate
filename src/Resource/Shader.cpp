@@ -1,7 +1,5 @@
 #include <vector>
 #include <array>
-#include <fstream>
-#include <sstream>
 #include <algorithm>
 
 #include <glad/glad.h>
@@ -11,6 +9,9 @@
 #include "Resource/Factory.hpp"
 
 #include "Utils/String.hpp"
+#include "Utils/File.hpp"
+
+#include <cstring>
 
 namespace Gate {
 
@@ -20,7 +21,7 @@ namespace Gate {
 
   bool Shader::globalDefine(String name, String content) {
     bool replaced = false;
-    if (sGlobalDefines.contains(name)) {
+    if (sGlobalDefines.find(name) != sGlobalDefines.end()) {
       replaced = true;
     }
     sGlobalDefines.insert_or_assign(std::move(name), std::move(content));
@@ -34,7 +35,7 @@ namespace Gate {
       case Shader::Type::Geometry: return GL_GEOMETRY_SHADER;
       case Shader::Type::Compute:  return GL_COMPUTE_SHADER;
     }
-    GAME_UNREACHABLE("unknown shader type!");
+    GATE_UNREACHABLE("unknown shader type!");
   }
 
   static const char* shaderTypeToString(Shader::Type type) {
@@ -44,7 +45,7 @@ namespace Gate {
       case Shader::Type::Geometry: return "Geometry";
       case Shader::Type::Compute:  return "Compute";
     }
-    GAME_UNREACHABLE("unknown shader type!");
+    GATE_UNREACHABLE("unknown shader type!");
   }
 
   static const char* shaderVersionToStringDirectiveAndVersionMacros(Shader::Version version) {
@@ -52,7 +53,7 @@ namespace Gate {
       case Shader::Version::Es300:   return "#version 300 es\n";
       case Shader::Version::Core450: return "#version 450 core\n";
     }
-    GAME_UNREACHABLE("unknown shader version!");
+    GATE_UNREACHABLE("unknown shader version!");
   }
 
   static std::optional<Shader::Type> stringToShaderType(const StringView& string) {
@@ -99,64 +100,64 @@ namespace Gate {
       stringDefinitions += '\n';
     }
 
-    std::ifstream file;
-    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    try {
-      file.open(filename.data());
-      std::stringstream stream;
-      stream << file.rdbuf();
-      file.close();
-
-      std::string type;
-      std::string content;
-      for (std::string line; std::getline(stream, line); ) {
-        if (line.starts_with(typeDelimiter)) {
-          if (!common) {
-            common = String(shaderVersionToStringDirectiveAndVersionMacros(version)) + '\n' + stringDefinitions + content + '\n';
-          } else {
-            auto shaderType = stringToShaderType(type);
-            if (!shaderType) {
-              return {};
-            }
-
-            if (std::any_of(result.begin(), result.end(), [shaderType](const auto& value){
-              return value.first == shaderType;
-            })) {
-              Logger::error("Duplicate shader type '%s' in %s", shaderTypeToString(*shaderType), filename.data());
-              return {};
-            }
-
-            result.emplace_back(std::make_pair(*shaderType, *common + content));
-          }
-
-          content.clear();
-
-          type = line.substr(typeDelimiter.size());
-          continue;
-        }
-
-        content += line;
-        content += '\n';
-      }
-
-      auto shaderType = stringToShaderType(type);
-      if (!shaderType) {
-        return {};
-      }
-
-      if (std::any_of(result.begin(), result.end(), [shaderType](const auto& value){
-        return value.first == shaderType;
-      })) {
-        Logger::error("Duplicate shader type '%s' in %s", shaderTypeToString(*shaderType), filename.data());
-        return {};
-      }
-
-      result.emplace_back(std::make_pair(*shaderType, *common + content));
-    } catch (std::ifstream::failure& e) {
-      Logger::error("Couldn't open file '%s': %s", filename.data(), e.what());
+    FILE* file = fopen(filename.data(), "r");
+    if (!file) {
+      Logger::error("cannot open file '%s': %s", filename.data(), strerror(errno));
       return {};
     }
 
+    char line[256];
+    std::string type;
+    std::string content;
+    while (fgets(line, sizeof(line), file)) {
+      // Remove trailing newline caused by fgets, if there is.
+      line[strcspn(line, "\n")] = '\0';
+
+      if (strncmp(line, typeDelimiter.data(), typeDelimiter.size()) == 0) {
+        if (!common) {
+          common = String(shaderVersionToStringDirectiveAndVersionMacros(version)) + '\n' + stringDefinitions + content + '\n';
+        } else {
+          auto shaderType = stringToShaderType(type);
+          if (!shaderType) {
+            return {};
+          }
+
+          if (std::any_of(result.begin(), result.end(), [shaderType](const auto& value){
+            return value.first == shaderType;
+          })) {
+            Logger::error("Duplicate shader type '%s' in %s", shaderTypeToString(*shaderType), filename.data());
+            return {};
+          }
+
+          result.emplace_back(std::make_pair(*shaderType, *common + content));
+        }
+
+        content.clear();
+
+        type = String(line).substr(typeDelimiter.size());
+        continue;
+      }
+
+      content += line;
+      content += '\n';
+    }
+
+    fclose(file);
+
+    auto shaderType = stringToShaderType(type);
+    if (!shaderType) {
+      return {};
+    }
+
+    if (std::any_of(result.begin(), result.end(), [shaderType](const auto& value){
+      return value.first == shaderType;
+    })) {
+      Logger::error("Duplicate shader type '%s' in %s", shaderTypeToString(*shaderType), filename.data());
+      return {};
+    }
+
+    result.emplace_back(std::make_pair(*shaderType, *common + content));
+    
     if (!std::any_of(result.begin(), result.end(), [](const auto& value){
         return value.first == Shader::Type::Vertex;
     }) || !std::any_of(result.begin(), result.end(), [](const auto& value){
@@ -290,7 +291,7 @@ namespace Gate {
       return false;
     }
 
-    GAME_TODO("");
+    GATE_TODO("");
 
     auto data = Shader::load(*mFilePath).build();
     if (data) {
@@ -313,7 +314,7 @@ namespace Gate {
   }
 
   i32 Shader::getUniformLocation(StringView string) {
-    if (mUniformLocations.contains(string)) {
+    if (mUniformLocations.find(string) != mUniformLocations.end()) {
       return mUniformLocations.at(string);
     }
     i32 location = glGetUniformLocation(id, string.data());

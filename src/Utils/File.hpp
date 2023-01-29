@@ -4,6 +4,6 @@
 
 namespace Gate::Utils {
 
-  Option<String> fileToString(const StringView& filename);
+  char* fileToString(const StringView& filename);
 
 } // namespace Gate::Utils

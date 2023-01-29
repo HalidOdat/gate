@@ -70,8 +70,8 @@ namespace Gate {
     mFontCharacterWidth  = 7;
     mFontCharacterHeight = 9;
 
-    GAME_DEBUG_ASSERT(mFontTextureWidth % mFontCharacterWidth == 0);
-    GAME_DEBUG_ASSERT(mFontTextureHeight % mFontCharacterHeight == 0);
+    GATE_DEBUG_ASSERT(mFontTextureWidth % mFontCharacterWidth == 0);
+    GATE_DEBUG_ASSERT(mFontTextureHeight % mFontCharacterHeight == 0);
 
     u32 count = 0;
     for (u32 height = 0; height != mFontTextureHeight; height += mFontCharacterHeight) {

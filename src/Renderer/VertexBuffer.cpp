@@ -32,7 +32,7 @@ namespace Gate {
           break;
       }
 
-      GAME_UNREACHABLE("unknown storage or access type!");
+      GATE_UNREACHABLE("unknown storage or access type!");
     }
 
   }
@@ -52,7 +52,7 @@ namespace Gate {
       case Type::Mat3:   return sizeof(float) * 3 * 3;
       case Type::Mat4:   return sizeof(float) * 4 * 4;
     }
-    GAME_UNREACHABLE("Unknown shader data type!");
+    GATE_UNREACHABLE("Unknown shader data type!");
   }
 
   usize BufferElement::getComponentCount() const {
@@ -71,7 +71,7 @@ namespace Gate {
       case Type::Mat3:   return 3;
       case Type::Mat4:   return 4;
     }
-    GAME_UNREACHABLE("Unknown shader data type!");
+    GATE_UNREACHABLE("Unknown shader data type!");
   }
 
   void BufferLayout::calculateStride() {

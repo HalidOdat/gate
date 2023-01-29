@@ -73,7 +73,7 @@ namespace Gate {
               type = GL_UNSIGNED_INT;
               break;
             default:
-              GAME_UNREACHABLE("Unknown buffer element type!");
+              GATE_UNREACHABLE("Unknown buffer element type!");
           }
           
           glEnableVertexAttribArray(mVertexAttributeIndex);
@@ -110,7 +110,7 @@ namespace Gate {
           break;
         }
         default:
-          GAME_UNREACHABLE("Unknown buffer element type!");
+          GATE_UNREACHABLE("Unknown buffer element type!");
       }
     }
 

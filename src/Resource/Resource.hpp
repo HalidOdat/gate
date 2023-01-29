@@ -73,11 +73,11 @@ namespace Gate {
     inline bool operator!=(const Resource& other) const { return mId != other.mId; }
 
     inline T* get() { 
-      GAME_DEBUG_ASSERT(isValid());
+      GATE_DEBUG_ASSERT(isValid());
       return std::launder(reinterpret_cast<T*>(getRaw().data));
     }
     inline const T* get() const {
-      GAME_DEBUG_ASSERT(isValid());
+      GATE_DEBUG_ASSERT(isValid());
       return std::launder(reinterpret_cast<T*>(getRaw().data));
     }
 

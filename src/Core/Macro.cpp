@@ -20,7 +20,7 @@ namespace Gate {
       case GL_INVALID_FRAMEBUFFER_OPERATION: return "invalid framebuffer operation";
       case GL_OUT_OF_MEMORY:                 return "out of memory";
       default: 
-        GAME_UNREACHABLE("unknown OpengGL error type");
+        GATE_UNREACHABLE("unknown OpengGL error type");
     }
   }
 

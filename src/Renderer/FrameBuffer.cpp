@@ -115,7 +115,7 @@ namespace Gate {
   }
 
   void FrameBuffer::invalidate(u32 width, u32 height) {
-    GAME_DEBUG_ASSERT(width != 0 && height != 0);
+    GATE_DEBUG_ASSERT(width != 0 && height != 0);
 
     mWidth  = width;
     mHeight = height;
@@ -132,16 +132,16 @@ namespace Gate {
     u32 drawableAttachmentsCount = 0;
     GLenum drawableAttachments[32] = {};
 
-    GAME_DEBUG_ASSERT(mAttachmentsSpecification.size() <= 32);
+    GATE_DEBUG_ASSERT(mAttachmentsSpecification.size() <= 32);
 
     for (u32 i = 0; i < mAttachmentsSpecification.size(); ++i) {
       Attachment& attachment = mAttachmentsSpecification[i];
 
       // TODO: implement other attachment types
-      GAME_ASSERT(attachment.type == Attachment::Type::Texture);
+      GATE_ASSERT(attachment.type == Attachment::Type::Texture);
 
       // TODO: implement multisampled attachment types
-      GAME_ASSERT(!attachment.isMultisample);
+      GATE_ASSERT(!attachment.isMultisample);
 
       // create color attachment texture
       auto texture = Texture::buffer(width, height)
@@ -184,7 +184,7 @@ namespace Gate {
       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, mDepthStencilTexture->getId(), 0);
     }
 
-    GAME_ASSERT_WITH_MESSAGE(
+    GATE_ASSERT_WITH_MESSAGE(
       glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
       "framebuffer is not complete!"
     );

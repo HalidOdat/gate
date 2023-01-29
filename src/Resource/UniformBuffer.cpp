@@ -32,7 +32,7 @@ namespace Gate {
           break;
       }
 
-      GAME_UNREACHABLE("unknown storage or access type!");
+      GATE_UNREACHABLE("unknown storage or access type!");
     }
 
   }

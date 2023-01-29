@@ -8,7 +8,7 @@ project(${This}
 )
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL Emscripten)
@@ -107,7 +107,9 @@ if (MSVC)
 else()
   target_compile_options(${This}
     PRIVATE
-      -Wall -Wextra -pedantic -ggdb -fsanitize=address -fsanitize=undefined
+      -Wall -Wextra -pedantic
+      -fno-exceptions
+      -ggdb -fsanitize=address -fsanitize=undefined
   )
 endif()
 
@@ -136,6 +138,7 @@ endif()
 
 target_link_options(${This}
   PRIVATE
+    -fno-exceptions
     -fsanitize=address
     -fsanitize=undefined
 )
@@ -164,9 +167,6 @@ target_precompile_headers(${This}
     <array>
     <memory>
     <optional>
-    <fstream>
-    <sstream>
-    <map>
     <unordered_map>
     <type_traits>
 
@@ -175,3 +175,7 @@ target_precompile_headers(${This}
     <glad/glad.h>
 )
 
+target_compile_definitions(${This}
+  PUBLIC
+    GATE_DEBUG_MODE=1
+)

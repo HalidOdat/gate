@@ -22,7 +22,7 @@ namespace Gate {
       case Texture::WrappingMode::ClampToEdge:    return GL_CLAMP_TO_EDGE;
       case Texture::WrappingMode::ClampToBorder:  return GL_CLAMP_TO_BORDER;
     }
-    GAME_UNREACHABLE("unknown texture wrapping type!");
+    GATE_UNREACHABLE("unknown texture wrapping type!");
   }
 
   static GLenum TextureFilteringToOpenGL(Texture::FilteringMode filtering) {
@@ -30,7 +30,7 @@ namespace Gate {
       case Texture::FilteringMode::Linear:  return GL_LINEAR;
       case Texture::FilteringMode::Nearest: return GL_NEAREST;
     }
-    GAME_UNREACHABLE("unknown texture filtering type!");
+    GATE_UNREACHABLE("unknown texture filtering type!");
   }
 
   static GLenum TextureFilteringMipmapToOpenGL(Texture::FilteringMode filtering, Texture::MipmapMode mipmap) {
@@ -50,10 +50,10 @@ namespace Gate {
         }
         break;
       default:
-        GAME_UNREACHABLE("unknown texture filtering type!");
+        GATE_UNREACHABLE("unknown texture filtering type!");
     }
 
-    GAME_UNREACHABLE("unknown texture mipmap type!");
+    GATE_UNREACHABLE("unknown texture mipmap type!");
   }
 
   static GLenum TextureDataTypeToOpenGL(Texture::DataType format) {
@@ -64,7 +64,7 @@ namespace Gate {
       case Texture::DataType::HalfFloat:        return GL_HALF_FLOAT;
       case Texture::DataType::UnsignedInt_24_8: return GL_UNSIGNED_INT_24_8;
     }
-    GAME_UNREACHABLE("unknown data type type!");
+    GATE_UNREACHABLE("unknown data type type!");
   }
 
   static GLenum TextureDataFormatToOpenGL(Texture::DataFormat format) {
@@ -78,7 +78,7 @@ namespace Gate {
       case Texture::DataFormat::RedInteger:   return GL_RED_INTEGER;
       case Texture::DataFormat::DepthStencil: return GL_DEPTH_STENCIL;
     }
-    GAME_UNREACHABLE("unknown data format type!");
+    GATE_UNREACHABLE("unknown data format type!");
   }
 
   static GLenum TextureInternalFormatToOpenGL(Texture::Format format) {
@@ -95,7 +95,7 @@ namespace Gate {
       case Texture::Format::R32UI:           return GL_R32UI;
       case Texture::Format::Depth24Stencil8: return GL_DEPTH24_STENCIL8;
     }
-    GAME_UNREACHABLE("unknown internal format type!");
+    GATE_UNREACHABLE("unknown internal format type!");
   }
 
   static Texture::DataFormat TextureBaseDataFormatOfInternalFomat(Texture::Format format) {
@@ -112,7 +112,7 @@ namespace Gate {
       case Texture::Format::R32UI:           return Texture::DataFormat::RedInteger;
       case Texture::Format::Depth24Stencil8: return Texture::DataFormat::DepthStencil;
     }
-    GAME_UNREACHABLE("unknown internal format type!");
+    GATE_UNREACHABLE("unknown internal format type!");
   }
 
   static Texture::DataType TextureDataTypeOfInternalFomat(Texture::Format format) {
@@ -129,7 +129,7 @@ namespace Gate {
       case Texture::Format::R32UI:           return Texture::DataType::UnsignedInt;
       case Texture::Format::Depth24Stencil8: return Texture::DataType::UnsignedInt_24_8;
     }
-    GAME_UNREACHABLE("unknown internal format type!");
+    GATE_UNREACHABLE("unknown internal format type!");
   }
 
   // TODO: key should also have specification
@@ -152,7 +152,7 @@ namespace Gate {
           case Texture::Type::Buffer:
             break;
           default:
-            GAME_UNREACHABLE("unknown texture type!");
+            GATE_UNREACHABLE("unknown texture type!");
         }  
       }
     }
@@ -168,7 +168,7 @@ namespace Gate {
           Logger::trace("Texture #%u created buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
           break;
         default:
-          GAME_UNREACHABLE("unknown texture type!");
+          GATE_UNREACHABLE("unknown texture type!");
       }
     }
     inline static void destroyed(Texture& texture, u32 id) {
@@ -183,7 +183,7 @@ namespace Gate {
           Logger::trace("Texture #%u destroyed buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
           break;
         default:
-          GAME_UNREACHABLE("unknown texture type!");
+          GATE_UNREACHABLE("unknown texture type!");
       }
     }
     inline static void clear() {
@@ -224,7 +224,7 @@ namespace Gate {
     String filepath = String(mFile);
     switch (mType) {
       case Texture::Type::Color:
-        if (cachedColorTexture.contains(mColor)) {
+        if (cachedColorTexture.find(mColor) != cachedColorTexture.end()) {
           return cachedColorTexture.at(mColor);
         }
         break;
@@ -235,12 +235,12 @@ namespace Gate {
         }
         break;
       case Texture::Type::Image:
-        if (cachedImageTexture.contains(filepath)) {
+        if (cachedImageTexture.find(filepath) != cachedImageTexture.end()) {
           return cachedImageTexture.at(filepath);
         }
         break;
       default:
-        GAME_UNREACHABLE("unknown texture type!");
+        GATE_UNREACHABLE("unknown texture type!");
     }
 
     mSpecification.type = mType;
@@ -261,7 +261,7 @@ namespace Gate {
       mData   = bytes;
       mDataType = Texture::DataType::UnsignedByte;
 
-      GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
+      GATE_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
       if (channels == 4) {
         mDataFormat = Texture::DataFormat::Rgba;
       } else if (channels == 3) {
@@ -269,7 +269,7 @@ namespace Gate {
       }
     }
 
-    GAME_ASSERT(mWidth != 0 || mHeight != 0);
+    GATE_ASSERT(mWidth != 0 || mHeight != 0);
 
     if (mSpecification.gammaCorrected) {
       if (mSpecification.internalFormat == Texture::Format::Rgba8) {
@@ -318,7 +318,7 @@ namespace Gate {
       case Texture::Type::Image:
         break;
       default:
-        GAME_UNREACHABLE("unknown texture type!");
+        GATE_UNREACHABLE("unknown texture type!");
     }
 
     if (mSpecification.samples == 0) {
@@ -347,7 +347,7 @@ namespace Gate {
         cachedImageTexture.emplace(std::move(filepath), handle);
         break;
       default:
-        GAME_UNREACHABLE("unknown texture type!");
+        GATE_UNREACHABLE("unknown texture type!");
     }
     return handle;
   }
@@ -359,11 +359,11 @@ namespace Gate {
   }
 
   void Texture::reloadAll() {
-    GAME_TODO("not implemented yet!");
+    GATE_TODO("not implemented yet!");
   }
 
   Texture::Data Texture::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Specification specification) {
-    GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
+    GATE_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
     GLenum dataFormat = 0;
     if (channels == 4) {
       dataFormat = GL_RGBA;

@@ -37,7 +37,7 @@ namespace Gate {
   }
 
   void Window::deinitializeWindowSystem() {
-    GAME_ASSERT_WITH_MESSAGE(windowCount >= 1, "Should not call deinit before init");
+    GATE_ASSERT_WITH_MESSAGE(windowCount >= 1, "Should not call deinit before init");
     windowCount--;
     if (windowCount == 0) {
       glfwTerminate();
@@ -67,7 +67,7 @@ namespace Gate {
       case GL_DEBUG_SOURCE_APPLICATION:     sourceString = "Application"; break;
       case GL_DEBUG_SOURCE_OTHER:           sourceString = "Other"; break;
       default:
-        GAME_UNREACHABLE("");
+        GATE_UNREACHABLE("");
     }
 
     const char* typeString;
@@ -82,7 +82,7 @@ namespace Gate {
       case GL_DEBUG_TYPE_POP_GROUP:           typeString = "Pop Group"; break;
       case GL_DEBUG_TYPE_OTHER:               typeString = "Other"; break;
       default:
-        GAME_UNREACHABLE("");
+        GATE_UNREACHABLE("");
     }
     
     switch (severity) {
@@ -99,7 +99,7 @@ namespace Gate {
           Logger::trace("OpenGL: Source = %s, Type = %s, Message = %s", sourceString, typeString, message);
           break;
         default:
-          GAME_UNREACHABLE("");
+          GATE_UNREACHABLE("");
     }
   }
 
@@ -112,15 +112,12 @@ namespace Gate {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
-    #ifndef GAME_PLATFORM_WEB
-      glfwWindowHint(GLFW_SRGB_CAPABLE, true);
-    #endif
 
     #ifdef __APPLE__
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    #if GAME_DEBUG_MODE && !defined(GAME_PLATFORM_WEB)
+    #if GATE_DEBUG_MODE && !defined(GATE_PLATFORM_WEB)
       glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     #endif
 
@@ -137,7 +134,6 @@ namespace Gate {
     auto result = Ref<Window>( new Window(data) );
 
     glfwMakeContextCurrent(result->data.window);
-    // GAME_ASSERT(glfwGetError(NULL) == 0);
 
     if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
     {
@@ -147,7 +143,7 @@ namespace Gate {
 
     Logger::info("OpenGL Version: %s", glGetString(GL_VERSION));
 
-    #if GAME_DEBUG_MODE && !defined(GAME_PLATFORM_WEB)
+    #if GATE_DEBUG_MODE && !defined(GATE_PLATFORM_WEB)
       i32 flags;
       glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
       if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {

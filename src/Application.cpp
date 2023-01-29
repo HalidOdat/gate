@@ -3,7 +3,7 @@
 #include "Resource/Manager.hpp"
 #include "Application.hpp"
 
-#if GAME_PLATFORM_WEB
+#if GATE_PLATFORM_WEB
 # include<emscripten/emscripten.h>
 // # define GLFW_INCLUDE_ES3
 #endif
@@ -34,7 +34,7 @@ namespace Gate {
       std::exit(EXIT_FAILURE);
     }
 
-    #ifdef GAME_PLATFORM_WEB
+    #ifdef GATE_PLATFORM_WEB
       Shader::globalDefine("WEB_GL", "1");
     #endif
 
@@ -66,7 +66,7 @@ namespace Gate {
 
   void Application::gameLoop() {
     Application* self = sInstance;
-    #ifdef GAME_PLATFORM_WEB
+    #ifdef GATE_PLATFORM_WEB
       self->window->setVSync(true);
     #endif
 
@@ -92,13 +92,13 @@ namespace Gate {
   void Application::startGameLoop() {
     this->lastFrameTime = (float)glfwGetTime();
 
-    #ifndef GAME_PLATFORM_WEB
+    #ifndef GATE_PLATFORM_WEB
       // this->window->setVSync(true);
     #endif
 
     getRenderer().blending(true);
 
-    #if GAME_PLATFORM_WEB
+    #if GATE_PLATFORM_WEB
       emscripten_set_main_loop(Application::gameLoop, 0, 1);
     #else
       while (running) {

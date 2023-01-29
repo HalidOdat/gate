@@ -44,7 +44,7 @@ namespace Gate {
       case Type::Vertical:
         return this->position + this->size * Vec2(0.0f, 1.0f);
       default:
-        GAME_UNREACHABLE("Unknown Layout type!");
+        GATE_UNREACHABLE("Unknown Layout type!");
     }
   }
 
@@ -60,7 +60,7 @@ namespace Gate {
         this->size.y = this->size.y + widgetSize.y;
         break;
       default:
-        GAME_UNREACHABLE("Unknown Layout type!");
+        GATE_UNREACHABLE("Unknown Layout type!");
     }
   }
 
@@ -134,7 +134,7 @@ namespace Gate {
       }
         break;
       default:
-        GAME_UNREACHABLE("");
+        GATE_UNREACHABLE("");
     }
   }
 
@@ -163,7 +163,7 @@ namespace Gate {
     (void)width;
     (void)height;
 
-    GAME_TODO("");
+    GATE_TODO("");
   }
 
   bool Ui::button(const StringView& text, u64 id) {
@@ -359,7 +359,7 @@ namespace Gate {
   }
 
   void Ui::end() {
-    GAME_DEBUG_ASSERT(this->layouts.size() == 1);
+    GATE_DEBUG_ASSERT(this->layouts.size() == 1);
     // Layout layout = this->layouts.back();
     this->layouts.pop_back();
 

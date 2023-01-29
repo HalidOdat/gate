@@ -159,61 +159,61 @@ namespace Gate::Serializer {
 
   const Node& Node::operator[](usize i) const {
     const auto* array = asArray();
-    GAME_DEBUG_ASSERT(array != nullptr);
-    GAME_ASSERT(i < array->size());
+    GATE_DEBUG_ASSERT(array != nullptr);
+    GATE_ASSERT(i < array->size());
     return (*array)[i];
   }
 
   Node& Node::operator[](usize i) {
     auto* array = asArray();
-    GAME_DEBUG_ASSERT(array != nullptr);
-    GAME_ASSERT(i < array->size());
+    GATE_DEBUG_ASSERT(array != nullptr);
+    GATE_ASSERT(i < array->size());
     return (*array)[i];
   }
 
   Node& Node::operator[](const String& string) {
-    GAME_DEBUG_ASSERT(isObject());
+    GATE_DEBUG_ASSERT(isObject());
     auto* object = asObject();
     return (*object)[string];
   }
 
   const Node* Node::get(const String& key) const {
-    GAME_DEBUG_ASSERT(isObject());
+    GATE_DEBUG_ASSERT(isObject());
     const Node::Object* object = asObject();
-    if (!object->contains(key)) {
+    if (object->find( key ) == object->end()) {
       return nullptr;
     }
     return &object->at(key);
   }
 
   bool Node::contains(const String& key) const {
-    GAME_DEBUG_ASSERT(isObject());
+    GATE_DEBUG_ASSERT(isObject());
     const Node::Object* object = asObject();
-    return object->contains(key);
+    return object->find( key ) != object->end();
   }
 
   Node& Node::push(Node node) {
-    GAME_DEBUG_ASSERT(isArray());
+    GATE_DEBUG_ASSERT(isArray());
     Node::Array* array = asArray();
     return array->emplace_back(std::move(node));
   }
 
   void Node::pop() {
-    GAME_DEBUG_ASSERT(isArray());
+    GATE_DEBUG_ASSERT(isArray());
     Node::Array* array = asArray();
-    GAME_ASSERT(array->size() != 0);
+    GATE_ASSERT(array->size() != 0);
     array->pop_back();
   }
 
   usize Node::size() const {
-    GAME_ASSERT(isArray() || isObject());
+    GATE_ASSERT(isArray() || isObject());
     if (const Node::Array* array = asArray(); array) {
       return array->size();
     } else if (const Node::Object* object = asObject(); object) {
       return object->size();
     }
 
-    GAME_UNREACHABLE("should be array or object!");
+    GATE_UNREACHABLE("should be array or object!");
   }
 
   Json::Json(StringView source)

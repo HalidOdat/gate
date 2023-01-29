@@ -17,7 +17,7 @@ namespace Gate {
       case Type::WindowMinimized:     return "WindowMinimized";
     }
 
-    GAME_UNREACHABLE("Unknown event type");
+    GATE_UNREACHABLE("Unknown event type");
   }
 
 } // namespace Gate
