@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace Game {
+namespace Gate {
 
   class UniformBuffer {
   public:
@@ -84,4 +84,4 @@ namespace Game {
 
   GAME_FACTORY_HEADER(UniformBuffer)
 
-} // namespace Game
+} // namespace Gate

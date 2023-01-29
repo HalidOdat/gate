@@ -6,5 +6,5 @@ int main(int argc, char* argv[]) {
   (void)argc;
   (void)argv;
   
-  Game::Application("Game", 1340, 640).start();
+  Gate::Application("Game", 1340, 640).start();
 }

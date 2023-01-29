@@ -9,7 +9,7 @@
 
 #include "Editor/Board.hpp"
 
-namespace Game {
+namespace Gate {
     
   class Scene;
 
@@ -44,4 +44,4 @@ namespace Game {
     Board board;
   };
 
-} // namespace Game
+} // namespace Gate

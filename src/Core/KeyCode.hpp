@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Game {
+namespace Gate {
 
   // Taken from glfw3.h header
   enum class Key {

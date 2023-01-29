@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace Game {
+namespace Gate {
 
   struct Buffer {
     enum class StorageType : u8 {
@@ -152,4 +152,4 @@ namespace Game {
 
   GAME_FACTORY_HEADER(VertexBuffer)
 
-} // namespace Game
+} // namespace Gate

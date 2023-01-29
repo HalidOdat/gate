@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 
-namespace Game::Utils {
+namespace Gate::Utils {
 
   u8* alignUp(u8* stack, isize align) {
     GAME_DEBUG_ASSERT(align > 0 && (align & (align - 1)) == 0); /* Power of 2 */

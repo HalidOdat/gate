@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <sstream>
 
-namespace Game::Serializer {
+namespace Gate::Serializer {
 
   template<typename T>
   struct Convert;
@@ -322,4 +322,4 @@ namespace Game::Serializer {
     Utils::Lexer mLexer;
   };
   
-} // namespace Game::Serializer
+} // namespace Gate::Serializer

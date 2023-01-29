@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace Game {
+namespace Gate {
     namespace Utils {
       
       bool stringIsEqualIgnoreCase(const StringView& rhs, const StringView& lhs) {
@@ -16,4 +16,4 @@ namespace Game {
       }
 
     } // namespace Utils
-} // namespace Game
+} // namespace Gate

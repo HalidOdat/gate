@@ -2,10 +2,10 @@
 
 #include "Application.hpp"
 
-namespace Game {
+namespace Gate {
 
   bool Input::isKeyPressed(Key key) {
     return Application::get().getWindow().isKeyPressed(key);
   }
 
-} // namespace Game
+} // namespace Gate

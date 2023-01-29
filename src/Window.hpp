@@ -8,7 +8,7 @@
 // Forward declare
 struct GLFWwindow;
 
-namespace Game {
+namespace Gate {
 
   // TODO: put events in a queue
   class Window final {
@@ -58,4 +58,4 @@ namespace Game {
     Data data;
   };
 
-} // namespace Game
+} // namespace Gate

@@ -9,7 +9,7 @@
 #include <vector>
 #include <array>
 
-namespace Game {
+namespace Gate {
   
   class Application;
 
@@ -87,4 +87,4 @@ namespace Game {
     std::array<Vec4, 96> mFontCoords;
   };
 
-} // namespace Game
+} // namespace Gate

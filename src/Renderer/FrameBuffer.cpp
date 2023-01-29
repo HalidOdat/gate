@@ -5,7 +5,7 @@
 #include "Resource/Factory.hpp"
 #include "Application.hpp"
 
-namespace Game {
+namespace Gate {
 
   namespace {
     constexpr static GLenum clearToOpenGLType(FrameBuffer::Clear clear) {
@@ -231,4 +231,4 @@ namespace Game {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
-} // namespace Game
+} // namespace Gate

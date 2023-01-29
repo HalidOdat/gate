@@ -2,7 +2,7 @@
 
 #include "Application.hpp"
 
-namespace Game {
+namespace Gate {
 
   Board::Board() {
     gridFrameBuffer = FrameBuffer::builder()

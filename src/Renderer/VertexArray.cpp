@@ -7,7 +7,7 @@
 
 #include "Resource/Factory.hpp"
 
-namespace Game {
+namespace Gate {
   
   GAME_FACTORY_IMPLEMENTATION(VertexArray, factory);
 
@@ -137,4 +137,4 @@ namespace Game {
     glDrawArrays(GL_TRIANGLES, 0, count);
   }
 
-} // namespace Game
+} // namespace Gate

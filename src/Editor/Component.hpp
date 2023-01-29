@@ -4,7 +4,7 @@
 
 #include "Renderer/Renderer.hpp"
 
-namespace Game {
+namespace Gate {
 
   struct Component {
     String name;

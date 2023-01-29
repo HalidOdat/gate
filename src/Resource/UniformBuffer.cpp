@@ -4,7 +4,7 @@
 #include "Resource/Factory.hpp"
 #include "Resource/UniformBuffer.hpp"
 
-namespace Game {
+namespace Gate {
 
   namespace {
     static GLenum bufferStorageAndAccessTypeToOpenGL(UniformBuffer::StorageType storage, UniformBuffer::AccessType access) {
@@ -96,4 +96,4 @@ namespace Game {
     glBufferSubData(GL_UNIFORM_BUFFER, 0, slice.sizeInBytes(), slice.data());
   }
 
-} // namespace Game
+} // namespace Gate

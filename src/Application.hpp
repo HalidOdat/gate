@@ -7,7 +7,7 @@
 
 #include "Editor/EditorLayer.hpp"
 
-namespace Game {
+namespace Gate {
 
   class Application {
   public:

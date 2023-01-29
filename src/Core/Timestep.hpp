@@ -2,7 +2,7 @@
 
 #include "Core/Type.hpp"
 
-namespace Game {
+namespace Gate {
   
   class Application;
 
@@ -25,4 +25,4 @@ namespace Game {
     friend class Application;
   };
 
-} // namespace Game
+} // namespace Gate

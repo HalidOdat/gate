@@ -3,7 +3,7 @@
 #include "Core/Type.hpp"
 #include "Events/Event.hpp"
 
-namespace Game {
+namespace Gate {
 
   class WindowEvent : public Event {
   protected:
@@ -56,4 +56,4 @@ namespace Game {
     {}
   };
 
-} // namespace Game
+} // namespace Gate

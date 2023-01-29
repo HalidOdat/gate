@@ -2,7 +2,7 @@
 
 #include "Core/Base.hpp"
 
-namespace Game {
+namespace Gate {
 
   struct Point {
     u32 x;

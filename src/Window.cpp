@@ -13,7 +13,7 @@
 #include "Events/WindowEvent.hpp"
 #include "Window.hpp"
 
-namespace Game {
+namespace Gate {
 
   static void GLFWErrorCallback(int error, const char* description) {
     Logger::error("GLFW Error (%d): %s", error, description);

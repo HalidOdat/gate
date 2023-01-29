@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <filesystem>
 
-namespace Game {
+namespace Gate {
 
   Application* Application::sInstance = nullptr;
 
@@ -136,5 +136,5 @@ namespace Game {
     return false;
   }
 
-} // namespace Game
+} // namespace Gate
 

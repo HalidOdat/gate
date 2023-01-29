@@ -12,7 +12,7 @@
 
 #include "Utils/String.hpp"
 
-namespace Game {
+namespace Gate {
 
   GAME_FACTORY_IMPLEMENTATION(Shader, factory)
 
@@ -165,13 +165,6 @@ namespace Game {
       Logger::error("Shader program '%s' must contain a vertex and fragment shaders", filename.data());
       return {};
     }
-
-    // Logger::trace("-------------------------------------");
-    // for (auto&[type, content] : result) {
-    //   Logger::trace("Type: '%s'", shaderTypeToString(type));
-    //   Logger::trace("Content: '%s'", content.c_str());
-    // }
-    // Logger::trace("-------------------------------------");
 
     return result;
   }
@@ -383,4 +376,4 @@ namespace Game {
     glUniform1uiv(uniform_id, count, value);
   }
 
-} // namespace Game
+} // namespace Gate

@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace Game {
+namespace Gate {
 
   class FrameBuffer {
   public:
@@ -126,4 +126,4 @@ namespace Game {
 
   GAME_FACTORY_HEADER(FrameBuffer)
 
-} // namespace Game
+} // namespace Gate

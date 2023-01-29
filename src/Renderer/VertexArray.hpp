@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace Game {
+namespace Gate {
 
   class VertexArray {
   public:
@@ -47,4 +47,4 @@ namespace Game {
 
   GAME_FACTORY_HEADER(VertexArray);
 
-} // namespace Game
+} // namespace Gate

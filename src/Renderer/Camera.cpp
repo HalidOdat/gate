@@ -2,7 +2,7 @@
 
 #include "Renderer/Camera.hpp"
 
-namespace Game {
+namespace Gate {
 
   OrthographicCamera::OrthographicCamera(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
     : Camera{glm::ortho(left, right, bottom, top, zNear, zFar), Mat4(1.0f)}
@@ -37,4 +37,4 @@ namespace Game {
     this->mProjectionViewMatrix = this->mProjectionMatrix * this->mViewMatrix;
   }
 
-} // namespace Game
+} // namespace Gate

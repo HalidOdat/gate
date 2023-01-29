@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 
-namespace Game {
+namespace Gate {
 
   // TODO: shader specification of definitions
   class Shader {
@@ -98,4 +98,4 @@ namespace Game {
 
   GAME_FACTORY_HEADER(Shader)
 
-} // namespace Game
+} // namespace Gate

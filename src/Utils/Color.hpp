@@ -2,7 +2,7 @@
 
 #include "Core/Math.hpp"
 
-namespace Game {
+namespace Gate {
   
   class Color {
   public:
@@ -13,4 +13,4 @@ namespace Game {
     static constexpr const auto BLUE  = Vec4(0.0f, 0.0f, 1.0f, 1.0f);
   };
 
-} // namespace Game
+} // namespace Gate

@@ -12,7 +12,7 @@
 
 #include "Application.hpp"
 
-namespace Game {
+namespace Gate {
 
   class AABB {
   public:
@@ -397,4 +397,4 @@ namespace Game {
     return  this->hasHot || this->hasActive;
   }
 
-} // namespace Game
+} // namespace Gate

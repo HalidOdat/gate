@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0..3.20 FATAL_ERROR)
 
-set(This Game)
+set(This gate)
 
 project(${This}
   VERSION 0.1.0
@@ -17,8 +17,8 @@ endif()
 
 add_subdirectory(vendor)
 
-set(GAME_ASSETS_DIRECTOY "${PROJECT_SOURCE_DIR}/assets")
-message(STATUS "${This}: Assets directory path: ${GAME_ASSETS_DIRECTOY}")
+set(ASSETS_DIRECTOY "${PROJECT_SOURCE_DIR}/assets")
+message(STATUS "${This}: Assets directory path: ${ASSETS_DIRECTOY}")
 
 add_executable(${This}
   src/Core/Type.hpp
@@ -126,7 +126,7 @@ if (DEFINED WEB)
       -sMIN_WEBGL_VERSION=2
       -sMAX_WEBGL_VERSION=2
       -sALLOW_MEMORY_GROWTH=1
-      --preload-file "${GAME_ASSETS_DIRECTOY}@assets"
+      --preload-file "${ASSETS_DIRECTOY}@assets"
   )
   set_target_properties(${This}
     PROPERTIES

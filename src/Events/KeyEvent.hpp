@@ -4,7 +4,7 @@
 #include "Core/KeyCode.hpp"
 #include "Events/Event.hpp"
 
-namespace Game {
+namespace Gate {
 
   class KeyEvent : public Event {
   public:
@@ -47,4 +47,4 @@ namespace Game {
     {}
   };
 
-} // namespace Game
+} // namespace Gate

@@ -5,7 +5,7 @@
 
 #include "Application.hpp"
 
-namespace Game {
+namespace Gate {
 
   OrthographicCameraController::OrthographicCameraController(f32 aspectRatio, f32 zNear, f32 zFar)
     : mAspectRatio{aspectRatio},
@@ -52,4 +52,4 @@ namespace Game {
     mCamera.setRotation(mCameraRotation);
   }
 
-} // namespace Game
+} // namespace Gate

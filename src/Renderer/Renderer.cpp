@@ -9,7 +9,7 @@
 
 #include "Renderer/Renderer.hpp"
 
-namespace Game {
+namespace Gate {
 
   Renderer::Renderer() {
     mWhiteTexture = Texture::color(0xFF, 0xFF, 0xFF).build();
@@ -243,4 +243,4 @@ namespace Game {
     }
   }
 
-} // namespace Game
+} // namespace Gate

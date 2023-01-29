@@ -6,7 +6,7 @@
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/Renderer.hpp"
 
-namespace Game {
+namespace Gate {
 
   struct Board {
     Board();

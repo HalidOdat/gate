@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iomanip>
 
-namespace Game::Serializer {
+namespace Gate::Serializer {
 
   template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
   template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
@@ -375,4 +375,4 @@ namespace Game::Serializer {
     return result;
   }
 
-} // namespace Game::Serializer
+} // namespace Gate::Serializer

@@ -6,7 +6,7 @@
 #include "Core/Log.hpp"
 #include "Core/Type.hpp"
 
-namespace Game {
+namespace Gate {
 
   static_assert(sizeof(GLuint) == sizeof(u32), "GLuints should be unsigned 32-bit numbers");
   static_assert(sizeof(GLint)  == sizeof(i32), "GLuints should be singned 32-bit numbers");
@@ -24,4 +24,4 @@ namespace Game {
     }
   }
 
-} // namespace Game
+} // namespace Gate

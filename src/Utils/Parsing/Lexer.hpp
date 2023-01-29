@@ -2,7 +2,7 @@
 
 #include "Core/Base.hpp"
 
-namespace Game::Utils {
+namespace Gate::Utils {
 
   class Token {
   public:
@@ -96,4 +96,4 @@ namespace Game::Utils {
     bool mLexerError = false;
   };
 
-} // namespace Game::Utils
+} // namespace Gate::Utils

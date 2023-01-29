@@ -2,7 +2,7 @@
 
 #include "Editor/Point.hpp"
 
-namespace Game {
+namespace Gate {
   
   struct Line {
     Point from;

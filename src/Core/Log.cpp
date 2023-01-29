@@ -3,7 +3,7 @@
 
 #include "Core/Log.hpp"
 
-namespace Game {
+namespace Gate {
 
   void Logger::trace(const char *format, ...) {
     va_list args;
@@ -41,4 +41,4 @@ namespace Game {
     va_end(args);
   }
 
-} // namespace Game
+} // namespace Gate

@@ -3,7 +3,7 @@
 #include "Core/Math.hpp"
 #include "Resource/Resource.hpp"
 
-namespace Game {
+namespace Gate {
 
   class Texture {
   public:
@@ -186,5 +186,5 @@ namespace Game {
 
   GAME_FACTORY_HEADER(Texture)
 
-} // namespace Game
+} // namespace Gate
 

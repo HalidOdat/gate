@@ -1,7 +1,7 @@
 #include "Core/Timestep.hpp"
 
-namespace Game {
+namespace Gate {
   
   Timestep Timestep::timestep = 0.0f;
 
-} // namespace Game
+} // namespace Gate

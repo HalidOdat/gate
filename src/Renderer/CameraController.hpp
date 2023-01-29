@@ -8,7 +8,7 @@
 
 #include "Renderer/Camera.hpp"
 
-namespace Game {
+namespace Gate {
   
   class OrthographicCameraController {
   public:
@@ -49,4 +49,4 @@ namespace Game {
     // f32                mCameraRotationSpeed = 100.0f;
   };
 
-} // namespace Game
+} // namespace Gate

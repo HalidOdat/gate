@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace Game {
+namespace Gate {
 
   namespace Utils {
     
@@ -24,4 +24,4 @@ namespace Game {
   } // namespace Utils
   
 
-} // namespace Game
+} // namespace Gate

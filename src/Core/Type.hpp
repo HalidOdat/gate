@@ -9,7 +9,7 @@
 #include <memory>
 #include <optional>
 
-namespace Game {
+namespace Gate {
 
   using u8  = std::uint8_t;
   using u16 = std::uint16_t;
@@ -116,4 +116,4 @@ namespace Game {
     usize _size;
   };
 
-} // namespace Game
+} // namespace Gate

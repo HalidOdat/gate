@@ -8,7 +8,7 @@
 #include "Resource/Texture.hpp"
 #include "Resource/Factory.hpp"
 
-namespace Game {
+namespace Gate {
 
   static const u8 defaultTextureData[] = {
     0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
@@ -505,4 +505,4 @@ namespace Game {
     return mData.height;
   }
 
-} // namespace Game
+} // namespace Gate

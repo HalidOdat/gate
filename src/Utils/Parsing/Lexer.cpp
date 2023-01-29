@@ -1,6 +1,6 @@
 #include "Utils/Parsing/Lexer.hpp"
 
-namespace Game::Utils {
+namespace Gate::Utils {
 
   Lexer::Lexer(const StringView& source)
     : mSource{source}
@@ -235,4 +235,4 @@ namespace Game::Utils {
     }
   }
 
-} // namespace Game::Utils
+} // namespace Gate::Utils

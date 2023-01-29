@@ -10,7 +10,7 @@
 
 #include "Resource/Manager.hpp"
 
-namespace Game {
+namespace Gate {
 
   class Application;
 
@@ -151,4 +151,4 @@ namespace Game {
     friend class Application;
   };
 
-} // namespace Game
+} // namespace Gate

@@ -1,6 +1,6 @@
 #include "Editor/Component.hpp"
 
-namespace Game {
+namespace Gate {
 
   void Component::render(Renderer& renderer) {
     renderer.drawQuad({100, 100}, {100, 100}, Color::RED);

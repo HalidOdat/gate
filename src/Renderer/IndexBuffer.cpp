@@ -5,7 +5,7 @@
 
 #include "Resource/Factory.hpp"
 
-namespace Game {
+namespace Gate {
 
   GAME_FACTORY_IMPLEMENTATION(IndexBuffer, factory)
 
@@ -29,4 +29,4 @@ namespace Game {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   }
 
-} // namespace Game
+} // namespace Gate

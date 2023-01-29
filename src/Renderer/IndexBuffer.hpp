@@ -2,7 +2,7 @@
 
 #include "Resource/Resource.hpp"
 
-namespace Game {
+namespace Gate {
 
   // TODO: Support indices of different types, like unsigned short
   class IndexBuffer {
@@ -36,6 +36,6 @@ namespace Game {
 
   GAME_FACTORY_HEADER(IndexBuffer)
 
-} // namespace Game
+} // namespace Gate
 
 

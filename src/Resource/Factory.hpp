@@ -4,8 +4,9 @@
 #include <vector>
 #include <type_traits>
 
-namespace Game {
+namespace Gate {
 
+  // TODO: Refactor this
   template<typename T>
   struct FactoryCallback {
     inline static void postDecrement(const Resource<T>&) {}

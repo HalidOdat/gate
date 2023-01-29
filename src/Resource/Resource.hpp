@@ -2,7 +2,7 @@
 
 #include "Core/Base.hpp"
 
-namespace Game {
+namespace Gate {
 
   template<typename T>
   class Resource {
@@ -116,4 +116,4 @@ namespace Game {
   template<> Resource<T>::Data& Resource<T>::getRaw() const;    \
   template<> void Resource<T>::decrementReferenceCount() const;
 
-} // namespace Game
+} // namespace Gate

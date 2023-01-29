@@ -2,7 +2,7 @@
 
 #include "Core/Base.hpp"
 
-namespace Game {
+namespace Gate {
 
   class Event {
   public:
@@ -47,4 +47,4 @@ namespace Game {
     mutable bool handled = false;
   };
 
-} // namespace Game
+} // namespace Gate

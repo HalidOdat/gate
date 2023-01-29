@@ -2,7 +2,7 @@
 
 #include "Core/Base.hpp"
 
-namespace Game::Utils {
+namespace Gate::Utils {
 
   u8* alignUp(u8* stack, isize align);
   u8* alignDown(u8* stack, isize align);

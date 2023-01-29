@@ -2,7 +2,7 @@
 
 #include "Events/Event.hpp"
 
-namespace Game {
+namespace Gate {
   
   const char* Event::getName() const {
     switch (this->type) {
@@ -20,4 +20,4 @@ namespace Game {
     GAME_UNREACHABLE("Unknown event type");
   }
 
-} // namespace Game
+} // namespace Gate

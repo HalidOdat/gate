@@ -11,7 +11,7 @@
 
 #include "Editor/EditorLayer.hpp"
 
-namespace Game {
+namespace Gate {
 
   EditorLayer::EditorLayer()
     : mEditorCameraController(Application::getWindow().getAspectRatio())
@@ -125,4 +125,4 @@ namespace Game {
     return false;
   }
 
-} // namespace Game
+} // namespace Gate

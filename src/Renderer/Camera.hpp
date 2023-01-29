@@ -2,7 +2,7 @@
 
 #include "Core/Math.hpp"
 
-namespace Game {
+namespace Gate {
 
   // TODO: Camera should only contain projection and view matrix
 
@@ -47,4 +47,4 @@ namespace Game {
     f32  mRotation = 0.0f; // rotation on the z-axis
   };
 
-} // namespace Game
+} // namespace Gate

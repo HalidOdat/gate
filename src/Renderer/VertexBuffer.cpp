@@ -4,7 +4,7 @@
 #include "Resource/Factory.hpp"
 #include "Renderer/VertexBuffer.hpp"
 
-namespace Game {
+namespace Gate {
 
   namespace {
     static GLenum bufferStorageAndAccessTypeToOpenGL(Buffer::StorageType storage, Buffer::AccessType access) {
@@ -149,4 +149,4 @@ namespace Game {
     glBufferSubData(GL_ARRAY_BUFFER, 0, slice.sizeInBytes(), slice.data());
   }
 
-} // namespace Game
+} // namespace Gate
