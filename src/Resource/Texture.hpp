@@ -192,39 +192,5 @@ namespace Game {
 
   GAME_FACTORY_HEADER(Texture2D)
 
-  class CubeMap {
-  public:
-    using Handle = Resource<CubeMap>;
-    using FilePaths = Array<String, 6>;
-
-  public:
-    static CubeMap::Handle load(FilePaths paths);
-    DISALLOW_MOVE_AND_COPY(CubeMap);
-    ~CubeMap();
-
-    void bind() const;
-
-    u32 getId() const;
-    bool reload();
-
-    inline const FilePaths& getFilePath() const { return filePaths; }
-
-  private:
-    CubeMap(u32 id, FilePaths filePaths)
-      : id{id}
-      , filePaths{std::move(filePaths)}
-    {}
-
-  private:
-    u32 id;
-    FilePaths filePaths;
-
-  private:
-    template<typename T>
-    friend class ResourceFactory;
-  };
-
-  GAME_FACTORY_HEADER(CubeMap)
-
 } // namespace Game
 
