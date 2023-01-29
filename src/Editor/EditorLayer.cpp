@@ -15,7 +15,6 @@ namespace Game {
 
   EditorLayer::EditorLayer()
     : mEditorCameraController(Application::getWindow().getAspectRatio())
-    , mCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio())
   {}
 
   void EditorLayer::onAttach() {
@@ -30,9 +29,6 @@ namespace Game {
   }
 
   void EditorLayer::onUpdate(Timestep ts) {
-    if (!Input::isKeyPressed(Key::LeftControl) && !Input::isKeyPressed(Key::RightControl)) {
-      mCameraController.onUpdate(ts);
-    }
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     Application::getRenderer().clearScreen();
@@ -62,12 +58,6 @@ namespace Game {
   }
 
   void EditorLayer::onEvent(const Event& event) {
-    if (mClicked) {
-      mCameraController.onEvent(event);
-    } else {
-      mCameraController.resetLastPosition();
-    }
-
     event.dispatch(&EditorLayer::onWindowResizeEvent, this);
     event.dispatch(&EditorLayer::onKeyPressedEvent, this);
     event.dispatch(&EditorLayer::onMouseScrollEvent, this);

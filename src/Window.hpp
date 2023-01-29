@@ -5,7 +5,6 @@
 #include "Core/Type.hpp"
 #include "Events/Event.hpp"
 
-
 // Forward declare
 struct GLFWwindow;
 

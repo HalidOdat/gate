@@ -47,12 +47,4 @@ namespace Game {
     f32  mRotation = 0.0f; // rotation on the z-axis
   };
 
-  class PerspectiveCamera : public Camera {
-  public:
-    PerspectiveCamera(const Vec3& position, const Vec3& target, const Vec3& up, f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
-
-    void setProjection(f32 fov, f32 aspect, f32 zNear = 0.1f, f32 zFar = 100.0f);
-    void lookAt(const Vec3& position, const Vec3& target, const Vec3& up = Vec3{0.0f, 0.0f, 1.0f});
-  };
-
 } // namespace Game

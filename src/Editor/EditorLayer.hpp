@@ -33,7 +33,6 @@ namespace Game {
 
   private:
     OrthographicCameraController mEditorCameraController;
-    PerspectiveCameraController mCameraController;
 
     bool mShow = true;
 
