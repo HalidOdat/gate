@@ -138,13 +138,13 @@ namespace Game {
       Attachment& attachment = mAttachmentsSpecification[i];
 
       // TODO: implement other attachment types
-      GAME_ASSERT(attachment.type == Attachment::Type::Texture2D);
+      GAME_ASSERT(attachment.type == Attachment::Type::Texture);
 
       // TODO: implement multisampled attachment types
       GAME_ASSERT(!attachment.isMultisample);
 
       // create color attachment texture
-      auto texture = Texture2D::buffer(width, height)
+      auto texture = Texture::buffer(width, height)
         .format(attachment.format)
         .filtering(Texture::FilteringMode::Linear)
         .mipmap(Texture::MipmapMode::Linear)
@@ -170,7 +170,7 @@ namespace Game {
       // bind depth and stencil attachment
       glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilAttachment);
     } else {
-      mDepthStencilTexture = Texture2D::buffer(width, height)
+      mDepthStencilTexture = Texture::buffer(width, height)
         .format(mDepthStencilAttachmentSpecification.format)
         .filtering(Texture::FilteringMode::Linear)
         .mipmap(Texture::MipmapMode::None)

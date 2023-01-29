@@ -106,7 +106,7 @@ namespace Game {
     void end();
 
     void label(const StringView& text, const Vec3& foreground = {1.0f, 1.0f, 1.0f}, const Vec4& background = {1.0f, 1.0f, 1.0f, 0.0f});
-    void image(const Texture2D::Handle& texture, u32 width, u32 height);
+    void image(const Texture::Handle& texture, u32 width, u32 height);
     bool button(const StringView& text, u64 id = 0);
     bool slider(f32& value, const f32 min, const f32 max);
     bool slider(Vec3& value, const Vec3& mins, const Vec3& maxs);

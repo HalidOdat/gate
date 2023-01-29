@@ -26,7 +26,7 @@ namespace Game {
 
     void clearScreen(const Vec4& color = Color::WHITE);
 
-    void drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color = Color::WHITE);
+    void drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE);
     void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
     void drawChar(char c, const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
     void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE);
@@ -64,7 +64,7 @@ namespace Game {
     Mat4 mProjectionViewMatrix;
 
     // Cached default white texture
-    Texture2D::Handle mWhiteTexture;
+    Texture::Handle mWhiteTexture;
 
     // Quad batching
     VertexArray::Handle  mQuadVertexArray;
@@ -72,14 +72,14 @@ namespace Game {
     IndexBuffer::Handle  mQuadIndexBuffer;
     Shader::Handle       mQuadShader;
 
-    std::vector<Texture2D::Handle> mQuadTextures;
+    std::vector<Texture::Handle> mQuadTextures;
 
     QuadVertex* mQuadBasePtr = nullptr;
     QuadVertex* mQuadCurrentPtr = nullptr;
     u32 mQuadCount = 0;
 
     // Font rendering
-    Texture2D::Handle mFontTexture;
+    Texture::Handle mFontTexture;
     u32 mFontTextureWidth;
     u32 mFontTextureHeight;
     u32 mFontCharacterWidth;

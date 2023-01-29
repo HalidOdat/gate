@@ -43,7 +43,7 @@ namespace Game {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
-  void Renderer3D::PostProcessing::setTexture(Texture2D::Handle& dest) {
+  void Renderer3D::PostProcessing::setTexture(Texture::Handle& dest) {
     if (dest->getSpecification().samples == 0) {
       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dest->getId(), 0);
     } else {
@@ -95,16 +95,16 @@ namespace Game {
       #endif
       .clearOnBind(true)
       .attach(
-        FrameBuffer::Attachment::Type::Texture2D,
+        FrameBuffer::Attachment::Type::Texture,
         FrameBuffer::Attachment::Format::Rgba16F
       )
       #if GAME_EDITOR
         .attach(
-          FrameBuffer::Attachment::Type::Texture2D,
+          FrameBuffer::Attachment::Type::Texture,
           FrameBuffer::Attachment::Format::R32UI
         )
       #endif
-      .depthStencilType(FrameBuffer::Attachment::Type::Texture2D)
+      .depthStencilType(FrameBuffer::Attachment::Type::Texture)
       .build();
 
     static const float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
@@ -201,9 +201,9 @@ namespace Game {
     i32 samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     mPipeline.shader->setIntArray("uTextures", samples, 16);
 
-    mEnvironment.defaultDiffuseMap  = Texture2D::color(0xFF'FF'FF'FF).build();
-    mEnvironment.defaultSpecularMap = Texture2D::color(0x00'00'00'FF).build();
-    mEnvironment.defaultEmissionMap = Texture2D::color(128, 128, 128).build();
+    mEnvironment.defaultDiffuseMap  = Texture::color(0xFF'FF'FF'FF).build();
+    mEnvironment.defaultSpecularMap = Texture::color(0x00'00'00'FF).build();
+    mEnvironment.defaultEmissionMap = Texture::color(128, 128, 128).build();
 
     #if 0
     // Bloom
@@ -222,7 +222,7 @@ namespace Game {
         width  = mPipeline.mipmaps[i - 1]->getWidth() / 2;
         height = mPipeline.mipmaps[i - 1]->getHeight() / 2;
       }
-      mPipeline.mipmaps[i] = Texture2D::buffer(width, height)
+      mPipeline.mipmaps[i] = Texture::buffer(width, height)
         .format(Texture::Format::R11FG11FB10F)
         .mipmap(Texture::MipmapMode::None)
         .gammaCorrected(false)

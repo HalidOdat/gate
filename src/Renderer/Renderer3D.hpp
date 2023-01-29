@@ -51,7 +51,7 @@ namespace Game {
 
       void bind();
       void unbind();
-      void setTexture(Texture2D::Handle& dest);
+      void setTexture(Texture::Handle& dest);
       void clear();
 
     private:
@@ -103,7 +103,7 @@ namespace Game {
       Shader::Handle   skyboxShader;
 
       PostProcessing bloomFbo;
-      std::array<Texture2D::Handle, 6> mipmaps;
+      std::array<Texture::Handle, 6> mipmaps;
       Shader::Handle bloomPreFilterShader;
       Shader::Handle bloomDownsampleShader;
       Shader::Handle bloomUpsampleShader;
@@ -133,9 +133,9 @@ namespace Game {
     };
 
     struct Environment {
-      Texture2D::Handle defaultDiffuseMap;
-      Texture2D::Handle defaultSpecularMap;
-      Texture2D::Handle defaultEmissionMap;
+      Texture::Handle defaultDiffuseMap;
+      Texture::Handle defaultSpecularMap;
+      Texture::Handle defaultEmissionMap;
     };
   private:
     static constexpr const auto INSTANCE_COUNT       = 1024;

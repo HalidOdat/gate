@@ -10,10 +10,9 @@ namespace Game {
       .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
       .clearOnBind(true)
       .attach(
-        FrameBuffer::Attachment::Type::Texture2D,
+        FrameBuffer::Attachment::Type::Texture,
         FrameBuffer::Attachment::Format::Rgb8
       )
-      .depthStencilType(FrameBuffer::Attachment::Type::Texture2D)
       .build();
   }
 
@@ -52,7 +51,7 @@ namespace Game {
 
   void Board::invalidate(u32 width, u32 height) {
     gridFrameBuffer->invalidate(width, height);
-    gridTexture = Texture2D::Handle();
+    gridTexture = Texture::Handle();
   }
 
   void Board::renderGrid(Renderer& renderer) {

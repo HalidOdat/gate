@@ -133,21 +133,21 @@ namespace Game {
   }
 
   // TODO: key should also have specification
-  static std::unordered_map<String, Texture2D::Handle> cachedImageTexture2D; // Key: Path,  Value: Texture
-  static std::unordered_map<u32,    Texture2D::Handle> cachedColorTexture2D; // Key: Color, Value: Texture
+  static std::unordered_map<String, Texture::Handle> cachedImageTexture; // Key: Path,  Value: Texture
+  static std::unordered_map<u32,    Texture::Handle> cachedColorTexture; // Key: Color, Value: Texture
 
-  GAME_FACTORY_IMPLEMENTATION(Texture2D, texture2DFactory)
+  GAME_FACTORY_IMPLEMENTATION(Texture, texture2DFactory)
 
   template<>
-  struct FactoryCallback<Texture2D> {
-    inline static void postDecrement(const Resource<Texture2D>& resource) {
+  struct FactoryCallback<Texture> {
+    inline static void postDecrement(const Resource<Texture>& resource) {
       if (resource.getReferenceCount() == 1) {
         switch (resource->getType()) {
           case Texture::Type::Image:
-            cachedImageTexture2D.erase(*resource->getFilePath());
+            cachedImageTexture.erase(*resource->getFilePath());
             break;
           case Texture::Type::Color:
-            cachedColorTexture2D.erase(resource->getColor());
+            cachedColorTexture.erase(resource->getColor());
             break;
           case Texture::Type::Buffer:
             break;
@@ -156,7 +156,7 @@ namespace Game {
         }  
       }
     }
-    inline static void created(Texture2D& texture, u32 id) {
+    inline static void created(Texture& texture, u32 id) {
       switch (texture.getType()) {
         case Texture::Type::Image:
           Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
@@ -165,67 +165,67 @@ namespace Game {
           Logger::trace("Texture #%u created color: #%08X", id, texture.getColor());
           break;
         case Texture::Type::Buffer:
-          Logger::trace("Texture2D #%u created buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
+          Logger::trace("Texture #%u created buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
           break;
         default:
           GAME_UNREACHABLE("unknown texture type!");
       }
     }
-    inline static void destroyed(Texture2D& texture, u32 id) {
+    inline static void destroyed(Texture& texture, u32 id) {
       switch (texture.getType()) {
         case Texture::Type::Image:
-          Logger::trace("Texture2D #%u destroyed: %s", id, texture.getFilePath()->c_str());
+          Logger::trace("Texture #%u destroyed: %s", id, texture.getFilePath()->c_str());
           break;
         case Texture::Type::Color:
-          Logger::trace("Texture2D #%u destroyed color: #%08X", id, texture.getColor());
+          Logger::trace("Texture #%u destroyed color: #%08X", id, texture.getColor());
           break;
         case Texture::Type::Buffer:
-          Logger::trace("Texture2D #%u destroyed buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
+          Logger::trace("Texture #%u destroyed buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
           break;
         default:
           GAME_UNREACHABLE("unknown texture type!");
       }
     }
     inline static void clear() {
-      cachedImageTexture2D.clear();
-      cachedColorTexture2D.clear();
+      cachedImageTexture.clear();
+      cachedColorTexture.clear();
     }
   };
 
-  Texture2D::Builder& Texture2D::Builder::format(Texture::Format internalFormat) {
+  Texture::Builder& Texture::Builder::format(Texture::Format internalFormat) {
     mSpecification.internalFormat = internalFormat;
     return *this;
   }
-  Texture2D::Builder& Texture2D::Builder::wrapping(Texture::WrappingMode mode) {
+  Texture::Builder& Texture::Builder::wrapping(Texture::WrappingMode mode) {
     mSpecification.wrapping = mode;
     return *this; 
   }
-  Texture2D::Builder& Texture2D::Builder::filtering(Texture::Filtering filtering) {
+  Texture::Builder& Texture::Builder::filtering(Texture::Filtering filtering) {
     mSpecification.filtering = filtering;
     return *this;
   }
-  Texture2D::Builder& Texture2D::Builder::mipmap(Texture::MipmapMode mode) {
+  Texture::Builder& Texture::Builder::mipmap(Texture::MipmapMode mode) {
     mSpecification.mipmap = mode;
     return *this;
   }
-  Texture2D::Builder& Texture2D::Builder::verticalFlipOnLoad(bool yes) {
+  Texture::Builder& Texture::Builder::verticalFlipOnLoad(bool yes) {
     mSpecification.verticalFlip = yes;
     return *this;
   }
-  Texture2D::Builder& Texture2D::Builder::gammaCorrected(bool yes) {
+  Texture::Builder& Texture::Builder::gammaCorrected(bool yes) {
     mSpecification.gammaCorrected = yes;
     return *this;
   }
-  Texture2D::Builder& Texture2D::Builder::samples(u32 inSamples) {
+  Texture::Builder& Texture::Builder::samples(u32 inSamples) {
     mSpecification.samples = inSamples;
     return *this; 
   }
-  Texture2D::Handle Texture2D::Builder::build() {
+  Texture::Handle Texture::Builder::build() {
     String filepath = String(mFile);
     switch (mType) {
       case Texture::Type::Color:
-        if (cachedColorTexture2D.contains(mColor)) {
-          return cachedColorTexture2D.at(mColor);
+        if (cachedColorTexture.contains(mColor)) {
+          return cachedColorTexture.at(mColor);
         }
         break;
       case Texture::Type::Buffer:
@@ -235,8 +235,8 @@ namespace Game {
         }
         break;
       case Texture::Type::Image:
-        if (cachedImageTexture2D.contains(filepath)) {
-          return cachedImageTexture2D.at(filepath);
+        if (cachedImageTexture.contains(filepath)) {
+          return cachedImageTexture.at(filepath);
         }
         break;
       default:
@@ -339,12 +339,12 @@ namespace Game {
     auto handle = texture2DFactory.emplace(std::move(data));
     switch (mType) {
       case Texture::Type::Color:
-        cachedColorTexture2D.emplace(mColor, handle);
+        cachedColorTexture.emplace(mColor, handle);
         break;
       case Texture::Type::Buffer:
         break;
       case Texture::Type::Image:
-        cachedImageTexture2D.emplace(std::move(filepath), handle);
+        cachedImageTexture.emplace(std::move(filepath), handle);
         break;
       default:
         GAME_UNREACHABLE("unknown texture type!");
@@ -352,17 +352,17 @@ namespace Game {
     return handle;
   }
 
-  void Texture2D::destroyAllTextures() {
-    cachedImageTexture2D.clear();
-    cachedColorTexture2D.clear();
+  void Texture::destroyAllTextures() {
+    cachedImageTexture.clear();
+    cachedColorTexture.clear();
     texture2DFactory.clear();
   }
 
-  void Texture2D::reloadAll() {
+  void Texture::reloadAll() {
     GAME_TODO("not implemented yet!");
   }
 
-  Texture2D::Data Texture2D::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Specification specification) {
+  Texture::Data Texture::fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels, Specification specification) {
     GAME_ASSERT_WITH_MESSAGE(channels == 4 || channels == 3, "Unknown channel");
     GLenum dataFormat = 0;
     if (channels == 4) {
@@ -404,7 +404,7 @@ namespace Game {
     return Data{texture, width, height, specification, Texture::Type::Color};
   }
 
-  Texture2D::Builder Texture2D::color(u32 color) {
+  Texture::Builder Texture::color(u32 color) {
     Builder builder;
     builder.mType = Texture::Type::Color;
     builder.mColor = color;
@@ -414,16 +414,16 @@ namespace Game {
     return builder;
   }
 
-  Texture2D::Builder Texture2D::color(u8 r, u8 g, u8 b, u8 a) {
+  Texture::Builder Texture::color(u8 r, u8 g, u8 b, u8 a) {
     u32 color =  r; color <<= 8;
         color |= g; color <<= 8;
         color |= b; color <<= 8;
         color |= a;
 
-    return Texture2D::color(color);
+    return Texture::color(color);
   }
 
-  Texture2D::Builder Texture2D::buffer(u32 width, u32 height) {
+  Texture::Builder Texture::buffer(u32 width, u32 height) {
     Builder builder;
     builder.mType = Texture::Type::Buffer;
     builder.mWidth = width;
@@ -431,7 +431,7 @@ namespace Game {
     return builder;
   }
 
-  Texture2D::Builder Texture2D::buffer(const void* inData, u32 width, u32 height, Texture::DataFormat dataFormat, Texture::DataType dataType) {
+  Texture::Builder Texture::buffer(const void* inData, u32 width, u32 height, Texture::DataFormat dataFormat, Texture::DataType dataType) {
     Builder builder;
     builder.mType = Texture::Type::Buffer;
     builder.mData = inData;
@@ -442,7 +442,7 @@ namespace Game {
     return builder;
   }
 
-  Texture2D::Builder Texture2D::load(const String& path, bool verticalFlipOnLoad) {
+  Texture::Builder Texture::load(const String& path, bool verticalFlipOnLoad) {
     Builder builder;
     builder.mType = Texture::Type::Image;
     builder.mFile = path;
@@ -450,14 +450,14 @@ namespace Game {
     return builder;
   }
 
-  Texture2D::Handle Texture2D::generateMissingDataPlaceholder() {
-    return Texture2D::buffer(defaultTextureData, 2, 2, Texture::DataFormat::Rgba, Texture::DataType::UnsignedByte)
+  Texture::Handle Texture::generateMissingDataPlaceholder() {
+    return Texture::buffer(defaultTextureData, 2, 2, Texture::DataFormat::Rgba, Texture::DataType::UnsignedByte)
       .filtering({Texture::FilteringMode::Nearest, Texture::FilteringMode::Nearest})
       .mipmap(Texture::MipmapMode::None)
       .build();
   }
 
-  bool Texture2D::reload() {
+  bool Texture::reload() {
     if (mData.type != Texture::Type::Image) {
       return true;
     }
@@ -472,7 +472,7 @@ namespace Game {
       return false;
     }
 
-    auto data = Texture2D::fromBytes(bytes, width, height, channels, mData.specification);
+    auto data = Texture::fromBytes(bytes, width, height, channels, mData.specification);
     stbi_image_free(bytes);
 
     Logger::trace("Reloaded texture: %s", mData.filePath.value().c_str());
@@ -482,26 +482,26 @@ namespace Game {
     return true;
   }
 
-  Texture2D::~Texture2D() {
+  Texture::~Texture() {
     glDeleteTextures(1, &mData.id);
   }
 
-  void Texture2D::bind(const usize slot) const {
+  void Texture::bind(const usize slot) const {
     // TODO: debug check if max texture slot reached
     u32 textureId = mData.id;
     glActiveTexture(GL_TEXTURE0 + (GLenum)slot);
     glBindTexture(GL_TEXTURE_2D, textureId);
   }
 
-  u32 Texture2D::getId() const {
+  u32 Texture::getId() const {
     return mData.id;
   }
 
-  u32 Texture2D::getWidth() const {
+  u32 Texture::getWidth() const {
     return mData.width;
   }
 
-  u32 Texture2D::getHeight() const {
+  u32 Texture::getHeight() const {
     return mData.height;
   }
 

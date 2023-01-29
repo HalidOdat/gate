@@ -15,7 +15,7 @@ namespace Game {
     const static constexpr u32 GRID_SIZE = 20;
 
     FrameBuffer::Handle gridFrameBuffer;
-    Texture2D::Handle gridTexture;
+    Texture::Handle gridTexture;
 
     std::vector<Component*> components;
     std::vector<std::vector<u32>> connections;

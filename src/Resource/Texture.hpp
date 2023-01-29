@@ -7,6 +7,8 @@ namespace Game {
 
   class Texture {
   public:
+    using Handle = Resource<Texture>;
+
     enum class WrappingMode : u8 {
       Repeat,
       MirroredRepeat,
@@ -82,14 +84,6 @@ namespace Game {
       Buffer,
     };
 
-  private:
-    Texture() = delete;
-  };
-
-  class Texture2D {
-  public:
-    using Handle = Resource<Texture2D>;
-
     struct Specification {
       Specification() {}
 
@@ -112,7 +106,7 @@ namespace Game {
       Builder& verticalFlipOnLoad(bool yes = true);
       Builder& gammaCorrected(bool yes = true);
       Builder& samples(u32 inSamples);
-      Texture2D::Handle build();
+      Texture::Handle build();
 
     private:
       Builder() = default;
@@ -133,19 +127,19 @@ namespace Game {
       Texture::DataType   mDataType = Texture::DataType::UnsignedByte;
 
     private:
-      friend class Texture2D;
+      friend class Texture;
     };
 
   public:
-    [[nodiscard]] static Texture2D::Builder builder();
-    [[nodiscard]] static Texture2D::Builder load(const String& filepath, bool verticalFlipOnLoad = true);
-    [[nodiscard]] static Texture2D::Builder buffer(u32 width, u32 height);
-    [[nodiscard]] static Texture2D::Builder buffer(const void* inData, u32 width, u32 height, Texture::DataFormat dataFormat, Texture::DataType dataType);
-    [[nodiscard]] static Texture2D::Builder color(u32 color);
-    [[nodiscard]] static Texture2D::Builder color(u8 r, u8 g, u8 b, u8 a = 0xFF);
-    [[nodiscard]] static Texture2D::Handle generateMissingDataPlaceholder();
-    DISALLOW_MOVE_AND_COPY(Texture2D);
-    ~Texture2D();
+    [[nodiscard]] static Texture::Builder builder();
+    [[nodiscard]] static Texture::Builder load(const String& filepath, bool verticalFlipOnLoad = true);
+    [[nodiscard]] static Texture::Builder buffer(u32 width, u32 height);
+    [[nodiscard]] static Texture::Builder buffer(const void* inData, u32 width, u32 height, Texture::DataFormat dataFormat, Texture::DataType dataType);
+    [[nodiscard]] static Texture::Builder color(u32 color);
+    [[nodiscard]] static Texture::Builder color(u8 r, u8 g, u8 b, u8 a = 0xFF);
+    [[nodiscard]] static Texture::Handle generateMissingDataPlaceholder();
+    DISALLOW_MOVE_AND_COPY(Texture);
+    ~Texture();
 
     void bind(const usize slot = 0) const;
 
@@ -174,7 +168,7 @@ namespace Game {
       u32 color{};
     };
 
-    Texture2D(Data data)
+    Texture(Data data)
       : mData{std::move(data)}
     {}
 
@@ -190,7 +184,7 @@ namespace Game {
     friend class ResourceManager;
   };
 
-  GAME_FACTORY_HEADER(Texture2D)
+  GAME_FACTORY_HEADER(Texture)
 
 } // namespace Game
 

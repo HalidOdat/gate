@@ -158,7 +158,7 @@ namespace Game {
     );
   }
 
-  void Ui::image(const Texture2D::Handle& texture, u32 width, u32 height) {
+  void Ui::image(const Texture::Handle& texture, u32 width, u32 height) {
     (void)texture;
     (void)width;
     (void)height;

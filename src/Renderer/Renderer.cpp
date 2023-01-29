@@ -12,7 +12,7 @@
 namespace Game {
 
   Renderer::Renderer() {
-    mWhiteTexture = Texture2D::color(0xFF, 0xFF, 0xFF).build();
+    mWhiteTexture = Texture::color(0xFF, 0xFF, 0xFF).build();
 
     mQuadVertexArray = VertexArray::create();
     mQuadVertexBuffer = VertexBuffer::builder()
@@ -60,7 +60,7 @@ namespace Game {
     mQuadShader->bind();
     mQuadShader->setIntArray("uTextures", samples, MAX_TEXTURES);
 
-    mFontTexture = Texture2D::load("assets/textures/PixelFont_7x9_112x54.png")
+    mFontTexture = Texture::load("assets/textures/PixelFont_7x9_112x54.png")
       .filtering(Texture::FilteringMode::Nearest)
       .mipmap(Texture::MipmapMode::None)
       .build();
@@ -159,7 +159,7 @@ namespace Game {
     Renderer::drawQuad(position, size, mWhiteTexture, color);
   }
 
-  void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Texture2D::Handle& texture, const Vec4& color) {
+  void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
     Mat4 transform = Mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(position, 0.0f));  
 

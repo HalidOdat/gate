@@ -12,9 +12,9 @@ namespace Game {
 
   void ResourceManager::shutdown() {
     // sInstance.getFactory<Mesh>().clear();
-    // sInstance.getFactory<Texture2D>().clear();
+    // sInstance.getFactory<Texture>().clear();
     // sInstance.getFactory<Shader>().clear();
-    Texture2D::destroyAllTextures();
+    Texture::destroyAllTextures();
     Mesh::destroyAllMeshes();
     Logger::info("ResourceManager: Shutdown!");
   }

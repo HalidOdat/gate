@@ -21,7 +21,7 @@ namespace Game {
 
     struct Attachment {
       enum class Type : u8 {
-        Texture2D,
+        Texture,
         RenderBuffer,
       };
 
@@ -82,11 +82,11 @@ namespace Game {
     void clear();
     void clear(FrameBuffer::Clear clear);
 
-    inline const Texture2D::Handle& getColorAttachment(u32 index = 0) const {
+    inline const Texture::Handle& getColorAttachment(u32 index = 0) const {
       return mColorAttachments[index];
     }
 
-    inline const Texture2D::Handle& getDepthAttachment() const {
+    inline const Texture::Handle& getDepthAttachment() const {
       return mDepthStencilTexture;
     }
 
@@ -106,8 +106,8 @@ namespace Game {
     std::vector<Attachment> mAttachmentsSpecification;
     Attachment mDepthStencilAttachmentSpecification;
 
-    std::vector<Texture2D::Handle> mColorAttachments;
-    Texture2D::Handle mDepthStencilTexture;
+    std::vector<Texture::Handle> mColorAttachments;
+    Texture::Handle mDepthStencilTexture;
     u32 mDepthStencilAttachment = 0;
 
     u32 mWidth;
