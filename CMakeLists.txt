@@ -81,6 +81,7 @@ add_executable(${This}
 
   src/Editor/Point.hpp
   src/Editor/Wire.hpp
+  src/Editor/Wire.cpp
   src/Editor/Component.hpp
   src/Editor/Component.cpp
   src/Editor/EditorLayer.hpp

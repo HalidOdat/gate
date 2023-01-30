@@ -57,19 +57,7 @@ namespace Gate {
 
   void EditorLayer::renderWires(Renderer& renderer) {
     for (auto wire : mWires) {
-      Vec2 size = wire.to.toVec2();
-      if (wire.from.x == wire.to.x) {
-        size.x  = 5;
-        size.y += mWireWidth;
-      } else {
-        size.x += mWireWidth;
-        size.y = 5;
-      }
-      renderer.drawQuad(
-        wire.from.toVec2() - Vec2(mWireWidth / 2.0f),
-        size,
-        Color::BLACK
-      );
+      wire.render(renderer, mWireWidth);
     }
   }
 
@@ -145,6 +133,12 @@ namespace Gate {
       }
     }
     
+    if (event.getKey() == Key::A) {
+      for (auto& wire : mWires) {
+        wire.active = !wire.active;
+      }
+    }
+
     #ifndef GATE_PLATFORM_WEB
       if (event.getKey() == Key::Q) {
         Application::get().quit();

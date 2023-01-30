@@ -1,23 +1,32 @@
 # Logic Gate Simulator in C++
 
-# TODO
-
-- [x] Only quit with `q` on native platform.
-- [x] Better grid cell selection
-- [ ] Define points based on grid cell size
-- [x] Align drawn wires better
-- [ ] Draw wire end points
-- [ ] Add active state to wire
-- [ ] Draw line on click from one to another
-- [ ] Draw inputs and outputs on a component
-- [ ] Add a toggleable switch componenet
-- [ ] Connect toggleable component with wire
-- [ ] Serializable board.
-- [x] Merge Board into EditorLayer
-- [x] Rename Line to Wire
-
 This project uses [`cmake`](https://cmake.org/download/) for project building
 so it must be installed as well a `c++17` (or greater) compliant `c++` compiler.
+
+# TODO
+
+- [ ] Board
+    - [x] Better grid cell selection
+    - [ ] Define components/wires based on grid cell size
+    - [ ] Draw line on click from one to another
+
+- [ ] Wire
+    - [x] Rename Line to Wire
+    - [x] Align drawn wires better
+    - [ ] Draw wire end points
+    - [x] Add active state to wire
+
+- [ ] Component
+    - [ ] Draw inputs and outputs on a component
+    - [ ] Add a toggleable switch componenet
+    - [ ] Connect toggleable component with wire
+
+- [ ] Misc
+    - [x] Merge Board into EditorLayer
+    - [x] Only quit with `q` on native platform.
+    - [ ] Serializable board.
+    - [ ] Define global editor state
+    - [ ] Make renderer global
 
 ## Quick start
 
