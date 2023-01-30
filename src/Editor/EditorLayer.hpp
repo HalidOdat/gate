@@ -29,7 +29,8 @@ namespace Gate {
 
   private:
     void renderAll(Renderer& renderer);
-    void renderComponents(Renderer& renderer);
+    void renderComponentBodys(Renderer& renderer);
+    void renderComponentConnectors(Renderer& renderer);
     void renderWires(Renderer& renderer);
     void renderGrid(Renderer& renderer);
 

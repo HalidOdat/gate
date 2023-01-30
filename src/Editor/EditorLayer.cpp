@@ -27,7 +27,7 @@ namespace Gate {
       )
       .build();
 
-    mComponents.push_back(new Component{"Hello"});
+    mComponents.push_back(new SwitchComponent({2, 2}));
   }
 
   void EditorLayer::onDetach() {
@@ -41,14 +41,23 @@ namespace Gate {
 
   void EditorLayer::renderAll(Renderer& renderer) {
     renderGrid(renderer);
-    renderComponents(renderer);
+    renderComponentBodys(renderer);
     renderWires(renderer);
+    renderComponentConnectors(renderer);
   }
 
-  void EditorLayer::renderComponents(Renderer& renderer) {
+  void EditorLayer::renderComponentBodys(Renderer& renderer) {
     for (auto component : mComponents) {
       if (component) {
-        component->render(renderer);
+        component->renderBody(renderer);
+      }
+    }
+  }
+
+  void EditorLayer::renderComponentConnectors(Renderer& renderer) {
+    for (auto component : mComponents) {
+      if (component) {
+        component->renderConnectors(renderer);
       }
     }
   }

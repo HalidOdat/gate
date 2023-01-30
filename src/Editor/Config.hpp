@@ -12,6 +12,16 @@ namespace Gate {
       Vec4 color    = Color::BLUE;
     };
     
+    struct Component {
+      struct Connector {
+        Vec2 size;
+        Vec4 color;
+      };
+
+      Connector input = { { 6.0f, 6.0f }, Color::GREEN };
+      Connector output = { { 6.0f, 6.0f }, Color::RED };
+    };
+
     struct Wire {
       f32  width{3.0f};
 
@@ -29,6 +39,7 @@ namespace Gate {
     };
 
     Selector selector;
+    Component component;
     Wire wire;
     Grid grid;
 
