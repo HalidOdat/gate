@@ -25,7 +25,7 @@ namespace Gate {
       };
 
       Cell cell;
-      Vec4 color = Color::BLACK;
+      Vec4 color = Color::GRAY;
     };
 
     Selector selector;

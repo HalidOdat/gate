@@ -97,7 +97,11 @@ namespace Gate {
 
     // Wire Draw
     if (mMode == Mode::WireDraw) {
-      Application::getRenderer().drawQuad(mWireStartPosition - Vec2{config.wire.width}/2.0f, mWireSize, config.wire.inactiveColor);
+      Wire{
+        Point(mWireStartPosition / (f32)config.grid.cell.size),
+        Point(mWireEndPosition   / (f32)config.grid.cell.size)
+      }.render(Application::getRenderer());
+      // Application::getRenderer().drawQuad(mWireStartPosition - Vec2{config.wire.width}/2.0f, mWireSize, config.wire.inactiveColor);
     }
 
     // Selector
@@ -125,7 +129,12 @@ namespace Gate {
         case Mode::WireDraw:
           // TODO: Check if wires intersect
           // TODO: assert from is smaller than to
-          mWires.push_back(Wire{Point(mWireStartPosition), Point(mWireEndPosition)});
+          mWires.push_back(
+            Wire{
+              Point(mWireStartPosition / (f32)config.grid.cell.size),
+              Point(mWireEndPosition   / (f32)config.grid.cell.size)
+            }
+          );
           mMode = Mode::Select;
           break;
       }

@@ -4,14 +4,15 @@
 namespace Gate {
   
   void Wire::render(Renderer& renderer) {
-    f32 wireWidth = config.wire.width;
-    Vec2 size = to.toVec2();
+    f32 width = config.wire.width;
+
+    Vec2 size = (to.toVec2() - from.toVec2()) * (f32)config.grid.cell.size;
     if (from.x == to.x) {
-      size.x  = wireWidth;
-      size.y += wireWidth;
+      size.x  = width;
+      size.y += width;
     } else {
-      size.x += wireWidth;
-      size.y = wireWidth;
+      size.x += width;
+      size.y  = width;
     }
 
     Vec4 color = config.wire.inactiveColor;
@@ -20,7 +21,7 @@ namespace Gate {
     }
 
     renderer.drawQuad(
-      from.toVec2() - Vec2(wireWidth / 2.0f),
+      from.toVec2() * (f32)config.grid.cell.size - Vec2(width / 2.0f),
       size,
       color
     );
