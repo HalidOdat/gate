@@ -12,7 +12,7 @@ namespace Gate {
 
     bool active = false;
 
-    void render(Renderer& renderer, f32 wireWidth);
+    void render(Renderer& renderer);
   };
 
 }

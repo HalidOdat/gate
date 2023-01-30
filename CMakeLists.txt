@@ -79,6 +79,8 @@ add_executable(${This}
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp
 
+  src/Editor/Config.hpp
+  src/Editor/Config.cpp
   src/Editor/Point.hpp
   src/Editor/Wire.hpp
   src/Editor/Wire.cpp

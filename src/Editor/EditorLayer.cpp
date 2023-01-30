@@ -16,9 +16,7 @@ namespace Gate {
 
   void EditorLayer::onAttach() {
     Logger::info("EditorLayer::onAttach was called");
-
-    Application::getWindow().setTitle("Hi");
-
+    Application::getWindow().setTitle(config.title);
     mGridFrameBuffer = FrameBuffer::builder()
       .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
       .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
@@ -50,14 +48,14 @@ namespace Gate {
   void EditorLayer::renderComponents(Renderer& renderer) {
     for (auto component : mComponents) {
       if (component) {
-        component->render(renderer, mGridCellSize);
+        component->render(renderer);
       }
     }
   }
 
   void EditorLayer::renderWires(Renderer& renderer) {
     for (auto wire : mWires) {
-      wire.render(renderer, mWireWidth);
+      wire.render(renderer);
     }
   }
 
@@ -68,9 +66,9 @@ namespace Gate {
     if (!mGridTexture) {
       renderer.end();
       mGridFrameBuffer->bind();
-      for (u32 i = 0; i < width; i += mGridCellSize) {
-        for (u32 j = 0; j < height; j += mGridCellSize) {
-          renderer.drawCenteredQuad({i, j}, {2.0f, 2.0f}, Color::BLACK);
+      for (u32 i = 0; i < width; i += config.grid.cell.size) {
+        for (u32 j = 0; j < height; j += config.grid.cell.size) {
+          renderer.drawCenteredQuad({i, j}, {2.0f, 2.0f}, config.grid.color);
         }
       }
       renderer.flush();
@@ -85,7 +83,7 @@ namespace Gate {
   void EditorLayer::onUpdate(Timestep ts) {
     std::stringstream ss;
     ss.precision(2);
-    ss << "Title" << " - " << std::fixed << (1.0f / ts) << "fps / " << ts * 1000.0f << "ms";
+    ss << config.title << " - " << std::fixed << (1.0f / ts) << "fps / " << ts * 1000.0f << "ms";
     std::string fpsString = ss.str();
     Application::getWindow().setTitle(fpsString.c_str());
 
@@ -99,11 +97,11 @@ namespace Gate {
 
     // Wire Draw
     if (mMode == Mode::WireDraw) {
-      Application::getRenderer().drawQuad(mWireStartPosition - Vec2{mWireWidth}/2.0f, mWireSize, Color::BLACK);
+      Application::getRenderer().drawQuad(mWireStartPosition - Vec2{config.wire.width}/2.0f, mWireSize, config.wire.inactiveColor);
     }
 
     // Selector
-    Application::getRenderer().drawCenteredQuad(mSelectorPosition, mSelectorSize, mSelectorColor);
+    Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
 
     // TODO: Move to UI
     switch (mMode) {
@@ -190,9 +188,9 @@ namespace Gate {
 
         Vec2 temp = mWireStartPosition - mWireEndPosition;
         if (temp.x < temp.y) {
-          mWireSize = {mWireEndPosition.x - mWireStartPosition.x, mWireWidth};
+          mWireSize = {mWireEndPosition.x - mWireStartPosition.x, config.wire.width};
         } else {
-          mWireSize = {mWireWidth, mWireEndPosition.y - mWireStartPosition.y};
+          mWireSize = {config.wire.width, mWireEndPosition.y - mWireStartPosition.y};
         }
         break;
     }
@@ -201,10 +199,10 @@ namespace Gate {
   }
 
   Vec2 EditorLayer::gridAlginPosition(Vec2 position) {
-    Vec2 offsetPosition = position + (mGridCellSize / 2.0f);
+    Vec2 offsetPosition = position + (config.grid.cell.size / 2.0f);
     return Vec2{
-      u32(offsetPosition.x) - u32(offsetPosition.x) % mGridCellSize,
-      u32(offsetPosition.y) - u32(offsetPosition.y) % mGridCellSize
+      u32(offsetPosition.x) - u32(offsetPosition.x) % config.grid.cell.size,
+      u32(offsetPosition.y) - u32(offsetPosition.y) % config.grid.cell.size
     };
   }
   Vec2 EditorLayer::getGridAlignedMousePosition() {

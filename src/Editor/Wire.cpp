@@ -1,20 +1,22 @@
 #include "Editor/Wire.hpp"
+#include "Editor/Config.hpp"
 
 namespace Gate {
   
-  void Wire::render(Renderer& renderer, f32 wireWidth) {
+  void Wire::render(Renderer& renderer) {
+    f32 wireWidth = config.wire.width;
     Vec2 size = to.toVec2();
     if (from.x == to.x) {
-      size.x  = 5;
+      size.x  = wireWidth;
       size.y += wireWidth;
     } else {
       size.x += wireWidth;
-      size.y = 5;
+      size.y = wireWidth;
     }
 
-    Vec4 color = Color::BLACK;
+    Vec4 color = config.wire.inactiveColor;
     if (active) {
-      color = Color::RED;
+      color = config.wire.activeColor;
     }
 
     renderer.drawQuad(

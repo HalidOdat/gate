@@ -8,6 +8,7 @@
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/CameraController.hpp"
 
+#include "Editor/Config.hpp"
 #include "Editor/Wire.hpp"
 #include "Editor/Component.hpp"
 
@@ -48,7 +49,7 @@ namespace Gate {
   private:
     // Camera
     OrthographicCameraController mEditorCameraController;
-    
+
     // State
     bool mClicked = false;
     Vec2 mLastMousePosition{0.0f};
@@ -56,17 +57,13 @@ namespace Gate {
 
     // Selector
     Vec2 mSelectorPosition = { 0.0f, 0.0f };
-    Vec2 mSelectorSize     = { 8.0f, 8.0f };
-    Vec4 mSelectorColor    = Color::BLUE;
 
     // Wire drawing
-    f32  mWireWidth{5.0f};
     Vec2 mWireStartPosition{0.0f};
     Vec2 mWireEndPosition{0.0f};
     Vec2 mWireSize{0.0f};
 
-    // Grid drawing
-    u32                 mGridCellSize = 20;
+    // Grid drawing & caching
     FrameBuffer::Handle mGridFrameBuffer;
     Texture::Handle     mGridTexture;
 
