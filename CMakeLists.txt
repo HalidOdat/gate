@@ -79,13 +79,16 @@ add_executable(${This}
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp
 
+  src/Editor/Components/Component.hpp
+  src/Editor/Components/Component.cpp
+  src/Editor/Components/SwitchComponent.hpp
+  src/Editor/Components/SwitchComponent.cpp
+  src/Editor/Components.hpp
   src/Editor/Config.hpp
   src/Editor/Config.cpp
   src/Editor/Point.hpp
   src/Editor/Wire.hpp
   src/Editor/Wire.cpp
-  src/Editor/Component.hpp
-  src/Editor/Component.cpp
   src/Editor/EditorLayer.hpp
   src/Editor/EditorLayer.cpp
 

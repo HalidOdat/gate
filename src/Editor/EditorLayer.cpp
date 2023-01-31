@@ -28,8 +28,9 @@ namespace Gate {
       .build();
 
     auto* component = new SwitchComponent({2, 2});
-    mComponents.push_back(component);
-    mConnections[component->getOutPoint()] = {};
+    component->toggle();
+    push_component(component);
+    // push_component(new JointComponent({2, 8}));
   }
 
   void EditorLayer::onDetach() {
@@ -39,6 +40,62 @@ namespace Gate {
         delete component;
       }
     }
+  }
+
+  bool EditorLayer::push_component(Component* component) {
+    // TODO: check if it can be placed there.
+    // TODO: Check if a free slot is available.
+    u32 componentIndex = (u32)mComponents.size();
+    
+    mComponents.push_back(component);
+    const auto& pins = component->getPins();
+
+    for (u32 i = 0; i < pins.size(); ++i) {
+      const auto& pin = pins[i];
+      Connection::Type type;
+      switch (pin.type) {
+        case Pin::Type::Input:
+          type = Connection::Type::ComponentIn;
+          break;
+        case Pin::Type::Output:
+          type = Connection::Type::ComponentOut;
+          break;
+      }
+      mConnectionsByPoint[pin.position].push_back(mConnections.size());
+      mConnections.push_back(
+        Connection{
+          type,
+          componentIndex,
+          i,
+        }
+      );
+    }
+    return true;
+  }
+  bool EditorLayer::push_wire(Wire wire) {
+    // TODO: check if it can be placed there
+    // TODO: Check if a free slot is available
+    u32 wireIndex = (u32)mWires.size();
+    mWires.push_back(wire);
+
+    mConnectionsByPoint[wire.from].push_back(mConnections.size());
+    mConnections.push_back(
+      Connection{
+        Connection::Type::WireFrom,
+        UINT32_MAX,
+        wireIndex,
+      }
+    );
+    
+    mConnectionsByPoint[wire.to].push_back(mConnections.size());
+    mConnections.push_back(
+      Connection{
+        Connection::Type::WireTo,
+        UINT32_MAX,
+        wireIndex,
+      }
+    );
+    return true;
   }
 
   void EditorLayer::renderAll(Renderer& renderer) {
@@ -125,16 +182,59 @@ namespace Gate {
         Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
         break;
       case Mode::WireDraw:
-        const StringView text = "Press <ESCAPE> to cancel wire drawing";
+        const StringView text = " Press <ESCAPE> to cancel wire drawing";
         const auto size = 16;
         Application::getRenderer().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
         break;
     }
   }
 
+  void EditorLayer::tickConnections(std::vector<u32>& connectionIndexes, bool active) {
+    for (const auto& connectionIndex : connectionIndexes) {
+      auto& connection = mConnections[connectionIndex];
+      switch (connection.type) {
+      case Connection::Type::ComponentIn: {
+        GATE_UNREACHABLE("");
+      } break;
+      case Connection::Type::ComponentOut: {
+        // TODO: Do we need this?
+        // GATE_UNREACHABLE("");
+      } break;
+      case Connection::Type::WireFrom: {
+        auto& wire = mWires[connection.index];
+        wire.active = active;
+        // if (auto it = mConnectionsByPoint.find(wire.from); it != mConnectionsByPoint.end()) {
+        //   auto[point, connectionIndexes] = *it;
+        //   tickConnections(connectionIndexes, active);
+        // }
+      } break;
+      case Connection::Type::WireTo: {
+        auto& wire = mWires[connection.index];
+        wire.active = active;
+        // if (auto it = mConnectionsByPoint.find(wire.to); it != mConnectionsByPoint.end()) {
+        //   auto[point, connectionIndexes] = *it;
+        //   tickConnections(connectionIndexes, active);
+        // }
+      } break;
+      }
+    }
+  }
+
   void EditorLayer::tick() {
     for (auto component : mComponents) {
-      // TODO: 
+      //   auto& ins = component->getInputPins();
+      //   for (auto& in : ins) {
+      //     Logger::error("TODO: fix in pins");
+      //   }
+
+      component->update();
+      auto& pins = component->getPins();
+      for (auto& pin : pins) {
+        if (auto it = mConnectionsByPoint.find(pin.position); it != mConnectionsByPoint.end()) {
+          auto[point, connectionIndexes] = *it;
+          tickConnections(connectionIndexes, pin.active);
+        }
+      }
     }
   }
 
@@ -151,8 +251,8 @@ namespace Gate {
     }
     
     if (event.getKey() == Key::A) {
-      for (auto& wire : mWires) {
-        wire.active = !wire.active;
+      for (auto& component : mComponents) {
+        component->click();
       }
     }
 
@@ -169,24 +269,28 @@ namespace Gate {
       mClicked = true;
 
       switch (mMode) {
-        case Mode::Select:
+        case Mode::Select: {
           // TODO: Check for collision
-          mMode = Mode::WireDraw;
-          mWireStartPosition = gridAlginPosition(mLastMousePosition);
-          break;
+          Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
+          bool interacted = false;
+          for (auto* component : mComponents) {
+            if (component->getPosition() == mousePosition) {
+              component->click();
+              interacted = true;
+              break;
+            }
+          }
+
+          if (!interacted) {
+            mMode = Mode::WireDraw;
+            mWireStartPosition = gridAlginPosition(mLastMousePosition);
+          }
+        }  break;
         case Mode::WireDraw: {
           // TODO: Check if wires intersect
           Point from = Point(mWireStartPosition / (f32)config.grid.cell.size);
           Point to = Point(mWireEndPosition / (f32)config.grid.cell.size);
-          if (auto it = mConnections.find(from); it != mConnections.end()) {
-            it->second.index = (u32)mWires.size();
-            it->second.type = Connection::Type::Wire;
-          }
-          if (auto it = mConnections.find(to); it != mConnections.end()) {
-            it->second.index = (u32)mWires.size();
-            it->second.type = Connection::Type::Wire;
-          }
-          mWires.push_back(Wire{ from, to });
+          push_wire({ from, to });
 
           // We continue wire draw
           mMode = Mode::WireDraw;

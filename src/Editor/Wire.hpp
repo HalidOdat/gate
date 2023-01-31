@@ -11,6 +11,7 @@ namespace Gate {
     Point to;
 
     bool active = false;
+    bool visited = false;
 
     void render(Renderer& renderer);
   };

@@ -1,14 +1,14 @@
 # Logic Gate Simulator in C++
 
 This project uses [`cmake`](https://cmake.org/download/) for project building
-so it must be installed as well a `c++17` (or greater) compliant `c++` compiler.
+so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
 
 # TODO
 
 - [ ] Board
     - [x] Better grid cell selection
-    - [ ] Define components/wires based on grid cell size
-    - [ ] Draw line on click from one to another
+    - [x] Define components/wires based on grid cell size
+    - [x] Draw line on click from one to another
 
 - [ ] Wire
     - [x] Rename Line to Wire
@@ -17,16 +17,43 @@ so it must be installed as well a `c++17` (or greater) compliant `c++` compiler.
     - [x] Add active state to wire
 
 - [ ] Component
-    - [ ] Draw inputs and outputs on a component
+    - [x] Draw inputs and outputs on a component
     - [ ] Add a toggleable switch componenet
-    - [ ] Connect toggleable component with wire
+    - [x] Connect toggleable component with wire
 
 - [ ] Misc
     - [x] Merge Board into EditorLayer
     - [x] Only quit with `q` on native platform.
     - [ ] Serializable board.
-    - [ ] Define global editor state
-    - [ ] Make renderer global
+    - [x] Define global editor state
+
+# Graph Traversal Algorithm
+
+This algorithm is specialization of a Breadth First Search Graph algorithm.
+
+The components as well as wires have visited boolean flags.
+
+
+```txt
+procedure algorithm(root) is
+    let Q be a queue
+    Q.enqueue(root)
+    while Q is not empty do
+        v := Q.dequeue()
+        label v as visited
+        for all wires w connected to v do
+            if w is (not visited) or (not active and visited) then
+                label w as visited
+                for all components c connected to w do
+                    Q.enqueue(c)
+
+Step 1. Clear all visited flags for components and wires.
+Step 2. Start the traversal with the list of emitting components (i.e. SwitchComponent) then non-emitting components
+Step 2. Initialize queue
+Step 2. For each component
+    Step 2.2. For each output pin
+        Step 2.2.1. For each connected wire
+```
 
 ## Quick start
 
