@@ -18,8 +18,8 @@ namespace Gate {
         Vec4 color;
       };
 
-      Connector input = { { 6.0f, 6.0f }, Color::GREEN };
-      Connector output = { { 6.0f, 6.0f }, Color::RED };
+      Connector input = { { 6.5f, 6.5f }, Color::GREEN };
+      Connector output = { { 6.5f, 6.5f }, Color::RED };
     };
 
     struct Wire {
