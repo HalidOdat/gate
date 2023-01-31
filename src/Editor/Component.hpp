@@ -28,20 +28,10 @@ namespace Gate {
     virtual void renderBody(Renderer& renderer) override;
     virtual void renderConnectors(Renderer& renderer) override;
 
+    inline Point getOutPoint() const { return mOut; }
+
   private:
     Point mOut;
   };
-
-  // class AndComponent : public Component {
-  // public:
-  //   AndComponent()
-  //   virtual void render(Renderer& renderer) override;
-
-  // private:
-  //   Point mA;
-  //   Point mB;
-
-  //   Point out;
-  // };
 
 }

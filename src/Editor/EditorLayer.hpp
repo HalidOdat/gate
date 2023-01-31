@@ -12,6 +12,8 @@
 #include "Editor/Wire.hpp"
 #include "Editor/Component.hpp"
 
+#include <unordered_map>
+
 namespace Gate {
 
   class EditorLayer {
@@ -33,6 +35,8 @@ namespace Gate {
     void renderComponentConnectors(Renderer& renderer);
     void renderWires(Renderer& renderer);
     void renderGrid(Renderer& renderer);
+
+    void tick();
 
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
@@ -62,16 +66,25 @@ namespace Gate {
     // Wire drawing
     Vec2 mWireStartPosition{0.0f};
     Vec2 mWireEndPosition{0.0f};
-    Vec2 mWireSize{0.0f};
 
     // Grid drawing & caching
     FrameBuffer::Handle mGridFrameBuffer;
     Texture::Handle     mGridTexture;
 
     // Board parts/components
-    std::vector<Component*>       mComponents;
-    std::vector<std::vector<u32>> mConnections;
-    std::vector<Wire>             mWires;
+    struct Connection {
+      enum Type {
+        None,
+        Wire,
+        Component,
+      };
+
+      Type type = Type::None;
+      u32 index = 0;
+    };
+    std::vector<Component*> mComponents;
+    std::vector<Wire> mWires;
+    std::unordered_map<Point, Connection> mConnections;
   };
 
 } // namespace Gate

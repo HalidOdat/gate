@@ -27,7 +27,9 @@ namespace Gate {
       )
       .build();
 
-    mComponents.push_back(new SwitchComponent({2, 2}));
+    auto* component = new SwitchComponent({2, 2});
+    mComponents.push_back(component);
+    mConnections[component->getOutPoint()] = {};
   }
 
   void EditorLayer::onDetach() {
@@ -96,8 +98,9 @@ namespace Gate {
     std::string fpsString = ss.str();
     Application::getWindow().setTitle(fpsString.c_str());
 
-
     Application::getRenderer().begin(mEditorCameraController.getCamera());
+
+    tick();
 
     Application::getRenderer().clearScreen();
     renderAll(Application::getRenderer());
@@ -110,22 +113,28 @@ namespace Gate {
         Point(mWireStartPosition / (f32)config.grid.cell.size),
         Point(mWireEndPosition   / (f32)config.grid.cell.size)
       }.render(Application::getRenderer());
-      // Application::getRenderer().drawQuad(mWireStartPosition - Vec2{config.wire.width}/2.0f, mWireSize, config.wire.inactiveColor);
-    }
 
-    // Selector
-    Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
+      Application::getRenderer().drawCenteredQuad(mWireStartPosition, config.selector.size, config.selector.color);
+      Application::getRenderer().drawCenteredQuad(mWireEndPosition, config.selector.size, config.selector.color);
+    }
 
     // TODO: Move to UI
     switch (mMode) {
       case Mode::Select:
+        // Selector cursor
+        Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
         break;
       case Mode::WireDraw:
         const StringView text = "Press <ESCAPE> to cancel wire drawing";
-        const auto size = 20;
-        const auto x = size * (text.size()/2);
-        Application::getRenderer().drawText(text, {x, height - size*2}, 20, Color::BLACK);
+        const auto size = 16;
+        Application::getRenderer().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
         break;
+    }
+  }
+
+  void EditorLayer::tick() {
+    for (auto component : mComponents) {
+      // TODO: 
     }
   }
 
@@ -135,17 +144,9 @@ namespace Gate {
         case Mode::Select:
           // TODO: deselect
           break;
-        case Mode::WireDraw:
-          // TODO: Check if wires intersect
-          // TODO: assert from is smaller than to
-          mWires.push_back(
-            Wire{
-              Point(mWireStartPosition / (f32)config.grid.cell.size),
-              Point(mWireEndPosition   / (f32)config.grid.cell.size)
-            }
-          );
+        case Mode::WireDraw: {
           mMode = Mode::Select;
-          break;
+        }
       }
     }
     
@@ -167,23 +168,30 @@ namespace Gate {
     if (event.getButton() == MouseButton::Left) {
       mClicked = true;
 
-      // u32 entityId = Renderer::readPixel(mLastMousePosition.x, mLastMousePosition.y);
-      // if (entityId != UINT32_MAX) {
-      //   Logger::trace("Editor: Selected entity id: 0x%x", entityId);
-      //   // mSelectedEntity = {entityId, mEditorScene.get()};
-      //   // Renderer::setSelectedEntity(entityId);
-      // }
-
-      mWireStartPosition = gridAlginPosition(mLastMousePosition);
-
       switch (mMode) {
         case Mode::Select:
           // TODO: Check for collision
           mMode = Mode::WireDraw;
+          mWireStartPosition = gridAlginPosition(mLastMousePosition);
           break;
-        case Mode::WireDraw:
-          // TODO: Save wire, if valid
-          break;
+        case Mode::WireDraw: {
+          // TODO: Check if wires intersect
+          Point from = Point(mWireStartPosition / (f32)config.grid.cell.size);
+          Point to = Point(mWireEndPosition / (f32)config.grid.cell.size);
+          if (auto it = mConnections.find(from); it != mConnections.end()) {
+            it->second.index = (u32)mWires.size();
+            it->second.type = Connection::Type::Wire;
+          }
+          if (auto it = mConnections.find(to); it != mConnections.end()) {
+            it->second.index = (u32)mWires.size();
+            it->second.type = Connection::Type::Wire;
+          }
+          mWires.push_back(Wire{ from, to });
+
+          // We continue wire draw
+          mMode = Mode::WireDraw;
+          mWireStartPosition = mWireEndPosition;
+        } break;
       }
     }
     return false;
@@ -204,11 +212,11 @@ namespace Gate {
       case Mode::WireDraw:
         mWireEndPosition = gridPosition;
 
-        Vec2 temp = mWireStartPosition - mWireEndPosition;
-        if (temp.x < temp.y) {
-          mWireSize = {mWireEndPosition.x - mWireStartPosition.x, config.wire.width};
+        Vec2 temp = glm::abs(mWireEndPosition - mWireStartPosition);
+        if (temp.x > temp.y) {
+          mWireEndPosition = Vec2{mWireEndPosition.x, mWireStartPosition.y};
         } else {
-          mWireSize = {config.wire.width, mWireEndPosition.y - mWireStartPosition.y};
+          mWireEndPosition = Vec2{mWireStartPosition.x, mWireEndPosition.y};
         }
         break;
     }
