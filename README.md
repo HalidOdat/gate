@@ -18,7 +18,7 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
 
 - [ ] Component
     - [x] Draw inputs and outputs on a component
-    - [ ] Add a toggleable switch componenet
+    - [x] Add a toggleable switch componenet
     - [x] Connect toggleable component with wire
 
 - [ ] Misc
@@ -27,14 +27,26 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
     - [ ] Serializable board.
     - [x] Define global editor state
 
-# Graph Traversal Algorithm
+## Graph Traversal Algorithm
 
 This algorithm is specialization of a Breadth First Search Graph algorithm.
 
 The components as well as wires have visited boolean flags.
 
+## Rules
+
+These are rules to eliminate invalid state.
+
+1. An input pin can **only** have one connection.
+2. An output pin can **many** have one connection.
+3. A circuit without a input catagory component is not valid.
+4. Wires inherit the type of of the pin (`Input`, `Output`).
+5. Traversal starts from components that are from the `Input` catagory type.
+6. Traversal is one directional.
+
 
 ```txt
+TODO: define algorithm
 procedure algorithm(root) is
     let Q be a queue
     Q.enqueue(root)
@@ -54,6 +66,7 @@ Step 2. For each component
     Step 2.2. For each output pin
         Step 2.2.1. For each connected wire
 ```
+
 
 ## Quick start
 

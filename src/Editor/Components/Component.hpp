@@ -4,21 +4,16 @@
 #include "Renderer/Renderer.hpp"
 
 #include "Editor/Point.hpp"
+#include "Editor/Pin.hpp"
 
 namespace Gate {
 
-  struct Pin {
-    enum class Type {
-      Input,
-      Output,
-    };
-    Type type;
-    Point position;
-
-    bool active = false;
-  };
-
   class Component {
+  public:
+    enum class Category {
+      Input,
+    };
+
   public:
     inline Point getPosition() const { return mPosition; }
     inline std::vector<Pin>& getPins() { return mPins; }
@@ -26,6 +21,8 @@ namespace Gate {
 
     inline bool isVisited() const { return mVisited; }
     inline void setVisited(bool value) { mVisited = value; }
+
+    inline Category getCategory() const { return mCategory; }
 
   public:
     virtual ~Component();
@@ -35,11 +32,12 @@ namespace Gate {
     virtual void update() = 0;
 
   protected:
-    Component(Point position)
-      : mPosition{position}
+    Component(Category category, Point position)
+      : mCategory{category}, mPosition{position}
     {}
 
   protected:
+    Category mCategory;
     Point mPosition;
     std::vector<Pin> mPins;
 

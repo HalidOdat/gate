@@ -20,6 +20,10 @@ namespace Gate {
       color = config.wire.activeColor;
     }
 
+    if (!visited) {
+      color = config.wire.invalidColor;
+    }
+
     renderer.drawQuad(
       from.toVec2() * (f32)config.grid.cell.size - Vec2(width / 2.0f),
       size,

@@ -31,9 +31,10 @@ add_executable(${This}
   src/Core/Input.cpp
   src/Core/Timestep.hpp
   src/Core/Timestep.cpp
+  src/Core/Color.hpp
+  src/Core/Color.cpp
   src/Core/Base.hpp
-
-  src/Utils/Color.hpp
+  
   src/Utils/File.hpp
   src/Utils/File.cpp
   src/Utils/String.hpp
@@ -89,6 +90,8 @@ add_executable(${This}
   src/Editor/Point.hpp
   src/Editor/Wire.hpp
   src/Editor/Wire.cpp
+  src/Editor/Pin.hpp
+  src/Editor/Connection.hpp
   src/Editor/EditorLayer.hpp
   src/Editor/EditorLayer.cpp
 

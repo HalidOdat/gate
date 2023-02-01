@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Base.hpp"
-#include "Utils/Color.hpp"
 
 namespace Gate {
 
@@ -27,6 +26,7 @@ namespace Gate {
 
       Vec4 activeColor   = Color::RED;
       Vec4 inactiveColor = Color::BLACK;
+      Vec4 invalidColor  = Color::PURPLE;
     };
 
     struct Grid {
@@ -35,7 +35,7 @@ namespace Gate {
       };
 
       Cell cell;
-      Vec4 color = Color::GRAY;
+      Vec4 color = rgba(60, 60, 60);
     };
 
     Selector selector;

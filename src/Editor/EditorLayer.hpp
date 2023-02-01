@@ -12,6 +12,7 @@
 #include "Editor/Wire.hpp"
 
 #include "Editor/Components.hpp"
+#include "Editor/Connection.hpp"
 
 #include <unordered_map>
 
@@ -31,10 +32,11 @@ namespace Gate {
     Vec2 getGridAlignedMousePosition();
 
   private:
+    ConnectionResult push_wire_connection(Point position, u32 wireIndex);
+    ConnectionResult push_component_connection(Point position, u32 componentIndex, u32 pinIndex);
     bool push_component(Component* component);
     bool push_wire(Wire wire);
     void tick();
-    void tickConnections(std::vector<u32>& connectionIndexes, bool pin);
 
     void renderAll(Renderer& renderer);
     void renderComponentBodys(Renderer& renderer);
@@ -76,25 +78,10 @@ namespace Gate {
     Texture::Handle     mGridTexture;
 
     // Board parts/components
-    struct Connection {
-      /// The type that describes the connector type and direction.
-      enum Type {
-        WireTo,
-        WireFrom,
-        ComponentIn,
-        ComponentOut,
-      };
-
-      Type type;
-      u32 componentIndex;
-      // The index can either be an index to a wire in mWires,
-      // or an index in the component's in or out pins.
-      u32 index;
-    };
     std::vector<Component*> mComponents;
     std::vector<Wire> mWires;
-    std::vector<Connection> mConnections;
-    std::unordered_map<Point, std::vector<u32>> mConnectionsByPoint;
+    std::vector<std::vector<Connection>> mConnections;
+    std::unordered_map<Point, u32> mConnectionsIndexByPoint;
   };
 
 } // namespace Gate
