@@ -1,7 +1,7 @@
 #include <array>
 #include <cctype>
 
-#include <glad/glad.h>
+#include "Core/OpenGL.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/Base.hpp"
@@ -60,6 +60,8 @@ namespace Gate {
     mQuadShader->bind();
     mQuadShader->setIntArray("uTextures", samples, MAX_TEXTURES);
 
+    Logger::warn("hEllo");
+    fflush(stdout);
     mFontTexture = Texture::load("assets/textures/PixelFont_7x9_112x54.png")
       .filtering(Texture::FilteringMode::Nearest)
       .mipmap(Texture::MipmapMode::None)

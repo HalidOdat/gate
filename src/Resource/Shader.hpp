@@ -37,7 +37,11 @@ namespace Gate {
 
     private:
       StringView mFilePath;
-      Version mVersion = Version::Core450;
+      #ifdef GATE_PLATFORM_WEB
+        Version mVersion = Version::Es300;
+      #else
+        Version mVersion = Version::Core450;
+      #endif
       std::unordered_map<String, String> mDefinitions;
 
       friend class Shader;

@@ -3,13 +3,7 @@
 #include "Resource/Manager.hpp"
 #include "Application.hpp"
 
-#if GATE_PLATFORM_WEB
-# include<emscripten/emscripten.h>
-// # define GLFW_INCLUDE_ES3
-#endif
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "Core/OpenGL.hpp"
 
 #include <cstdlib>
 #include <filesystem>

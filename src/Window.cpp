@@ -1,10 +1,4 @@
-#ifdef __EMSCRIPTEN__
-# include <emscripten/emscripten.h>
-// #define GLFW_INCLUDE_ES3
-#endif
-#include <glad/glad.h>
-// #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include "Core/OpenGL.hpp"
 
 #include "Core/Base.hpp"
 #include "Events/Event.hpp"

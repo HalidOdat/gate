@@ -29,6 +29,16 @@ namespace Gate {
       size,
       color
     );
+    renderer.drawCenteredQuad(
+      from.toVec2() * (f32)config.grid.cell.size,
+      config.wire.endsSize,
+      color
+    );
+    renderer.drawCenteredQuad(
+      to.toVec2() * (f32)config.grid.cell.size,
+      config.wire.endsSize,
+      color
+    );
   }
 
 }

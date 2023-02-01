@@ -2,7 +2,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#include <glad/glad.h>
+#include "Core/OpenGL.hpp"
 
 #include "Core/Base.hpp"
 #include "Resource/Texture.hpp"

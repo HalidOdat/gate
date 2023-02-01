@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include "Core/OpenGL.hpp"
 
 #include "Core/Base.hpp"
 #include "Renderer/FrameBuffer.hpp"

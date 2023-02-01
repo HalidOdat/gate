@@ -2,7 +2,7 @@
 #include <array>
 #include <algorithm>
 
-#include <glad/glad.h>
+#include "Core/OpenGL.hpp"
 
 #include "Core/Base.hpp"
 #include "Resource/Shader.hpp"

@@ -32,6 +32,8 @@ namespace Gate {
     Vec2 getGridAlignedMousePosition();
 
   private:
+    bool isConnectionActive(Connection& connection);
+    bool isConnectionVisited(Connection& connection);
     ConnectionResult push_wire_connection(Point position, u32 wireIndex);
     ConnectionResult push_component_connection(Point position, u32 componentIndex, u32 pinIndex);
     bool push_component(Component* component);

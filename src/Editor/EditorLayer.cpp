@@ -1,6 +1,6 @@
 #include <string>
 #include <sstream>
-#include <deque>
+#include <queue>
 
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
@@ -31,6 +31,9 @@ namespace Gate {
     auto* component = new SwitchComponent({2, 2});
     component->toggle();
     push_component(component);
+    push_component(new NotComponent({10, 2}));
+    push_component(new NotComponent({8, 10}));
+    push_component(new AndComponent({15, 15}));
   }
 
   void EditorLayer::onDetach() {
@@ -41,7 +44,36 @@ namespace Gate {
       }
     }
   }
-
+  bool EditorLayer::isConnectionActive(Connection& connection) {
+    switch (connection.type) {
+      case Connection::Type::Component: {
+        auto* component = mComponents[connection.componentIndex];
+        auto& pins = component->getPins();
+        auto& pin = pins[connection.index];
+        return pin.active;
+      } break;
+      case Connection::Type::Wire: {
+        auto& wire = mWires[connection.index];
+        return wire.active;
+      } break;
+    }
+    GATE_UNREACHABLE("");
+  }
+  bool EditorLayer::isConnectionVisited(Connection& connection) {
+    switch (connection.type) {
+      case Connection::Type::Component: {
+        auto* component = mComponents[connection.componentIndex];
+        auto& pins = component->getPins();
+        auto& pin = pins[connection.index];
+        return pin.visited;
+      } break;
+      case Connection::Type::Wire: {
+        auto& wire = mWires[connection.index];
+        return wire.visited;
+      } break;
+    }
+    GATE_UNREACHABLE("");
+  }
   ConnectionResult EditorLayer::push_wire_connection(Point position, u32 wireIndex) {
     auto connection = Connection {
       Connection::Type::Wire,
@@ -50,7 +82,7 @@ namespace Gate {
     u32 connectionIndex;
     if (auto it = mConnectionsIndexByPoint.find(position); it != mConnectionsIndexByPoint.end()) {
       connectionIndex = it->second;
-      // TODO: check if its output pin
+      // TODO: check if its output pin, shouldn't have more than one connection.
       if (false) {
         return {};
       }
@@ -93,7 +125,7 @@ namespace Gate {
     
     auto& pins = component->getPins();
     for (u32 i = 0; i < pins.size(); ++i) {
-      auto& pin = pins[i];
+      auto& pin = pins[i];      
       auto[successful, connectionIndex] = push_component_connection(pin.position, componentIndex, i);
       if (!successful) {
         GATE_TODO("Fix invalid pin connection!");
@@ -102,13 +134,13 @@ namespace Gate {
       pin.connectionIndex = connectionIndex;
     }
     mComponents.push_back(component);
+    tick();
     return true;
   }
   bool EditorLayer::push_wire(Wire wire) {
     // TODO: check if it can be placed there
     // TODO: Check if a free slot is available
     u32 wireIndex = (u32)mWires.size();
-
     auto connectionResultFrom = push_wire_connection(wire.from, wireIndex);
     if (!connectionResultFrom.successful) {
       return false;
@@ -119,8 +151,9 @@ namespace Gate {
     }
     wire.connectionIndexes.push_back(connectionResultFrom.connectionIndex);
     wire.connectionIndexes.push_back(connectionResultTo.connectionIndex);
-
     mWires.push_back(wire);
+
+    tick();
     return true;
   }
 
@@ -132,51 +165,61 @@ namespace Gate {
     struct Node {
       Type type;
       u32 index;
+      bool activate;
+      Component* component = nullptr;
+
+      bool visitedOnce = false;
+
+      bool operator<(const Node &rhs) const {
+        return (u32)this->visitedOnce > (u32)rhs.visitedOnce;
+      }
     };
 
-    std::deque<Node> queue;
-    auto enqueueComponent = [&](u32 index) {
+    std::priority_queue<Node, std::vector<Node>> queue;
+    auto enqueueComponent = [&](u32 index, bool activate) {
       if (mComponents[index]->isVisited()) {
         return;
       }
-      queue.push_back(
+      queue.push(
         Node {
           Type::Component,
           index,
+          activate,
+          mComponents[index]
         }
       );
     };
-    auto enqueueWire = [&](u32 index) {
+    auto enqueueWire = [&](u32 index, bool activate) {
       if (mWires[index].visited) {
         return;
       }
-      queue.push_back(
+      queue.push(
         Node {
           Type::Wire,
           index,
+          activate,
         }
       );
     };
-    auto enqueueConnections = [&](std::vector<Connection>& connections) {
+    auto enqueueConnections = [&](std::vector<Connection>& connections, bool activate) {
       for (auto& connection : connections) {
         switch (connection.type) {
           case Connection::Type::Component: {
-            enqueueComponent(connection.index);
+            enqueueComponent(connection.componentIndex, activate);
           } break;
           case Connection::Type::Wire: {
-            enqueueWire(connection.index);
+            enqueueWire(connection.index, activate);
           } break;
         }
       }
     };
-
 
     // Clear visited flags on components and wires
     for (usize i = 0; i < mComponents.size(); ++i) {
       auto* component = mComponents[i];
-      component->setVisited(false);
+      component->resetVisited();
       if (component->getCategory() == Component::Category::Input) {
-        enqueueComponent((u32)i);
+        enqueueComponent((u32)i, true);
       }
     }
     for (auto& wire : mWires) {
@@ -184,26 +227,70 @@ namespace Gate {
       wire.active = false;
     }
 
-    for (; !queue.empty(); queue.pop_front()) {
-      auto&[type, index] = queue.front();
+    for (; !queue.empty(); queue.pop()) {
+      auto node = queue.top();
+      auto&[type, index, activate, component, visitedOnce] = node;
       switch (type) {
         case Type::Component: {
-          auto* component = mComponents[index];
-          component->update();
           component->setVisited(true);
           auto& pins = component->getPins();
           for (auto& pin : pins) {
+            if (pin.type != Pin::Type::Input) {
+              continue;
+            }
+            if (pin.visited) {
+              continue;
+            }
+
             auto& connections = mConnections[pin.connectionIndex];
-            // GATE_ASSERT(!(pin.type == Pin::Type::Input && connections.size() > 1));
-            enqueueConnections(connections);
+            if (connections.size() > 2) {
+              Logger::error("too many connection on imput type point(%d, %d)", pin.position.x, pin.position.y);
+              GATE_TODO("^");
+            }
+            if (connections.size() == 2) {
+              Connection result{Connection::Type::Component, UINT32_MAX, UINT32_MAX};
+              for (auto& connection : connections) {
+                
+                if (
+                  connection.type == Connection::Type::Component
+                  && mComponents[connection.componentIndex] == component
+                ) {
+                  continue;
+                }
+                result = connection;
+                
+              }
+              if (!visitedOnce && !isConnectionVisited(result)) {
+                node.visitedOnce = true;
+                component->setVisited(false);
+                queue.push(node);
+                continue;
+              }
+              pin.visited = isConnectionVisited(result);
+              pin.active = isConnectionActive(result);
+            }
+          }
+
+          if (component->areAllInputPinsVisited()) {
+            component->update();
+            for (auto& pin : pins) {
+              if (pin.type != Pin::Type::Output) {
+                continue;
+              }
+              
+              pin.visited = true;
+              auto& connections = mConnections[pin.connectionIndex];
+              enqueueConnections(connections, pin.active);
+            }
           }
         } break;
         case Type::Wire: {
           auto& wire = mWires[index];
           wire.visited = true;
+          wire.active = activate;
           for (auto& connectionIndex : wire.connectionIndexes) {
             auto& connection = mConnections[connectionIndex];
-            enqueueConnections(connection);
+            enqueueConnections(connection, wire.active);
           }
         } break;
       } 
@@ -269,8 +356,6 @@ namespace Gate {
 
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
-    tick();
-
     Application::getRenderer().clearScreen();
     renderAll(Application::getRenderer());
 
@@ -317,6 +402,7 @@ namespace Gate {
       for (auto& component : mComponents) {
         component->click();
       }
+      tick();
     }
 
     #ifndef GATE_PLATFORM_WEB
@@ -340,6 +426,7 @@ namespace Gate {
             if (component->getPosition() == mousePosition) {
               component->click();
               interacted = true;
+              tick();
               break;
             }
           }
@@ -353,6 +440,10 @@ namespace Gate {
           // TODO: Check if wires intersect
           Point from = Point(mWireStartPosition / (f32)config.grid.cell.size);
           Point to = Point(mWireEndPosition / (f32)config.grid.cell.size);
+          bool connected = false;
+          if (auto it = mConnectionsIndexByPoint.find(to); it != mConnectionsIndexByPoint.end()) {
+            connected = true;
+          }
           if (!push_wire({ from, to })) {
             GATE_TODO("implement this: wire is invalid");
           }
@@ -360,6 +451,9 @@ namespace Gate {
           // We continue wire draw
           mMode = Mode::WireDraw;
           mWireStartPosition = mWireEndPosition;
+          if (connected) {
+            mMode = Mode::Select;
+          }
         } break;
       }
     }

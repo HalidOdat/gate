@@ -4,12 +4,13 @@
 
 namespace Gate {
 
-  SwitchComponent::SwitchComponent(Point position)
-    : Component(Component::Category::Input, position)
+  NotComponent::NotComponent(Point position)
+    : Component(Component::Category::Gate, position)
   {
+    this->mPins.push_back(Pin{Pin::Type::Input,  Point{position.x - 1, position.y}});
     this->mPins.push_back(Pin{Pin::Type::Output, Point{position.x + 1, position.y}});
   }
-  void SwitchComponent::renderBody(Renderer& renderer) {
+  void NotComponent::renderBody(Renderer& renderer) {
     Vec2 size = Vec2{(f32)config.grid.cell.size};
     Vec4 color = Color::BLACK;
     if (mPins[OUTPUT_INDEX].active) {
@@ -17,11 +18,12 @@ namespace Gate {
     }
     renderer.drawCenteredQuad(mPosition.toVec2() * (f32)config.grid.cell.size, size * 1.5f, color);
   }
-  bool SwitchComponent::update() {
+  bool NotComponent::update() {
+    // if (mPins[INPUT_INDEX].visited) {
+    //   return false;
+    // }
+    mPins[OUTPUT_INDEX].active = !mPins[INPUT_INDEX].active;
     return true;
-  }
-  void SwitchComponent::click() {
-    this->toggle();
   }
 
 }

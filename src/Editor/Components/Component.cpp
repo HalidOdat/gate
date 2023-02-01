@@ -29,5 +29,19 @@ namespace Gate {
       );
     }
   }
+  void Component::resetVisited() {
+    setVisited(false);
+    for (auto& pin : mPins) {
+      pin.visited = false;
+    }
+  }
+  bool Component::areAllInputPinsVisited() const {
+    for (auto& pin : mPins) {
+      if (pin.type == Pin::Type::Input && !pin.visited) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 }

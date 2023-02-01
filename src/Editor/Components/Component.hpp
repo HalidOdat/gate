@@ -12,6 +12,7 @@ namespace Gate {
   public:
     enum class Category {
       Input,
+      Gate,
     };
 
   public:
@@ -21,6 +22,8 @@ namespace Gate {
 
     inline bool isVisited() const { return mVisited; }
     inline void setVisited(bool value) { mVisited = value; }
+    bool areAllInputPinsVisited() const;
+    void resetVisited();
 
     inline Category getCategory() const { return mCategory; }
 
@@ -28,8 +31,8 @@ namespace Gate {
     virtual ~Component();
     virtual void renderBody(Renderer& renderer) = 0;
     virtual void renderConnectors(Renderer&);
-    virtual void click() = 0;
-    virtual void update() = 0;
+    virtual void click() {}
+    virtual bool update() = 0;
 
   protected:
     Component(Category category, Point position)

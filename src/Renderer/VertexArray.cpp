@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include <glad/glad.h>
+#include "Core/OpenGL.hpp"
 
 #include "Core/Log.hpp"
 #include "Renderer/VertexArray.hpp"

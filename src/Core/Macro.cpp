@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include <glad/glad.h>
+#include "Core/OpenGL.hpp"
 
 #include "Core/Macro.hpp"
 #include "Core/Log.hpp"

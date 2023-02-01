@@ -17,6 +17,7 @@ namespace Gate {
 
     u32 connectionIndex{NULL_CONNECTION};
     bool active = false;
+    bool visited = false;
   };
 
 }

@@ -8,17 +8,14 @@
 
 namespace Gate {
  
-  class SwitchComponent : public Component {
+  class NotComponent : public Component {
   public:
-    static const constexpr u32 OUTPUT_INDEX = 0;
+    static const constexpr u32 INPUT_INDEX  = 0;
+    static const constexpr u32 OUTPUT_INDEX = 1;
   public:
-    SwitchComponent(Point position);
+    NotComponent(Point position);
     virtual void renderBody(Renderer& renderer) override;
-    virtual void click() override;
     virtual bool update() override;
-
-  public:
-    inline void toggle() { mPins[OUTPUT_INDEX].active = !mPins[OUTPUT_INDEX].active; }
   };
 
 }

@@ -33,6 +33,7 @@ add_executable(${This}
   src/Core/Timestep.cpp
   src/Core/Color.hpp
   src/Core/Color.cpp
+  src/Core/OpenGL.hpp
   src/Core/Base.hpp
   
   src/Utils/File.hpp
@@ -84,6 +85,12 @@ add_executable(${This}
   src/Editor/Components/Component.cpp
   src/Editor/Components/SwitchComponent.hpp
   src/Editor/Components/SwitchComponent.cpp
+  src/Editor/Components/NotComponent.hpp
+  src/Editor/Components/NotComponent.cpp
+  src/Editor/Components/AndComponent.hpp
+  src/Editor/Components/AndComponent.cpp
+  src/Editor/Components/OrComponent.hpp
+  src/Editor/Components/OrComponent.cpp
   src/Editor/Components.hpp
   src/Editor/Config.hpp
   src/Editor/Config.cpp
@@ -116,6 +123,7 @@ else()
       -Wall -Wextra -pedantic
       -fno-exceptions
       -ggdb -fsanitize=address -fsanitize=undefined
+      # -fsanitize=null
   )
 endif()
 
