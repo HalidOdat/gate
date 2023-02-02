@@ -94,7 +94,6 @@ namespace Gate {
 
     Logger::trace("Creating window...");
 
-    // TODO: Set hint for web build
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

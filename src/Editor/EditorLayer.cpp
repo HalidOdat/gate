@@ -37,33 +37,18 @@ namespace Gate {
       }
     }
   }
-  // TODO: Refactor active and visited into struct to remove code dup
-  bool EditorLayer::isConnectionActive(Connection& connection) {
+  
+  ConnectionState EditorLayer::getConnectionState(Connection& connection) {
     switch (connection.type) {
       case Connection::Type::Component: {
         auto* component = mComponents[connection.componentIndex];
         auto& pins = component->getOutputPins();
         auto& pin = pins.at(connection.index);
-        return pin.active;
+        return ConnectionState(pin.active, pin.visited);
       } break;
       case Connection::Type::Wire: {
         auto& wire = mWires[connection.index];
-        return wire.active;
-      } break;
-    }
-    GATE_UNREACHABLE("");
-  }
-  bool EditorLayer::isConnectionVisited(Connection& connection) {
-    switch (connection.type) {
-      case Connection::Type::Component: {
-        auto* component = mComponents[connection.componentIndex];
-        auto& pins = component->getOutputPins();
-        auto& pin = pins.at(connection.index);
-        return pin.visited;
-      } break;
-      case Connection::Type::Wire: {
-        auto& wire = mWires[connection.index];
-        return wire.visited;
+        return ConnectionState(wire.active, wire.visited);
       } break;
     }
     GATE_UNREACHABLE("");
@@ -251,8 +236,7 @@ namespace Gate {
             }
             if (connections.size() == 2) {
               Connection result{Connection::Type::Component, UINT32_MAX, UINT32_MAX};
-              for (auto& connection : connections) {
-                
+              for (auto& connection : connections) {    
                 if (
                   connection.type == Connection::Type::Component
                   && mComponents[connection.componentIndex] == component
@@ -262,14 +246,15 @@ namespace Gate {
                 result = connection;
                 
               }
-              if (!visitedOnce && !isConnectionVisited(result)) {
+              auto state = getConnectionState(result);
+              if (!(visitedOnce || state.visited)) {
                 node.visitedOnce = true;
                 component->setVisited(false);
                 queue.push(node);
                 continue;
               }
-              pin.visited = isConnectionVisited(result);
-              pin.active = isConnectionActive(result);
+              pin.visited = state.visited;
+              pin.active = state.active;
             }
           }
 

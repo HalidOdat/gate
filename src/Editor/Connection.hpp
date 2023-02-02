@@ -25,4 +25,13 @@ namespace Gate {
     {}
   };
 
+  struct ConnectionState {
+    bool active;
+    bool visited;
+
+    ConnectionState(bool active_, bool visited_)
+      : active{active_}, visited{visited_}
+    {}
+  };
+
 }

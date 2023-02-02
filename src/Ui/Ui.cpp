@@ -12,6 +12,7 @@
 
 #include "Application.hpp"
 
+// FIXME: Needs to be refactored
 namespace Gate {
 
   class AABB {
