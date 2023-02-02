@@ -1,10 +1,12 @@
-cmake_minimum_required(VERSION 3.0..3.20 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0)
 
 set(This gate)
 
 project(${This}
   VERSION 0.1.0
   LANGUAGES CXX C
+  DESCRIPTION "A fancy logic gate simulator written in C++"
+  HOMEPAGE_URL "https://github.com/HalidOdat/gate"
 )
 
 set(CMAKE_C_STANDARD 99)
@@ -121,10 +123,26 @@ if (MSVC)
 else()
   target_compile_options(${This}
     PRIVATE
-      -Wall -Wextra -pedantic
+      -Wall -Wextra -pedantic               # Enable very useful warnings
+      -fno-exceptions                       # Disable exceptions
+      -fno-rtti                             # Disable runtime type information (dynamic_cast)
+      $<$<CONFIG:Debug>:-fsanitize=address>
+      $<$<CONFIG:Debug>:-fsanitize=undefined>
+      $<$<CONFIG:Debug>:-fsanitize=null>
+      $<$<CONFIG:Debug>:-Og>
+      $<$<CONFIG:Release>:-Os>
+      $<$<CONFIG:MinSizeRel>:-Oz>
+  )
+  target_link_options(${This}
+    PRIVATE
       -fno-exceptions
-      -ggdb -fsanitize=address -fsanitize=undefined
-      # -fsanitize=null
+      -fno-rtti
+      $<$<CONFIG:Debug>:-fsanitize=address>
+      $<$<CONFIG:Debug>:-fsanitize=undefined>
+      $<$<CONFIG:Debug>:-fsanitize=null>
+      $<$<CONFIG:Debug>:-Og>
+      $<$<CONFIG:Release>:-Os>
+      $<$<CONFIG:MinSizeRel>:-Oz>
   )
 endif()
 
@@ -141,22 +159,14 @@ if (DEFINED WEB)
       -sMIN_WEBGL_VERSION=2
       -sMAX_WEBGL_VERSION=2
       -sALLOW_MEMORY_GROWTH=1
+      -sDISABLE_EXCEPTION_CATCHING=1
+      $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:--closure=1>
+      $<$<CONFIG:MinSizeRel>:-flto=full>
       --preload-file "${ASSETS_DIRECTOY}@assets"
-  )
-  set_target_properties(${This}
-    PROPERTIES
-      SUFFIX ".html"
   )
 else()
   message(STATUS "${This}: Building for native")
 endif()
-
-target_link_options(${This}
-  PRIVATE
-    -fno-exceptions
-    -fsanitize=address
-    -fsanitize=undefined
-)
 
 target_link_libraries(${This} PUBLIC
   glfw::glfw
@@ -192,5 +202,5 @@ target_precompile_headers(${This}
 
 target_compile_definitions(${This}
   PUBLIC
-    GATE_DEBUG_MODE=1
+    $<$<CONFIG:Debug>:GATE_DEBUG_MODE=1>
 )

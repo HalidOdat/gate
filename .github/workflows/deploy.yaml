@@ -9,6 +9,9 @@ on:
 permissions:
   contents: write
 
+env:
+  BUILD_TYPE: Release
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,10 +31,10 @@ jobs:
         run: emcc -v
 
       - name: Run cmake
-        run: emcmake cmake . -B build
+        run: emcmake cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build
 
       - name: Run build system
-        run: cmake --build build
+        run: cmake --build build --config $BUILD_TYPE
 
       - name: Create final directory
         run: mkdir final
