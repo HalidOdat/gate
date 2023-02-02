@@ -37,12 +37,13 @@ namespace Gate {
       }
     }
   }
+  // TODO: Refactor active and visited into struct to remove code dup
   bool EditorLayer::isConnectionActive(Connection& connection) {
     switch (connection.type) {
       case Connection::Type::Component: {
         auto* component = mComponents[connection.componentIndex];
-        auto& pins = component->getPins();
-        auto& pin = pins[connection.index];
+        auto& pins = component->getOutputPins();
+        auto& pin = pins.at(connection.index);
         return pin.active;
       } break;
       case Connection::Type::Wire: {
@@ -56,8 +57,8 @@ namespace Gate {
     switch (connection.type) {
       case Connection::Type::Component: {
         auto* component = mComponents[connection.componentIndex];
-        auto& pins = component->getPins();
-        auto& pin = pins[connection.index];
+        auto& pins = component->getOutputPins();
+        auto& pin = pins.at(connection.index);
         return pin.visited;
       } break;
       case Connection::Type::Wire: {
@@ -116,9 +117,20 @@ namespace Gate {
     // TODO: Check if a free slot is available.
     u32 componentIndex = (u32)mComponents.size();
     
-    auto& pins = component->getPins();
-    for (u32 i = 0; i < pins.size(); ++i) {
-      auto& pin = pins[i];      
+    // TODO: refactor to remove code duplication
+    auto& inputPins = component->getInputPins();
+    for (u32 i = 0; i < inputPins.size(); ++i) {
+      auto& pin = inputPins[i];      
+      auto[successful, connectionIndex] = push_component_connection(pin.position, componentIndex, i);
+      if (!successful) {
+        GATE_TODO("Fix invalid pin connection!");
+      }
+      mConnectionsIndexByPoint[pin.position] = connectionIndex;
+      pin.connectionIndex = connectionIndex;
+    }
+    auto& outputPins = component->getOutputPins();
+    for (u32 i = 0; i < outputPins.size(); ++i) {
+      auto& pin = outputPins[i];      
       auto[successful, connectionIndex] = push_component_connection(pin.position, componentIndex, i);
       if (!successful) {
         GATE_TODO("Fix invalid pin connection!");
@@ -150,6 +162,7 @@ namespace Gate {
     return true;
   }
 
+  /// TODO: Refactor and make this a bit better
   void EditorLayer::tick() {
     enum class Type {
       Component,
@@ -226,11 +239,7 @@ namespace Gate {
       switch (type) {
         case Type::Component: {
           component->setVisited(true);
-          auto& pins = component->getPins();
-          for (auto& pin : pins) {
-            if (pin.type != Pin::Type::Input) {
-              continue;
-            }
+          for (auto& pin : component->getInputPins()) {
             if (pin.visited) {
               continue;
             }
@@ -266,11 +275,7 @@ namespace Gate {
 
           if (component->areAllInputPinsVisited()) {
             component->update();
-            for (auto& pin : pins) {
-              if (pin.type != Pin::Type::Output) {
-                continue;
-              }
-              
+            for (auto& pin : component->getOutputPins()) {
               pin.visited = true;
               auto& connections = mConnections[pin.connectionIndex];
               enqueueConnections(connections, pin.active);

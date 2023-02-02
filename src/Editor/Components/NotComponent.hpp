@@ -11,7 +11,7 @@ namespace Gate {
   class NotComponent : public Component {
   public:
     static const constexpr u32 INPUT_INDEX  = 0;
-    static const constexpr u32 OUTPUT_INDEX = 1;
+    static const constexpr u32 OUTPUT_INDEX = 0;
   public:
     NotComponent(Point position);
     virtual void renderBody(Renderer& renderer) override;

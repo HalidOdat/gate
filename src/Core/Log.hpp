@@ -2,6 +2,7 @@
 
 namespace Gate {
 
+  // TODO: Remove traces in release build and maybe info too.
   class Logger {
   public:
     static void trace(const char *format, ...);

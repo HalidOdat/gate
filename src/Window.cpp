@@ -30,6 +30,7 @@ namespace Gate {
     windowCount++;
   }
 
+  // TOOD: Remove `windowCount` since we will only have one window
   void Window::deinitializeWindowSystem() {
     GATE_ASSERT_WITH_MESSAGE(windowCount >= 1, "Should not call deinit before init");
     windowCount--;
@@ -39,6 +40,7 @@ namespace Gate {
     }    
   }
 
+  // TODO: Should be ifdef removed in Web build
   void APIENTRY openGLMessageCallback(
     GLenum source,
     GLenum type,
@@ -102,6 +104,7 @@ namespace Gate {
 
     Logger::trace("Creating window...");
 
+    // TODO: Set hint for web build
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

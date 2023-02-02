@@ -2,6 +2,7 @@
 
 #include "Core/Base.hpp"
 
+// TODO: Add perspective projection camera
 namespace Gate {
 
   class Camera {

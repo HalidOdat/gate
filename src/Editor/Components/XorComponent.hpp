@@ -12,7 +12,7 @@ namespace Gate {
   public:
     static const constexpr u32 A_INPUT_INDEX = 0;
     static const constexpr u32 B_INPUT_INDEX = 1;
-    static const constexpr u32 OUTPUT_INDEX  = 2;
+    static const constexpr u32 OUTPUT_INDEX  = 0;
   public:
     XorComponent(Point position);
     virtual void renderBody(Renderer& renderer) override;

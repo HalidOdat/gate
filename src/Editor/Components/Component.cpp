@@ -9,35 +9,33 @@ namespace Gate {
 
   void Component::renderConnectors(Renderer& renderer) {
     // TODO: Show when outputs and inputs are active
-    for (auto& pin : mPins) {
-      Vec2 size;
-      Vec4 color;
-      switch (pin.type) {
-        case Pin::Type::Input:
-          size = config.component.input.size;
-          color = config.component.input.color;
-          break;
-        case Pin::Type::Output:
-          size = config.component.output.size;
-          color = config.component.output.color;
-          break;
-      }
+    for (auto& pin : mInputPins) {
       renderer.drawCenteredQuad(
         pin.position.toVec2() * (f32)config.grid.cell.size,
-        size,
-        color
+        config.component.input.size,
+        config.component.input.color
+      );
+    }
+    for (auto& pin : mOutputPins) {
+      renderer.drawCenteredQuad(
+        pin.position.toVec2() * (f32)config.grid.cell.size,
+        config.component.output.size,
+        config.component.output.color
       );
     }
   }
   void Component::resetVisited() {
     setVisited(false);
-    for (auto& pin : mPins) {
+    for (auto& pin : mInputPins) {
+      pin.visited = false;
+    }
+    for (auto& pin : mOutputPins) {
       pin.visited = false;
     }
   }
   bool Component::areAllInputPinsVisited() const {
-    for (auto& pin : mPins) {
-      if (pin.type == Pin::Type::Input && !pin.visited) {
+    for (auto& pin : mInputPins) {
+      if (!pin.visited) {
         return false;
       }
     }

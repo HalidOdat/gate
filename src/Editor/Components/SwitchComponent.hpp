@@ -17,8 +17,8 @@ namespace Gate {
     virtual void click() override;
     virtual bool update() override;
 
-  public:
-    inline void toggle() { mPins[OUTPUT_INDEX].active = !mPins[OUTPUT_INDEX].active; }
+  private:
+    inline void toggle() { mOutputPins[OUTPUT_INDEX].active = !mOutputPins[OUTPUT_INDEX].active; }
   };
 
 }

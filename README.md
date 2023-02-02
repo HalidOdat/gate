@@ -20,6 +20,17 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
     - [x] Draw inputs and outputs on a component
     - [x] Add a toggleable switch componenet
     - [x] Connect toggleable component with wire
+    - [ ] Pins
+         - [ ] Separate output and input pins
+         - [ ] Circular shaped pins
+    - [ ] Input Components
+        - [ ] Tick (activates every some seconds/miliseconds)
+    - [ ] Output Components
+        - [ ] LED
+    - [ ] Gates
+        - [ ] NAND
+        - [ ] NOR
+        - [ ] XNOR
 
 - [ ] Misc
     - [x] Merge Board into EditorLayer
@@ -27,6 +38,7 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
     - [ ] Serializable board.
     - [x] Define global editor state
     - [ ] Undo & Redo
+    - [ ] Add circle to rendering
 
 ## Graph Traversal Algorithm
 
@@ -39,7 +51,7 @@ The components as well as wires have visited boolean flags.
 These are rules to eliminate invalid state.
 
 1. An input pin can **only** have one connection.
-2. An output pin can **many** have one connection.
+2. An output pin can have **many** connection.
 3. A circuit without a input catagory component is not valid.
 4. Wires inherit the type of of the pin (`Input`, `Output`).
 5. Traversal starts from components that are from the `Input` catagory type.
