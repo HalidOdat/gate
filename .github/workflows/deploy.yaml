@@ -30,8 +30,8 @@ jobs:
       - name: Run cmake
         run: emcmake cmake . -B build
 
-      - name: Run make
-        run: emcmake cmake --build build
+      - name: Run build system
+        run: cmake --build build
 
       - name: Create final directory
         run: mkdir final
