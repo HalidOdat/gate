@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Resource/Resource.hpp"
+#include "Core/Base.hpp"
 
 namespace Gate {
 
   // TODO: Support indices of different types, like unsigned short
   class IndexBuffer {
   public:
-    using Handle = Resource<IndexBuffer>;
+    using Handle = std::shared_ptr<IndexBuffer>;
 
   public:
     [[nodiscard]] static IndexBuffer::Handle create(Slice<const u32> slice);
@@ -20,7 +20,10 @@ namespace Gate {
 
     inline u32 getCount() const { return this->count; }
 
-  private:
+  public:
+    // DO NOT USE! Use the builder!
+    //
+    // NOTE: It has to be public so it can be constructed by std::make_shared.
     IndexBuffer(u32 id, u32 count)
       : id{id}, count{count}
     {}
@@ -28,13 +31,7 @@ namespace Gate {
   private:
     u32 id;
     u32 count;
-
-  private:
-    template<typename T>
-    friend class ResourceFactory;
   };
-
-  GAME_FACTORY_HEADER(IndexBuffer)
 
 } // namespace Gate
 
