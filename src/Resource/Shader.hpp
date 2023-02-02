@@ -7,10 +7,7 @@
 
 namespace Gate {
 
-  // TODO: shader specification of definitions
   class Shader {
-    friend class ResourceManager;
-
   public:
     enum class Type {
       Vertex = 0,
@@ -25,9 +22,10 @@ namespace Gate {
       Core330,
     };
 
-    using Handle = Resource<Shader>;
+    using Handle = std::shared_ptr<Shader>;
 
     class Builder {
+      friend class Shader;
     public:
       Builder& version(Shader::Version version);
       Builder& define(String name, String content = "");
@@ -44,8 +42,6 @@ namespace Gate {
         Version mVersion = Version::Core330;
       #endif
       std::unordered_map<String, String> mDefinitions;
-
-      friend class Shader;
     };
 
   public:
@@ -75,14 +71,18 @@ namespace Gate {
     void setIntArray(StringView name, const i32* value, u32 count);
     void setUintArray(StringView name, const u32* value, u32 count);
 
-  private:
-    static constexpr const u32 NULL_SHADER = 0;
-
-  private:
+  public:
+    // DO NOT USE! Use the shader builder.
+    //
+    // NOTE: Has to be public to be constructed with std::make_shared
     Shader(u32 id, Option<String> filePath = None)
       : id{id}, mFilePath{std::move(filePath)}
     {}
 
+  private:
+    static constexpr const u32 NULL_SHADER = 0;
+
+  private:
     [[nodiscard]] static u32 compile(Type type, const char* source) noexcept;
 
     i32 getUniformLocation(StringView string);
@@ -97,10 +97,6 @@ namespace Gate {
 
   private:
     friend class Builder;
-    template<typename T>
-    friend class ResourceFactory;
   };
-
-  GAME_FACTORY_HEADER(Shader)
 
 } // namespace Gate

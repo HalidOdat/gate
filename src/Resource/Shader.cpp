@@ -15,8 +15,6 @@
 
 namespace Gate {
 
-  GAME_FACTORY_IMPLEMENTATION(Shader, factory)
-
   std::unordered_map<String, String> Shader::sGlobalDefines;
 
   bool Shader::globalDefine(String name, String content) {
@@ -186,7 +184,7 @@ namespace Gate {
 
     auto parts = parse(filepath, mVersion, mDefinitions, sGlobalDefines);
     if (parts.empty()) {
-      return {};
+      return nullptr;
     }
 
     std::array<u32, SHADER_TYPE_COUNT> shaders = {0, 0, 0, 0};
@@ -201,7 +199,7 @@ namespace Gate {
             glDeleteShader(shader);
           }
         }
-        return {};
+        return nullptr;
       }
     }
 
@@ -235,7 +233,7 @@ namespace Gate {
 
     if (!success) {
       glDeleteProgram(shaderProgram);
-      return {};
+      return nullptr;
     }
 
     // GLuint cameraBlockIndex = glGetUniformBlockIndex(shaderProgram, "Camera");
@@ -256,7 +254,7 @@ namespace Gate {
     //   Logger::trace("Shader: Materials block binding at 2");
     // }
 
-    return factory.emplace(shaderProgram, String(filepath));
+    return std::make_shared<Shader>(shaderProgram, String(filepath));
   }
 
   u32 Shader::compile(Type type, const char* source) noexcept {
@@ -292,6 +290,7 @@ namespace Gate {
       return false;
     }
 
+    // TODO: fix shader reload
     GATE_TODO("");
 
     auto data = Shader::load(*mFilePath).build();
