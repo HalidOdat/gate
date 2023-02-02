@@ -27,23 +27,17 @@ jobs:
       - name: Verify emscripten SDK
         run: emcc -v
 
-      - name: Create build directory
-        run: mkdir build
-
-      - name: Change to build directory
-        run: cd build
-
       - name: Run cmake
-        run: emcmake cmake ..
+        run: emcmake cmake . -B build
 
       - name: Run make
-        run: emmake make -j8
+        run: emcmake cmake --build build
 
       - name: Create final directory
         run: mkdir final
 
       - name: Copy files to final directory
-        run: cp ../web/index.html gate.* final
+        run: cp web/index.html build/gate.* final
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
