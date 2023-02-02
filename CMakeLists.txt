@@ -32,7 +32,6 @@ add_executable(${This}
   src/Core/Timestep.hpp
   src/Core/Timestep.cpp
   src/Core/Color.hpp
-  src/Core/Color.cpp
   src/Core/OpenGL.hpp
   src/Core/Base.hpp
   

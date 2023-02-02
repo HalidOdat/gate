@@ -151,7 +151,7 @@ namespace Gate {
         drawChar(c, current, size, color);
         current.x += size.x;
       } else {
-        current.y -= size.y; 
+        current.y += size.y; 
         current.x  = start.x;
       }
     }

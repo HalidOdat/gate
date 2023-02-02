@@ -28,12 +28,13 @@ namespace Gate {
       )
       .build();
 
-    auto* component = new SwitchComponent({2, 2});
-    component->toggle();
-    push_component(component);
-    push_component(new NotComponent({10, 2}));
-    push_component(new NotComponent({8, 10}));
-    push_component(new AndComponent({15, 15}));
+    // auto* component = new SwitchComponent({2, 2});
+    // component->toggle();
+    // push_component(component);
+    // push_component(new NotComponent({10, 2}));
+    // push_component(new NotComponent({8, 10}));
+    // push_component(new OrComponent({15, 15}));
+    // push_component(new AndComponent({20, 15}));
   }
 
   void EditorLayer::onDetach() {
@@ -374,15 +375,27 @@ namespace Gate {
 
     // TODO: Move to UI
     switch (mMode) {
-      case Mode::Select:
+      case Mode::Select: {
         // Selector cursor
         Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
-        break;
-      case Mode::WireDraw:
+        const StringView text = " Click on the board to draw a line,\n or press \"c\" to insert a component!";
+        const auto size = 16;
+        Application::getRenderer().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
+      }  break;
+      case Mode::WireDraw: {
         const StringView text = " Press <ESCAPE> to cancel wire drawing";
         const auto size = 16;
         Application::getRenderer().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
-        break;
+      }  break;
+      case Mode::AddComponent: {
+        Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, Color::ORANGE);
+
+        String text = " Click on board to add ";
+        text += componentTypeToString(mComponentType);
+        text += " component";
+        const auto size = 16;
+        Application::getRenderer().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
+      }  break;
     }
   }
 
@@ -394,15 +407,32 @@ namespace Gate {
           break;
         case Mode::WireDraw: {
           mMode = Mode::Select;
-        }
+        } break;
+        case Mode::AddComponent: {
+          mMode = Mode::Select;
+        }  break;
       }
-    }
-    
-    if (event.getKey() == Key::A) {
-      for (auto& component : mComponents) {
-        component->click();
+    } else {
+      switch (mMode) {
+        case Mode::Select:
+          if (event.getKey() == Key::C) {
+            mMode = Mode::AddComponent;
+          }
+          break;
+        case Mode::WireDraw: {
+        } break;
+        case Mode::AddComponent: {
+          if (event.getKey() == Key::S) {
+            mComponentType = ComponentType::Switch;
+          } else if (event.getKey() == Key::N) {
+            mComponentType = ComponentType::Not;
+          }  else if (event.getKey() == Key::A) {
+            mComponentType = ComponentType::And;
+          }  else if (event.getKey() == Key::O) {
+            mComponentType = ComponentType::Or;
+          }
+        }  break;
       }
-      tick();
     }
 
     #ifndef GATE_PLATFORM_WEB
@@ -455,6 +485,24 @@ namespace Gate {
             mMode = Mode::Select;
           }
         } break;
+        case Mode::AddComponent: {
+          // TODO: check if it intersets withs something
+          auto position = Point(getGridAlignedMousePosition() / (f32)config.grid.cell.size);
+          switch (mComponentType) {
+            case ComponentType::Switch: {
+              push_component(new SwitchComponent(position));
+            } break;
+            case ComponentType::Not: {
+              push_component(new NotComponent(position));
+            } break;
+            case ComponentType::And: {
+              push_component(new AndComponent(position));
+            } break;
+            case ComponentType::Or: {
+              push_component(new OrComponent(position));
+            } break;
+          }
+        } break;
       }
     }
     return false;
@@ -472,7 +520,7 @@ namespace Gate {
       case Mode::Select:
         mSelectorPosition = gridPosition;
         break;
-      case Mode::WireDraw:
+      case Mode::WireDraw: {
         mWireEndPosition = gridPosition;
 
         Vec2 temp = glm::abs(mWireEndPosition - mWireStartPosition);
@@ -481,6 +529,9 @@ namespace Gate {
         } else {
           mWireEndPosition = Vec2{mWireStartPosition.x, mWireEndPosition.y};
         }
+      }  break;
+      case Mode::AddComponent:
+        mSelectorPosition = gridPosition;
         break;
     }
     mLastMousePosition = event.toVec2();

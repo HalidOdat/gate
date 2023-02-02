@@ -29,6 +29,7 @@ namespace Gate {
     static constexpr const auto BLUE      = rgba(0x0000FFFF);
     static constexpr const auto DARK_BLUE = rgba(0x0000FFFF);
     static constexpr const auto PURPLE    = rgba(0x800080FF);
+    static constexpr const auto ORANGE    = rgba(0xFFA500FF);
   };
 
 } // namespace Gate

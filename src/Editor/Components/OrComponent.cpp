@@ -18,6 +18,9 @@ namespace Gate {
       color = Color::RED;
     }
     renderer.drawCenteredQuad(mPosition.toVec2() * (f32)config.grid.cell.size, size * 2.5f, color);
+
+    f32 fontSize = size.x * 1.5f;
+    renderer.drawText("v", (mPosition.toVec2() * (f32)config.grid.cell.size) - fontSize / 2.0f, fontSize, Color::PURPLE);
   }
   bool OrComponent::update() {
     // if (mPins[INPUT_INDEX].visited) {

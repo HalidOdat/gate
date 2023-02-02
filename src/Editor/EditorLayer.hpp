@@ -57,7 +57,25 @@ namespace Gate {
       enum class Mode {
         Select,
         WireDraw,
+        AddComponent,
       };
+
+      enum class ComponentType {
+        Switch,
+        Not,
+        And,
+        Or,
+      };
+
+      static StringView componentTypeToString(ComponentType type) {
+        switch (type) {
+          case ComponentType::Switch: return "Switch";
+          case ComponentType::Not:    return "Not Gate";
+          case ComponentType::And:    return "And Gate";
+          case ComponentType::Or:     return "Or Gate";
+        }
+        GATE_UNREACHABLE("invalid component type");
+      }
 
   private:
     // Camera
@@ -67,6 +85,7 @@ namespace Gate {
     bool mClicked = false;
     Vec2 mLastMousePosition{0.0f};
     Mode mMode = Mode::Select;
+    ComponentType mComponentType = ComponentType::Not;
 
     // Selector
     Vec2 mSelectorPosition = { 0.0f, 0.0f };
