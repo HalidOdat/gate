@@ -13,31 +13,20 @@ namespace Gate {
     Logger::error("GLFW Error (%d): %s", error, description);
   }
 
-  u32 Window::windowCount = 0;
-
   void Window::initializeWindowSystem() {
-    if (windowCount == 0) {
-      glfwSetErrorCallback(GLFWErrorCallback);
+    glfwSetErrorCallback(GLFWErrorCallback);
 
-      Logger::info("GLFW Version: %s", glfwGetVersionString());
-      if (!glfwInit()) {
-        std::exit(EXIT_FAILURE);
-      } else {
-        Logger::trace("GLFW initialized!");
-      }
+    Logger::info("GLFW Version: %s", glfwGetVersionString());
+    if (!glfwInit()) {
+      std::exit(EXIT_FAILURE);
+    } else {
+      Logger::trace("GLFW initialized!");
     }
-    
-    windowCount++;
   }
 
-  // TOOD: Remove `windowCount` since we will only have one window
   void Window::deinitializeWindowSystem() {
-    GATE_ASSERT_WITH_MESSAGE(windowCount >= 1, "Should not call deinit before init");
-    windowCount--;
-    if (windowCount == 0) {
-      glfwTerminate();
-      Logger::trace("GLFW Terminated!");
-    }    
+    glfwTerminate();
+    Logger::trace("GLFW Terminated!");
   }
 
   // TODO: Should be ifdef removed in Web build

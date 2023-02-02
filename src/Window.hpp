@@ -50,7 +50,6 @@ namespace Gate {
       : data{ data }
     {}
 
-    static u32 windowCount;
     static void initializeWindowSystem();
     static void deinitializeWindowSystem();
 
