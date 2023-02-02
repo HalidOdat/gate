@@ -27,14 +27,6 @@ namespace Gate {
         FrameBuffer::Attachment::Format::Rgb8
       )
       .build();
-
-    // auto* component = new SwitchComponent({2, 2});
-    // component->toggle();
-    // push_component(component);
-    // push_component(new NotComponent({10, 2}));
-    // push_component(new NotComponent({8, 10}));
-    // push_component(new OrComponent({15, 15}));
-    // push_component(new AndComponent({20, 15}));
   }
 
   void EditorLayer::onDetach() {
