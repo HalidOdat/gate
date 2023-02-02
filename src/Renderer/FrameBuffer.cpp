@@ -1,8 +1,6 @@
 #include "Core/OpenGL.hpp"
 
-#include "Core/Base.hpp"
 #include "Renderer/FrameBuffer.hpp"
-#include "Resource/Factory.hpp"
 #include "Application.hpp"
 
 namespace Gate {
@@ -24,48 +22,38 @@ namespace Gate {
     }
   }
 
-  GAME_FACTORY_IMPLEMENTATION(FrameBuffer, factory)
-
   FrameBuffer::Builder& FrameBuffer::Builder::width(u32 width) {
     mWidth = width;
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::height(u32 height) {
     mHeight = height;
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::clearColor(f32 r, f32 g, f32 b, f32 a) {
     mClearColor = Vec4(r, g, b, a);
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::clearColor(const Vec3& color) {
     mClearColor = Vec4(color, 1.0f);
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::clearColor(const Vec4& color) {
     mClearColor = color;
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::clear(FrameBuffer::Clear clear) {
     mClear = clear;
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::clearOnBind(bool yes) {
     mClearOnBind = yes;
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::attach(Attachment::Type type, Attachment::Format format, bool drawable, bool isMultisample) {
     mAttachments.push_back(FrameBuffer::Attachment{type, format, drawable, isMultisample});
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::attachDefaultDepthStencilBuffer() {
     mDepthStencilAttachment = {
       Attachment::Type::RenderBuffer,
@@ -74,12 +62,10 @@ namespace Gate {
     };
     return *this;
   }
-
   FrameBuffer::Builder& FrameBuffer::Builder::depthStencilType(Attachment::Type type) {
     mDepthStencilAttachment.type = type;
     return *this;
   }
-
   FrameBuffer::Handle FrameBuffer::Builder::build() {
     if (mWidth == 0) {
       mWidth = Application::getWindow().getWidth();
@@ -90,15 +76,12 @@ namespace Gate {
 
     return FrameBuffer::create(*this);
   }
-
   FrameBuffer::Builder FrameBuffer::builder() {
     return FrameBuffer::Builder();
   }
-
   FrameBuffer::Handle FrameBuffer::create(Builder& builder) {
-    return factory.emplace(builder);
+    return std::make_shared<FrameBuffer>(builder);
   }
-
   FrameBuffer::FrameBuffer(Builder& builder)
     : mId{0}
   {
@@ -113,7 +96,6 @@ namespace Gate {
 
     invalidate(mWidth, mHeight);
   }
-
   void FrameBuffer::invalidate(u32 width, u32 height) {
     GATE_DEBUG_ASSERT(width != 0 && height != 0);
 

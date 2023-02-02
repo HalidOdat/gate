@@ -3,13 +3,11 @@
 #include "Core/Base.hpp"
 #include "Resource/Texture.hpp"
 
-#include <vector>
-
 namespace Gate {
 
   class FrameBuffer {
   public:
-    using Handle = Resource<FrameBuffer>;
+    using Handle = std::shared_ptr<FrameBuffer>;
 
     enum class Clear : u8 {
       Color   = 0b0000'0001,
@@ -90,9 +88,14 @@ namespace Gate {
 
     inline u32 getId() const { return mId; }
 
+  public:
+    // DO NOT USE! Use the builder!
+    //
+    // NOTE: It has to be public so it can be constructed by std::make_shared.
+    FrameBuffer(Builder& builder);
+
   private:
     static FrameBuffer::Handle create(Builder& builder);
-    FrameBuffer(Builder& builder);
     void destroy();
 
   private:
@@ -110,10 +113,6 @@ namespace Gate {
 
     u32 mWidth;
     u32 mHeight;
-
-  private:
-    template<typename T>
-    friend class ResourceFactory;
   };
 
   constexpr FrameBuffer::Clear operator|(FrameBuffer::Clear lhs, FrameBuffer::Clear rhs) {
@@ -121,7 +120,5 @@ namespace Gate {
       static_cast<u8>(lhs) | static_cast<u8>(rhs)
     );
   }
-
-  GAME_FACTORY_HEADER(FrameBuffer)
 
 } // namespace Gate
