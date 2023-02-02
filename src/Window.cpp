@@ -29,8 +29,8 @@ namespace Gate {
     Logger::trace("GLFW Terminated!");
   }
 
-  // TODO: Should be ifdef removed in Web build
-  void APIENTRY openGLMessageCallback(
+#ifndef GATE_PLATFORM_WEB
+  static void APIENTRY openGLMessageCallback(
     GLenum source,
     GLenum type,
     GLuint id,
@@ -87,6 +87,7 @@ namespace Gate {
           GATE_UNREACHABLE("");
     }
   }
+#endif
 
   Ref<Window> Window::create(const char* title, u32 width, u32 height) {
     initializeWindowSystem();
