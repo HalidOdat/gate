@@ -238,11 +238,11 @@ namespace Gate {
       return {};
     }
 
-    GLuint cameraBlockIndex = glGetUniformBlockIndex(shaderProgram, "Camera");
-    if (cameraBlockIndex != GL_INVALID_INDEX) {
-      glUniformBlockBinding(shaderProgram, cameraBlockIndex, 0);
-      Logger::trace("Shader: Camera block binding at 0");
-    }
+    // GLuint cameraBlockIndex = glGetUniformBlockIndex(shaderProgram, "Camera");
+    // if (cameraBlockIndex != GL_INVALID_INDEX) {
+    //   glUniformBlockBinding(shaderProgram, cameraBlockIndex, 0);
+    //   Logger::trace("Shader: Camera block binding at 0");
+    // }
 
     // GLuint lightsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Lights");
     // if (lightsBlockIndex != GL_INVALID_INDEX) {
@@ -250,11 +250,11 @@ namespace Gate {
     //   Logger::trace("Shader: Lights block binding at 1");
     // }
 
-    GLuint materialsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Materials");
-    if (materialsBlockIndex != GL_INVALID_INDEX) {
-      glUniformBlockBinding(shaderProgram, materialsBlockIndex, 2);
-      Logger::trace("Shader: Materials block binding at 2");
-    }
+    // GLuint materialsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Materials");
+    // if (materialsBlockIndex != GL_INVALID_INDEX) {
+    //   glUniformBlockBinding(shaderProgram, materialsBlockIndex, 2);
+    //   Logger::trace("Shader: Materials block binding at 2");
+    // }
 
     return factory.emplace(shaderProgram, String(filepath));
   }
@@ -299,7 +299,6 @@ namespace Gate {
       Logger::trace("Reloaded shader: %s", mFilePath.value().c_str());
 
       glDeleteProgram(id);
-      // mData = *data;
       return true;
     }
 
