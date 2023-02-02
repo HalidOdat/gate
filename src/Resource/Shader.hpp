@@ -22,6 +22,7 @@ namespace Gate {
     enum Version {
       Es300,
       Core450,
+      Core330,
     };
 
     using Handle = Resource<Shader>;
@@ -40,7 +41,7 @@ namespace Gate {
       #ifdef GATE_PLATFORM_WEB
         Version mVersion = Version::Es300;
       #else
-        Version mVersion = Version::Core450;
+        Version mVersion = Version::Core330;
       #endif
       std::unordered_map<String, String> mDefinitions;
 

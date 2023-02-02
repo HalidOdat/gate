@@ -13,7 +13,7 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
 - [ ] Wire
     - [x] Rename Line to Wire
     - [x] Align drawn wires better
-    - [ ] Draw wire end points
+    - [x] Draw wire end points
     - [x] Add active state to wire
 
 - [ ] Component
@@ -26,6 +26,7 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
     - [x] Only quit with `q` on native platform.
     - [ ] Serializable board.
     - [x] Define global editor state
+    - [ ] Undo & Redo
 
 ## Graph Traversal Algorithm
 

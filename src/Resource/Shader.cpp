@@ -52,6 +52,7 @@ namespace Gate {
     switch (version) {
       case Shader::Version::Es300:   return "#version 300 es\n";
       case Shader::Version::Core450: return "#version 450 core\n";
+      case Shader::Version::Core330: return "#version 330 core\n";
     }
     GATE_UNREACHABLE("unknown shader version!");
   }
