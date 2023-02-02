@@ -5,6 +5,7 @@
 #include "Editor/Components/NotComponent.hpp"
 #include "Editor/Components/AndComponent.hpp"
 #include "Editor/Components/OrComponent.hpp"
+#include "Editor/Components/XorComponent.hpp"
 
 namespace Gate {
 

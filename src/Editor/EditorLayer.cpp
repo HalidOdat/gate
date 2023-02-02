@@ -418,10 +418,12 @@ namespace Gate {
             mComponentType = ComponentType::Switch;
           } else if (event.getKey() == Key::N) {
             mComponentType = ComponentType::Not;
-          }  else if (event.getKey() == Key::A) {
+          } else if (event.getKey() == Key::A) {
             mComponentType = ComponentType::And;
-          }  else if (event.getKey() == Key::O) {
+          } else if (event.getKey() == Key::O) {
             mComponentType = ComponentType::Or;
+          } else if (event.getKey() == Key::X) {
+            mComponentType = ComponentType::Xor;
           }
         }  break;
       }
@@ -492,6 +494,9 @@ namespace Gate {
             } break;
             case ComponentType::Or: {
               push_component(new OrComponent(position));
+            } break;
+            case ComponentType::Xor: {
+              push_component(new XorComponent(position));
             } break;
           }
         } break;

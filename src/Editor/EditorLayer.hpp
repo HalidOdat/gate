@@ -65,14 +65,16 @@ namespace Gate {
         Not,
         And,
         Or,
+        Xor,
       };
 
       static StringView componentTypeToString(ComponentType type) {
         switch (type) {
           case ComponentType::Switch: return "Switch";
-          case ComponentType::Not:    return "Not Gate";
-          case ComponentType::And:    return "And Gate";
-          case ComponentType::Or:     return "Or Gate";
+          case ComponentType::Not:    return "NOT Gate";
+          case ComponentType::And:    return "AND Gate";
+          case ComponentType::Or:     return "OR Gate";
+          case ComponentType::Xor:    return "XOR Gate";
         }
         GATE_UNREACHABLE("invalid component type");
       }
@@ -85,7 +87,7 @@ namespace Gate {
     bool mClicked = false;
     Vec2 mLastMousePosition{0.0f};
     Mode mMode = Mode::Select;
-    ComponentType mComponentType = ComponentType::Not;
+    ComponentType mComponentType = ComponentType::Switch;
 
     // Selector
     Vec2 mSelectorPosition = { 0.0f, 0.0f };

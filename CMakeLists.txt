@@ -90,6 +90,8 @@ add_executable(${This}
   src/Editor/Components/AndComponent.cpp
   src/Editor/Components/OrComponent.hpp
   src/Editor/Components/OrComponent.cpp
+  src/Editor/Components/XorComponent.hpp
+  src/Editor/Components/XorComponent.cpp
   src/Editor/Components.hpp
   src/Editor/Config.hpp
   src/Editor/Config.cpp
