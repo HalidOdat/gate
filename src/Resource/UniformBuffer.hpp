@@ -1,15 +1,12 @@
 #pragma once
 
 #include "Core/Base.hpp"
-#include "Resource/Resource.hpp"
-
-#include <vector>
 
 namespace Gate {
 
   class UniformBuffer {
   public:
-    using Handle = Resource<UniformBuffer>;
+    using Handle = std::shared_ptr<UniformBuffer>;
 
     enum class StorageType : u8 {
       /// The data store contents will be modified once and used at most a few times.
@@ -67,7 +64,10 @@ namespace Gate {
 
     void set(const Slice<const void> slice);
 
-  private:
+  public:
+    // DO NOT USE! Use the shader builder.
+    //
+    // NOTE: Has to be public to be constructed with std::make_shared
     UniformBuffer(u32 id, u32 size, u32 binding)
       : mId{id}, mSize(size), mBinding(binding)
     {}
@@ -76,12 +76,6 @@ namespace Gate {
     u32 mId;
     u32 mSize;
     u32 mBinding;
-
-  private:
-    template<typename T>
-    friend class ResourceFactory;
   };
-
-  GAME_FACTORY_HEADER(UniformBuffer)
 
 } // namespace Gate

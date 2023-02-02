@@ -1,21 +1,13 @@
-#include <cassert>
-
 #include "Core/OpenGL.hpp"
-
-#include "Core/Log.hpp"
 #include "Renderer/VertexArray.hpp"
 
-#include "Resource/Factory.hpp"
-
 namespace Gate {
-  
-  GAME_FACTORY_IMPLEMENTATION(VertexArray, factory);
 
   VertexArray::Handle VertexArray::create() {
     u32 id;
     glGenVertexArrays(1, &id);
     glBindVertexArray(id);
-    return factory.emplace(id);
+    return std::make_shared<VertexArray>(id);
   }
 
   VertexArray::~VertexArray() {

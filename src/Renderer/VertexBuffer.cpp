@@ -1,7 +1,4 @@
 #include "Core/OpenGL.hpp"
-
-#include "Core/Base.hpp"
-#include "Resource/Factory.hpp"
 #include "Renderer/VertexBuffer.hpp"
 
 namespace Gate {
@@ -36,7 +33,6 @@ namespace Gate {
     }
 
   }
-
   usize BufferElement::getSize() const {
     switch (mType) {
       case Type::Float:  return sizeof(float)        * 1;
@@ -54,7 +50,6 @@ namespace Gate {
     }
     GATE_UNREACHABLE("Unknown shader data type!");
   }
-
   usize BufferElement::getComponentCount() const {
     switch (mType) {
       case Type::Float:  return 1;
@@ -73,7 +68,6 @@ namespace Gate {
     }
     GATE_UNREACHABLE("Unknown shader data type!");
   }
-
   void BufferLayout::calculateStride() {
     this->stride = 0;
     usize offset = 0;
@@ -84,9 +78,6 @@ namespace Gate {
       this->stride += element.getSize();
     }
   }
-
-  GAME_FACTORY_IMPLEMENTATION(VertexBuffer, factory)
-
   VertexBuffer::Builder& VertexBuffer::Builder::data(const void* inData, u32 inSize) {
     mData = inData;
     mSize = inSize;
@@ -125,25 +116,20 @@ namespace Gate {
     } else {
       glBufferData(GL_ARRAY_BUFFER, mSize, nullptr, storageAndAccess);
     }
-    return factory.emplace(id, BufferLayout(mLayout));
+    return std::make_shared<VertexBuffer>(id, BufferLayout(mLayout));
   }
-
   VertexBuffer::Builder VertexBuffer::builder() {
     return VertexBuffer::Builder();
   }
-
   VertexBuffer::~VertexBuffer() {
     glDeleteBuffers(1, &mId);
   }
-
   void VertexBuffer::bind() {
     glBindBuffer(GL_ARRAY_BUFFER, mId);
   }
-
   void VertexBuffer::unbind() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
   }
-
   void VertexBuffer::set(const Slice<const void> slice) {
     glBindBuffer(GL_ARRAY_BUFFER, mId);
     glBufferSubData(GL_ARRAY_BUFFER, 0, slice.sizeInBytes(), slice.data());

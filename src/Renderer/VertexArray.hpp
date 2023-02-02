@@ -9,7 +9,7 @@ namespace Gate {
 
   class VertexArray {
   public:
-    using Handle = Resource<VertexArray>;
+    using Handle = std::shared_ptr<VertexArray>;
 
   public:
     [[nodiscard]] static VertexArray::Handle create();
@@ -29,7 +29,10 @@ namespace Gate {
 
     void drawArrays(u32 count);
 
-  private:
+  public:
+    // DO NOT USE! Use the builder!
+    //
+    // NOTE: It has to be public so it can be constructed by std::make_shared.
     VertexArray(u32 id)
       : mId(id)
     {}
@@ -39,12 +42,6 @@ namespace Gate {
     u32 mVertexAttributeIndex = 0;
     std::vector<VertexBuffer::Handle> mBuffers;
     IndexBuffer::Handle mIndexBuffer;
-
-  private:
-    template<typename T>
-    friend class ResourceFactory;
   };
-
-  GAME_FACTORY_HEADER(VertexArray);
 
 } // namespace Gate

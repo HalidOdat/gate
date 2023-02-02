@@ -4,11 +4,14 @@
 #include <stb_image.h>
 #include "Core/OpenGL.hpp"
 
-#include "Core/Base.hpp"
 #include "Resource/Texture.hpp"
-#include "Resource/Factory.hpp"
 
 namespace Gate {
+
+  // TODO: key should also have specification
+  // FIXME: Delete texture when it reaches 1 refcount for hashmap
+  static std::unordered_map<String, Texture::Handle> cachedImageTexture; // Key: Path,  Value: Texture
+  static std::unordered_map<u32,    Texture::Handle> cachedColorTexture; // Key: Color, Value: Texture
 
   static const u8 defaultTextureData[] = {
     0x00, 0x00, 0x00, 0xFF,   0xFF, 0x00, 0xFF, 0xFF,
@@ -131,66 +134,6 @@ namespace Gate {
     }
     GATE_UNREACHABLE("unknown internal format type!");
   }
-
-  // TODO: key should also have specification
-  static std::unordered_map<String, Texture::Handle> cachedImageTexture; // Key: Path,  Value: Texture
-  static std::unordered_map<u32,    Texture::Handle> cachedColorTexture; // Key: Color, Value: Texture
-
-  GAME_FACTORY_IMPLEMENTATION(Texture, texture2DFactory)
-
-  template<>
-  struct FactoryCallback<Texture> {
-    inline static void postDecrement(const Resource<Texture>& resource) {
-      if (resource.getReferenceCount() == 1) {
-        switch (resource->getType()) {
-          case Texture::Type::Image:
-            cachedImageTexture.erase(*resource->getFilePath());
-            break;
-          case Texture::Type::Color:
-            cachedColorTexture.erase(resource->getColor());
-            break;
-          case Texture::Type::Buffer:
-            break;
-          default:
-            GATE_UNREACHABLE("unknown texture type!");
-        }  
-      }
-    }
-    inline static void created(Texture& texture, u32 id) {
-      switch (texture.getType()) {
-        case Texture::Type::Image:
-          Logger::trace("Texture #%u loaded from file: %s", id, texture.getFilePath()->c_str());
-          break;
-        case Texture::Type::Color:
-          Logger::trace("Texture #%u created color: #%08X", id, texture.getColor());
-          break;
-        case Texture::Type::Buffer:
-          Logger::trace("Texture #%u created buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
-          break;
-        default:
-          GATE_UNREACHABLE("unknown texture type!");
-      }
-    }
-    inline static void destroyed(Texture& texture, u32 id) {
-      switch (texture.getType()) {
-        case Texture::Type::Image:
-          Logger::trace("Texture #%u destroyed: %s", id, texture.getFilePath()->c_str());
-          break;
-        case Texture::Type::Color:
-          Logger::trace("Texture #%u destroyed color: #%08X", id, texture.getColor());
-          break;
-        case Texture::Type::Buffer:
-          Logger::trace("Texture #%u destroyed buffer: width=%u, height=%u", id, texture.getWidth(), texture.getHeight());
-          break;
-        default:
-          GATE_UNREACHABLE("unknown texture type!");
-      }
-    }
-    inline static void clear() {
-      cachedImageTexture.clear();
-      cachedColorTexture.clear();
-    }
-  };
 
   Texture::Builder& Texture::Builder::format(Texture::Format internalFormat) {
     mSpecification.internalFormat = internalFormat;
@@ -336,15 +279,18 @@ namespace Gate {
     }
 
     auto data = Data{texture, mWidth, mHeight, mSpecification, mType, filepath, mColor};
-    auto handle = texture2DFactory.emplace(std::move(data));
+    auto handle = std::make_shared<Texture>(std::move(data));
     switch (mType) {
       case Texture::Type::Color:
+        Logger::trace("Texture #%u loaded from file: %s", handle->getId(), handle->getFilePath()->c_str());
         cachedColorTexture.emplace(mColor, handle);
         break;
-      case Texture::Type::Buffer:
-        break;
       case Texture::Type::Image:
+        Logger::trace("Texture #%u created color: #%08X", handle->getId(), handle->getColor());
         cachedImageTexture.emplace(std::move(filepath), handle);
+        break;
+      case Texture::Type::Buffer:
+        Logger::trace("Texture #%u created buffer: width=%u, height=%u", handle->getId(), handle->getWidth(), handle->getHeight());
         break;
       default:
         GATE_UNREACHABLE("unknown texture type!");
@@ -355,7 +301,6 @@ namespace Gate {
   void Texture::destroyAllTextures() {
     cachedImageTexture.clear();
     cachedColorTexture.clear();
-    texture2DFactory.clear();
   }
 
   void Texture::reloadAll() {
@@ -380,7 +325,6 @@ namespace Gate {
     }
 
     auto dataType       = TextureDataTypeToOpenGL(Texture::DataType::UnsignedByte);
-    // auto dataFormat  = TextureDataFormatToOpenGL(mDataFormat);
     auto internalFormat = TextureInternalFormatToOpenGL(specification.internalFormat);
     auto wrapping       = TextureWrappingToOpenGL(specification.wrapping);
     auto magFilter      = TextureFilteringToOpenGL(specification.filtering.mag);
@@ -403,7 +347,6 @@ namespace Gate {
 
     return Data{texture, width, height, specification, Texture::Type::Color};
   }
-
   Texture::Builder Texture::color(u32 color) {
     Builder builder;
     builder.mType = Texture::Type::Color;
@@ -413,16 +356,13 @@ namespace Gate {
     builder.mSpecification.filtering.mag = Texture::FilteringMode::Nearest;
     return builder;
   }
-
   Texture::Builder Texture::color(u8 r, u8 g, u8 b, u8 a) {
     u32 color =  r; color <<= 8;
         color |= g; color <<= 8;
         color |= b; color <<= 8;
         color |= a;
-
     return Texture::color(color);
   }
-
   Texture::Builder Texture::buffer(u32 width, u32 height) {
     Builder builder;
     builder.mType = Texture::Type::Buffer;
@@ -430,7 +370,6 @@ namespace Gate {
     builder.mHeight = height;
     return builder;
   }
-
   Texture::Builder Texture::buffer(const void* inData, u32 width, u32 height, Texture::DataFormat dataFormat, Texture::DataType dataType) {
     Builder builder;
     builder.mType = Texture::Type::Buffer;
@@ -441,7 +380,6 @@ namespace Gate {
     builder.mDataType = dataType;
     return builder;
   }
-
   Texture::Builder Texture::load(const String& path, bool verticalFlipOnLoad) {
     Builder builder;
     builder.mType = Texture::Type::Image;
@@ -449,14 +387,12 @@ namespace Gate {
     builder.mSpecification.verticalFlip = verticalFlipOnLoad;
     return builder;
   }
-
   Texture::Handle Texture::generateMissingDataPlaceholder() {
     return Texture::buffer(defaultTextureData, 2, 2, Texture::DataFormat::Rgba, Texture::DataType::UnsignedByte)
       .filtering({Texture::FilteringMode::Nearest, Texture::FilteringMode::Nearest})
       .mipmap(Texture::MipmapMode::None)
       .build();
   }
-
   bool Texture::reload() {
     if (mData.type != Texture::Type::Image) {
       return true;
@@ -481,26 +417,34 @@ namespace Gate {
     mData = std::move(data);
     return true;
   }
-
   Texture::~Texture() {
+    switch (getType()) {
+      case Texture::Type::Image:
+        Logger::trace("Texture #%u destroyed: %s", getId(), getFilePath()->c_str());
+        break;
+      case Texture::Type::Color:
+        Logger::trace("Texture #%u destroyed color: #%08X", getId(), getColor());
+        break;
+      case Texture::Type::Buffer:
+        Logger::trace("Texture #%u destroyed buffer: width=%u, height=%u", getId(), getWidth(), getHeight());
+        break;
+      default:
+        GATE_UNREACHABLE("unknown texture type!");
+    }
     glDeleteTextures(1, &mData.id);
   }
-
   void Texture::bind(const usize slot) const {
     // TODO: debug check if max texture slot reached
     u32 textureId = mData.id;
     glActiveTexture(GL_TEXTURE0 + (GLenum)slot);
     glBindTexture(GL_TEXTURE_2D, textureId);
   }
-
   u32 Texture::getId() const {
     return mData.id;
   }
-
   u32 Texture::getWidth() const {
     return mData.width;
   }
-
   u32 Texture::getHeight() const {
     return mData.height;
   }

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Core/Base.hpp"
-#include "Resource/Resource.hpp"
 
 namespace Gate {
 
   class Texture {
+    friend class ResourceManager;
   public:
-    using Handle = Resource<Texture>;
+    using Handle = std::shared_ptr<Texture>;
 
     enum class WrappingMode : u8 {
       Repeat,
@@ -168,23 +168,21 @@ namespace Gate {
       u32 color{};
     };
 
-    Texture(Data data)
-      : mData{std::move(data)}
-    {}
-
     static Data fromBytes(const u8 bytes[], const u32 width, const u32 height, const u32 channels = 4, Specification specification = {});
 
     static void destroyAllTextures();
 
+  public:
+    // DO NOT USE! Use the builder!
+    //
+    // NOTE: It has to be public so it can be constructed by std::make_shared.
+    Texture(Data data)
+      : mData{std::move(data)}
+    {}
+
   private:
     Data mData;
-
-    template<typename T>
-    friend class ResourceFactory;
-    friend class ResourceManager;
   };
-
-  GAME_FACTORY_HEADER(Texture)
 
 } // namespace Gate
 

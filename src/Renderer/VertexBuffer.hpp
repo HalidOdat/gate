@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Core/Base.hpp"
-#include "Resource/Resource.hpp"
-
-#include <vector>
 
 namespace Gate {
 
@@ -97,7 +94,7 @@ namespace Gate {
 
   class VertexBuffer {
   public:
-    using Handle = Resource<VertexBuffer>;
+    using Handle = std::shared_ptr<VertexBuffer>;
 
     class Builder {
     public:
@@ -136,7 +133,10 @@ namespace Gate {
     inline const BufferLayout& getLayout() const { return mLayout; }
     inline void setLayout(BufferLayout layout) { mLayout = std::move(layout); }
 
-  private:
+  public:
+    // DO NOT USE! Use the builder!
+    //
+    // NOTE: It has to be public so it can be constructed by std::make_shared.
     VertexBuffer(u32 id, BufferLayout layout)
       : mId{id}, mLayout{std::move(layout)}
     {}
@@ -144,12 +144,6 @@ namespace Gate {
   private:
     u32 mId;
     BufferLayout mLayout;
-
-  private:
-    template<typename T>
-    friend class ResourceFactory;
   };
-
-  GAME_FACTORY_HEADER(VertexBuffer)
 
 } // namespace Gate
