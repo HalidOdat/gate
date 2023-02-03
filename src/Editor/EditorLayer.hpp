@@ -89,7 +89,7 @@ namespace Gate {
     ComponentType mComponentType = ComponentType::Switch;
 
     // Selector
-    Vec2 mSelectorPosition = { 0.0f, 0.0f };
+    Vec2 mSelectorPosition{ 0.0f, 0.0f };
 
     // Wire drawing
     Vec2 mWireStartPosition{0.0f};

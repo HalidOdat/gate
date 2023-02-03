@@ -21,7 +21,7 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
     - [x] Add a toggleable switch componenet
     - [x] Connect toggleable component with wire
     - [ ] Pins
-         - [ ] Separate output and input pins
+         - [x] Separate output and input pins
          - [ ] Circular shaped pins
     - [ ] Input Components
         - [ ] Tick (activates every some seconds/miliseconds)
@@ -38,7 +38,7 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
     - [ ] Serializable board.
     - [x] Define global editor state
     - [ ] Undo & Redo
-    - [ ] Add circle to rendering
+    - [x] Add circle to rendering
 
 ## Graph Traversal Algorithm
 

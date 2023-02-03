@@ -13,7 +13,7 @@ void main() {
    vColor      = aColor;
    vTexCoord   = aTexCoord;
    vTexIndex   = aTexIndex;
-   gl_Position = vec4(aPosition, 0.0f, 1.0);
+   gl_Position = vec4(aPosition, 0.0f, 1.0f);
 }
 
 @type fragment

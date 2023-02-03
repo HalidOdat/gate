@@ -337,9 +337,9 @@ namespace Gate {
 
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
-    Application::getRenderer().clearScreen();
+    // Application::getRenderer().clearScreen();
     renderAll(Application::getRenderer());
-
+    Application::getRenderer().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
     auto height = Application::getWindow().getHeight();
 
     // Wire Draw

@@ -60,6 +60,27 @@ namespace Gate {
     mQuadShader->bind();
     mQuadShader->setIntArray("uTextures", samples, MAX_TEXTURES);
 
+    // Circles
+    {
+      mCircleVertexArray = VertexArray::create();
+      mCircleVertexBuffer = VertexBuffer::builder()
+        .size(CIRCLE_VERTEX_BUFFER_BYTE_SIZE)
+        .storage(Buffer::StorageType::Dynamic)
+        .layout(BufferElement::Type::Float2, "aWorldPosition")
+        .layout(BufferElement::Type::Float2, "aLocalPosition")
+        .layout(BufferElement::Type::Float4, "aColor")
+        .layout(BufferElement::Type::Float,  "aThickness")
+        .layout(BufferElement::Type::Float,  "aFade")
+        .build();
+      mCircleVertexArray->addVertexBuffer(mCircleVertexBuffer);
+      mCircleVertexArray->setIndexBuffer(mQuadIndexBuffer); // Use quad index buffer
+      mCircleBasePtr = new CircleVertex[CIRCLE_MAX * CIRCLE_VERTICES_COUNT];
+      mCircleCurrentPtr = mCircleBasePtr;
+      mCircleCount = 0;
+      
+      mCircleShader = Shader::load("assets/shaders/renderer/Circle.glsl").build();
+    }
+
     // TOOD: Take in more defined font
     mFontTexture = Texture::load("assets/textures/PixelFont_7x9_112x54.png")
       .filtering(Texture::FilteringMode::Nearest)
@@ -91,6 +112,7 @@ namespace Gate {
 
   Renderer::~Renderer() {
     delete[] mQuadBasePtr;
+    delete[] mCircleBasePtr;
   }
 
   void Renderer::begin(const Camera& camera) {
@@ -106,7 +128,7 @@ namespace Gate {
 
     // TODO: refactor this.
     if (mQuadCount == QUAD_MAX) {
-      flush();
+      flushQuad();
     }
 
     u32 index = 0;
@@ -130,8 +152,6 @@ namespace Gate {
     }
 
     Vec4 tc = mFontCoords[(usize)(c - ' ')];
-
-    // TODO: do transfrom with projection view matrix here
     *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right
     *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, /* {1.0f, 0.0f} */ {tc.z, tc.y}, index }; // bottom-right
     *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, /* {0.0f, 0.0f} */ {tc.x, tc.y}, index }; // bottom-left
@@ -179,7 +199,7 @@ namespace Gate {
     transform = glm::scale(transform, glm::vec3(size, 1.0f)); 
 
     if (mQuadCount >= QUAD_MAX) {
-      flush();
+      flushQuad();
     }
 
     u32 index = 0;
@@ -213,8 +233,7 @@ namespace Gate {
   void Renderer::clearScreen(const Texture::Handle& texture, const Vec4& color) {
     drawQuad(Vec2{0, 0}, Vec2{Application::getWindow().getWidth(), Application::getWindow().getHeight()}, texture, color);
   }
-
-  void Renderer::flush() {
+  void Renderer::flushQuad() {
     if (mQuadCount) {
       mWhiteTexture->bind();
 
@@ -235,7 +254,64 @@ namespace Gate {
       mQuadTextures.push_back(mWhiteTexture);
     }
   }
+  void Renderer::drawCenteredCircle(const Vec2& position, float radius, const Vec4& color, float thickness, float fade) {
+    drawCircle(position - radius, radius, color, thickness, fade);
+  }
+  void Renderer::drawCircle(const Vec2& position, float radius, const Vec4& color, float thickness, float fade) {
+    Vec3 scale = Vec3(radius * 2.0f, radius * 2.0f, 1.0f);
 
+    Mat4 transform = Mat4(1.0f);
+    transform = glm::translate(transform, Vec3(position, 0.0f));
+    transform = glm::scale(transform, scale);
+    drawCircle(transform, color, thickness, fade);
+  }
+  void Renderer::drawCircle(const Mat4& transform, const Vec4& color, float thickness, float fade) {
+		if (mCircleCount >= CIRCLE_MAX) {
+      flushCircle();
+    }
+
+    const constexpr Vec2 localPositions[] = {
+      Vec2{1.0f, 1.0f} * 2.0f - 1.0f,
+		  Vec2{1.0f, 0.0f} * 2.0f - 1.0f,
+		  Vec2{0.0f, 0.0f} * 2.0f - 1.0f,
+		  Vec2{0.0f, 1.0f} * 2.0f - 1.0f,
+    };
+
+		for (size_t i = 0; i < CIRCLE_VERTICES_COUNT; i++) {
+			mCircleCurrentPtr->worldPosition = Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[i]);
+			mCircleCurrentPtr->localPosition = localPositions[i];
+			mCircleCurrentPtr->color         = color;
+			mCircleCurrentPtr->thickness     = thickness;
+			mCircleCurrentPtr->fade          = fade;
+			mCircleCurrentPtr++;
+		}
+		mCircleCount++;
+	}
+  void Renderer::flushCircle() {
+    if (mCircleCount) {
+      // mWhiteTexture->bind();
+
+      for (u32 i = 0; i < mCircleTextures.size(); ++i) {
+        mCircleTextures[i]->bind(i);
+      }
+
+      mCircleShader->bind();
+
+      mCircleVertexArray->bind();
+      mCircleVertexBuffer->set({mCircleBasePtr,  mCircleCount * CIRCLE_VERTICES_COUNT});
+      mCircleVertexArray->drawIndices(mCircleCount * CIRCLE_INDICES_COUNT);
+
+      mCircleCurrentPtr = mCircleBasePtr;
+      mCircleCount = 0;
+
+      // mCircleTextures.clear();
+      // mCircleTextures.push_back(mWhiteTexture);
+    }
+  }
+  void Renderer::flush() {
+    flushQuad();
+    flushCircle();
+  }
   void Renderer::end() {
     flush();
   }
