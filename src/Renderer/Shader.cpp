@@ -4,9 +4,7 @@
 
 #include "Core/OpenGL.hpp"
 
-#include "Core/Base.hpp"
-#include "Resource/Shader.hpp"
-#include "Resource/Factory.hpp"
+#include "Renderer/Shader.hpp"
 
 #include "Utils/String.hpp"
 #include "Utils/File.hpp"

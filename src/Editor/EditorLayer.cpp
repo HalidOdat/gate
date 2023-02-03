@@ -1,10 +1,8 @@
-#include <string>
 #include <sstream>
 #include <queue>
 
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
-#include "Resource/Manager.hpp"
 #include "Application.hpp"
 
 #include "Editor/EditorLayer.hpp"

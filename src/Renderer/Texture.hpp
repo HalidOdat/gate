@@ -5,7 +5,7 @@
 namespace Gate {
 
   class Texture {
-    friend class ResourceManager;
+    friend class Application;
   public:
     using Handle = std::shared_ptr<Texture>;
 

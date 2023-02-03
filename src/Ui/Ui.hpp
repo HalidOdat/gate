@@ -1,14 +1,10 @@
 #pragma once
 
-#include <vector>
-
 #include "Events/Event.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Renderer/CameraController.hpp"
 #include "Renderer/Renderer.hpp"
-
-#include "Resource/Manager.hpp"
 
 namespace Gate {
 

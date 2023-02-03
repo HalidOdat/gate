@@ -1,12 +1,11 @@
 #include "Core/Base.hpp"
 #include "Events/WindowEvent.hpp"
-#include "Resource/Manager.hpp"
+#include "Renderer/Texture.hpp"
 #include "Application.hpp"
 
 #include "Core/OpenGL.hpp"
 
 #include <cstdlib>
-#include <filesystem>
 
 namespace Gate {
 
@@ -32,8 +31,6 @@ namespace Gate {
       Shader::globalDefine("WEB_GL", "1");
     #endif
 
-    ResourceManager::initialize();
-
     this->mRenderer = new Renderer();
     this->ui = new Ui(width, height);
 
@@ -52,7 +49,8 @@ namespace Gate {
     delete this->layer;
     delete this->mRenderer;
     delete this->ui;
-    ResourceManager::shutdown();
+    Logger::trace("Destroying all textures");
+    Texture::destroyAllTextures();
     this->window.reset();
 
     Logger::info("Game Engine Terminated!");

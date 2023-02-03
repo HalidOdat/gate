@@ -53,17 +53,10 @@ add_executable(${This}
   src/Events/MouseEvent.hpp
   src/Events/WindowEvent.hpp
 
-  src/Resource/Manager.hpp
-  src/Resource/Manager.cpp
-  src/Resource/Resource.hpp
-  src/Resource/Factory.hpp
-  src/Resource/Texture.hpp
-  src/Resource/Texture.cpp
-  src/Resource/Shader.hpp
-  src/Resource/Shader.cpp
-  src/Resource/UniformBuffer.hpp
-  src/Resource/UniformBuffer.cpp
-
+  src/Renderer/Texture.hpp
+  src/Renderer/Texture.cpp
+  src/Renderer/Shader.hpp
+  src/Renderer/Shader.cpp
   src/Renderer/VertexBuffer.hpp
   src/Renderer/VertexBuffer.cpp
   src/Renderer/IndexBuffer.hpp
@@ -72,6 +65,8 @@ add_executable(${This}
   src/Renderer/VertexArray.cpp
   src/Renderer/FrameBuffer.hpp
   src/Renderer/FrameBuffer.cpp
+  src/Renderer/UniformBuffer.hpp
+  src/Renderer/UniformBuffer.cpp
   src/Renderer/Camera.hpp
   src/Renderer/Camera.cpp
   src/Renderer/CameraController.hpp

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Base.hpp"
-#include "Resource/Texture.hpp"
+#include "Renderer/Texture.hpp"
 
 namespace Gate {
 

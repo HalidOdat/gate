@@ -1,8 +1,5 @@
 #include "Core/OpenGL.hpp"
-
-#include "Core/Base.hpp"
-#include "Resource/Factory.hpp"
-#include "Resource/UniformBuffer.hpp"
+#include "Renderer/UniformBuffer.hpp"
 
 namespace Gate {
 

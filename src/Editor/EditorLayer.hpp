@@ -4,7 +4,7 @@
 #include "Events/KeyEvent.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
-#include "Resource/Texture.hpp"
+#include "Renderer/Texture.hpp"
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/CameraController.hpp"
 

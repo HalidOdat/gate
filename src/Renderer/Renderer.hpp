@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Core/Base.hpp"
-#include "Resource/Manager.hpp"
+#include "Renderer/Shader.hpp"
+#include "Renderer/Texture.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/CameraController.hpp"
 
-#include <vector>
 #include <array>
 
 namespace Gate {
