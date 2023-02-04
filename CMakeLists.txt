@@ -106,6 +106,8 @@ add_executable(${This}
   src/Editor/Wire.cpp
   src/Editor/Pin.hpp
   src/Editor/Pin.cpp
+  src/Editor/Chip.hpp
+  src/Editor/Chip.cpp
   src/Editor/Connection.hpp
   src/Editor/EditorLayer.hpp
   src/Editor/EditorLayer.cpp

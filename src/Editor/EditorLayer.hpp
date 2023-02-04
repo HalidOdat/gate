@@ -13,6 +13,7 @@
 
 #include "Editor/Components.hpp"
 #include "Editor/Connection.hpp"
+#include "Editor/Chip.hpp"
 
 #include <unordered_map>
 
@@ -31,17 +32,7 @@ namespace Gate {
     Vec2 getGridAlignedMousePosition();
 
   private:
-    ConnectionState getConnectionState(Connection& connection);
-    ConnectionResult push_wire_connection(Point position, u32 wireIndex);
-    ConnectionResult push_component_connection(Point position, u32 componentIndex, u32 pinIndex);
-    bool push_component(Component* component);
-    bool push_wire(Wire wire);
-    void tick();
-
     void renderAll(Renderer& renderer);
-    void renderComponentBodys(Renderer& renderer);
-    void renderComponentConnectors(Renderer& renderer);
-    void renderWires(Renderer& renderer);
     void renderGrid(Renderer& renderer);
 
     bool onWindowResizeEvent(const WindowResizeEvent& event);
@@ -99,10 +90,7 @@ namespace Gate {
     Texture::Handle     mGridTexture;
 
     // Board parts/components
-    std::vector<Component*> mComponents;
-    std::vector<Wire> mWires;
-    std::vector<std::vector<Connection>> mConnections;
-    std::unordered_map<Point, u32> mConnectionsIndexByPoint;
+    Chip mChip;
   };
 
 } // namespace Gate

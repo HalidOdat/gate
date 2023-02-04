@@ -1,11 +1,10 @@
-#include <sstream>
-#include <queue>
-
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
 #include "Application.hpp"
 
 #include "Editor/EditorLayer.hpp"
+
+#include <queue>
 
 namespace Gate {
 
@@ -31,287 +30,7 @@ namespace Gate {
       Logger::error("Unable to apply theme %s", themeFilepath);
     }
   }
-
-  EditorLayer::~EditorLayer() {
-    Logger::trace("EditorLayer: Destructor was called");
-    for (auto component : mComponents) {
-      if (component) {
-        delete component;
-      }
-    }
-  }
-  
-  ConnectionState EditorLayer::getConnectionState(Connection& connection) {
-    switch (connection.type) {
-      case Connection::Type::Component: {
-        auto* component = mComponents[connection.componentIndex];
-        auto& pins = component->getOutputPins();
-        auto& pin = pins.at(connection.index);
-        return ConnectionState(pin.active, pin.visited);
-      } break;
-      case Connection::Type::Wire: {
-        auto& wire = mWires[connection.index];
-        return ConnectionState(wire.active, wire.visited);
-      } break;
-    }
-    GATE_UNREACHABLE("");
-  }
-  ConnectionResult EditorLayer::push_wire_connection(Point position, u32 wireIndex) {
-    auto connection = Connection {
-      Connection::Type::Wire,
-      wireIndex,
-    };
-    u32 connectionIndex;
-    if (auto it = mConnectionsIndexByPoint.find(position); it != mConnectionsIndexByPoint.end()) {
-      connectionIndex = it->second;
-      // TODO: check if its output pin, shouldn't have more than one connection.
-      if (false) {
-        return {};
-      }
-      mConnections[connectionIndex].push_back(connection);
-    } else {
-      connectionIndex = (u32)mConnections.size();
-      mConnections.push_back({});
-      mConnections[connectionIndex].push_back(connection);
-      mConnectionsIndexByPoint[position] = connectionIndex;
-    }
-    return connectionIndex;
-  }
-  ConnectionResult EditorLayer::push_component_connection(Point position, u32 componentIndex, u32 pinIndex) {
-    auto connection = Connection {
-      Connection::Type::Component,
-      pinIndex,
-      componentIndex
-    };
-    u32 connectionIndex;
-    if (auto it = mConnectionsIndexByPoint.find(position); it != mConnectionsIndexByPoint.end()) {
-      connectionIndex = it->second;
-      // TODO: check if its output pin
-      if (false) {
-        return {};
-      }
-      mConnections[connectionIndex].push_back(connection);
-    } else {
-      connectionIndex = (u32)mConnections.size();
-      mConnections.push_back({});
-      mConnections[connectionIndex].push_back(connection);
-      mConnectionsIndexByPoint[position] = connectionIndex;
-    }
-    return connectionIndex;
-  }
-
-  bool EditorLayer::push_component(Component* component) {
-    // TODO: check if it can be placed there.
-    // TODO: Check if a free slot is available.
-    u32 componentIndex = (u32)mComponents.size();
-    
-    // TODO: refactor to remove code duplication
-    auto& inputPins = component->getInputPins();
-    for (u32 i = 0; i < inputPins.size(); ++i) {
-      auto& pin = inputPins[i];      
-      auto[successful, connectionIndex] = push_component_connection(pin.position, componentIndex, i);
-      if (!successful) {
-        GATE_TODO("Fix invalid pin connection!");
-      }
-      mConnectionsIndexByPoint[pin.position] = connectionIndex;
-      pin.connectionIndex = connectionIndex;
-    }
-    auto& outputPins = component->getOutputPins();
-    for (u32 i = 0; i < outputPins.size(); ++i) {
-      auto& pin = outputPins[i];      
-      auto[successful, connectionIndex] = push_component_connection(pin.position, componentIndex, i);
-      if (!successful) {
-        GATE_TODO("Fix invalid pin connection!");
-      }
-      mConnectionsIndexByPoint[pin.position] = connectionIndex;
-      pin.connectionIndex = connectionIndex;
-    }
-    mComponents.push_back(component);
-    tick();
-    return true;
-  }
-  bool EditorLayer::push_wire(Wire wire) {
-    // TODO: check if it can be placed there
-    // TODO: Check if a free slot is available
-    u32 wireIndex = (u32)mWires.size();
-    auto connectionResultFrom = push_wire_connection(wire.from, wireIndex);
-    if (!connectionResultFrom.successful) {
-      return false;
-    }
-    auto connectionResultTo = push_wire_connection(wire.to, wireIndex);
-    if (!connectionResultTo.successful) {
-      return false;
-    }
-    wire.connectionIndexes.push_back(connectionResultFrom.connectionIndex);
-    wire.connectionIndexes.push_back(connectionResultTo.connectionIndex);
-    mWires.push_back(wire);
-
-    tick();
-    return true;
-  }
-
-  /// TODO: Refactor and make this a bit better
-  void EditorLayer::tick() {
-    enum class Type {
-      Component,
-      Wire,
-    };
-    struct Node {
-      Type type;
-      u32 index;
-      bool activate;
-      Component* component = nullptr;
-
-      bool visitedOnce = false;
-
-      bool operator<(const Node &rhs) const {
-        return (u32)this->visitedOnce > (u32)rhs.visitedOnce;
-      }
-    };
-
-    std::priority_queue<Node, std::vector<Node>> queue;
-    auto enqueueComponent = [&](u32 index, bool activate) {
-      if (mComponents[index]->isVisited()) {
-        return;
-      }
-      queue.push(
-        Node {
-          Type::Component,
-          index,
-          activate,
-          mComponents[index]
-        }
-      );
-    };
-    auto enqueueWire = [&](u32 index, bool activate) {
-      if (mWires[index].visited) {
-        return;
-      }
-      queue.push(
-        Node {
-          Type::Wire,
-          index,
-          activate,
-        }
-      );
-    };
-    auto enqueueConnections = [&](std::vector<Connection>& connections, bool activate) {
-      for (auto& connection : connections) {
-        switch (connection.type) {
-          case Connection::Type::Component: {
-            enqueueComponent(connection.componentIndex, activate);
-          } break;
-          case Connection::Type::Wire: {
-            enqueueWire(connection.index, activate);
-          } break;
-        }
-      }
-    };
-
-    // Clear visited flags on components and wires
-    for (usize i = 0; i < mComponents.size(); ++i) {
-      auto* component = mComponents[i];
-      component->resetVisited();
-      if (component->getCategory() == Component::Category::Input) {
-        enqueueComponent((u32)i, true);
-      }
-    }
-    for (auto& wire : mWires) {
-      wire.visited = false;
-      wire.active = false;
-    }
-
-    for (; !queue.empty(); queue.pop()) {
-      auto node = queue.top();
-      auto&[type, index, activate, component, visitedOnce] = node;
-      switch (type) {
-        case Type::Component: {
-          component->setVisited(true);
-          for (auto& pin : component->getInputPins()) {
-            if (pin.visited) {
-              continue;
-            }
-
-            auto& connections = mConnections[pin.connectionIndex];
-            if (connections.size() > 2) {
-              Logger::error("too many connection on imput type point(%d, %d)", pin.position.x, pin.position.y);
-              GATE_TODO("^");
-            }
-            if (connections.size() == 2) {
-              Connection result{Connection::Type::Component, UINT32_MAX, UINT32_MAX};
-              for (auto& connection : connections) {    
-                if (
-                  connection.type == Connection::Type::Component
-                  && mComponents[connection.componentIndex] == component
-                ) {
-                  continue;
-                }
-                result = connection;
-                
-              }
-              auto state = getConnectionState(result);
-              if (!(visitedOnce || state.visited)) {
-                node.visitedOnce = true;
-                component->setVisited(false);
-                queue.push(node);
-                continue;
-              }
-              pin.visited = state.visited;
-              pin.active = state.active;
-            }
-          }
-
-          if (component->areAllInputPinsVisited()) {
-            component->update();
-            for (auto& pin : component->getOutputPins()) {
-              pin.visited = true;
-              auto& connections = mConnections[pin.connectionIndex];
-              enqueueConnections(connections, pin.active);
-            }
-          }
-        } break;
-        case Type::Wire: {
-          auto& wire = mWires[index];
-          wire.visited = true;
-          wire.active = activate;
-          for (auto& connectionIndex : wire.connectionIndexes) {
-            auto& connection = mConnections[connectionIndex];
-            enqueueConnections(connection, wire.active);
-          }
-        } break;
-      } 
-    }
-  }
-
-  void EditorLayer::renderAll(Renderer& renderer) {
-    renderGrid(renderer);
-    renderComponentBodys(renderer);
-    renderWires(renderer);
-    renderComponentConnectors(renderer);
-  }
-
-  void EditorLayer::renderComponentBodys(Renderer& renderer) {
-    for (auto component : mComponents) {
-      if (component) {
-        component->renderBody(renderer);
-      }
-    }
-  }
-
-  void EditorLayer::renderComponentConnectors(Renderer& renderer) {
-    for (auto component : mComponents) {
-      if (component) {
-        component->renderConnectors(renderer);
-      }
-    }
-  }
-
-  void EditorLayer::renderWires(Renderer& renderer) {
-    for (auto wire : mWires) {
-      wire.render(renderer);
-    }
-  }
-
+  EditorLayer::~EditorLayer() {}
   void EditorLayer::renderGrid(Renderer& renderer) {
     auto width  = Application::getWindow().getWidth();
     auto height = Application::getWindow().getHeight();
@@ -333,12 +52,14 @@ namespace Gate {
 
     renderer.clearScreen(mGridTexture);
   }
-
+  void EditorLayer::renderAll(Renderer& renderer) {
+    renderGrid(renderer);
+    mChip.render(renderer);
+  }
   void EditorLayer::onUpdate(Timestep ts) {
     (void)ts;
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
-    // Application::getRenderer().clearScreen();
     renderAll(Application::getRenderer());
     // Application::getRenderer().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
     auto height = Application::getWindow().getHeight();
@@ -434,15 +155,7 @@ namespace Gate {
         case Mode::Select: {
           // TODO: Check for collision
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
-          bool interacted = false;
-          for (auto* component : mComponents) {
-            if (component->getPosition() == mousePosition) {
-              component->click();
-              interacted = true;
-              tick();
-              break;
-            }
-          }
+          bool interacted = mChip.click(mousePosition);
 
           if (!interacted) {
             mMode = Mode::WireDraw;
@@ -454,14 +167,17 @@ namespace Gate {
           Point from = Point(mWireStartPosition / (f32)config.grid.cell.size);
           Point to = Point(mWireEndPosition / (f32)config.grid.cell.size);
           bool connected = false;
-          if (auto it = mConnectionsIndexByPoint.find(to); it != mConnectionsIndexByPoint.end()) {
-            connected = true;
-          }
-          if (!push_wire({ from, to })) {
-            GATE_TODO("implement this: wire is invalid");
+          switch (mChip.push_wire({ from, to })) {
+            case WirePushState::Valid:
+              break;
+            case WirePushState::Invalid:
+              GATE_TODO("implement this: wire is invalid");
+              break;
+            case WirePushState::Connected:
+              connected = true;
+              break;
           }
 
-          // We continue wire draw
           mMode = Mode::WireDraw;
           mWireStartPosition = mWireEndPosition;
           if (connected) {
@@ -473,19 +189,19 @@ namespace Gate {
           auto position = Point(getGridAlignedMousePosition() / (f32)config.grid.cell.size);
           switch (mComponentType) {
             case ComponentType::Switch: {
-              push_component(new SwitchComponent(position));
+              mChip.push_component(new SwitchComponent(position));
             } break;
             case ComponentType::Not: {
-              push_component(new NotComponent(position));
+              mChip.push_component(new NotComponent(position));
             } break;
             case ComponentType::And: {
-              push_component(new AndComponent(position));
+              mChip.push_component(new AndComponent(position));
             } break;
             case ComponentType::Or: {
-              push_component(new OrComponent(position));
+              mChip.push_component(new OrComponent(position));
             } break;
             case ComponentType::Xor: {
-              push_component(new XorComponent(position));
+              mChip.push_component(new XorComponent(position));
             } break;
           }
         } break;
