@@ -5,9 +5,7 @@ layout (location = 1) in vec2 aTexture;
 layout (location = 2) in vec3 aNormal;
 layout (location = 3) in mat4 aModelMatrix;  // 3, 4, 5, 6
 layout (location = 7) in mat3 aNormalMatrix; // 7, 8, 9
-#if EDITOR
-  layout (location = 10) in highp uint aEntityId;
-#endif
+layout (location = 10) in highp uint aEntityId;
 
 layout (std140) uniform Camera {
   mat4 projectionMatrix;

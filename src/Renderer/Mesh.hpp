@@ -60,3 +60,14 @@ namespace Gate {
   };
 
 } // namespace Game
+
+namespace std {
+
+  template<>
+  struct hash<Gate::Mesh::Handle> {
+    size_t operator()(Gate::Mesh::Handle const& handle) const noexcept {
+      return hash<Gate::usize>{}((Gate::usize)handle.get());
+    }
+  };
+
+}

@@ -42,6 +42,8 @@ namespace Gate {
       [this](const Event& event) { this->onEvent(event); }
     );
 
+    Material::initialize();
+
     Logger::info("Game Engine Initialized!");
   }
 

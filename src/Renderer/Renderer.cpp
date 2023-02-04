@@ -44,7 +44,7 @@ namespace Gate {
     mQuadVertexArray->setIndexBuffer(mQuadIndexBuffer);
     mQuadVertexArray->unbind();
 
-    mQuadShader = Shader::load("assets/shaders/renderer/Quad.glsl").build();
+    mQuadShader = Shader::load("assets/2D/shaders/Quad.glsl").build();
 
     mQuadBasePtr = new QuadVertex[QUAD_MAX * QUAD_VERTICES_COUNT];
     mQuadCurrentPtr = mQuadBasePtr;
@@ -78,11 +78,11 @@ namespace Gate {
       mCircleCurrentPtr = mCircleBasePtr;
       mCircleCount = 0;
       
-      mCircleShader = Shader::load("assets/shaders/renderer/Circle.glsl").build();
+      mCircleShader = Shader::load("assets/2D/shaders/Circle.glsl").build();
     }
 
     // TOOD: Take in more defined font
-    mFontTexture = Texture::load("assets/textures/PixelFont_7x9_112x54.png")
+    mFontTexture = Texture::load("assets/2D/textures/PixelFont_7x9_112x54.png")
       .filtering(Texture::FilteringMode::Nearest)
       .mipmap(Texture::MipmapMode::None)
       .build();

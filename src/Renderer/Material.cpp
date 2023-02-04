@@ -36,7 +36,7 @@ namespace Gate {
   }
 
   bool Material::initialize() {
-    auto filePath = String("assets/materials.json");
+    auto filePath = String("assets/3D/materials.json");
     auto source = Utils::fileToString(filePath);
     if (!source) {
       Logger::error("Material serializer: Couldn't open materials file: %s", filePath.c_str());

@@ -77,6 +77,8 @@ add_executable(${This}
   src/Renderer/CameraController.cpp
   src/Renderer/Renderer.hpp
   src/Renderer/Renderer.cpp
+  src/Renderer/Renderer3D.hpp
+  src/Renderer/Renderer3D.cpp
 
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp
