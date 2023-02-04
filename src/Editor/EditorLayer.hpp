@@ -14,6 +14,7 @@
 #include "Editor/Components.hpp"
 #include "Editor/Connection.hpp"
 #include "Editor/Chip.hpp"
+#include "Editor/Board.hpp"
 
 #include <unordered_map>
 
@@ -22,7 +23,6 @@ namespace Gate {
   class EditorLayer {
   public:
     EditorLayer();
-    ~EditorLayer();
 
     void onUpdate(Timestep ts);
     void onUiRender(Ui& ui);
@@ -32,9 +32,6 @@ namespace Gate {
     Vec2 getGridAlignedMousePosition();
 
   private:
-    void renderAll(Renderer& renderer);
-    void renderGrid(Renderer& renderer);
-
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
     bool onMouseScrollEvent(const MouseScrollEvent& event);
@@ -85,12 +82,8 @@ namespace Gate {
     Vec2 mWireStartPosition{0.0f};
     Vec2 mWireEndPosition{0.0f};
 
-    // Grid drawing & caching
-    FrameBuffer::Handle mGridFrameBuffer;
-    Texture::Handle     mGridTexture;
-
     // Board parts/components
-    Chip mChip;
+    Board mBoard;
   };
 
 } // namespace Gate

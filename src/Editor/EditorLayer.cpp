@@ -12,16 +12,6 @@ namespace Gate {
     : mEditorCameraController(Application::getWindow().getAspectRatio())
   {
     Logger::trace("EditorLayer: Constructor was called");
-    mGridFrameBuffer = FrameBuffer::builder()
-      .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
-      .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
-      .clearOnBind(true)
-      .attach(
-        FrameBuffer::Attachment::Type::Texture,
-        FrameBuffer::Attachment::Format::Rgb8
-      )
-      .build();
-
     const auto themeFilepath = "assets/themes/default.json";
     auto theme = Theme::Settings::load(themeFilepath);
     if (theme) {
@@ -30,37 +20,12 @@ namespace Gate {
       Logger::error("Unable to apply theme %s", themeFilepath);
     }
   }
-  EditorLayer::~EditorLayer() {}
-  void EditorLayer::renderGrid(Renderer& renderer) {
-    auto width  = Application::getWindow().getWidth();
-    auto height = Application::getWindow().getHeight();
-
-    if (!mGridTexture) {
-      renderer.end();
-      mGridFrameBuffer->bind();
-      renderer.clearScreen(config.grid.background);
-      for (u32 i = 0; i < width; i += config.grid.cell.size) {
-        for (u32 j = 0; j < height; j += config.grid.cell.size) {
-          renderer.drawCenteredQuad({i, j}, {2.0f, 2.0f}, config.grid.color);
-        }
-      }
-      renderer.flush();
-      mGridFrameBuffer->unbind();  
-
-      mGridTexture = mGridFrameBuffer->getColorAttachment(0);
-    }
-
-    renderer.clearScreen(mGridTexture);
-  }
-  void EditorLayer::renderAll(Renderer& renderer) {
-    renderGrid(renderer);
-    mChip.render(renderer);
-  }
   void EditorLayer::onUpdate(Timestep ts) {
     (void)ts;
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
-    renderAll(Application::getRenderer());
+    mBoard.render(Application::getRenderer());
+
     // Application::getRenderer().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
     auto height = Application::getWindow().getHeight();
 
@@ -155,7 +120,7 @@ namespace Gate {
         case Mode::Select: {
           // TODO: Check for collision
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
-          bool interacted = mChip.click(mousePosition);
+          bool interacted = mBoard.getCurrentChip().click(mousePosition);
 
           if (!interacted) {
             mMode = Mode::WireDraw;
@@ -167,7 +132,7 @@ namespace Gate {
           Point from = Point(mWireStartPosition / (f32)config.grid.cell.size);
           Point to = Point(mWireEndPosition / (f32)config.grid.cell.size);
           bool connected = false;
-          switch (mChip.push_wire({ from, to })) {
+          switch (mBoard.getCurrentChip().push_wire({ from, to })) {
             case WirePushState::Valid:
               break;
             case WirePushState::Invalid:
@@ -189,19 +154,19 @@ namespace Gate {
           auto position = Point(getGridAlignedMousePosition() / (f32)config.grid.cell.size);
           switch (mComponentType) {
             case ComponentType::Switch: {
-              mChip.push_component(new SwitchComponent(position));
+              mBoard.getCurrentChip().push_component(new SwitchComponent(position));
             } break;
             case ComponentType::Not: {
-              mChip.push_component(new NotComponent(position));
+              mBoard.getCurrentChip().push_component(new NotComponent(position));
             } break;
             case ComponentType::And: {
-              mChip.push_component(new AndComponent(position));
+              mBoard.getCurrentChip().push_component(new AndComponent(position));
             } break;
             case ComponentType::Or: {
-              mChip.push_component(new OrComponent(position));
+              mBoard.getCurrentChip().push_component(new OrComponent(position));
             } break;
             case ComponentType::Xor: {
-              mChip.push_component(new XorComponent(position));
+              mBoard.getCurrentChip().push_component(new XorComponent(position));
             } break;
           }
         } break;
@@ -270,8 +235,7 @@ namespace Gate {
   bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
     auto[width, height] = event.getSize();
     mEditorCameraController.resize(width, height);
-    mGridFrameBuffer->invalidate(width, height);
-    mGridTexture = Texture::Handle();
+    mBoard.onResize(width, height);
     return false;
   }
 

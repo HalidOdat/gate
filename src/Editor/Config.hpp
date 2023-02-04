@@ -42,10 +42,15 @@ namespace Gate {
       Vec4 background = Color::WHITE;
     };
 
+    struct Text {
+      Vec4 color;
+    };
+
     Selector selector;
     Component component;
     Wire wire;
     Grid grid;
+    Text text;
 
     void apply(Theme::Settings settins);
   };

@@ -20,7 +20,7 @@ namespace Gate {
 
   class Chip {
   public:
-    Chip();
+    Chip(String name);
     ~Chip();
 
   public:
@@ -41,6 +41,8 @@ namespace Gate {
     ConnectionResult push_component_connection(Point position, u32 componentIndex, u32 pinIndex);
 
   private:
+    String mName;
+
     std::vector<Component*> mComponents;
     std::vector<Wire> mWires;
     std::vector<std::vector<Connection>> mConnections;

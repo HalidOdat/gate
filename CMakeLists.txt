@@ -108,6 +108,8 @@ add_executable(${This}
   src/Editor/Pin.cpp
   src/Editor/Chip.hpp
   src/Editor/Chip.cpp
+  src/Editor/Board.hpp
+  src/Editor/Board.cpp
   src/Editor/Connection.hpp
   src/Editor/EditorLayer.hpp
   src/Editor/EditorLayer.cpp

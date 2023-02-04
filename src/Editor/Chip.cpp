@@ -4,9 +4,9 @@
 
 namespace Gate {
   
-  Chip::Chip() {
-
-  }
+  Chip::Chip(String name)
+    : mName{std::move(name)}
+  {}
   Chip::~Chip() {
     for (auto component : mComponents) {
       if (component) {
@@ -279,6 +279,10 @@ namespace Gate {
     renderComponentBodys(renderer);
     renderWires(renderer);
     renderComponentConnectors(renderer);
+
+    const auto size = 16;
+    String text = "Name: " + mName;
+    renderer.drawText(text, Vec2{size}, (f32)size, config.text.color);
   }
 
   void Chip::renderComponentBodys(Renderer& renderer) {

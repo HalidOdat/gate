@@ -12,6 +12,8 @@ namespace Gate {
     wire.activeColor = rgba(settings.wire.active);
     wire.inactiveColor = rgba(settings.wire.inactive);
     wire.invalidColor = rgba(settings.wire.invalid);
+
+    text.color = rgba(settings.text.color);
   }
 
 }
