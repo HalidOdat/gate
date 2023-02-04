@@ -9,13 +9,13 @@
   #define GATE_PLATFORM_NATIVE 1
 #endif
 
-#ifndef GATE_DEBUG_MODE
+#if !defined(GATE_DEBUG_MODE) && !defined(GATE_RELEASE_MODE)
 # define GATE_DEBUG_MODE 1
 #endif
 
 #define GATE_ASSERT_IMPL(type, cond, sep, msg) do { if (!(cond)) { fprintf(stderr, "%s:%d: " type " Failed '%s'%s%s\n", __FILE__, __LINE__, #cond, sep, msg); fflush(stdout); fflush(stderr); std::exit(1); } } while(false)
 
-#if GATE_DEBUG_MODE
+#ifdef GATE_DEBUG_MODE
 # define GATE_DEBUG_ASSERT(cond)                   GATE_ASSERT_IMPL("Debug Assert", cond, "", "")
 # define GATE_DEBUG_ASSERT_WITH_MESSAGE(cond, msg) GATE_ASSERT_IMPL("Debug Assert", cond, ": ", msg)
 #else

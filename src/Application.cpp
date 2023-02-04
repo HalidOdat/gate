@@ -6,6 +6,8 @@
 #include "Core/OpenGL.hpp"
 
 #include <cstdlib>
+#include <sstream>
+#include <iomanip>
 
 namespace Gate {
 
@@ -18,11 +20,12 @@ namespace Gate {
     startGameLoop();
   }
 
-  Application::Application(const char *title, const u32 width, const u32 height) {
+  Application::Application(StringView title, u32 width, u32 height) {
     Logger::trace("Game Engine Initializing...");
 
     sInstance = this;
-    this->window = Window::create(title, width, height);
+    this->mTitle = title;
+    this->window = Window::create(title.data(), width, height);
     if (!this->window) {
       std::exit(EXIT_FAILURE);
     }
@@ -58,14 +61,19 @@ namespace Gate {
 
   void Application::gameLoop() {
     Application* self = sInstance;
-    #ifdef GATE_PLATFORM_WEB
-      self->window->setVSync(true);
-    #endif
 
     float time = (float)glfwGetTime();
     float dt = time - self->lastFrameTime;
     self->lastFrameTime = time;
     Timestep::timestep = dt;
+
+    #ifdef GATE_DEBUG_MODE
+      std::stringstream ss;
+      ss.precision(2);
+      ss << self->mTitle << " - " << std::fixed << (1.0f / Timestep::get()) << "fps / " << Timestep::get() * 1000.0f << "ms";
+      std::string fpsString = ss.str();
+      Application::getWindow().setTitle(fpsString.c_str());
+    #endif
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -83,10 +91,8 @@ namespace Gate {
 
   void Application::startGameLoop() {
     this->lastFrameTime = (float)glfwGetTime();
-
-    #ifndef GATE_PLATFORM_WEB
-      // this->window->setVSync(true);
-    #endif
+    this->window->setVSync(true);
+    this->window->setTitle(mTitle);
 
     getRenderer().blending(true);
 
@@ -130,3 +136,9 @@ namespace Gate {
 
 } // namespace Gate
 
+int main(int argc, char* argv[]) {
+  (void)argc;
+  (void)argv;
+  
+  Gate::Application("Logic Gate Simulator", 840, 640).start();
+}

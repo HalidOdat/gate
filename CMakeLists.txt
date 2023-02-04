@@ -108,8 +108,6 @@ add_executable(${This}
   src/Window.cpp
   src/Application.hpp
   src/Application.cpp
-
-  src/Main.cpp
 )
 
 target_include_directories(${This} PUBLIC src)
@@ -201,5 +199,6 @@ target_precompile_headers(${This}
 
 target_compile_definitions(${This}
   PUBLIC
-    $<$<CONFIG:Debug>:GATE_DEBUG_MODE=1>
+    $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:GATE_DEBUG_MODE=1>
+    $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:GATE_RELEASE_MODE=1>
 )

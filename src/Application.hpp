@@ -11,7 +11,7 @@ namespace Gate {
 
   class Application {
   public:
-    Application(const char* title = "Game Title", const u32 width = 900, const u32 height = 600);
+    Application(StringView title, u32 width, u32 height);
     DISALLOW_MOVE_AND_COPY(Application);
     ~Application();
 
@@ -42,6 +42,8 @@ namespace Gate {
     Ui* ui;
     EditorLayer *layer;
     f32 lastFrameTime = 0.0f;
+
+    String mTitle;
   };
   
 }

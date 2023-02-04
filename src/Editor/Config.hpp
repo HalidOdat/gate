@@ -47,8 +47,6 @@ namespace Gate {
     Wire wire;
     Grid grid;
 
-    String title = "Logic Gate Simulator";
-
     void apply(Theme::Settings settins);
   };
 

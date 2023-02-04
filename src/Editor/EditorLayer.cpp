@@ -15,7 +15,6 @@ namespace Gate {
 
   void EditorLayer::onAttach() {
     Logger::info("EditorLayer::onAttach was called");
-    Application::getWindow().setTitle(config.title);
     mGridFrameBuffer = FrameBuffer::builder()
       .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
       .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
@@ -338,12 +337,6 @@ namespace Gate {
   }
 
   void EditorLayer::onUpdate(Timestep ts) {
-    std::stringstream ss;
-    ss.precision(2);
-    ss << config.title << " - " << std::fixed << (1.0f / ts) << "fps / " << ts * 1000.0f << "ms";
-    std::string fpsString = ss.str();
-    Application::getWindow().setTitle(fpsString.c_str());
-
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     // Application::getRenderer().clearScreen();
