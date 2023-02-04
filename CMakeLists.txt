@@ -77,6 +77,9 @@ add_executable(${This}
   src/Ui/Ui.hpp
   src/Ui/Ui.cpp
 
+  src/Themes/Settings.hpp
+  src/Themes/Settings.cpp
+
   src/Editor/Components/Component.hpp
   src/Editor/Components/Component.cpp
   src/Editor/Components/SwitchComponent.hpp

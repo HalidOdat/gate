@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/Base.hpp"
+#include "Themes/Settings.hpp"
+#include "Renderer/Texture.hpp"
 
 namespace Gate {
 
@@ -22,7 +24,7 @@ namespace Gate {
     };
 
     struct Wire {
-      f32  width{3.0f};
+      f32  width{4.0f};
       Vec2 endsSize{ 6.0f, 6.0f };
 
       Vec4 activeColor   = Color::RED;
@@ -32,11 +34,12 @@ namespace Gate {
 
     struct Grid {
       struct Cell {
-        u32 size = 16;
+        u32 size = 25;
       };
 
       Cell cell;
       Vec4 color = rgba(60, 60, 60);
+      Vec4 background = Color::WHITE;
     };
 
     Selector selector;
@@ -45,6 +48,8 @@ namespace Gate {
     Grid grid;
 
     String title = "Logic Gate Simulator";
+
+    void apply(Theme::Settings settins);
   };
 
   // Global settings

@@ -25,7 +25,14 @@ namespace Gate {
         FrameBuffer::Attachment::Format::Rgb8
       )
       .build();
-      mAndGate = Texture::load("assets/textures/and_gate.jpg").build();
+
+      const auto themeFilepath = "assets/themes/default.json";
+      auto theme = Theme::Settings::load(themeFilepath);
+      if (theme) {
+        config.apply(*theme);
+      } else {
+        Logger::error("Unable to apply theme %s", themeFilepath);
+      }
   }
 
   void EditorLayer::onDetach() {
@@ -315,6 +322,7 @@ namespace Gate {
     if (!mGridTexture) {
       renderer.end();
       mGridFrameBuffer->bind();
+      renderer.clearScreen(config.grid.background);
       for (u32 i = 0; i < width; i += config.grid.cell.size) {
         for (u32 j = 0; j < height; j += config.grid.cell.size) {
           renderer.drawCenteredQuad({i, j}, {2.0f, 2.0f}, config.grid.color);
@@ -341,8 +349,6 @@ namespace Gate {
     // Application::getRenderer().clearScreen();
     renderAll(Application::getRenderer());
     // Application::getRenderer().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
-    Application::getRenderer().drawQuad({100.0f, 100.0f}, Vec2{100.0f}, mAndGate);
-    // mAndGate
     auto height = Application::getWindow().getHeight();
 
     // Wire Draw

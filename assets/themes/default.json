@@ -1,0 +1,14 @@
+{
+  "board": {
+    "background": "#EEEEEE",
+    "points": "#232323"
+  },
+  "wire": {
+    "active": "#E06C75",
+    "inactive": "#121212",
+    "invalid": "#C678DD"
+  },
+  "text": {
+    "color": "#98C379"
+  }
+}
