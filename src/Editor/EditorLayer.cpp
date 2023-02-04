@@ -25,6 +25,7 @@ namespace Gate {
         FrameBuffer::Attachment::Format::Rgb8
       )
       .build();
+      mAndGate = Texture::load("assets/textures/and_gate.jpg").build();
   }
 
   void EditorLayer::onDetach() {
@@ -339,7 +340,9 @@ namespace Gate {
 
     // Application::getRenderer().clearScreen();
     renderAll(Application::getRenderer());
-    Application::getRenderer().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
+    // Application::getRenderer().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
+    Application::getRenderer().drawQuad({100.0f, 100.0f}, Vec2{100.0f}, mAndGate);
+    // mAndGate
     auto height = Application::getWindow().getHeight();
 
     // Wire Draw

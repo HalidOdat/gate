@@ -32,7 +32,7 @@ namespace Gate {
 
     struct Grid {
       struct Cell {
-        u32 size = 15;
+        u32 size = 16;
       };
 
       Cell cell;

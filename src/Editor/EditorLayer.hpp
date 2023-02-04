@@ -99,6 +99,8 @@ namespace Gate {
     FrameBuffer::Handle mGridFrameBuffer;
     Texture::Handle     mGridTexture;
 
+    Texture::Handle mAndGate;
+
     // Board parts/components
     std::vector<Component*> mComponents;
     std::vector<Wire> mWires;

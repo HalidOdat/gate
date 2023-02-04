@@ -10,18 +10,10 @@ namespace Gate {
   void Component::renderConnectors(Renderer& renderer) {
     // TODO: Show when outputs and inputs are active
     for (auto& pin : mInputPins) {
-      renderer.drawCenteredQuad(
-        pin.position.toVec2() * (f32)config.grid.cell.size,
-        config.component.input.size,
-        config.component.input.color
-      );
+      pin.render(renderer, false);
     }
     for (auto& pin : mOutputPins) {
-      renderer.drawCenteredQuad(
-        pin.position.toVec2() * (f32)config.grid.cell.size,
-        config.component.output.size,
-        config.component.output.color
-      );
+      pin.render(renderer, true);
     }
   }
   void Component::resetVisited() {

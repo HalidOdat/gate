@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Core/Base.hpp"
-#include "Renderer/Renderer.hpp"
 #include "Editor/Point.hpp"
+#include "Renderer/Renderer.hpp"
 
 namespace Gate {
 
@@ -14,6 +14,8 @@ namespace Gate {
     u32 connectionIndex{NULL_CONNECTION};
     bool active = false;
     bool visited = false;
+
+    void render(Renderer& renderer, bool isOutput);
   };
 
 }
