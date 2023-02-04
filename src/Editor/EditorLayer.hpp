@@ -45,7 +45,6 @@ namespace Gate {
         WireDraw,
         AddComponent,
       };
-
       enum class ComponentType {
         Switch,
         Not,
@@ -53,7 +52,6 @@ namespace Gate {
         Or,
         Xor,
       };
-
       static StringView componentTypeToString(ComponentType type) {
         switch (type) {
           case ComponentType::Switch: return "Switch";
@@ -68,6 +66,7 @@ namespace Gate {
   private:
     // Camera
     OrthographicCameraController mEditorCameraController;
+    // PerspectiveCameraController mPerspectiveCameraController;
 
     // State
     bool mClicked = false;

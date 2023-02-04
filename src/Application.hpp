@@ -5,6 +5,8 @@
 #include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
 
+#include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer3D.hpp"
 #include "Editor/EditorLayer.hpp"
 
 namespace Gate {
@@ -17,7 +19,7 @@ namespace Gate {
 
     inline static Application& get() { return *sInstance; }
     inline static Window& getWindow() { return *sInstance->window; }
-    inline static Renderer& getRenderer() { return *sInstance->mRenderer; }
+    inline static Renderer2D& getRenderer2D() { return *sInstance->mRenderer2D; }
 
     void start();
     void quit();
@@ -38,7 +40,7 @@ namespace Gate {
     bool mWindowMinimized = false;
     Ref<Window> window = nullptr;
     
-    Renderer* mRenderer;
+    Renderer2D* mRenderer2D;
     Ui* ui;
     EditorLayer *layer;
     f32 lastFrameTime = 0.0f;

@@ -4,7 +4,7 @@
 
 namespace Gate {
 
-  void Pin::render(Renderer& renderer, bool isOutput) {
+  void Pin::render(Renderer2D& renderer, bool isOutput) {
     renderer.drawCenteredCircle(
       position.toVec2() * (f32)config.grid.cell.size,
       (isOutput ? config.component.output.size.x : config.component.input.size.x) / 2.0f,

@@ -2,7 +2,7 @@
 
 #include "Core/Base.hpp"
 #include "Editor/Point.hpp"
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 #include "Editor/Components/Component.hpp"
 
@@ -15,7 +15,7 @@ namespace Gate {
     static const constexpr u32 OUTPUT_INDEX  = 0;
   public:
     XorComponent(Point position);
-    virtual void renderBody(Renderer& renderer) override;
+    virtual void renderBody(Renderer2D& renderer) override;
     virtual bool update() override;
   };
 

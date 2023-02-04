@@ -53,10 +53,6 @@ add_executable(${This}
   src/Events/MouseEvent.hpp
   src/Events/WindowEvent.hpp
 
-  src/Renderer/Mesh.hpp
-  src/Renderer/Mesh.cpp
-  src/Renderer/Material.hpp
-  src/Renderer/Material.cpp
   src/Renderer/Texture.hpp
   src/Renderer/Texture.cpp
   src/Renderer/Shader.hpp
@@ -75,8 +71,12 @@ add_executable(${This}
   src/Renderer/Camera.cpp
   src/Renderer/CameraController.hpp
   src/Renderer/CameraController.cpp
-  src/Renderer/Renderer.hpp
-  src/Renderer/Renderer.cpp
+  src/Renderer/Renderer2D.hpp
+  src/Renderer/Renderer2D.cpp
+  src/Renderer/Mesh.hpp
+  src/Renderer/Mesh.cpp
+  src/Renderer/Material.hpp
+  src/Renderer/Material.cpp
   src/Renderer/Renderer3D.hpp
   src/Renderer/Renderer3D.cpp
 

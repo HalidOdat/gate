@@ -35,7 +35,7 @@ namespace Gate {
       Shader::globalDefine("WEB_GL", "1");
     #endif
 
-    this->mRenderer = new Renderer();
+    this->mRenderer2D = new Renderer2D();
     this->ui = new Ui(width, height);
 
     this->window->setEventCallback(
@@ -51,7 +51,7 @@ namespace Gate {
     Logger::trace("Game Engine Terminating...");
 
     delete this->layer;
-    delete this->mRenderer;
+    delete this->mRenderer2D;
     delete this->ui;
 
     Logger::trace("Destroying all materials");
@@ -90,7 +90,7 @@ namespace Gate {
       // self->layer->onUiRender(*self->ui);
       // self->ui->endFrame();
 
-      self->mRenderer->end();
+      self->mRenderer2D->end();
     }
     self->window->update();
   }
@@ -100,7 +100,7 @@ namespace Gate {
     this->window->setVSync(true);
     this->window->setTitle(mTitle);
 
-    getRenderer().blending(true);
+    getRenderer2D().blending(true);
 
     #if GATE_PLATFORM_WEB
       emscripten_set_main_loop(Application::gameLoop, 0, 1);

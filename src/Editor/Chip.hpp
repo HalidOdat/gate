@@ -6,7 +6,7 @@
 #include "Editor/Components.hpp"
 #include "Editor/Connection.hpp"
 
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 #include <unordered_map>
 
@@ -24,17 +24,17 @@ namespace Gate {
     ~Chip();
 
   public:
-    void render(Renderer& renderer);
+    void render(Renderer2D& renderer);
     bool push_component(Component* component);
     WirePushState push_wire(Wire wire);
     bool click(Point position);
     void tick();
 
   private:
-    void renderComponentBodys(Renderer& renderer);
-    void renderComponentConnectors(Renderer& renderer);
-    void renderWires(Renderer& renderer);
-    void renderGrid(Renderer& renderer);
+    void renderComponentBodys(Renderer2D& renderer);
+    void renderComponentConnectors(Renderer2D& renderer);
+    void renderWires(Renderer2D& renderer);
+    void renderGrid(Renderer2D& renderer);
 
     ConnectionState getConnectionState(Connection& connection);
     ConnectionResult push_wire_connection(Point position, u32 wireIndex);

@@ -3,7 +3,7 @@
 
 namespace Gate {
   
-  void Wire::render(Renderer& renderer) {
+  void Wire::render(Renderer2D& renderer) {
     f32 width = config.wire.width;
 
     Vec2 size = (to.toVec2() - from.toVec2()) * (f32)config.grid.cell.size;

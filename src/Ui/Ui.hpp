@@ -4,7 +4,7 @@
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Renderer/CameraController.hpp"
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 namespace Gate {
 

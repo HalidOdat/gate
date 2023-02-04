@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 #include "Editor/Point.hpp"
 
 namespace Gate {
@@ -14,7 +14,7 @@ namespace Gate {
     bool active = false;
     bool visited = false;
 
-    void render(Renderer& renderer);
+    void render(Renderer2D& renderer);
   };
 
 }

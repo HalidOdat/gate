@@ -4,7 +4,7 @@
 #include "Editor/Chip.hpp"
 #include "Renderer/Texture.hpp"
 #include "Renderer/FrameBuffer.hpp"
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 namespace Gate {
 
@@ -13,14 +13,14 @@ namespace Gate {
     Board();
     ~Board();
 
-    void render(Renderer& renderer);
+    void render(Renderer2D& renderer);
     
     Chip& getCurrentChip();
 
     void onResize(u32 width, u32 height);
 
   private:
-    void renderGrid(Renderer& renderer);
+    void renderGrid(Renderer2D& renderer);
 
   private:
     u32 mIndex = 0;

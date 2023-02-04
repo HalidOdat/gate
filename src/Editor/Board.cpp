@@ -23,7 +23,7 @@ namespace Gate {
     mGridTexture = nullptr;
   }
 
-  void Board::renderGrid(Renderer& renderer) {
+  void Board::renderGrid(Renderer2D& renderer) {
     auto width  = Application::getWindow().getWidth();
     auto height = Application::getWindow().getHeight();
 
@@ -45,7 +45,7 @@ namespace Gate {
     renderer.clearScreen(mGridTexture);
   }
 
-  void Board::render(Renderer& renderer) {
+  void Board::render(Renderer2D& renderer) {
     renderGrid(renderer);
     getCurrentChip().render(renderer);
   }

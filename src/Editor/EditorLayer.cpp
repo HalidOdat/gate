@@ -22,11 +22,11 @@ namespace Gate {
   }
   void EditorLayer::onUpdate(Timestep ts) {
     (void)ts;
-    Application::getRenderer().begin(mEditorCameraController.getCamera());
+    Application::getRenderer2D().begin(mEditorCameraController.getCamera());
 
-    mBoard.render(Application::getRenderer());
+    mBoard.render(Application::getRenderer2D());
 
-    // Application::getRenderer().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
+    // Application::getRenderer2D().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
     auto height = Application::getWindow().getHeight();
 
     // Wire Draw
@@ -34,34 +34,34 @@ namespace Gate {
       Wire{
         Point(mWireStartPosition / (f32)config.grid.cell.size),
         Point(mWireEndPosition   / (f32)config.grid.cell.size)
-      }.render(Application::getRenderer());
+      }.render(Application::getRenderer2D());
 
-      Application::getRenderer().drawCenteredQuad(mWireStartPosition, config.selector.size, config.selector.color);
-      Application::getRenderer().drawCenteredQuad(mWireEndPosition, config.selector.size, config.selector.color);
+      Application::getRenderer2D().drawCenteredQuad(mWireStartPosition, config.selector.size, config.selector.color);
+      Application::getRenderer2D().drawCenteredQuad(mWireEndPosition, config.selector.size, config.selector.color);
     }
 
     // TODO: Move to UI
     switch (mMode) {
       case Mode::Select: {
         // Selector cursor
-        Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
+        Application::getRenderer2D().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
         const StringView text = " Click on the board to draw a line,\n or press \"c\" to insert a component!";
         const auto size = 16;
-        Application::getRenderer().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
+        Application::getRenderer2D().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
       }  break;
       case Mode::WireDraw: {
         const StringView text = " Press <ESCAPE> to cancel wire drawing";
         const auto size = 16;
-        Application::getRenderer().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
+        Application::getRenderer2D().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
       }  break;
       case Mode::AddComponent: {
-        Application::getRenderer().drawCenteredQuad(mSelectorPosition, config.selector.size, Color::ORANGE);
+        Application::getRenderer2D().drawCenteredQuad(mSelectorPosition, config.selector.size, Color::ORANGE);
 
         String text = " Click on board to add ";
         text += componentTypeToString(mComponentType);
         text += " component";
         const auto size = 16;
-        Application::getRenderer().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
+        Application::getRenderer2D().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
       }  break;
     }
   }

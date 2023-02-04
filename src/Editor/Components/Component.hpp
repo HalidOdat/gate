@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Base.hpp"
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 #include "Editor/Point.hpp"
 #include "Editor/Pin.hpp"
@@ -31,8 +31,8 @@ namespace Gate {
 
   public:
     virtual ~Component();
-    virtual void renderBody(Renderer& renderer) = 0;
-    virtual void renderConnectors(Renderer&);
+    virtual void renderBody(Renderer2D& renderer) = 0;
+    virtual void renderConnectors(Renderer2D&);
     virtual void click() {}
     virtual bool update() = 0;
 

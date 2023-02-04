@@ -11,11 +11,11 @@ namespace Gate {
   
   class Application;
 
-  class Renderer {
+  class Renderer2D {
   public:
-    Renderer();
-    DISALLOW_MOVE_AND_COPY(Renderer);
-    ~Renderer();
+    Renderer2D();
+    DISALLOW_MOVE_AND_COPY(Renderer2D);
+    ~Renderer2D();
 
     void blending(bool yes = true);
 

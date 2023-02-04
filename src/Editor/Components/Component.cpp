@@ -7,7 +7,7 @@ namespace Gate {
 
   Component::~Component() {}
 
-  void Component::renderConnectors(Renderer& renderer) {
+  void Component::renderConnectors(Renderer2D& renderer) {
     // TODO: Show when outputs and inputs are active
     for (auto& pin : mInputPins) {
       pin.render(renderer, false);

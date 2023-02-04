@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/Base.hpp"
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 #include "Ui/Ui.hpp"
 
@@ -72,14 +72,14 @@ namespace Gate {
   }
 
   void Ui::prepareFrame() {
-    Application::getRenderer().blending(true);
+    Application::getRenderer2D().blending(true);
   }
 
   void Ui::endFrame() {
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    Application::getRenderer().drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
+    Application::getRenderer2D().drawQuad(Vec2(position.x, mConfig.window.size.y - position.y), {size.x, -size.y}, color);
   }
 
   void Ui::drawQuad(const Vec2& position, const Vec2& size, const Vec3& color) {
@@ -87,7 +87,7 @@ namespace Gate {
   }
 
   void Ui::drawText(const StringView& text, const Vec2& position, f32 size, const Vec3& color) {
-    Application::getRenderer().drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
+    Application::getRenderer2D().drawText(text, Vec2(position.x, mConfig.window.size.y - position.y), size, Vec4(color, 1.0f));
   }
 
   void Ui::begin(const Vec2& position, f32 padding) {
@@ -99,7 +99,7 @@ namespace Gate {
   
     this->layouts.push_back(layout);
 
-    Application::getRenderer().begin(mCamera);
+    Application::getRenderer2D().begin(mCamera);
   }
 
   void Ui::beginLayout(Layout::Type type, f32 padding) {
@@ -113,7 +113,7 @@ namespace Gate {
   }
 
   void Ui::beginDock(Ui::Dock type, f32 size) {
-    Application::getRenderer().begin(mCamera);
+    Application::getRenderer2D().begin(mCamera);
 
     switch (type) {
       case Dock::Left: {
@@ -364,7 +364,7 @@ namespace Gate {
     // Layout layout = this->layouts.back();
     this->layouts.pop_back();
 
-    Application::getRenderer().end();
+    Application::getRenderer2D().end();
   }
 
   void Ui::onEvent(const Event& event) {

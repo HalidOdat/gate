@@ -7,11 +7,11 @@
 #include "Core/Base.hpp"
 #include "Application.hpp"
 
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 namespace Gate {
 
-  Renderer::Renderer() {
+  Renderer2D::Renderer2D() {
     mWhiteTexture = Texture::color(0xFF, 0xFF, 0xFF).build();
 
     mQuadVertexArray = VertexArray::create();
@@ -54,7 +54,7 @@ namespace Gate {
     mQuadTextures.push_back(mWhiteTexture);
 
     i32 samples[MAX_TEXTURES];
-    for (u32 i = 0; i < Renderer::MAX_TEXTURES; ++i) {
+    for (u32 i = 0; i < Renderer2D::MAX_TEXTURES; ++i) {
       samples[i] = i;
     }
     mQuadShader->bind();
@@ -110,16 +110,16 @@ namespace Gate {
     }
   }
 
-  Renderer::~Renderer() {
+  Renderer2D::~Renderer2D() {
     delete[] mQuadBasePtr;
     delete[] mCircleBasePtr;
   }
 
-  void Renderer::begin(const Camera& camera) {
+  void Renderer2D::begin(const Camera& camera) {
     mProjectionViewMatrix = camera.getProjectionViewMatrix();
   }
 
-  void Renderer::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color) {
+  void Renderer2D::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color) {
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, Vec3(position, 0.0f));
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -160,7 +160,7 @@ namespace Gate {
     mQuadCount++;
   }
 
-  void Renderer::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color) {
+  void Renderer2D::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color) {
     Vec2 size = {_size - _size/7.0f, _size};
 
     Vec2 start = position;
@@ -176,19 +176,19 @@ namespace Gate {
     }
   }
 
-  void Renderer::drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
+  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
     drawQuad(position - size / 2.0f, size, color);
   }
 
-  void Renderer::drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
+  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
     drawQuad(position - size / 2.0f, size, texture, color);
   }
   
-  void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    Renderer::drawQuad(position, size, mWhiteTexture, color);
+  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
+    Renderer2D::drawQuad(position, size, mWhiteTexture, color);
   }
 
-  void Renderer::drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
+  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
     Mat4 transform = Mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(position, 0.0f));  
 
@@ -226,14 +226,14 @@ namespace Gate {
     mQuadCount++;
   }
 
-  void Renderer::clearScreen(const Vec4& color) {
+  void Renderer2D::clearScreen(const Vec4& color) {
     clearScreen(mWhiteTexture, color);
   }
 
-  void Renderer::clearScreen(const Texture::Handle& texture, const Vec4& color) {
+  void Renderer2D::clearScreen(const Texture::Handle& texture, const Vec4& color) {
     drawQuad(Vec2{0, 0}, Vec2{Application::getWindow().getWidth(), Application::getWindow().getHeight()}, texture, color);
   }
-  void Renderer::flushQuad() {
+  void Renderer2D::flushQuad() {
     if (mQuadCount) {
       mWhiteTexture->bind();
 
@@ -254,10 +254,10 @@ namespace Gate {
       mQuadTextures.push_back(mWhiteTexture);
     }
   }
-  void Renderer::drawCenteredCircle(const Vec2& position, float radius, const Vec4& color, float thickness, float fade) {
+  void Renderer2D::drawCenteredCircle(const Vec2& position, float radius, const Vec4& color, float thickness, float fade) {
     drawCircle(position - radius, radius, color, thickness, fade);
   }
-  void Renderer::drawCircle(const Vec2& position, float radius, const Vec4& color, float thickness, float fade) {
+  void Renderer2D::drawCircle(const Vec2& position, float radius, const Vec4& color, float thickness, float fade) {
     Vec3 scale = Vec3(radius * 2.0f, radius * 2.0f, 1.0f);
 
     Mat4 transform = Mat4(1.0f);
@@ -265,7 +265,7 @@ namespace Gate {
     transform = glm::scale(transform, scale);
     drawCircle(transform, color, thickness, fade);
   }
-  void Renderer::drawCircle(const Mat4& transform, const Vec4& color, float thickness, float fade) {
+  void Renderer2D::drawCircle(const Mat4& transform, const Vec4& color, float thickness, float fade) {
 		if (mCircleCount >= CIRCLE_MAX) {
       flushCircle();
     }
@@ -287,7 +287,7 @@ namespace Gate {
 		}
 		mCircleCount++;
 	}
-  void Renderer::flushCircle() {
+  void Renderer2D::flushCircle() {
     if (mCircleCount) {
       // mWhiteTexture->bind();
 
@@ -308,15 +308,15 @@ namespace Gate {
       // mCircleTextures.push_back(mWhiteTexture);
     }
   }
-  void Renderer::flush() {
+  void Renderer2D::flush() {
     flushQuad();
     flushCircle();
   }
-  void Renderer::end() {
+  void Renderer2D::end() {
     flush();
   }
 
-  void Renderer::blending(bool yes) {
+  void Renderer2D::blending(bool yes) {
     if (mBlending == yes) {
       return;
     }

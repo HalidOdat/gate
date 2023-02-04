@@ -7,6 +7,7 @@
 #include "Renderer/Shader.hpp"
 #include "Renderer/Texture.hpp"
 #include "Renderer/Material.hpp"
+#include "Renderer/FrameBuffer.hpp"
 #include "Renderer/CameraController.hpp"
 
 #include <unordered_map>

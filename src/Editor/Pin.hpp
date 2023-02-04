@@ -2,7 +2,7 @@
 
 #include "Core/Base.hpp"
 #include "Editor/Point.hpp"
-#include "Renderer/Renderer.hpp"
+#include "Renderer/Renderer2D.hpp"
 
 namespace Gate {
 
@@ -15,7 +15,7 @@ namespace Gate {
     bool active = false;
     bool visited = false;
 
-    void render(Renderer& renderer, bool isOutput);
+    void render(Renderer2D& renderer, bool isOutput);
   };
 
 }
