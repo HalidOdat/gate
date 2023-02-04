@@ -103,7 +103,7 @@ namespace Gate {
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    #if GATE_DEBUG_MODE && !defined(GATE_PLATFORM_WEB)
+    #if defined(GATE_DEBUG_MODE) && !defined(GATE_PLATFORM_WEB)
       glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     #endif
 
@@ -129,7 +129,7 @@ namespace Gate {
 
     Logger::info("OpenGL Version: %s", glGetString(GL_VERSION));
 
-    #if GATE_DEBUG_MODE && !defined(GATE_PLATFORM_WEB)
+    #if defined(GATE_DEBUG_MODE) && !defined(GATE_PLATFORM_WEB)
       i32 flags;
       glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
       if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {

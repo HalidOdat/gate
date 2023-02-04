@@ -11,10 +11,8 @@ namespace Gate {
 
   EditorLayer::EditorLayer()
     : mEditorCameraController(Application::getWindow().getAspectRatio())
-  {}
-
-  void EditorLayer::onAttach() {
-    Logger::info("EditorLayer::onAttach was called");
+  {
+    Logger::trace("EditorLayer: Constructor was called");
     mGridFrameBuffer = FrameBuffer::builder()
       .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
       .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
@@ -25,17 +23,17 @@ namespace Gate {
       )
       .build();
 
-      const auto themeFilepath = "assets/themes/default.json";
-      auto theme = Theme::Settings::load(themeFilepath);
-      if (theme) {
-        config.apply(*theme);
-      } else {
-        Logger::error("Unable to apply theme %s", themeFilepath);
-      }
+    const auto themeFilepath = "assets/themes/default.json";
+    auto theme = Theme::Settings::load(themeFilepath);
+    if (theme) {
+      config.apply(*theme);
+    } else {
+      Logger::error("Unable to apply theme %s", themeFilepath);
+    }
   }
 
-  void EditorLayer::onDetach() {
-    Logger::info("EditorLayer::onDetach was called");
+  EditorLayer::~EditorLayer() {
+    Logger::trace("EditorLayer: Destructor was called");
     for (auto component : mComponents) {
       if (component) {
         delete component;
@@ -337,6 +335,7 @@ namespace Gate {
   }
 
   void EditorLayer::onUpdate(Timestep ts) {
+    (void)ts;
     Application::getRenderer().begin(mEditorCameraController.getCamera());
 
     // Application::getRenderer().clearScreen();

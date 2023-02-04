@@ -193,7 +193,6 @@ target_precompile_headers(${This}
     <type_traits>
 
     # vendor
-    <glm/glm.hpp>
     <glad/glad.h>
 )
 

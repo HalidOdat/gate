@@ -21,9 +21,8 @@ namespace Gate {
   class EditorLayer {
   public:
     EditorLayer();
+    ~EditorLayer();
 
-    void onAttach();
-    void onDetach();
     void onUpdate(Timestep ts);
     void onUiRender(Ui& ui);
     void onEvent(const Event& event);

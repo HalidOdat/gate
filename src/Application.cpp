@@ -15,7 +15,6 @@ namespace Gate {
 
   void Application::start() {
     this->layer = new EditorLayer();
-    this->layer->onAttach();
 
     startGameLoop();
   }
@@ -47,8 +46,6 @@ namespace Gate {
   Application::~Application() {
     Logger::trace("Game Engine Terminating...");
 
-    // TOOD: use unique_ptr here
-    this->layer->onDetach();
     delete this->layer;
     delete this->mRenderer;
     delete this->ui;
