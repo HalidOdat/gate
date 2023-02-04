@@ -2,6 +2,7 @@
 #include "Events/WindowEvent.hpp"
 #include "Renderer/Texture.hpp"
 #include "Renderer/Mesh.hpp"
+#include "Renderer/Material.hpp"
 #include "Application.hpp"
 
 #include "Core/OpenGL.hpp"
@@ -50,6 +51,9 @@ namespace Gate {
     delete this->layer;
     delete this->mRenderer;
     delete this->ui;
+
+    Logger::trace("Destroying all materials");
+    Material::destroyAll();
     Logger::trace("Destroying all textures");
     Texture::destroyAllTextures();
     Logger::trace("Destroying all meshes");

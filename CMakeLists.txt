@@ -55,6 +55,8 @@ add_executable(${This}
 
   src/Renderer/Mesh.hpp
   src/Renderer/Mesh.cpp
+  src/Renderer/Material.hpp
+  src/Renderer/Material.cpp
   src/Renderer/Texture.hpp
   src/Renderer/Texture.cpp
   src/Renderer/Shader.hpp
