@@ -53,6 +53,8 @@ add_executable(${This}
   src/Events/MouseEvent.hpp
   src/Events/WindowEvent.hpp
 
+  src/Renderer/Mesh.hpp
+  src/Renderer/Mesh.cpp
   src/Renderer/Texture.hpp
   src/Renderer/Texture.cpp
   src/Renderer/Shader.hpp

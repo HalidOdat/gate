@@ -1,6 +1,7 @@
 #include "Core/Base.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Renderer/Texture.hpp"
+#include "Renderer/Mesh.hpp"
 #include "Application.hpp"
 
 #include "Core/OpenGL.hpp"
@@ -51,6 +52,8 @@ namespace Gate {
     delete this->ui;
     Logger::trace("Destroying all textures");
     Texture::destroyAllTextures();
+    Logger::trace("Destroying all meshes");
+    Mesh::destroyAllMeshes();
     this->window.reset();
 
     Logger::info("Game Engine Terminated!");
