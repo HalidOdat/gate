@@ -184,5 +184,34 @@ namespace Gate {
     Data mData;
   };
 
+  class CubeMap {
+    friend class Application;
+  public:
+    using Handle = std::shared_ptr<CubeMap>;
+    using FilePaths = Array<String, 6>;
+
+  public:
+    static CubeMap::Handle load(FilePaths paths);
+    DISALLOW_MOVE_AND_COPY(CubeMap);
+    ~CubeMap();
+
+    void bind() const;
+
+    u32 getId() const;
+    bool reload();
+
+    inline const FilePaths& getFilePath() const { return filePaths; }
+
+  public:
+    CubeMap(u32 id, FilePaths filePaths)
+      : id{id}
+      , filePaths{std::move(filePaths)}
+    {}
+
+  private:
+    u32 id;
+    FilePaths filePaths;
+  };
+
 } // namespace Gate
 
