@@ -3,16 +3,18 @@
 
 #include <string>
 
+#include "Core/OpenGL.hpp"
+
 namespace Gate {
 
   Board::Board() {
     mGridFrameBuffer = FrameBuffer::builder()
       .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
-      .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
+      .clear(FrameBuffer::Clear::Color)
       .clearOnBind(true)
       .attach(
         FrameBuffer::Attachment::Type::Texture,
-        FrameBuffer::Attachment::Format::Rgb8
+        FrameBuffer::Attachment::Format::Rgba8
       )
       .build();
   }
@@ -28,7 +30,13 @@ namespace Gate {
     auto height = Application::getWindow().getHeight();
 
     if (!mGridTexture) {
-      renderer.end();
+      renderer.flush();
+      // Unbind all textutes so it doesn't cause a write-read FBO feadback.
+      // Mabye solve this in a better way...
+      for (u32 i = 0; i < 16; i++) {
+        glActiveTexture(GL_TEXTURE0 + (GLenum)i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+      }
       mGridFrameBuffer->bind();
       renderer.clearScreen(config.grid.background);
       for (u32 i = 0; i < width; i += config.grid.cell.size) {
@@ -37,8 +45,7 @@ namespace Gate {
         }
       }
       renderer.flush();
-      mGridFrameBuffer->unbind();  
-
+      mGridFrameBuffer->unbind();
       mGridTexture = mGridFrameBuffer->getColorAttachment(0);
     }
 
@@ -47,6 +54,10 @@ namespace Gate {
 
   void Board::render(Renderer2D& renderer) {
     renderGrid(renderer);
+    getCurrentChip().render(renderer);
+  }
+
+  void Board::render(Renderer3D& renderer) {
     getCurrentChip().render(renderer);
   }
   

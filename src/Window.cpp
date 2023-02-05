@@ -121,11 +121,14 @@ namespace Gate {
 
     glfwMakeContextCurrent(result->data.window);
 
-    if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
-    {
-      Logger::error("Glad: Failed to initialize");
-      return nullptr;
-    }
+    // We dont need to do this, for web since ems
+    #ifndef GATE_PLATFORM_WEB
+      if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
+      {
+        Logger::error("Glad: Failed to initialize");
+        return nullptr;
+      }
+    #endif
 
     Logger::info("OpenGL Version: %s", glGetString(GL_VERSION));
 
@@ -240,6 +243,10 @@ namespace Gate {
     }
 
     return result;
+  }
+
+  void Window::setSize(u32 width, u32 height) {
+    glfwSetWindowSize(this->data.window, width, height);
   }
 
   bool Window::shouldClose() {

@@ -1,3 +1,6 @@
+precision mediump float;
+precision highp int;
+
 struct Material {
   uint  diffuse;
   uint  specular;
@@ -30,7 +33,7 @@ layout (location = 1) in vec2 aTexture;
 layout (location = 2) in vec3 aNormal;
 layout (location = 3) in mat4 aModelMatrix;  // 3, 4, 5, 6
 layout (location = 7) in mat3 aNormalMatrix; // 7, 8, 9
-layout (location = 10) in highp uint aEntityId;
+layout (location = 10) in vec4 aEntityId;
 
 layout (std140) uniform Camera {
   mat4 projectionMatrix;
@@ -42,7 +45,7 @@ layout (std140) uniform Camera {
 } uCamera;
 
 layout (std140) uniform Materials {
-  Material uMaterials[];
+  Material uMaterials[MAX_MATERIALS];
 };
 
 uniform Light uLight;
@@ -54,7 +57,7 @@ flat out vec3 vViewPosition;
 flat out Material vMaterial;
 flat out Light vLight;
 
-flat out highp uint vEntityId;
+flat out vec4 vEntityId;
 
 void main() {
   vTexCoords        = aTexture;
@@ -63,8 +66,7 @@ void main() {
   vViewPosition     = vec3(uCamera.position);
   vMaterial         = uMaterials[0];
   vLight            = uLight;
-
-  vEntityId       = aEntityId;
+  vEntityId         = aEntityId;
 
   gl_Position       = uCamera.projectionViewMatrix * vec4(vFragmentPosition, 1.0);
 }
@@ -75,9 +77,6 @@ void main() {
   layout(early_fragment_tests) in;
 #endif
 
-precision mediump float;
-precision highp int;
-
 in vec2 vTexCoords;
 in vec3 vNormal;
 in vec3 vFragmentPosition;
@@ -85,12 +84,12 @@ flat in vec3 vViewPosition;
 flat in Material vMaterial;
 flat in Light vLight;
 
-flat in highp uint vEntityId;
+flat in vec4 vEntityId;
 
 uniform sampler2D uTextures[16];
 
 layout (location = 0) out vec4 vFragmentColor;
-layout (location = 1) out highp uint vEntityIdOut;
+layout (location = 1) out vec4 vEntityIdOut;
 
 void main() {
   vec4 diffuseTexture;

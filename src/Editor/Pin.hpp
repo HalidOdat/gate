@@ -3,6 +3,7 @@
 #include "Core/Base.hpp"
 #include "Editor/Point.hpp"
 #include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer3D.hpp"
 
 namespace Gate {
 
@@ -16,6 +17,7 @@ namespace Gate {
     bool visited = false;
 
     void render(Renderer2D& renderer, bool isOutput);
+    void render(Renderer3D& renderer, bool isOutput);
   };
 
 }

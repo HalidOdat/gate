@@ -7,6 +7,15 @@
 
 #include "Core/OpenGL.hpp"
 
+#ifdef GATE_PLATFORM_WEB
+#   include <emscripten/emscripten.h>
+#   if defined(__cplusplus)
+#   	  define EM_PORT_API(rettype) extern "C" rettype EMSCRIPTEN_KEEPALIVE
+#   else
+#   	  define EM_PORT_API(rettype) rettype EMSCRIPTEN_KEEPALIVE
+#   endif
+#endif
+
 #include <cstdlib>
 #include <sstream>
 #include <iomanip>
@@ -145,6 +154,9 @@ namespace Gate {
   bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
     glViewport(0, 0, event.getWidth(), event.getHeight());
     mWindowMinimized = false;
+    if (mRenderer3D) {
+      mRenderer3D->invalidate(event.getWidth(), event.getHeight());
+    }
     return false;
   }
 
@@ -155,9 +167,31 @@ namespace Gate {
 
 } // namespace Gate
 
+static Gate::u32 canvasWidth  = 840; 
+static Gate::u32 canvasHeight = 640;
+
+#ifdef GATE_PLATFORM_WEB
+  EM_JS(int, canvas_get_width, (), {
+    return canvas.width;
+  });
+
+  EM_JS(int, canvas_get_height, (), {
+    return canvas.height;
+  });
+
+  EM_PORT_API(void) gate_resizeWindow(int width, int height) {
+    Gate::Application::getWindow().setSize(width, height);
+  }
+#endif
+
 int main(int argc, char* argv[]) {
   (void)argc;
   (void)argv;
   
-  Gate::Application("Logic Gate Simulator", 840, 640).start();
+#ifdef GATE_PLATFORM_WEB
+  canvasWidth  = (Gate::u32)canvas_get_width();
+  canvasHeight = (Gate::u32)canvas_get_height();
+#endif
+
+  Gate::Application("Logic Gate Simulator", canvasWidth, canvasHeight).start();
 }

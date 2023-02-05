@@ -129,7 +129,7 @@ namespace Gate {
       auto texture = Texture::buffer(width, height)
         .format(attachment.format)
         .filtering(Texture::FilteringMode::Linear)
-        .mipmap(Texture::MipmapMode::Linear)
+        .mipmap(Texture::MipmapMode::None)
         .gammaCorrected(false)
         .build();
 

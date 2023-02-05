@@ -7,6 +7,7 @@
 #include "Editor/Connection.hpp"
 
 #include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer3D.hpp"
 
 #include <unordered_map>
 
@@ -25,6 +26,7 @@ namespace Gate {
 
   public:
     void render(Renderer2D& renderer);
+    void render(Renderer3D& renderer);
     bool push_component(Component* component);
     WirePushState push_wire(Wire wire);
     bool click(Point position);
@@ -35,6 +37,11 @@ namespace Gate {
     void renderComponentConnectors(Renderer2D& renderer);
     void renderWires(Renderer2D& renderer);
     void renderGrid(Renderer2D& renderer);
+
+    void renderComponentBodys(Renderer3D& renderer);
+    void renderComponentConnectors(Renderer3D& renderer);
+    void renderWires(Renderer3D& renderer);
+    void renderGrid(Renderer3D& renderer);
 
     ConnectionState getConnectionState(Connection& connection);
     ConnectionResult push_wire_connection(Point position, u32 wireIndex);

@@ -46,7 +46,7 @@ namespace Gate {
       Mat4 modelMatrix;
       Mat3 normalMatrix;
 
-      u32 entityId;
+      Vec4 entityId;
     };
 
     // NOTE: This struct must be aligned accroding to the std140 standard.
@@ -95,7 +95,7 @@ namespace Gate {
         Mat4 transformMatrix;
         Mat3 normalMatrix;
 
-        u32 entityId;
+        Vec4 entityId;
       };
 
       VertexBuffer::Handle instancedBuffer;

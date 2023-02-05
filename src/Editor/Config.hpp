@@ -3,6 +3,8 @@
 #include "Core/Base.hpp"
 #include "Themes/Settings.hpp"
 #include "Renderer/Texture.hpp"
+#include "Renderer/Material.hpp"
+#include "Renderer/Mesh.hpp"
 
 namespace Gate {
 
@@ -35,6 +37,8 @@ namespace Gate {
     struct Grid {
       struct Cell {
         u32 size = 25;
+
+        f32 size3d = 2.0f;
       };
 
       Cell cell;
@@ -51,6 +55,10 @@ namespace Gate {
     Wire wire;
     Grid grid;
     Text text;
+
+    Mesh::Handle pinMesh;
+    Material::Handle activeMaterial;
+    Material::Handle inactiveMaterial;
 
     void apply(Theme::Settings settins);
   };

@@ -136,7 +136,7 @@ else()
       $<$<CONFIG:Debug>:-fsanitize=address>
       $<$<CONFIG:Debug>:-fsanitize=undefined>
       $<$<CONFIG:Debug>:-fsanitize=null>
-      $<$<CONFIG:Debug>:-Og>
+      # $<$<AND:$<CONFIG:Debug>,$<WEB:>>:-Og>
       $<$<CONFIG:Release>:-Os>
       $<$<CONFIG:MinSizeRel>:-Oz>
   )
@@ -147,7 +147,7 @@ else()
       $<$<CONFIG:Debug>:-fsanitize=address>
       $<$<CONFIG:Debug>:-fsanitize=undefined>
       $<$<CONFIG:Debug>:-fsanitize=null>
-      $<$<CONFIG:Debug>:-Og>
+      # $<$<CONFIG:Debug>:-Og>
       $<$<CONFIG:Release>:-Os>
       $<$<CONFIG:MinSizeRel>:-Oz>
   )
@@ -177,10 +177,15 @@ endif()
 
 target_link_libraries(${This} PUBLIC
   glfw::glfw
-  glad::glad
   glm::glm
   stb::stb
 )
+
+if (NOT DEFINED WEB)
+  target_link_libraries(${This} PUBLIC
+    glad::glad
+  )
+endif()
 
 target_precompile_headers(${This}
   PUBLIC
@@ -201,9 +206,6 @@ target_precompile_headers(${This}
     <optional>
     <unordered_map>
     <type_traits>
-
-    # vendor
-    <glad/glad.h>
 )
 
 target_compile_definitions(${This}

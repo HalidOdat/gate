@@ -13,9 +13,10 @@ namespace Gate {
     static const constexpr u32 OUTPUT_INDEX = 0;
   public:
     SwitchComponent(Point position);
-    virtual void renderBody(Renderer2D& renderer) override;
-    virtual void click() override;
     virtual bool update() override;
+    virtual void click() override;
+    virtual void renderBody(Renderer2D& renderer) override;
+    virtual void renderBody(Renderer3D& renderer) override;
 
   private:
     inline void toggle() { mOutputPins[OUTPUT_INDEX].active = !mOutputPins[OUTPUT_INDEX].active; }

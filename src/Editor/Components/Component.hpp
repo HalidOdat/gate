@@ -2,6 +2,7 @@
 
 #include "Core/Base.hpp"
 #include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer3D.hpp"
 
 #include "Editor/Point.hpp"
 #include "Editor/Pin.hpp"
@@ -31,10 +32,14 @@ namespace Gate {
 
   public:
     virtual ~Component();
-    virtual void renderBody(Renderer2D& renderer) = 0;
-    virtual void renderConnectors(Renderer2D&);
     virtual void click() {}
     virtual bool update() = 0;
+
+    virtual void renderBody(Renderer2D& renderer) = 0;
+    virtual void renderConnectors(Renderer2D&);
+
+    virtual void renderBody(Renderer3D&) {}
+    virtual void renderConnectors(Renderer3D&);
 
   protected:
     Component(Category category, Point position)

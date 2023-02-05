@@ -3,10 +3,10 @@
 #include <algorithm>
 #include <stdint.h>
 
-#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/Base.hpp"
+#include "Core/OpenGL.hpp"
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/Renderer3D.hpp"
 #include "Application.hpp"
@@ -45,7 +45,7 @@ namespace Gate {
 
     mPipeline.frameBuffer = FrameBuffer::builder()
       .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
-      .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth | FrameBuffer::Clear::Stencil)
+      .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
       .clearOnBind(true)
       .attach(
         FrameBuffer::Attachment::Type::Texture,
@@ -53,9 +53,12 @@ namespace Gate {
       )
       .attach(
         FrameBuffer::Attachment::Type::Texture,
-        FrameBuffer::Attachment::Format::R32UI
+        #ifdef GATE_PLATFORM_WEB
+          FrameBuffer::Attachment::Format::Rgba8
+        #else
+          FrameBuffer::Attachment::Format::R32UI
+        #endif
       )
-      .depthStencilType(FrameBuffer::Attachment::Type::Texture)
       .build();
 
     static const float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
@@ -142,9 +145,18 @@ namespace Gate {
     skyboxVertexArray->unbind();
     mPipeline.skyboxVertexArray = skyboxVertexArray;
 
-    mPipeline.skyboxShader = Shader::load("assets/3D/shaders/Skybox.glsl").build();
+    mPipeline.skyboxShader = Shader::load("assets/3D/shaders/Skybox.glsl")
+      .build();
+    mPipeline.skyboxShader->bind();
+    mPipeline.skyboxShader->setVec4("uInvalidEntity", Vec4{
+      f32(((UINT32_MAX >>  0) & 0xFF) / 0xFF),
+      f32(((UINT32_MAX >>  8) & 0xFF) / 0xFF),
+      f32(((UINT32_MAX >> 16) & 0xFF) / 0xFF),
+      f32(((UINT32_MAX >> 24) & 0xFF) / 0xFF),
+    });
+
     mPipeline.shader = Shader::load("assets/3D/shaders/SpotLight.glsl")
-      .define("EDITOR", "1")
+      .define("MAX_MATERIALS", std::to_string(MAX_MATERIALS))
       .build();
     mPipeline.shader->bind();
     i32 samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -154,16 +166,12 @@ namespace Gate {
     mEnvironment.defaultSpecularMap = Texture::color(0x00'00'00'FF).build();
     mEnvironment.defaultEmissionMap = Texture::color(128, 128, 128).build();
 
-    mOutlineShader = Shader::load("assets/3D/shaders/Outline.glsl")
-      .define("EDITOR", "1")
-      .build();
-
     mPipeline.instancedBuffer = VertexBuffer::builder()
       .storage(Buffer::StorageType::Dynamic)
       .size(INSTANCE_BUFFER_SIZE)
       .layout(BufferElement::Type::Mat4, "aModelMatrix", 1)
       .layout(BufferElement::Type::Mat3, "aNormalMatrix", 1)
-      .layout(BufferElement::Type::Int, "aEntityId", 1)
+      .layout(BufferElement::Type::Float4, "aEntityId", 1)
       .build();
 
     mPipeline.instancedBasePtr = new Pipeline::Instance[INSTANCE_COUNT];
@@ -225,7 +233,12 @@ namespace Gate {
     RenderUnit unit {
       transform,
       Mat3(glm::transpose(glm::inverse(transform))),
-      entityId,
+      Vec4{
+        f32(((entityId >>  0) & 0xFF) / 0xFF),
+        f32(((entityId >>  8) & 0xFF) / 0xFF),
+        f32(((entityId >> 16) & 0xFF) / 0xFF),
+        f32(((entityId >> 24) & 0xFF) / 0xFF),
+      },
     };
 
     // TODO: don't change material
@@ -246,51 +259,6 @@ namespace Gate {
 
   void Renderer3D::renderAllUnits() {
     u32 drawCalls = 0;
-
-    // Editor selected entity outline
-    if (mSelectedEntity != UINT32_MAX) {
-      mOutlineShader->bind();
-
-      glEnable(GL_STENCIL_TEST);
-      glStencilMask(0xFF);
-      glStencilFunc(GL_ALWAYS, 1, 0xFF);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-      for (auto&[material, meshes] : mPipeline.opaqueUnits) {
-        // Sorted by mesh
-        for (auto&[mesh, unitIndices] : meshes) {
-          mPipeline.instancedCurrentPtr = mPipeline.instancedBasePtr;
-          usize count = 0;
-          for (auto unitIndex : unitIndices) {
-            if (mPipeline.units[unitIndex].entityId == mSelectedEntity) {
-              *mPipeline.instancedCurrentPtr = {
-                mPipeline.units[unitIndex].modelMatrix,
-                mPipeline.units[unitIndex].normalMatrix,
-                mPipeline.units[unitIndex].entityId,
-              };
-              mPipeline.instancedCurrentPtr++;
-              count++;
-            }
-          }
-
-          auto vao = mesh->getVertexArray();
-          vao->bind();
-          mPipeline.instancedBuffer->bind();
-          mPipeline.instancedBuffer->set({mPipeline.instancedBasePtr, count});
-          glDrawElementsInstanced(
-            GL_LINE_STRIP,
-            mesh->mData.indexBuffer->getCount(),
-            GL_UNSIGNED_INT,
-            0,
-            (GLsizei)count
-          );
-
-          drawCalls++;
-        }
-      }
-      glStencilFunc(GL_EQUAL, 0, 0xFF);
-      glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
-    }
 
     mPipeline.shader->bind();
     mPipeline.shader->setVec3("uLight.position", mPipeline.camera.position);
@@ -345,8 +313,6 @@ namespace Gate {
       }
     }
 
-    glDisable(GL_STENCIL_TEST);
-
     // Logger::trace("Draw calls: %d", drawCalls);
 
     mPipeline.units.clear();
@@ -370,8 +336,8 @@ namespace Gate {
     glDisable(GL_BLEND);
 
     mPipeline.frameBuffer->bind();
-    u32 clearValue = UINT32_MAX;
-    glClearTexImage(mPipeline.frameBuffer->getColorAttachment(1)->getId(), 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &clearValue);
+    // u32 clearValue = UINT32_MAX;
+    // glClearTexImage(mPipeline.frameBuffer->getColorAttachment(1)->getId(), 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &clearValue);
 
     Renderer3D::enableDepthTest(true);
     renderAllUnits();
@@ -379,7 +345,7 @@ namespace Gate {
     Renderer3D::enableDepthTest(false);
 
     mPipeline.frameBuffer->unbind();
-    //  glDisable(GL_DEPTH_TEST);
+
 
     mPipeline.quadVertexArray->bind();
 
@@ -390,8 +356,6 @@ namespace Gate {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     texture->bind(0);
-
-    mPipeline.frameBuffer->getDepthAttachment()->bind(1);
 
     mPipeline.postProcesingShader->bind();
     mPipeline.postProcesingShader->setInt("uScreenTexture", 0);
@@ -407,7 +371,10 @@ namespace Gate {
 
     mPipeline.frameBuffer->bind(false);
     glReadBuffer(GL_COLOR_ATTACHMENT1);
-    glReadPixels(x, Application::getWindow().getHeight() - y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &entity);
+    u8 data[4];
+    glReadPixels(x, Application::getWindow().getHeight() - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    entity = data[0] + (u32(data[1]) << 8) + (u32(data[2]) << 16) + (u32(data[3]) << 24);
+    
     glReadBuffer(GL_NONE);
 
     return entity;

@@ -3,6 +3,8 @@
 
 #include "Application.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Gate {
 
   Component::~Component() {}
@@ -32,6 +34,15 @@ namespace Gate {
       }
     }
     return true;
+  }
+
+  void Component::renderConnectors(Renderer3D& renderer) {
+    for (auto& pin : mInputPins) {
+      pin.render(renderer, false);
+    }
+    for (auto& pin : mOutputPins) {
+      pin.render(renderer, true);
+    }
   }
 
 }

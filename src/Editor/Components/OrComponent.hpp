@@ -15,8 +15,9 @@ namespace Gate {
     static const constexpr u32 OUTPUT_INDEX  = 0;
   public:
     OrComponent(Point position);
-    virtual void renderBody(Renderer2D& renderer) override;
     virtual bool update() override;
+    virtual void renderBody(Renderer2D& renderer) override;
+    virtual void renderBody(Renderer3D& renderer) override;
   };
 
 }

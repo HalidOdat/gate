@@ -112,7 +112,7 @@ namespace Gate {
 
     auto result = std::make_shared<Mesh>(Data{vao, vbo, ibo, file, Type::File});
     cachedMeshes[file] = result;
-    Logger::trace("Mesh %p created: %s", result, file.c_str());
+    Logger::trace("Mesh %p created: %s", result.get(), file.c_str());
     return result;
   }
 

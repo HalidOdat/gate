@@ -23,17 +23,19 @@ add_library(glfw::glfw ALIAS glfw)
 add_subdirectory(glm)
 
 # glad
-set(This glad)
+if (NOT DEFINED WEB)
+  set(This glad)
 
-add_library(${This} STATIC glad/src/glad.c)
+  add_library(${This} STATIC glad/src/glad.c)
 
-set_target_properties(${This} PROPERTIES
-    FOLDER libraries
-)
+  set_target_properties(${This} PROPERTIES
+      FOLDER libraries
+  )
 
-target_include_directories(${This} PUBLIC glad/include)
+  target_include_directories(${This} PUBLIC glad/include)
 
-add_library(${This}::${This} ALIAS ${This})
+  add_library(${This}::${This} ALIAS ${This})
+endif()
 
 # stb image
 set(This stb)

@@ -27,4 +27,19 @@ namespace Gate {
     return true;
   }
 
+  void XorComponent::renderBody(Renderer3D& renderer) {
+    Vec2 size = Vec2{config.grid.cell.size3d};
+
+    Material::Handle material = config.inactiveMaterial;
+    if (mOutputPins[OUTPUT_INDEX].active) {
+      material = config.activeMaterial;
+    }
+
+    Mat4 model{1.0f};
+    model = glm::translate(model, mPosition.toVec3() * config.grid.cell.size3d);
+    model = glm::scale(model, Vec3(Vec2(size * 2.5f), 1.0f));
+
+    renderer.submit(config.pinMesh, material, model);
+  }
+
 }

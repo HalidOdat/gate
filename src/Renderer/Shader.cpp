@@ -234,23 +234,21 @@ namespace Gate {
       return nullptr;
     }
 
-    // GLuint cameraBlockIndex = glGetUniformBlockIndex(shaderProgram, "Camera");
-    // if (cameraBlockIndex != GL_INVALID_INDEX) {
-    //   glUniformBlockBinding(shaderProgram, cameraBlockIndex, 0);
-    //   Logger::trace("Shader: Camera block binding at 0");
-    // }
-
-    // GLuint lightsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Lights");
-    // if (lightsBlockIndex != GL_INVALID_INDEX) {
-    //   glUniformBlockBinding(shaderProgram, lightsBlockIndex, 1);
-    //   Logger::trace("Shader: Lights block binding at 1");
-    // }
-
-    // GLuint materialsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Materials");
-    // if (materialsBlockIndex != GL_INVALID_INDEX) {
-    //   glUniformBlockBinding(shaderProgram, materialsBlockIndex, 2);
-    //   Logger::trace("Shader: Materials block binding at 2");
-    // }
+    GLuint cameraBlockIndex = glGetUniformBlockIndex(shaderProgram, "Camera");
+    if (cameraBlockIndex != GL_INVALID_INDEX) {
+      glUniformBlockBinding(shaderProgram, cameraBlockIndex, 0);
+      Logger::trace("Shader: Camera block binding at 0");
+    }
+    GLuint lightsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Lights");
+    if (lightsBlockIndex != GL_INVALID_INDEX) {
+      glUniformBlockBinding(shaderProgram, lightsBlockIndex, 1);
+      Logger::trace("Shader: Lights block binding at 1");
+    }
+    GLuint materialsBlockIndex = glGetUniformBlockIndex(shaderProgram, "Materials");
+    if (materialsBlockIndex != GL_INVALID_INDEX) {
+      glUniformBlockBinding(shaderProgram, materialsBlockIndex, 2);
+      Logger::trace("Shader: Materials block binding at 2");
+    }
 
     return std::make_shared<Shader>(shaderProgram, String(filepath));
   }

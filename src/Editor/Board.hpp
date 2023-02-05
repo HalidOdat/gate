@@ -5,6 +5,7 @@
 #include "Renderer/Texture.hpp"
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer3D.hpp"
 
 namespace Gate {
 
@@ -14,6 +15,7 @@ namespace Gate {
     ~Board();
 
     void render(Renderer2D& renderer);
+    void render(Renderer3D& renderer);
     
     Chip& getCurrentChip();
 

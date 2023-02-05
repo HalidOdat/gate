@@ -284,7 +284,6 @@ namespace Gate {
     String text = "Name: " + mName;
     renderer.drawText(text, Vec2{size}, (f32)size, config.text.color);
   }
-
   void Chip::renderComponentBodys(Renderer2D& renderer) {
     for (auto component : mComponents) {
       if (component) {
@@ -292,7 +291,6 @@ namespace Gate {
       }
     }
   }
-
   void Chip::renderComponentConnectors(Renderer2D& renderer) {
     for (auto component : mComponents) {
       if (component) {
@@ -300,8 +298,34 @@ namespace Gate {
       }
     }
   }
-
   void Chip::renderWires(Renderer2D& renderer) {
+    for (auto wire : mWires) {
+      wire.render(renderer);
+    }
+  }
+
+  // ================================= 3D =====================================
+
+  void Chip::render(Renderer3D& renderer) {
+    renderComponentBodys(renderer);
+    renderWires(renderer);
+    renderComponentConnectors(renderer);
+  }
+  void Chip::renderComponentBodys(Renderer3D& renderer) {
+    for (auto component : mComponents) {
+      if (component) {
+        component->renderBody(renderer);
+      }
+    }
+  }
+  void Chip::renderComponentConnectors(Renderer3D& renderer) {
+    for (auto component : mComponents) {
+      if (component) {
+        component->renderConnectors(renderer);
+      }
+    }
+  }
+  void Chip::renderWires(Renderer3D& renderer) {
     for (auto wire : mWires) {
       wire.render(renderer);
     }

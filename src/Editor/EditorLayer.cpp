@@ -23,6 +23,21 @@ namespace Gate {
 
     mMaterial = Material::get("Default");
     mMesh = Mesh::cube();
+
+    config.pinMesh = mMesh;
+    config.activeMaterial = Material::get("Active");
+    config.activeMaterial->diffuseMap = Texture::color(0xFF'00'00'FF).build();
+    config.activeMaterial->specularMap = Texture::color(0x00'00'00'FF).build();
+    config.activeMaterial->emissionMap = Texture::color(0x00'00'00'FF).build();
+    config.inactiveMaterial = Material::get("Inactive");
+    config.inactiveMaterial->diffuseMap = Texture::color(0x00'00'00'FF).build();
+    config.inactiveMaterial->specularMap = Texture::color(0x00'00'00'FF).build();
+    config.inactiveMaterial->emissionMap = Texture::color(0x00'00'00'FF).build();
+  }
+  EditorLayer::~EditorLayer() {
+    config.pinMesh = nullptr;
+    config.activeMaterial = nullptr;
+    config.inactiveMaterial = nullptr;
   }
   void EditorLayer::onUpdate2D(Timestep ts) {
     (void)ts;
@@ -70,10 +85,9 @@ namespace Gate {
     }
   }
   void EditorLayer::onUpdate3D(Timestep ts) {
-    (void)ts;
     mPerspectiveCameraController.onUpdate(ts);
     Application::getRenderer3D().begin3D(mPerspectiveCameraController);
-    Application::getRenderer3D().submit(mMesh, mMaterial);
+    mBoard.render(Application::getRenderer3D());
   }
   void EditorLayer::onUpdate(Timestep ts) {
     if (mRenderMode == RenderMode::_2D) {

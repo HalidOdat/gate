@@ -1,6 +1,8 @@
 #include "Editor/Wire.hpp"
 #include "Editor/Config.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Gate {
   
   void Wire::render(Renderer2D& renderer) {
@@ -39,6 +41,56 @@ namespace Gate {
       config.wire.endsSize,
       color
     );
+  }
+
+
+  void Wire::render(Renderer3D& renderer) {
+    f32 wireWidth    = 0.25f;
+    f32 gridCellSize = config.grid.cell.size3d;
+
+    // TODO: move to constructor
+    Vec3 scale = Vec3{wireWidth};
+    Vec3 offset = Vec3{0, 0, 0};
+    i32 cellDistance = 1;
+    if (from.x == to.x && from.y == to.y) {
+      if (from.z > to.z) {
+        i32 temp = from.z;
+        from.z = to.z;
+        to.z = temp;
+      }
+      cellDistance = to.z - from.z;
+      offset.z = cellDistance * gridCellSize / 2.0f;
+      scale.z = cellDistance * gridCellSize;
+    } else if (from.y == to.y && from.z == to.z) {
+      if (from.x > to.x) {
+        i32 temp = from.x;
+        from.x = to.x;
+        to.x = temp;
+      }
+      cellDistance = to.x - from.x;
+      offset.x = cellDistance * gridCellSize / 2.0f;
+      scale.x = cellDistance * gridCellSize;
+    } else if (from.z == to.z && from.x == to.x) {
+      if (from.y > to.y) {
+        i32 temp = from.y;
+        from.y = to.y;
+        to.y = temp;
+      }
+      cellDistance = to.y - from.y;
+      offset.y = cellDistance * gridCellSize / 2.0f;
+      scale.y = cellDistance * gridCellSize;
+    }
+
+    Material::Handle material = config.inactiveMaterial;
+    if (active) {
+      material = config.activeMaterial;
+    }
+    
+    Mat4 model{1.0f};
+    model = glm::translate(model, from.toVec3() * Vec3{gridCellSize} + offset);
+    model = glm::scale(model, scale);
+
+    renderer.submit(config.pinMesh, material, model);
   }
 
 }

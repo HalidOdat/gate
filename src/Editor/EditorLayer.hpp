@@ -29,6 +29,7 @@ namespace Gate {
 
   public:
     EditorLayer();
+    ~EditorLayer();
 
     void onUpdate(Timestep ts);
     void onUpdate2D(Timestep ts);

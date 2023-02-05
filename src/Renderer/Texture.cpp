@@ -267,7 +267,11 @@ namespace Gate {
     if (mSpecification.samples == 0) {
       glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, dataFormat, dataType, mData);
     } else {
-      glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSpecification.samples, internalFormat, mWidth, mHeight, 0);
+      #ifndef GATE_PLATFORM_WEB
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSpecification.samples, internalFormat, mWidth, mHeight, 0);
+      #else
+        GATE_TODO("glTexImage2DMultisample not implemented");
+      #endif
     }
 
     if (mSpecification.mipmap != Texture::MipmapMode::None && mSpecification.internalFormat != Texture::Format::R32UI) {

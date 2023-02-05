@@ -2,6 +2,8 @@
 
 #include "Editor/Config.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Gate {
 
   void Pin::render(Renderer2D& renderer, bool isOutput) {
@@ -17,6 +19,19 @@ namespace Gate {
       0.2f, // thickness
       0.001f
     );
+  }
+
+  void Pin::render(Renderer3D& renderer, bool isOutput) {
+    (void)isOutput;
+    Material::Handle material = config.inactiveMaterial;
+    if (active) {
+      material = config.activeMaterial;
+    }
+
+    Mat4 model{1.0f};
+    model = glm::translate(model, position.toVec3() * config.grid.cell.size3d);
+
+    renderer.submit(config.pinMesh, material, model);
   }
 
 }
