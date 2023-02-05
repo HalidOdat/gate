@@ -52,6 +52,9 @@ namespace Gate {
 
     delete this->layer;
     delete this->mRenderer2D;
+    if (this->mRenderer3D) {
+      delete mRenderer3D;
+    }
     delete this->ui;
 
     Logger::trace("Destroying all materials");
@@ -63,6 +66,13 @@ namespace Gate {
     this->window.reset();
 
     Logger::info("Game Engine Terminated!");
+  }
+
+  Renderer3D& Application::getRenderer3D() {
+    if (!sInstance->mRenderer3D) {
+      sInstance->mRenderer3D = new Renderer3D();
+    }
+    return *sInstance->mRenderer3D;
   }
 
   void Application::gameLoop() {
@@ -90,6 +100,9 @@ namespace Gate {
       // self->layer->onUiRender(*self->ui);
       // self->ui->endFrame();
 
+      if (self->mRenderer3D) {
+        self->mRenderer3D->waitAndRender();
+      }
       self->mRenderer2D->end();
     }
     self->window->update();

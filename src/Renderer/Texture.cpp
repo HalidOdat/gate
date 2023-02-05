@@ -270,7 +270,7 @@ namespace Gate {
       glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSpecification.samples, internalFormat, mWidth, mHeight, 0);
     }
 
-    if (mSpecification.mipmap != Texture::MipmapMode::None) {
+    if (mSpecification.mipmap != Texture::MipmapMode::None && mSpecification.internalFormat != Texture::Format::R32UI) {
       glGenerateMipmap(target);
     }
 

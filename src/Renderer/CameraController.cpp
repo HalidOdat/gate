@@ -151,7 +151,7 @@ namespace Gate {
     }
 
     updateCameraVectors();
-    return true;
+    return false;
   }
 
 } // namespace Gate

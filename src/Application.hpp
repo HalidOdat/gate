@@ -20,6 +20,7 @@ namespace Gate {
     inline static Application& get() { return *sInstance; }
     inline static Window& getWindow() { return *sInstance->window; }
     inline static Renderer2D& getRenderer2D() { return *sInstance->mRenderer2D; }
+    static Renderer3D& getRenderer3D();
 
     void start();
     void quit();
@@ -40,9 +41,10 @@ namespace Gate {
     bool mWindowMinimized = false;
     Ref<Window> window = nullptr;
     
-    Renderer2D* mRenderer2D;
-    Ui* ui;
-    EditorLayer *layer;
+    Renderer2D* mRenderer2D = nullptr;
+    Renderer3D* mRenderer3D = nullptr;
+    Ui* ui = nullptr;
+    EditorLayer *layer = nullptr;
     f32 lastFrameTime = 0.0f;
 
     String mTitle;

@@ -22,9 +22,17 @@ namespace Gate {
 
   class EditorLayer {
   public:
+    enum class RenderMode {
+      _2D,
+      _3D,
+    };
+
+  public:
     EditorLayer();
 
     void onUpdate(Timestep ts);
+    void onUpdate2D(Timestep ts);
+    void onUpdate3D(Timestep ts);
     void onUiRender(Ui& ui);
     void onEvent(const Event& event);
   
@@ -66,7 +74,7 @@ namespace Gate {
   private:
     // Camera
     OrthographicCameraController mEditorCameraController;
-    // PerspectiveCameraController mPerspectiveCameraController;
+    PerspectiveCameraController mPerspectiveCameraController;
 
     // State
     bool mClicked = false;
@@ -83,6 +91,11 @@ namespace Gate {
 
     // Board parts/components
     Board mBoard;
+
+    // Testing
+    RenderMode mRenderMode = RenderMode::_2D;
+    Material::Handle mMaterial;
+    Mesh::Handle mMesh;
   };
 
 } // namespace Gate

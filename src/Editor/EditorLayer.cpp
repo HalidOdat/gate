@@ -10,6 +10,7 @@ namespace Gate {
 
   EditorLayer::EditorLayer()
     : mEditorCameraController(Application::getWindow().getAspectRatio())
+    , mPerspectiveCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio())
   {
     Logger::trace("EditorLayer: Constructor was called");
     const auto themeFilepath = "assets/themes/default.json";
@@ -19,8 +20,11 @@ namespace Gate {
     } else {
       Logger::error("Unable to apply theme %s", themeFilepath);
     }
+
+    mMaterial = Material::get("Default");
+    mMesh = Mesh::cube();
   }
-  void EditorLayer::onUpdate(Timestep ts) {
+  void EditorLayer::onUpdate2D(Timestep ts) {
     (void)ts;
     Application::getRenderer2D().begin(mEditorCameraController.getCamera());
 
@@ -65,7 +69,19 @@ namespace Gate {
       }  break;
     }
   }
-
+  void EditorLayer::onUpdate3D(Timestep ts) {
+    (void)ts;
+    mPerspectiveCameraController.onUpdate(ts);
+    Application::getRenderer3D().begin3D(mPerspectiveCameraController);
+    Application::getRenderer3D().submit(mMesh, mMaterial);
+  }
+  void EditorLayer::onUpdate(Timestep ts) {
+    if (mRenderMode == RenderMode::_2D) {
+      onUpdate2D(ts);
+    } else {
+      onUpdate3D(ts);
+    }
+  }
   bool EditorLayer::onKeyPressedEvent(const KeyPressedEvent& event) {
     if (event.getKey() == Key::Escape) {
       switch (mMode) {
@@ -104,6 +120,17 @@ namespace Gate {
       }
     }
 
+    if (event.getKey() == Key::_3) {
+      switch (mRenderMode) {
+        case RenderMode::_2D:
+          mRenderMode = RenderMode::_3D;
+          break;
+        case RenderMode::_3D:
+          mRenderMode = RenderMode::_2D;
+          break;
+      }
+    }
+
     #ifndef GATE_PLATFORM_WEB
       if (event.getKey() == Key::Q) {
         Application::get().quit();
@@ -111,7 +138,6 @@ namespace Gate {
     #endif
     return false;
   }
-
   bool EditorLayer::onMouseButtonPressedEvent(const MouseButtonPressedEvent& event) {
     if (event.getButton() == MouseButton::Left) {
       mClicked = true;
@@ -224,6 +250,12 @@ namespace Gate {
   }
 
   void EditorLayer::onEvent(const Event& event) {
+    if (mClicked) {
+      mPerspectiveCameraController.onEvent(event);
+    } else {
+      mPerspectiveCameraController.resetLastPosition();
+    }
+
     event.dispatch(&EditorLayer::onWindowResizeEvent, this);
     event.dispatch(&EditorLayer::onKeyPressedEvent, this);
     event.dispatch(&EditorLayer::onMouseScrollEvent, this);
@@ -235,6 +267,7 @@ namespace Gate {
   bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
     auto[width, height] = event.getSize();
     mEditorCameraController.resize(width, height);
+    mPerspectiveCameraController.resize(width, height);
     mBoard.onResize(width, height);
     return false;
   }
