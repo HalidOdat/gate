@@ -199,7 +199,7 @@ namespace Gate {
     mPipeline.frameBuffer->invalidate(width, height);
   }
 
-  void Renderer3D::begin3D(const PerspectiveCameraController& cameraController) {
+  void Renderer3D::begin(const PerspectiveCameraController& cameraController) {
     mPipeline.camera.projection     = cameraController.getCamera().getProjectionMatrix();
     mPipeline.camera.view           = cameraController.getCamera().getViewMatrix();
     mPipeline.camera.projectionView = mPipeline.camera.projection * mPipeline.camera.view;
@@ -333,11 +333,7 @@ namespace Gate {
 
   void Renderer3D::waitAndRender() {
     // First Pass
-    glDisable(GL_BLEND);
-
     mPipeline.frameBuffer->bind();
-    // u32 clearValue = UINT32_MAX;
-    // glClearTexImage(mPipeline.frameBuffer->getColorAttachment(1)->getId(), 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &clearValue);
 
     Renderer3D::enableDepthTest(true);
     renderAllUnits();

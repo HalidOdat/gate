@@ -169,6 +169,7 @@ if (DEFINED WEB)
       -sDISABLE_EXCEPTION_CATCHING=1
       $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:--closure=1>
       $<$<CONFIG:MinSizeRel>:-flto=full>
+      $<$<CONFIG:MinSizeRel>:-sLZ4>
       --preload-file "${ASSETS_DIRECTOY}@assets"
   )
 else()

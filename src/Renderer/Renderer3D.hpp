@@ -25,7 +25,7 @@ namespace Gate {
     void enableDepthTest(bool yes = true);
     void enableCullFace(bool  yes = true);
 
-    void begin3D(const PerspectiveCameraController& cameraController);
+    void begin(const PerspectiveCameraController& cameraController);
     void submit(const Mesh::Handle& mesh, const Material::Handle& material, const Mat4& transform = Mat4(1.0f), u32 entityId = UINT32_MAX);
 
     void flush();

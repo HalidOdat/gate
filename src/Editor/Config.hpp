@@ -38,7 +38,7 @@ namespace Gate {
       struct Cell {
         u32 size = 25;
 
-        f32 size3d = 2.0f;
+        f32 size3d = 1.0f;
       };
 
       Cell cell;

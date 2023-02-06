@@ -86,7 +86,7 @@ namespace Gate {
   }
   void EditorLayer::onUpdate3D(Timestep ts) {
     mPerspectiveCameraController.onUpdate(ts);
-    Application::getRenderer3D().begin3D(mPerspectiveCameraController);
+    Application::getRenderer3D().begin(mPerspectiveCameraController);
     mBoard.render(Application::getRenderer3D());
   }
   void EditorLayer::onUpdate(Timestep ts) {
