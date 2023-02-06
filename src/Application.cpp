@@ -172,11 +172,11 @@ static Gate::u32 canvasHeight = 640;
 
 #ifdef GATE_PLATFORM_WEB
   EM_JS(int, canvas_get_width, (), {
-    return canvas.width;
+    return Module.canvas.width;
   });
 
   EM_JS(int, canvas_get_height, (), {
-    return canvas.height;
+    return Module.canvas.height;
   });
 
   EM_PORT_API(void) gate_resizeWindow(int width, int height) {

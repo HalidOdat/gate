@@ -114,10 +114,9 @@
         })(),
         canvas: (function() {
           window.addEventListener("resize", function(e) {
-            console.log("resized", e)
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            _gate_resizeWindow(window.innerWidth, window.innerHeight);
+            window.Module._gate_resizeWindow(window.innerWidth, window.innerHeight);
           })
           // As a default initial behavior, pop up an alert when webgl context is lost. To make your
           // application robust, you may want to override this behavior before shipping!
