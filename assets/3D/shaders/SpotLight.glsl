@@ -92,8 +92,117 @@ layout (location = 0) out vec4 vFragmentColor;
 layout (location = 1) out vec4 vEntityIdOut;
 
 void main() {
+  // vec4 diffuseTexture;
+  //  switch (vMaterial.diffuse) {
+  //   case  0u: diffuseTexture = texture(uTextures[ 0], vTexCoords); break;
+  //   case  1u: diffuseTexture = texture(uTextures[ 1], vTexCoords); break;
+  //   case  2u: diffuseTexture = texture(uTextures[ 2], vTexCoords); break;
+  //   case  3u: diffuseTexture = texture(uTextures[ 3], vTexCoords); break;
+  //   case  4u: diffuseTexture = texture(uTextures[ 4], vTexCoords); break;
+  //   case  5u: diffuseTexture = texture(uTextures[ 5], vTexCoords); break;
+  //   case  6u: diffuseTexture = texture(uTextures[ 6], vTexCoords); break;
+  //   case  7u: diffuseTexture = texture(uTextures[ 7], vTexCoords); break;
+  //   case  8u: diffuseTexture = texture(uTextures[ 8], vTexCoords); break;
+  //   case  9u: diffuseTexture = texture(uTextures[ 9], vTexCoords); break;
+  //   case 10u: diffuseTexture = texture(uTextures[10], vTexCoords); break;
+  //   case 11u: diffuseTexture = texture(uTextures[11], vTexCoords); break;
+  //   case 12u: diffuseTexture = texture(uTextures[12], vTexCoords); break;
+  //   case 13u: diffuseTexture = texture(uTextures[13], vTexCoords); break;
+  //   case 14u: diffuseTexture = texture(uTextures[14], vTexCoords); break;
+  //   case 15u: diffuseTexture = texture(uTextures[15], vTexCoords); break;
+  // }
+  // vec3 diffuseColor = vec3(diffuseTexture);
+
+  // // ambient
+  // vec3 ambient = vLight.ambient * diffuseColor;
+  
+  // // diffuse 
+  // vec3 lightDir = normalize(vLight.position - vFragmentPosition);
+  // vec3 norm = normalize(vNormal);
+  // float diff = max(dot(norm, lightDir), 0.0);
+  // vec3 diffuse = vLight.diffuse * diff * diffuseColor;
+
+  // // specular
+  // vec3 viewDir    = normalize(vViewPosition - vFragmentPosition);
+  // vec3 halfwayDir = normalize(lightDir + viewDir);
+  // float spec = pow(max(dot(viewDir, halfwayDir), 0.0), vMaterial.shininess * 4.0f);
+  // vec4 specularTexture;
+  // switch (vMaterial.specular) {
+  //   case  0u: specularTexture = texture(uTextures[ 0], vTexCoords); break;
+  //   case  1u: specularTexture = texture(uTextures[ 1], vTexCoords); break;
+  //   case  2u: specularTexture = texture(uTextures[ 2], vTexCoords); break;
+  //   case  3u: specularTexture = texture(uTextures[ 3], vTexCoords); break;
+  //   case  4u: specularTexture = texture(uTextures[ 4], vTexCoords); break;
+  //   case  5u: specularTexture = texture(uTextures[ 5], vTexCoords); break;
+  //   case  6u: specularTexture = texture(uTextures[ 6], vTexCoords); break;
+  //   case  7u: specularTexture = texture(uTextures[ 7], vTexCoords); break;
+  //   case  8u: specularTexture = texture(uTextures[ 8], vTexCoords); break;
+  //   case  9u: specularTexture = texture(uTextures[ 9], vTexCoords); break;
+  //   case 10u: specularTexture = texture(uTextures[10], vTexCoords); break;
+  //   case 11u: specularTexture = texture(uTextures[11], vTexCoords); break;
+  //   case 12u: specularTexture = texture(uTextures[12], vTexCoords); break;
+  //   case 13u: specularTexture = texture(uTextures[13], vTexCoords); break;
+  //   case 14u: specularTexture = texture(uTextures[14], vTexCoords); break;
+  //   case 15u: specularTexture = texture(uTextures[15], vTexCoords); break;
+  // }
+  // vec3 specular = vLight.specular * spec * vec3(specularTexture);
+
+  // vec4 emissionTexture;
+  // switch (vMaterial.emission) {
+  //   case  0u: emissionTexture = texture(uTextures[ 0], vTexCoords); break;
+  //   case  1u: emissionTexture = texture(uTextures[ 1], vTexCoords); break;
+  //   case  2u: emissionTexture = texture(uTextures[ 2], vTexCoords); break;
+  //   case  3u: emissionTexture = texture(uTextures[ 3], vTexCoords); break;
+  //   case  4u: emissionTexture = texture(uTextures[ 4], vTexCoords); break;
+  //   case  5u: emissionTexture = texture(uTextures[ 5], vTexCoords); break;
+  //   case  6u: emissionTexture = texture(uTextures[ 6], vTexCoords); break;
+  //   case  7u: emissionTexture = texture(uTextures[ 7], vTexCoords); break;
+  //   case  8u: emissionTexture = texture(uTextures[ 8], vTexCoords); break;
+  //   case  9u: emissionTexture = texture(uTextures[ 9], vTexCoords); break;
+  //   case 10u: emissionTexture = texture(uTextures[10], vTexCoords); break;
+  //   case 11u: emissionTexture = texture(uTextures[11], vTexCoords); break;
+  //   case 12u: emissionTexture = texture(uTextures[12], vTexCoords); break;
+  //   case 13u: emissionTexture = texture(uTextures[13], vTexCoords); break;
+  //   case 14u: emissionTexture = texture(uTextures[14], vTexCoords); break;
+  //   case 15u: emissionTexture = texture(uTextures[15], vTexCoords); break;
+  // }
+  // vec3 emission = vec3(emissionTexture);
+    
+  // // // check if lighting is inside the spotlight cone
+  // // // soft edges
+  // // float theta = dot(lightDir, normalize(-vLight.direction)); 
+  // // float epsilon   = vLight.cutOff - vLight.outerCutOff;
+  // // float intensity = clamp((theta - vLight.outerCutOff) / epsilon, 0.0, 1.0);
+  // // diffuse  *= intensity;
+  // // specular *= intensity;
+  // // emission *= intensity;
+
+  // // light attenuation
+  // float distance    = length(vLight.position - vFragmentPosition);
+  // float attenuation = 1.0 / (1.0f + vLight.linear * distance + vLight.quadratic * (distance * distance));
+  // ambient  *= attenuation;
+  // diffuse  *= attenuation;
+  // specular *= attenuation;
+  // emission *= attenuation;
+
+  // vec3 result = ambient + diffuse + specular + emission;
+  // vFragmentColor = vec4(result, vMaterial.transparency);
+
+  // lightingShader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+  // lightingShader.setVec3("viewPos", camera.Position);
+  //
+  // // light properties
+  // lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+  // lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+  // lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+  vec3 light_direction = vec3(-0.2f, -1.0f, -0.3f);
+  vec3 light_ambient   = vec3(0.3f, 0.3f, 0.3f);
+  vec3 light_diffuse   = vec3(0.5f, 0.5f, 0.5f);
+  vec3 light_specular  = vec3(1.0f, 1.0f, 1.0f);
+
+  // ambient
   vec4 diffuseTexture;
-   switch (vMaterial.diffuse) {
+  switch (vMaterial.diffuse) {
     case  0u: diffuseTexture = texture(uTextures[ 0], vTexCoords); break;
     case  1u: diffuseTexture = texture(uTextures[ 1], vTexCoords); break;
     case  2u: diffuseTexture = texture(uTextures[ 2], vTexCoords); break;
@@ -111,21 +220,9 @@ void main() {
     case 14u: diffuseTexture = texture(uTextures[14], vTexCoords); break;
     case 15u: diffuseTexture = texture(uTextures[15], vTexCoords); break;
   }
-  vec3 diffuseColor = vec3(diffuseTexture);
-
-  // ambient
-  vec3 ambient = vLight.ambient * diffuseColor;
+  vec3 ambient = light_ambient * diffuseTexture.rgb;
   
-  // diffuse 
-  vec3 lightDir = normalize(vLight.position - vFragmentPosition);
-  vec3 norm = normalize(vNormal);
-  float diff = max(dot(norm, lightDir), 0.0);
-  vec3 diffuse = vLight.diffuse * diff * diffuseColor;
-
-  // specular
-  vec3 viewDir    = normalize(vViewPosition - vFragmentPosition);
-  vec3 halfwayDir = normalize(lightDir + viewDir);
-  float spec = pow(max(dot(viewDir, halfwayDir), 0.0), vMaterial.shininess * 4.0f);
+  // diffuse
   vec4 specularTexture;
   switch (vMaterial.specular) {
     case  0u: specularTexture = texture(uTextures[ 0], vTexCoords); break;
@@ -145,48 +242,21 @@ void main() {
     case 14u: specularTexture = texture(uTextures[14], vTexCoords); break;
     case 15u: specularTexture = texture(uTextures[15], vTexCoords); break;
   }
-  vec3 specular = vLight.specular * spec * vec3(specularTexture);
+  vec3 norm = normalize(vNormal);
 
-  vec4 emissionTexture;
-  switch (vMaterial.emission) {
-    case  0u: emissionTexture = texture(uTextures[ 0], vTexCoords); break;
-    case  1u: emissionTexture = texture(uTextures[ 1], vTexCoords); break;
-    case  2u: emissionTexture = texture(uTextures[ 2], vTexCoords); break;
-    case  3u: emissionTexture = texture(uTextures[ 3], vTexCoords); break;
-    case  4u: emissionTexture = texture(uTextures[ 4], vTexCoords); break;
-    case  5u: emissionTexture = texture(uTextures[ 5], vTexCoords); break;
-    case  6u: emissionTexture = texture(uTextures[ 6], vTexCoords); break;
-    case  7u: emissionTexture = texture(uTextures[ 7], vTexCoords); break;
-    case  8u: emissionTexture = texture(uTextures[ 8], vTexCoords); break;
-    case  9u: emissionTexture = texture(uTextures[ 9], vTexCoords); break;
-    case 10u: emissionTexture = texture(uTextures[10], vTexCoords); break;
-    case 11u: emissionTexture = texture(uTextures[11], vTexCoords); break;
-    case 12u: emissionTexture = texture(uTextures[12], vTexCoords); break;
-    case 13u: emissionTexture = texture(uTextures[13], vTexCoords); break;
-    case 14u: emissionTexture = texture(uTextures[14], vTexCoords); break;
-    case 15u: emissionTexture = texture(uTextures[15], vTexCoords); break;
-  }
-  vec3 emission = vec3(emissionTexture);
-    
-  // // check if lighting is inside the spotlight cone
-  // // soft edges
-  // float theta = dot(lightDir, normalize(-vLight.direction)); 
-  // float epsilon   = vLight.cutOff - vLight.outerCutOff;
-  // float intensity = clamp((theta - vLight.outerCutOff) / epsilon, 0.0, 1.0);
-  // diffuse  *= intensity;
-  // specular *= intensity;
-  // emission *= intensity;
+  // vec3 lightDir = normalize(light.position - FragPos);
+  vec3 lightDir = normalize(-light_direction);
+  float diff = max(dot(norm, lightDir), 0.0);
+  vec3 diffuse = light_diffuse * diff * diffuseTexture.rgb;
+  
+  // specular
+  vec3 viewDir = normalize(vFragmentPosition - vFragmentPosition);
+  vec3 reflectDir = reflect(-lightDir, norm);
+  float spec = pow(max(dot(viewDir, reflectDir), 0.0), vMaterial.shininess);
+  vec3 specular = light_specular * spec * specularTexture.rgb;
 
-  // light attenuation
-  float distance    = length(vLight.position - vFragmentPosition);
-  float attenuation = 1.0 / (1.0f + vLight.linear * distance + vLight.quadratic * (distance * distance));
-  ambient  *= attenuation;
-  diffuse  *= attenuation;
-  specular *= attenuation;
-  // emission *= attenuation;
-
-  vec3 result = ambient + diffuse + specular + emission;
-  vFragmentColor = vec4(result, vMaterial.transparency);
+  vec3 result = ambient + diffuse + specular;
+  vFragmentColor = vec4(result, 1.0);
 
   vEntityIdOut = vEntityId;
 }

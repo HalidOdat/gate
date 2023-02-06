@@ -17,29 +17,35 @@ namespace Gate {
       size.y  = width;
     }
 
+    auto effect = Effect::Type::None;
     Vec4 color = config.wire.inactiveColor;
     if (active) {
       color = config.wire.activeColor;
+      effect = Effect::Type::Striped;
     }
 
     if (!visited) {
       color = config.wire.invalidColor;
+      effect = Effect::Type::Static;
     }
 
     renderer.drawQuad(
       from.toVec2() * (f32)config.grid.cell.size - Vec2(width / 2.0f),
       size,
-      color
+      color,
+      effect
     );
     renderer.drawCenteredQuad(
       from.toVec2() * (f32)config.grid.cell.size,
       config.wire.endsSize,
-      color
+      color,
+      effect
     );
     renderer.drawCenteredQuad(
       to.toVec2() * (f32)config.grid.cell.size,
       config.wire.endsSize,
-      color
+      color,
+      effect
     );
   }
 

@@ -154,6 +154,7 @@ namespace Gate {
   bool Application::onWindowResizeEvent(const WindowResizeEvent& event) {
     glViewport(0, 0, event.getWidth(), event.getHeight());
     mWindowMinimized = false;
+    mRenderer2D->invalidate(event.getWidth(), event.getHeight());
     if (mRenderer3D) {
       mRenderer3D->invalidate(event.getWidth(), event.getHeight());
     }

@@ -8,10 +8,30 @@
 #include <array>
 
 namespace Gate {
-  
-  class Application;
+
+  class Effect {
+  public:
+    enum class Type {
+      None    = 0,
+      Striped = 1,
+      Static  = 2,
+    };
+
+  public:
+    Effect(Type type)
+      : mType{type}
+    {}
+
+    u32 toIndex() const {
+      return u32(mType);
+    }
+
+  private:
+    Type mType;
+  };
 
   class Renderer2D {
+    friend class Application;
   public:
     Renderer2D();
     DISALLOW_MOVE_AND_COPY(Renderer2D);
@@ -29,16 +49,19 @@ namespace Gate {
     void clearScreen(const Vec4& color = Color::WHITE);
     void clearScreen(const Texture::Handle& texture, const Vec4& color = Color::WHITE);
 
-    void drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
-    void drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE);
-    void drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE);
-    void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE);
-    void drawChar(char c, const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE);
-    void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE);
+    void drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
+    void drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
+    void drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
+    void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
+    void drawChar(char c, const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
+    void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
 
     void flushCircle();
     void flushQuad();
     void flush();
+
+  private:
+    void invalidate(u32 width, u32 height);
 
   private:
     struct QuadVertex {
@@ -46,6 +69,7 @@ namespace Gate {
       Vec4 color;
       Vec2 texCoord;
       u32  texIndex;
+      u32  mode;
     };
 
     struct CircleVertex {

@@ -22,6 +22,7 @@ namespace Gate {
       .layout(BufferElement::Type::Float4, "color")
       .layout(BufferElement::Type::Float2, "texture")
       .layout(BufferElement::Type::Uint, "texIndex")
+      .layout(BufferElement::Type::Uint, "aMode")
       .build();
     mQuadVertexArray->addVertexBuffer(mQuadVertexBuffer);
 
@@ -45,6 +46,8 @@ namespace Gate {
     mQuadVertexArray->unbind();
 
     mQuadShader = Shader::load("assets/2D/shaders/Quad.glsl").build();
+    mQuadShader->bind();
+    mQuadShader->setVec2("uResolution", Vec2{Application::getWindow().getWidth(), Application::getWindow().getHeight()});
 
     mQuadBasePtr = new QuadVertex[QUAD_MAX * QUAD_VERTICES_COUNT];
     mQuadCurrentPtr = mQuadBasePtr;
@@ -115,11 +118,16 @@ namespace Gate {
     delete[] mCircleBasePtr;
   }
 
+  void Renderer2D::invalidate(u32 width, u32 height) {
+    mQuadShader->bind();
+    mQuadShader->setVec2("uResolution", Vec2{width, height});
+  }
+
   void Renderer2D::begin(const Camera& camera) {
     mProjectionViewMatrix = camera.getProjectionViewMatrix();
   }
 
-  void Renderer2D::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color) {
+  void Renderer2D::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color, Effect effect) {
     Mat4 transform = Mat4(1.0f);
     transform      = glm::translate(transform, Vec3(position, 0.0f));
     transform      = glm::scale(transform, Vec3(size, 1.0f));
@@ -152,22 +160,22 @@ namespace Gate {
     }
 
     Vec4 tc = mFontCoords[(usize)(c - ' ')];
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, /* {1.0f, 1.0f} */ {tc.z, tc.w}, index }; // top-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, /* {1.0f, 0.0f} */ {tc.z, tc.y}, index }; // bottom-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, /* {0.0f, 0.0f} */ {tc.x, tc.y}, index }; // bottom-left
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, /* {0.0f, 1.0f} */ {tc.x, tc.w}, index }; // top-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {tc.z, tc.w}, index, effect.toIndex() }; // top-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {tc.z, tc.y}, index, effect.toIndex() }; // bottom-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {tc.x, tc.y}, index, effect.toIndex() }; // bottom-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {tc.x, tc.w}, index, effect.toIndex() }; // top-left
 
     mQuadCount++;
   }
 
-  void Renderer2D::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color) {
+  void Renderer2D::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color, Effect effect) {
     Vec2 size = {_size - _size/7.0f, _size};
 
     Vec2 start = position;
     Vec2 current = start;
     for (const char c : text) {
       if (c != '\n') {
-        drawChar(c, current, size, color);
+        drawChar(c, current, size, color, effect);
         current.x += size.x;
       } else {
         current.y += size.y; 
@@ -176,19 +184,19 @@ namespace Gate {
     }
   }
 
-  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    drawQuad(position - size / 2.0f, size, color);
+  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color, Effect effect) {
+    drawQuad(position - size / 2.0f, size, color, effect);
   }
 
-  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
-    drawQuad(position - size / 2.0f, size, texture, color);
+  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color, Effect effect) {
+    drawQuad(position - size / 2.0f, size, texture, color, effect);
   }
   
-  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color) {
-    Renderer2D::drawQuad(position, size, mWhiteTexture, color);
+  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Vec4& color, Effect effect) {
+    Renderer2D::drawQuad(position, size, mWhiteTexture, color, effect);
   }
 
-  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color) {
+  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color, Effect effect) {
     Mat4 transform = Mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(position, 0.0f));  
 
@@ -218,10 +226,10 @@ namespace Gate {
       mQuadTextures.push_back(texture);
     }
 
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {1.0f, 1.0f}, index }; // top-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {1.0f, 0.0f}, index }; // bottom-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {0.0f, 0.0f}, index }; // bottom-left
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {0.0f, 1.0f}, index }; // top-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {1.0f, 1.0f}, index, effect.toIndex() }; // top-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {1.0f, 0.0f}, index, effect.toIndex() }; // bottom-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {0.0f, 0.0f}, index, effect.toIndex() }; // bottom-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {0.0f, 1.0f}, index, effect.toIndex() }; // top-left
 
     mQuadCount++;
   }
@@ -242,6 +250,7 @@ namespace Gate {
       }
 
       mQuadShader->bind();
+      mQuadShader->setFloat("uTime", (f32)glfwGetTime());
 
       mQuadVertexArray->bind();
       mQuadVertexBuffer->set({mQuadBasePtr,  mQuadCount * QUAD_VERTICES_COUNT});
