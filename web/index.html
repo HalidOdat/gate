@@ -72,6 +72,9 @@
       }
       #components {
         position: absolute;
+        left: 8%;
+        top: 50%;
+        transform: translate(0%, -50%);
       }
     </style>
   </head>
@@ -79,10 +82,9 @@
     <div id="components">
       <div class="spinner" id='spinner'></div>
       <div class="emscripten" id="status">Downloading...</div>
-    </div>
-
-    <div class="emscripten">
-      <progress value="0" max="100" id="progress" hidden=1></progress>
+      <div class="emscripten">
+        <progress value="0" max="100" id="progress" hidden=1></progress>
+      </div>
     </div>
 
     <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
@@ -91,6 +93,10 @@
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
+
+      var canvas = document.getElementById('canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
       var Module = {
         preRun: [],
@@ -107,8 +113,12 @@
           };
         })(),
         canvas: (function() {
-          var canvas = document.getElementById('canvas');
-
+          window.addEventListener("resize", function(e) {
+            console.log("resized", e)
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            _gate_resizeWindow(window.innerWidth, window.innerHeight);
+          })
           // As a default initial behavior, pop up an alert when webgl context is lost. To make your
           // application robust, you may want to override this behavior before shipping!
           // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
