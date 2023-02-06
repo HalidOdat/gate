@@ -3,43 +3,6 @@
 This project uses [`cmake`](https://cmake.org/download/) for project building
 so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
 
-# TODO
-
-- [ ] Board
-    - [x] Better grid cell selection
-    - [x] Define components/wires based on grid cell size
-    - [x] Draw line on click from one to another
-
-- [ ] Wire
-    - [x] Rename Line to Wire
-    - [x] Align drawn wires better
-    - [x] Draw wire end points
-    - [x] Add active state to wire
-
-- [ ] Component
-    - [x] Draw inputs and outputs on a component
-    - [x] Add a toggleable switch componenet
-    - [x] Connect toggleable component with wire
-    - [ ] Pins
-         - [x] Separate output and input pins
-         - [ ] Circular shaped pins
-    - [ ] Input Components
-        - [ ] Tick (activates every some seconds/miliseconds)
-    - [ ] Output Components
-        - [ ] LED
-    - [ ] Gates
-        - [ ] NAND
-        - [ ] NOR
-        - [ ] XNOR
-
-- [ ] Misc
-    - [x] Merge Board into EditorLayer
-    - [x] Only quit with `q` on native platform.
-    - [ ] Serializable board.
-    - [x] Define global editor state
-    - [ ] Undo & Redo
-    - [x] Add circle to rendering
-
 ## Graph Traversal Algorithm
 
 This algorithm is specialization of a Breadth First Search Graph algorithm.
@@ -53,7 +16,6 @@ These are rules to eliminate invalid state.
 1. An input pin can **only** have one connection.
 2. An output pin can have **many** connection.
 3. A circuit without a input catagory component is not valid.
-4. Wires inherit the type of of the pin (`Input`, `Output`).
 5. Traversal starts from components that are from the `Input` catagory type.
 6. Traversal is one directional.
 
@@ -61,7 +23,7 @@ These are rules to eliminate invalid state.
 ```txt
 TODO: define algorithm
 procedure algorithm(root) is
-    let Q be a queue
+    let Q be a priority queue
     Q.enqueue(root)
     while Q is not empty do
         v := Q.dequeue()
@@ -91,24 +53,24 @@ $ ./build/gate
 
 ## Compiling to Wasm
 
-Before being able to compile to you must have the Emscripten SDK installed.
+Before being able to compile to you must have the [Emscripten SDK][emscripten] installed
+and sourced (as described in the link).
 
 ```console
-$ mkdir build
-$ cd build
-$ emcmake cmake ..
-$ cmake --build .
+$ emcmake cmake . -B build_web
+$ cmake --build build_web
+$ cp web/index.html build_web
 ```
-
-There should be a `.html`, `.js` and `.wasm` file.
 
 ### Start a server
 
 To be able to use the web version you need to start a server.
-You can use `python`'s web server module in the build directory.
+You can use `python`'s web server module.
 
 ```bash
-python -m http.server
+python -m http.server -d build_web
 ```
 
 Or upload it to a server.
+
+[emscripten]: https://emscripten.org/docs/getting_started/downloads.html
