@@ -60,6 +60,10 @@ namespace Gate {
     Material::Handle activeMaterial;
     Material::Handle inactiveMaterial;
 
+    SubTexture andGate;
+    SubTexture orGate;
+    SubTexture xorGate;
+
     void apply(Theme::Settings settins);
   };
 

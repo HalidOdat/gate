@@ -33,11 +33,23 @@ namespace Gate {
     config.inactiveMaterial->diffuseMap = Texture::color(0x00'00'00'FF).build();
     config.inactiveMaterial->specularMap = Texture::color(0x00'00'00'FF).build();
     config.inactiveMaterial->emissionMap = Texture::color(0x00'00'00'FF).build();
+
+    auto texture = Texture::load("assets/2D/textures/components.png").build();
+    const auto width  = 2048.0f;
+    const auto height = 2048.0f;
+    const auto grid   = 512.0f;
+    const auto ratio  = grid / width;
+    config.andGate = SubTexture(texture, {ratio * 0.0f, ratio * 3.0f}, { ratio * 1.0f, ratio * 4.0f});
+    config.orGate  = SubTexture(texture, {ratio * 1.0f, ratio * 3.0f}, { ratio * 2.0f, ratio * 4.0f});
+    config.xorGate = SubTexture(texture, {ratio * 2.0f, ratio * 3.0f}, { ratio * 3.0f, ratio * 4.0f});
   }
   EditorLayer::~EditorLayer() {
     config.pinMesh = nullptr;
     config.activeMaterial = nullptr;
     config.inactiveMaterial = nullptr;
+    config.andGate = SubTexture();
+    config.orGate = SubTexture();
+    config.xorGate = SubTexture();
   }
   void EditorLayer::onUpdate2D(Timestep ts) {
     (void)ts;

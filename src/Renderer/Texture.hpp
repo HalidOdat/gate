@@ -188,6 +188,7 @@ namespace Gate {
 
   class SubTexture {
   public:
+    SubTexture() = default;
     SubTexture(Texture::Handle texture, const Vec2& from = Vec2{0.0f, 0.0f}, const Vec2& to = Vec2{1.0f, 1.0f})
       : mFrom{from}, mTo{to}, mTexture{texture}
     {}
@@ -197,8 +198,8 @@ namespace Gate {
     const Texture::Handle& getTexture() const { return mTexture; }
 
   private:
-    Vec2 mFrom;
-    Vec2 mTo;
+    Vec2 mFrom{0.0f, 0.0f};
+    Vec2 mTo{1.0f, 1.0f};
     Texture::Handle mTexture;
   };
 
