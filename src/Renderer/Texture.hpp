@@ -54,6 +54,7 @@ namespace Gate {
       Rgb,
       Bgr,
       Rgba,
+      RgbaInteger,
       Bgra,
       RedInteger,
 
@@ -63,6 +64,7 @@ namespace Gate {
     enum class Format : u8 {
       Rgb8,
       Rgba8,
+      Rgba8UI,
       Srgb8,
       Srgb8Alpha8,
       Rgb32F,

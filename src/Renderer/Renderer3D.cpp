@@ -46,18 +46,14 @@ namespace Gate {
     mPipeline.frameBuffer = FrameBuffer::builder()
       .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
       .clear(FrameBuffer::Clear::Color | FrameBuffer::Clear::Depth)
-      .clearOnBind(true)
+      .clearOnBind(false)
       .attach(
         FrameBuffer::Attachment::Type::Texture,
-        FrameBuffer::Attachment::Format::Rgba16F
+        FrameBuffer::Attachment::Format::Rgba8
       )
       .attach(
         FrameBuffer::Attachment::Type::Texture,
-        #ifdef GATE_PLATFORM_WEB
-          FrameBuffer::Attachment::Format::Rgba8
-        #else
-          FrameBuffer::Attachment::Format::R32UI
-        #endif
+        FrameBuffer::Attachment::Format::Rgba8UI
       )
       .build();
 
@@ -149,13 +145,13 @@ namespace Gate {
       .build();
     mPipeline.skyboxShader->bind();
     mPipeline.skyboxShader->setVec4("uInvalidEntity", Vec4{
-      f32(((UINT32_MAX >>  0) & 0xFF) / 0xFF),
-      f32(((UINT32_MAX >>  8) & 0xFF) / 0xFF),
-      f32(((UINT32_MAX >> 16) & 0xFF) / 0xFF),
-      f32(((UINT32_MAX >> 24) & 0xFF) / 0xFF),
+      f32((UINT32_MAX >>  0) & 0xFF) / f32(0xFF),
+      f32((UINT32_MAX >>  8) & 0xFF) / f32(0xFF),
+      f32((UINT32_MAX >> 16) & 0xFF) / f32(0xFF),
+      f32((UINT32_MAX >> 24) & 0xFF) / f32(0xFF),
     });
 
-    mPipeline.shader = Shader::load("assets/3D/shaders/SpotLight.glsl")
+    mPipeline.shader = Shader::load("assets/3D/shaders/Geometry.glsl")
       .define("MAX_MATERIALS", std::to_string(MAX_MATERIALS))
       .build();
     mPipeline.shader->bind();
@@ -171,7 +167,7 @@ namespace Gate {
       .size(INSTANCE_BUFFER_SIZE)
       .layout(BufferElement::Type::Mat4, "aModelMatrix", 1)
       .layout(BufferElement::Type::Mat3, "aNormalMatrix", 1)
-      .layout(BufferElement::Type::Float4, "aEntityId", 1)
+      .layout(BufferElement::Type::Uint4, "aEntityId", 1)
       .build();
 
     mPipeline.instancedBasePtr = new Pipeline::Instance[INSTANCE_COUNT];
@@ -233,12 +229,12 @@ namespace Gate {
     RenderUnit unit {
       transform,
       Mat3(glm::transpose(glm::inverse(transform))),
-      Vec4{
-        f32(((entityId >>  0) & 0xFF) / 0xFF),
-        f32(((entityId >>  8) & 0xFF) / 0xFF),
-        f32(((entityId >> 16) & 0xFF) / 0xFF),
-        f32(((entityId >> 24) & 0xFF) / 0xFF),
-      },
+      glm::uvec4(
+        (entityId >>  0) & 0xFF,
+        (entityId >>  8) & 0xFF,
+        (entityId >> 16) & 0xFF,
+        (entityId >> 24) & 0xFF
+      ),
     };
 
     // TODO: don't change material
@@ -288,7 +284,7 @@ namespace Gate {
         usize count = 0;
         for (auto unitIndex : unitIndices) {
           GATE_ASSERT(count + 1 < INSTANCE_COUNT);
-          *mPipeline.instancedCurrentPtr = {
+          *mPipeline.instancedCurrentPtr = {            
             mPipeline.units[unitIndex].modelMatrix,
             mPipeline.units[unitIndex].normalMatrix,
             mPipeline.units[unitIndex].entityId,
@@ -335,27 +331,34 @@ namespace Gate {
     // First Pass
     mPipeline.frameBuffer->bind();
 
+
+    GLenum drawable[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(1, drawable);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glDrawBuffers(2, drawable);
+
+    // 
+    glDisable(GL_BLEND);
     Renderer3D::enableDepthTest(true);
     renderAllUnits();
     renderSkybox();
     Renderer3D::enableDepthTest(false);
+    glEnable(GL_BLEND);
 
     mPipeline.frameBuffer->unbind();
 
-
-    mPipeline.quadVertexArray->bind();
-
-    auto texture = mPipeline.frameBuffer->getColorAttachment();
-    texture->bind(0);
-
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    // glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    mPipeline.quadVertexArray->bind();
+    auto texture = mPipeline.frameBuffer->getColorAttachment(0);
     texture->bind(0);
 
     mPipeline.postProcesingShader->bind();
     mPipeline.postProcesingShader->setInt("uScreenTexture", 0);
-    mPipeline.postProcesingShader->setInt("uDepthMap", 1);
+    // mPipeline.postProcesingShader->setInt("uDepthMap", 1);
     mPipeline.quadVertexArray->drawArrays(6);
   }
 
@@ -367,11 +370,16 @@ namespace Gate {
 
     mPipeline.frameBuffer->bind(false);
     glReadBuffer(GL_COLOR_ATTACHMENT1);
-    u8 data[4];
-    glReadPixels(x, Application::getWindow().getHeight() - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    entity = data[0] + (u32(data[1]) << 8) + (u32(data[2]) << 16) + (u32(data[3]) << 24);
+
+    // WebGL error: Format and type RED_INTEGER/UNSIGNED_INT incompatible with this R32UI attachment.
+    // This framebuffer requires either RGBA_INTEGER/UNSIGNED_INT or getParameter(IMPLEMENTATION_COLOR_READ_FORMAT/_TYPE)
+    // RGBA_INTEGER/UNSIGNED_INT.
+    u32 data[4];
+    glReadPixels(x, Application::getWindow().getHeight() - y, 1, 1, GL_RGBA_INTEGER, GL_UNSIGNED_INT, data);
+    entity = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
     
     glReadBuffer(GL_NONE);
+    mPipeline.frameBuffer->unbind();
 
     return entity;
   }

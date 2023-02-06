@@ -21,7 +21,7 @@ namespace Gate {
     );
   }
 
-  void Pin::render(Renderer3D& renderer, bool isOutput) {
+  void Pin::render(Renderer3D& renderer, bool isOutput, u32 id) {
     (void)isOutput;
     Material::Handle material = config.inactiveMaterial;
     if (active) {
@@ -32,7 +32,7 @@ namespace Gate {
     model = glm::translate(model, (position.toVec3() * config.grid.cell.size3d) * Vec3{1.0f, -1.0f, 1.0f});
     model = glm::scale(model, Vec3{0.5f});
 
-    renderer.submit(config.pinMesh, material, model);
+    renderer.submit(config.pinMesh, material, model, id);
   }
 
 }

@@ -160,11 +160,18 @@ namespace Gate {
         case Mode::Select: {
           // TODO: Check for collision
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
-          bool interacted = mBoard.getCurrentChip().click(mousePosition);
-
-          if (!interacted) {
+          
+          bool interacted;
+          if (mRenderMode == RenderMode::_2D) {
+            interacted = mBoard.getCurrentChip().click(mousePosition);
+            if (!interacted) {
             mMode = Mode::WireDraw;
             mWireStartPosition = gridAlginPosition(mLastMousePosition);
+          }
+          } else {
+            u32 value = Application::getRenderer3D().readPixel((u32)mLastMousePosition.x, (u32)mLastMousePosition.y);
+            Logger::trace("Click(%u, %u): %u", (u32)mLastMousePosition.x, (u32)mLastMousePosition.y, value);
+            interacted = mBoard.getCurrentChip().click(value);
           }
         }  break;
         case Mode::WireDraw: {

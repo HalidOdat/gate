@@ -28,6 +28,16 @@ namespace Gate {
     return interacted;
   }
 
+  bool Chip::click(u32 id) {
+    bool interacted = false;
+    if (id < mComponents.size()) {
+      mComponents[id]->click();
+      interacted = true;
+      tick();
+    }
+    return interacted;
+  }
+
   ConnectionState Chip::getConnectionState(Connection& connection) {
     switch (connection.type) {
       case Connection::Type::Component: {
@@ -312,16 +322,18 @@ namespace Gate {
     renderComponentConnectors(renderer);
   }
   void Chip::renderComponentBodys(Renderer3D& renderer) {
-    for (auto component : mComponents) {
+    for (u32 i = 0; i < mComponents.size(); ++i) {
+      auto* component = mComponents[i];
       if (component) {
-        component->renderBody(renderer);
+        component->renderBody(renderer, i);
       }
     }
   }
   void Chip::renderComponentConnectors(Renderer3D& renderer) {
-    for (auto component : mComponents) {
+    for (u32 i = 0; i < mComponents.size(); ++i) {
+      auto* component = mComponents[i];
       if (component) {
-        component->renderConnectors(renderer);
+        component->renderConnectors(renderer, i);
       }
     }
   }

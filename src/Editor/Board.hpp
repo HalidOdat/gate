@@ -16,6 +16,11 @@ namespace Gate {
 
     void render(Renderer2D& renderer);
     void render(Renderer3D& renderer);
+
+    // bool pushComponent(Component* component);
+    // WirePushState pushWire(Wire wire);
+    // bool click(Point position);
+    // void tick();
     
     Chip& getCurrentChip();
 
@@ -25,8 +30,16 @@ namespace Gate {
     void renderGrid(Renderer2D& renderer);
 
   private:
+    // u32 currentId = 0;
+    // struct Locator {
+    //   u32 chipIndex;
+    //   u32 componentIndex;
+    // };
+
     u32 mIndex = 0;
     std::vector<Chip> mChips;
+
+    // std::uordered_map<u32, Locator> mLocator;
 
     // Grid drawing & caching
     FrameBuffer::Handle mGridFrameBuffer;

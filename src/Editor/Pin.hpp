@@ -17,7 +17,7 @@ namespace Gate {
     bool visited = false;
 
     void render(Renderer2D& renderer, bool isOutput);
-    void render(Renderer3D& renderer, bool isOutput);
+    void render(Renderer3D& renderer, bool isOutput, u32 id);
   };
 
 }

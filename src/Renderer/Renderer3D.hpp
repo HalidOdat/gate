@@ -45,8 +45,7 @@ namespace Gate {
     struct RenderUnit {
       Mat4 modelMatrix;
       Mat3 normalMatrix;
-
-      Vec4 entityId;
+      glm::uvec4 entityId;
     };
 
     // NOTE: This struct must be aligned accroding to the std140 standard.
@@ -94,8 +93,7 @@ namespace Gate {
       struct Instance {
         Mat4 transformMatrix;
         Mat3 normalMatrix;
-
-        Vec4 entityId;
+        glm::uvec4 entityId;
       };
 
       VertexBuffer::Handle instancedBuffer;

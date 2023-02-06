@@ -36,12 +36,12 @@ namespace Gate {
     return true;
   }
 
-  void Component::renderConnectors(Renderer3D& renderer) {
+  void Component::renderConnectors(Renderer3D& renderer, u32 id) {
     for (auto& pin : mInputPins) {
-      pin.render(renderer, false);
+      pin.render(renderer, false, id);
     }
     for (auto& pin : mOutputPins) {
-      pin.render(renderer, true);
+      pin.render(renderer, true, id);
     }
   }
 

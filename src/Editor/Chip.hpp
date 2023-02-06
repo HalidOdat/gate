@@ -30,6 +30,7 @@ namespace Gate {
     bool push_component(Component* component);
     WirePushState push_wire(Wire wire);
     bool click(Point position);
+    bool click(u32 id);
     void tick();
 
   private:

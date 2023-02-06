@@ -79,6 +79,7 @@ namespace Gate {
       case Texture::DataFormat::Rgba:         return GL_RGBA;
       case Texture::DataFormat::Bgra:         return GL_BGRA;
       case Texture::DataFormat::RedInteger:   return GL_RED_INTEGER;
+      case Texture::DataFormat::RgbaInteger:  return GL_RGBA_INTEGER;
       case Texture::DataFormat::DepthStencil: return GL_DEPTH_STENCIL;
     }
     GATE_UNREACHABLE("unknown data format type!");
@@ -88,6 +89,7 @@ namespace Gate {
     switch (format) {
       case Texture::Format::Rgb8:            return GL_RGB8;
       case Texture::Format::Rgba8:           return GL_RGBA8;
+      case Texture::Format::Rgba8UI:         return GL_RGBA8UI;
       case Texture::Format::Srgb8:           return GL_SRGB8;
       case Texture::Format::Srgb8Alpha8:     return GL_SRGB8_ALPHA8;
       case Texture::Format::Rgb32F:          return GL_RGB32F;
@@ -105,6 +107,7 @@ namespace Gate {
     switch (format) {
       case Texture::Format::Rgb8:            return Texture::DataFormat::Rgb;
       case Texture::Format::Rgba8:           return Texture::DataFormat::Rgba;
+      case Texture::Format::Rgba8UI:         return Texture::DataFormat::RgbaInteger;
       case Texture::Format::Srgb8:           return Texture::DataFormat::Rgb;
       case Texture::Format::Srgb8Alpha8:     return Texture::DataFormat::Rgba;
       case Texture::Format::Rgb32F:          return Texture::DataFormat::Rgb;
@@ -122,6 +125,7 @@ namespace Gate {
     switch (format) {
       case Texture::Format::Rgb8:            return Texture::DataType::UnsignedByte;
       case Texture::Format::Rgba8:           return Texture::DataType::UnsignedByte;
+      case Texture::Format::Rgba8UI:         return Texture::DataType::UnsignedByte;
       case Texture::Format::Srgb8:           return Texture::DataType::UnsignedByte;
       case Texture::Format::Srgb8Alpha8:     return Texture::DataType::UnsignedByte;
       case Texture::Format::Rgb32F:          return Texture::DataType::Float;

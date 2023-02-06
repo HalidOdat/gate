@@ -38,6 +38,7 @@ namespace Gate {
       Int3,
       Int4,
       Uint,
+      Uint4,
       Bool,
       Mat3,
       Mat4,

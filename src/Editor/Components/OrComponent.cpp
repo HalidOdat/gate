@@ -27,7 +27,7 @@ namespace Gate {
     return true;
   }
 
-  void OrComponent::renderBody(Renderer3D& renderer) {
+  void OrComponent::renderBody(Renderer3D& renderer, u32 id) {
     Vec2 size = Vec2{config.grid.cell.size3d};
 
     Material::Handle material = config.inactiveMaterial;
@@ -39,7 +39,7 @@ namespace Gate {
     model = glm::translate(model, mPosition.toVec3() * config.grid.cell.size3d * Vec3{1.0f, -1.0f, 1.0f});
     model = glm::scale(model, Vec3(Vec2(size * 2.5f), 1.0f));
 
-    renderer.submit(config.pinMesh, material, model);
+    renderer.submit(config.pinMesh, material, model, id);
   }
 
 }

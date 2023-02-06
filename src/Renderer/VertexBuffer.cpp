@@ -44,6 +44,7 @@ namespace Gate {
       case Type::Int3:   return sizeof(int)          * 3;
       case Type::Int4:   return sizeof(int)          * 4;
       case Type::Uint:   return sizeof(unsigned int) * 1;
+      case Type::Uint4:  return sizeof(unsigned int) * 4;
       case Type::Bool:   return sizeof(bool);
       case Type::Mat3:   return sizeof(float) * 3 * 3;
       case Type::Mat4:   return sizeof(float) * 4 * 4;
@@ -61,6 +62,7 @@ namespace Gate {
       case Type::Int3:   return 3;
       case Type::Int4:   return 4;
       case Type::Uint:   return 1;
+      case Type::Uint4:  return 4;
       case Type::Bool:   return 1;
 
       case Type::Mat3:   return 3;

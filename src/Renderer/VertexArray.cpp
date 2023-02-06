@@ -49,6 +49,7 @@ namespace Gate {
         case BufferElement::Type::Int3:
         case BufferElement::Type::Int4:
         case BufferElement::Type::Uint:
+        case BufferElement::Type::Uint4:
         case BufferElement::Type::Bool: {
           GLenum type;
           switch (element.getType()) {
@@ -62,6 +63,7 @@ namespace Gate {
               type = GL_INT;
               break;
             case BufferElement::Type::Uint:
+            case BufferElement::Type::Uint4:
               type = GL_UNSIGNED_INT;
               break;
             default:

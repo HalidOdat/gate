@@ -38,8 +38,8 @@ namespace Gate {
     virtual void renderBody(Renderer2D& renderer) = 0;
     virtual void renderConnectors(Renderer2D&);
 
-    virtual void renderBody(Renderer3D&) {}
-    virtual void renderConnectors(Renderer3D&);
+    virtual void renderBody(Renderer3D&, u32 id) { (void)id; }
+    virtual void renderConnectors(Renderer3D&, u32 id);
 
   protected:
     Component(Category category, Point position)
