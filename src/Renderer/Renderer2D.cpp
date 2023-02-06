@@ -188,7 +188,7 @@ namespace Gate {
     drawQuad(position - size / 2.0f, size, color, effect);
   }
 
-  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color, Effect effect) {
+  void Renderer2D::drawCenteredQuad(const Vec2& position, const Vec2& size, const SubTexture& texture, const Vec4& color, Effect effect) {
     drawQuad(position - size / 2.0f, size, texture, color, effect);
   }
   
@@ -196,7 +196,7 @@ namespace Gate {
     Renderer2D::drawQuad(position, size, mWhiteTexture, color, effect);
   }
 
-  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color, Effect effect) {
+  void Renderer2D::drawQuad(const Vec2& position, const Vec2& size, const SubTexture& texture, const Vec4& color, Effect effect) {
     Mat4 transform = Mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(position, 0.0f));  
 
@@ -212,7 +212,7 @@ namespace Gate {
 
     u32 index = 0;
     for (; index < mQuadTextures.size(); ++index) {
-      if (mQuadTextures[index] == texture) {
+      if (mQuadTextures[index] == texture.getTexture()) {
         break;
       }
     }
@@ -223,13 +223,16 @@ namespace Gate {
       }
 
       index = (u32)mQuadTextures.size();
-      mQuadTextures.push_back(texture);
+      mQuadTextures.push_back(texture.getTexture());
     }
 
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {1.0f, 1.0f}, index, effect.toIndex() }; // top-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {1.0f, 0.0f}, index, effect.toIndex() }; // bottom-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {0.0f, 0.0f}, index, effect.toIndex() }; // bottom-left
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {0.0f, 1.0f}, index, effect.toIndex() }; // top-left
+    const auto from = texture.getFrom();
+    const auto to = texture.getTo();
+
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {from.x, from.y}, index, effect.toIndex() }; // top-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {from.x,   to.y}, index, effect.toIndex() }; // bottom-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {to.x,     to.y}, index, effect.toIndex() }; // bottom-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {to.x,   from.y}, index, effect.toIndex() }; // top-left
 
     mQuadCount++;
   }

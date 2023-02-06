@@ -50,8 +50,8 @@ namespace Gate {
     void clearScreen(const Texture::Handle& texture, const Vec4& color = Color::WHITE);
 
     void drawCenteredQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
-    void drawCenteredQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
-    void drawQuad(const Vec2& position, const Vec2& size, const Texture::Handle& texture, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
+    void drawCenteredQuad(const Vec2& position, const Vec2& size, const SubTexture& texture, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
+    void drawQuad(const Vec2& position, const Vec2& size, const SubTexture& texture, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
     void drawQuad(const Vec2& position, const Vec2& size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
     void drawChar(char c, const Vec2& position,  const Vec2& size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);
     void drawText(const StringView& text, const Vec2& position, const float size, const Vec4& color = Color::WHITE, Effect effect = Effect::Type::None);

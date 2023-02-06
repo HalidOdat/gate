@@ -186,6 +186,22 @@ namespace Gate {
     Data mData;
   };
 
+  class SubTexture {
+  public:
+    SubTexture(Texture::Handle texture, const Vec2& from = Vec2{0.0f, 0.0f}, const Vec2& to = Vec2{1.0f, 1.0f})
+      : mFrom{from}, mTo{to}, mTexture{texture}
+    {}
+
+    const Vec2& getTo() const { return mTo; }
+    const Vec2& getFrom() const { return mFrom; }
+    const Texture::Handle& getTexture() const { return mTexture; }
+
+  private:
+    Vec2 mFrom;
+    Vec2 mTo;
+    Texture::Handle mTexture;
+  };
+
   class CubeMap {
     friend class Application;
   public:
