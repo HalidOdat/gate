@@ -27,8 +27,10 @@ namespace Gate {
   public:
     void render(Renderer2D& renderer);
     void render(Renderer3D& renderer);
-    bool push_component(Component* component);
-    WirePushState push_wire(Wire wire);
+    bool pushComponent(Component* component);
+    void removeComponent(Point position);
+    void removeWire(Point position);
+    WirePushState pushWire(Wire wire);
     bool click(Point position);
     bool click(u32 id);
     void tick();
@@ -45,8 +47,8 @@ namespace Gate {
     void renderGrid(Renderer3D& renderer);
 
     ConnectionState getConnectionState(Connection& connection);
-    ConnectionResult push_wire_connection(Point position, u32 wireIndex);
-    ConnectionResult push_component_connection(Point position, u32 componentIndex, u32 pinIndex);
+    ConnectionResult pushWireConnection(Point position, u32 wireIndex);
+    ConnectionResult pushComponentConnection(Point position, u32 componentIndex, u32 pinIndex);
 
   private:
     String mName;

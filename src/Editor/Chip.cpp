@@ -18,6 +18,9 @@ namespace Gate {
   bool Chip::click(Point position) {
     bool interacted = false;
     for (auto* component : mComponents) {
+      if (!component) {
+        continue;
+      }
       if (component->getPosition() == position) {
         component->click();
         interacted = true;
@@ -53,7 +56,7 @@ namespace Gate {
     }
     GATE_UNREACHABLE("");
   }
-  ConnectionResult Chip::push_wire_connection(Point position, u32 wireIndex) {
+  ConnectionResult Chip::pushWireConnection(Point position, u32 wireIndex) {
     auto connection = Connection {
       Connection::Type::Wire,
       wireIndex,
@@ -74,7 +77,7 @@ namespace Gate {
     }
     return connectionIndex;
   }
-  ConnectionResult Chip::push_component_connection(Point position, u32 componentIndex, u32 pinIndex) {
+  ConnectionResult Chip::pushComponentConnection(Point position, u32 componentIndex, u32 pinIndex) {
     auto connection = Connection {
       Connection::Type::Component,
       pinIndex,
@@ -97,16 +100,27 @@ namespace Gate {
     return connectionIndex;
   }
 
-  bool Chip::push_component(Component* component) {
+  bool Chip::pushComponent(Component* component) {
     // TODO: check if it can be placed there.
-    // TODO: Check if a free slot is available.
-    u32 componentIndex = (u32)mComponents.size();
+    
+    u32 freeSlot = 0;
+    for (; freeSlot < mComponents.size(); ++freeSlot) {
+      auto* component = mComponents[freeSlot];
+      if (!component) {
+        break;
+      }
+    }
+    // There are no free slots
+    if (freeSlot == mComponents.size()) {
+      mComponents.push_back(nullptr);
+    }
+    u32 componentIndex = freeSlot;
     
     // TODO: refactor to remove code duplication
     auto& inputPins = component->getInputPins();
     for (u32 i = 0; i < inputPins.size(); ++i) {
       auto& pin = inputPins[i];      
-      auto[successful, connectionIndex] = push_component_connection(pin.position, componentIndex, i);
+      auto[successful, connectionIndex] = pushComponentConnection(pin.position, componentIndex, i);
       if (!successful) {
         GATE_TODO("Fix invalid pin connection!");
       }
@@ -116,18 +130,54 @@ namespace Gate {
     auto& outputPins = component->getOutputPins();
     for (u32 i = 0; i < outputPins.size(); ++i) {
       auto& pin = outputPins[i];      
-      auto[successful, connectionIndex] = push_component_connection(pin.position, componentIndex, i);
+      auto[successful, connectionIndex] = pushComponentConnection(pin.position, componentIndex, i);
       if (!successful) {
         GATE_TODO("Fix invalid pin connection!");
       }
       mConnectionsIndexByPoint[pin.position] = connectionIndex;
       pin.connectionIndex = connectionIndex;
     }
-    mComponents.push_back(component);
+    mComponents[componentIndex] = component;
     tick();
     return true;
   }
-  WirePushState Chip::push_wire(Wire wire) {
+  void Chip::removeComponent(Point position) {
+    for (u32 i = 0; i < mComponents.size(); ++i) {
+      auto* component = mComponents[i];
+      if (!component) {
+        continue;
+      }
+      if (component->getPosition() == position) {
+        for (auto& pin : component->getOutputPins()) {
+          std::vector<Connection>& connections = mConnections[pin.connectionIndex];
+          std::vector<Connection> result;
+          for (auto& connection : connections) {
+            bool isComponentPin = connection.type == Connection::Type::Component && connection.componentIndex == i;
+            if (!isComponentPin) {
+              result.push_back(connection);
+            }
+          }
+          mConnections[pin.connectionIndex] = result;
+        }
+        for (auto& pin : component->getInputPins()) {
+          std::vector<Connection>& connections = mConnections[pin.connectionIndex];
+          std::vector<Connection> result;
+          for (auto& connection : connections) {
+            bool isComponentPin = connection.type == Connection::Type::Component && connection.componentIndex == i;
+            if (!isComponentPin) {
+              result.push_back(connection);
+            }
+          }
+          mConnections[pin.connectionIndex] = result;
+        }
+        delete component;
+        mComponents[i] = nullptr;
+        tick();
+        break;
+      }
+    }
+  }
+  WirePushState Chip::pushWire(Wire wire) {
     // TODO: check if it can be placed there
     // TODO: Check if a free slot is available
     bool connected = false;
@@ -136,11 +186,11 @@ namespace Gate {
     }
 
     u32 wireIndex = (u32)mWires.size();
-    auto connectionResultFrom = push_wire_connection(wire.from, wireIndex);
+    auto connectionResultFrom = pushWireConnection(wire.from, wireIndex);
     if (!connectionResultFrom.successful) {
       return WirePushState::Invalid;
     }
-    auto connectionResultTo = push_wire_connection(wire.to, wireIndex);
+    auto connectionResultTo = pushWireConnection(wire.to, wireIndex);
     if (!connectionResultTo.successful) {
       return WirePushState::Invalid;
     }
@@ -213,6 +263,9 @@ namespace Gate {
     // Clear visited flags on components and wires
     for (usize i = 0; i < mComponents.size(); ++i) {
       auto* component = mComponents[i];
+      if (!component) {
+        continue;
+      }
       component->resetVisited();
       if (component->getCategory() == Component::Category::Input) {
         enqueueComponent((u32)i, true);

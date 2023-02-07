@@ -79,6 +79,13 @@ namespace Gate {
         const auto size = 16;
         Application::getRenderer2D().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
       }  break;
+      case Mode::Remove: {
+        // Selector cursor
+        Application::getRenderer2D().drawCenteredQuad(mSelectorPosition, config.selector.size, Color::RED);
+        const StringView text = " Click on a component to delete it!";
+        const auto size = 16;
+        Application::getRenderer2D().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
+      }  break;
       case Mode::WireDraw: {
         const StringView text = " Press <ESCAPE> to cancel wire drawing";
         const auto size = 16;
@@ -114,6 +121,9 @@ namespace Gate {
         case Mode::Select:
           // TODO: deselect
           break;
+        case Mode::Remove:
+          mMode = Mode::Select;
+          break;
         case Mode::WireDraw: {
           mMode = Mode::Select;
         } break;
@@ -126,8 +136,12 @@ namespace Gate {
         case Mode::Select:
           if (event.getKey() == Key::C) {
             mMode = Mode::AddComponent;
+          } else if (event.getKey() == Key::D) {
+            mMode = Mode::Remove;
           }
           break;
+        case Mode::Remove: {
+        } break;
         case Mode::WireDraw: {
         } break;
         case Mode::AddComponent: {
@@ -186,12 +200,17 @@ namespace Gate {
             interacted = mBoard.getCurrentChip().click(value);
           }
         }  break;
+        case Mode::Remove: {
+          // TODO: Check for collision
+          Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
+          mBoard.getCurrentChip().removeComponent(mousePosition);
+        }  break;
         case Mode::WireDraw: {
           // TODO: Check if wires intersect
           Point from = Point(mWireStartPosition / (f32)config.grid.cell.size);
           Point to = Point(mWireEndPosition / (f32)config.grid.cell.size);
           bool connected = false;
-          switch (mBoard.getCurrentChip().push_wire({ from, to })) {
+          switch (mBoard.getCurrentChip().pushWire({ from, to })) {
             case WirePushState::Valid:
               break;
             case WirePushState::Invalid:
@@ -213,19 +232,19 @@ namespace Gate {
           auto position = Point(getGridAlignedMousePosition() / (f32)config.grid.cell.size);
           switch (mComponentType) {
             case ComponentType::Switch: {
-              mBoard.getCurrentChip().push_component(new SwitchComponent(position));
+              mBoard.getCurrentChip().pushComponent(new SwitchComponent(position));
             } break;
             case ComponentType::Not: {
-              mBoard.getCurrentChip().push_component(new NotComponent(position));
+              mBoard.getCurrentChip().pushComponent(new NotComponent(position));
             } break;
             case ComponentType::And: {
-              mBoard.getCurrentChip().push_component(new AndComponent(position));
+              mBoard.getCurrentChip().pushComponent(new AndComponent(position));
             } break;
             case ComponentType::Or: {
-              mBoard.getCurrentChip().push_component(new OrComponent(position));
+              mBoard.getCurrentChip().pushComponent(new OrComponent(position));
             } break;
             case ComponentType::Xor: {
-              mBoard.getCurrentChip().push_component(new XorComponent(position));
+              mBoard.getCurrentChip().pushComponent(new XorComponent(position));
             } break;
           }
         } break;
@@ -244,6 +263,9 @@ namespace Gate {
 
     switch (mMode) {
       case Mode::Select:
+        mSelectorPosition = gridPosition;
+        break;
+      case Mode::Remove:
         mSelectorPosition = gridPosition;
         break;
       case Mode::WireDraw: {

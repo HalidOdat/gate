@@ -51,6 +51,7 @@ namespace Gate {
   private:
       enum class Mode {
         Select,
+        Remove,
         WireDraw,
         AddComponent,
       };
