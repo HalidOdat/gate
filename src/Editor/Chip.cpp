@@ -181,9 +181,7 @@ namespace Gate {
     }
   }
   WirePushState Chip::pushWire(Wire wire) {
-    // TODO: check if it can be placed there
-    // TODO: Check if a free slot is available
-
+    // TODO: Check if wire intersects with another wire
     // Wire of length 0
     if (wire.from == wire.to) {
       return WirePushState::Connected;
@@ -210,18 +208,29 @@ namespace Gate {
       GATE_UNREACHABLE("lines should be horizontal or vertical!");
     }
 
-    u32 wireIndex = (u32)mWires.size();
-    auto connectionResultFrom = pushWireConnection(wire.from, wireIndex);
+    u32 freeSlot = 0;
+    for (; freeSlot < mWires.size(); ++freeSlot) {
+      if (mWires[freeSlot].free) {
+        break;
+      }
+    }
+    if (freeSlot >= mWires.size()) {
+      mWires.push_back(wire);
+      mWires[freeSlot].free = true;
+    }
+
+    auto connectionResultFrom = pushWireConnection(mWires[freeSlot].from, freeSlot);
     if (!connectionResultFrom.successful) {
       return WirePushState::Invalid;
     }
-    auto connectionResultTo = pushWireConnection(wire.to, wireIndex);
+    auto connectionResultTo = pushWireConnection(mWires[freeSlot].to, freeSlot);
     if (!connectionResultTo.successful) {
       return WirePushState::Invalid;
     }
-    wire.connectionIndexes.push_back(connectionResultFrom.connectionIndex);
-    wire.connectionIndexes.push_back(connectionResultTo.connectionIndex);
-    mWires.push_back(wire);
+    mWires[freeSlot].connectionIndexes.push_back(connectionResultFrom.connectionIndex);
+    mWires[freeSlot].connectionIndexes.push_back(connectionResultTo.connectionIndex);
+
+    mWires[freeSlot].free = false;
 
     tick();
     return connected ? WirePushState::Connected : WirePushState::Valid;
