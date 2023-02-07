@@ -96,7 +96,7 @@ namespace Gate {
     f32 mPitch = 0.0f;
 
     f32 mZoomLevel = 45.0f;
-    f32 mMovmentSpeed = 6.5f;
+    f32 mMovmentSpeed = 7.5f;
     f32 mMouseSensitivity = 15.0f;
     bool mFirstMove = true;
     Vec2 mLastMousePosition;

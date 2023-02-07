@@ -10,7 +10,7 @@ namespace Gate {
 
   EditorLayer::EditorLayer()
     : mEditorCameraController(Application::getWindow().getAspectRatio())
-    , mPerspectiveCameraController(Vec3{0.0f, 0.0f, 3.0f}, 45.0f, Application::getWindow().getAspectRatio())
+    , mPerspectiveCameraController(Vec3{16.9640, -9.0777, 40.3504}, 45.0f, Application::getWindow().getAspectRatio())
   {
     Logger::trace("EditorLayer: Constructor was called");
     const auto themeFilepath = "assets/themes/default.json";
@@ -57,7 +57,6 @@ namespace Gate {
 
     mBoard.render(Application::getRenderer2D());
 
-    // Application::getRenderer2D().drawCenteredCircle(mSelectorPosition, 100, Color::RED, 0.2f, 1.01f);
     auto height = Application::getWindow().getHeight();
 
     // Wire Draw
@@ -105,6 +104,7 @@ namespace Gate {
     if (mRenderMode == RenderMode::_2D) {
       onUpdate2D(ts);
     } else {
+      mMode = Mode::Select;
       onUpdate3D(ts);
     }
   }
