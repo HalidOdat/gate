@@ -16,7 +16,7 @@ namespace Gate {
     if (mOutputPins[OUTPUT_INDEX].active) {
       color = Color::RED;
     }
-    renderer.drawCenteredQuad(mPosition.toVec2() * (f32)config.grid.cell.size, size * 1.5f, color);
+    renderer.drawCenteredQuad(mPosition.toVec2() * (f32)config.grid.cell.size, size * 1.9f, config.notGate, color);
   }
   bool NotComponent::update() {
     mOutputPins[OUTPUT_INDEX].active = !mInputPins[INPUT_INDEX].active;

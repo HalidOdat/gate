@@ -63,6 +63,7 @@ namespace Gate {
     SubTexture andGate;
     SubTexture orGate;
     SubTexture xorGate;
+    SubTexture notGate;
 
     void apply(Theme::Settings settins);
   };

@@ -42,6 +42,7 @@ namespace Gate {
     config.andGate = SubTexture(texture, {ratio * 0.0f, ratio * 3.0f}, { ratio * 1.0f, ratio * 4.0f});
     config.orGate  = SubTexture(texture, {ratio * 1.0f, ratio * 3.0f}, { ratio * 2.0f, ratio * 4.0f});
     config.xorGate = SubTexture(texture, {ratio * 2.0f, ratio * 3.0f}, { ratio * 3.0f, ratio * 4.0f});
+    config.notGate = SubTexture(texture, {ratio * 3.0f, ratio * 3.0f}, { ratio * 4.0f, ratio * 4.0f});
   }
   EditorLayer::~EditorLayer() {
     config.pinMesh = nullptr;
@@ -50,6 +51,7 @@ namespace Gate {
     config.andGate = SubTexture();
     config.orGate = SubTexture();
     config.xorGate = SubTexture();
+    config.notGate = SubTexture();
   }
   void EditorLayer::onUpdate2D(Timestep ts) {
     (void)ts;
