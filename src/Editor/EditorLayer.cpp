@@ -82,7 +82,7 @@ namespace Gate {
       case Mode::Remove: {
         // Selector cursor
         Application::getRenderer2D().drawCenteredQuad(mSelectorPosition, config.selector.size, Color::RED);
-        const StringView text = " Click on a component to delete it!";
+        const StringView text = " Click on a component or wire to delete it!";
         const auto size = 16;
         Application::getRenderer2D().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
       }  break;
@@ -196,13 +196,13 @@ namespace Gate {
           }
           } else {
             u32 value = Application::getRenderer3D().readPixel((u32)mLastMousePosition.x, (u32)mLastMousePosition.y);
-            Logger::trace("Click(%u, %u): %u", (u32)mLastMousePosition.x, (u32)mLastMousePosition.y, value);
+            Logger::trace("Click(%u, %u): Entity ID: %u", (u32)mLastMousePosition.x, (u32)mLastMousePosition.y, value);
             interacted = mBoard.getCurrentChip().click(value);
           }
         }  break;
         case Mode::Remove: {
-          // TODO: Check for collision
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
+          mBoard.getCurrentChip().removeWire(mousePosition);
           mBoard.getCurrentChip().removeComponent(mousePosition);
         }  break;
         case Mode::WireDraw: {
@@ -265,9 +265,14 @@ namespace Gate {
       case Mode::Select:
         mSelectorPosition = gridPosition;
         break;
-      case Mode::Remove:
+      case Mode::Remove: {
         mSelectorPosition = gridPosition;
-        break;
+        if (mClicked) {
+          Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
+          mBoard.getCurrentChip().removeWire(mousePosition);
+          mBoard.getCurrentChip().removeComponent(mousePosition);
+        }
+      }  break;
       case Mode::WireDraw: {
         mWireEndPosition = gridPosition;
 

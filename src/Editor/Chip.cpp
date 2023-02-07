@@ -51,6 +51,9 @@ namespace Gate {
       } break;
       case Connection::Type::Wire: {
         auto& wire = mWires[connection.index];
+        if (wire.free) {
+          GATE_UNREACHABLE("We shouldn't access freed wires!");
+        }
         return ConnectionState(wire.active, wire.visited);
       } break;
     }
@@ -180,9 +183,31 @@ namespace Gate {
   WirePushState Chip::pushWire(Wire wire) {
     // TODO: check if it can be placed there
     // TODO: Check if a free slot is available
+
+    // Wire of length 0
+    if (wire.from == wire.to) {
+      return WirePushState::Connected;
+    }
+
     bool connected = false;
     if (auto it = mConnectionsIndexByPoint.find(wire.to); it != mConnectionsIndexByPoint.end()) {
       connected = true;
+    }
+
+    // Swap if needed
+    if (wire.from.x > wire.to.x) {
+      auto temp = wire.to.x;
+      wire.to.x = wire.from.x;
+      wire.from.x = temp;
+    }
+    if (wire.from.y > wire.to.y) {
+      auto temp = wire.to.y;
+      wire.to.y = wire.from.y;
+      wire.from.y = temp;
+    }
+
+    if (wire.from.x != wire.to.x && wire.from.y != wire.to.y) {
+      GATE_UNREACHABLE("lines should be horizontal or vertical!");
     }
 
     u32 wireIndex = (u32)mWires.size();
@@ -200,6 +225,50 @@ namespace Gate {
 
     tick();
     return connected ? WirePushState::Connected : WirePushState::Valid;
+  }
+  void Chip::removeWire(Point position) {
+    bool hasRemoved = false;
+    for (u32 i = 0; i < mWires.size(); ++i) {
+      auto& wire = mWires[i];
+      if (wire.free) {
+        continue;
+      }
+      
+      if (wire.from.y == wire.to.y) {        // Horizontal line
+        if (position.y == wire.to.y && position.x >= wire.from.x && position.x <= wire.to.x) {
+          wire.free = true;
+          hasRemoved = true;
+          Logger::trace("Horizontal Wire removed");
+        }
+      } else if (wire.from.x == wire.to.x) { // Vertical line
+        if (position.x == wire.to.x && position.y >= wire.from.y && position.y <= wire.to.y) {
+          Logger::trace("Vertical Wire removed");
+          wire.free = true;
+          hasRemoved = true;
+        }
+      } else {
+        GATE_UNREACHABLE("There should only be horizontal or veritcal lines!");
+      }
+      
+      // If wire has been freed, delete connections
+      if (wire.free) {
+        for (auto& connectionIndex : wire.connectionIndexes) {
+          auto& connections = mConnections[connectionIndex];
+          std::vector<Connection> result;
+          for (auto& connection : connections) {
+            if (connection.type == Connection::Type::Wire && connection.index == i) {
+              continue;
+            }
+            result.push_back(connection);
+          }
+          mConnections[connectionIndex] = result;
+        }
+      }
+    }
+
+    if (hasRemoved) {
+      tick();
+    }
   }
 
   /// TODO: Refactor and make this a bit better
@@ -236,6 +305,9 @@ namespace Gate {
       );
     };
     auto enqueueWire = [&](u32 index, bool activate) {
+      if (mWires[index].free) {
+        GATE_UNREACHABLE("We shouldn't enque a freed wire!");
+      }
       if (mWires[index].visited) {
         return;
       }
@@ -272,6 +344,9 @@ namespace Gate {
       }
     }
     for (auto& wire : mWires) {
+      if (wire.free) {
+        continue;
+      }
       wire.visited = false;
       wire.active = false;
     }
@@ -327,6 +402,9 @@ namespace Gate {
         } break;
         case Type::Wire: {
           auto& wire = mWires[index];
+          if (wire.free) {
+            GATE_UNREACHABLE("We shouldn't access a freed wire!");
+          }
           wire.visited = true;
           wire.active = activate;
           for (auto& connectionIndex : wire.connectionIndexes) {
@@ -363,6 +441,9 @@ namespace Gate {
   }
   void Chip::renderWires(Renderer2D& renderer) {
     for (auto wire : mWires) {
+      if (wire.free) {
+        continue;
+      }
       wire.render(renderer);
     }
   }
@@ -392,6 +473,9 @@ namespace Gate {
   }
   void Chip::renderWires(Renderer3D& renderer) {
     for (auto wire : mWires) {
+      if (wire.free) {
+        continue;
+      }
       wire.render(renderer);
     }
   }

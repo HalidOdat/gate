@@ -15,6 +15,8 @@ namespace Gate {
     bool active = false;
     bool visited = false;
 
+    bool free = false;
+
     void render(Renderer2D& renderer);
     void render(Renderer3D& renderer);
   };
