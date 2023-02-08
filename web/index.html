@@ -146,7 +146,7 @@
 
           return canvas;
         })(),
-        saveFile: async function(_, content) {
+        saveFile: async function(content) {
           preventEvents = true;
           const { value: name } = await Swal.fire({
             title: 'Save with file name?',

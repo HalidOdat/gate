@@ -23,16 +23,17 @@ static Gate::u32 canvasWidth  = 840;
 static Gate::u32 canvasHeight = 640;
 
 #ifdef GATE_PLATFORM_WEB
+  // The reason for string property access: https://github.com/emscripten-core/emscripten/issues/16390
   EM_JS(int, canvas_get_width, (), {
-    return Module.canvas.width;
+    return Module['canvas'].width;
   });
 
   EM_JS(int, canvas_get_height, (), {
-    return Module.canvas.height;
+    return Module['canvas'].height;
   });
 
   EM_JS(void, Module_saveFile, (const char *name, const char *content), {
-    Module.saveFile(UTF8ToString(name), UTF8ToString(content));
+    Module['saveFile'](UTF8ToString(name), UTF8ToString(content));
   });
 
   EM_PORT_API(void) gate_resizeWindow(int width, int height) {
