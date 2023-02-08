@@ -229,6 +229,7 @@ namespace Gate {
             if (!interacted) {
             mMode = Mode::WireDraw;
             mWireStartPosition = gridAlginPosition(mLastMousePosition);
+            mWireEndPosition = mWireStartPosition;
           }
           } else {
             u32 value = Application::getRenderer3D().readPixel((u32)mLastMousePosition.x, (u32)mLastMousePosition.y);
