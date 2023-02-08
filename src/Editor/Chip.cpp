@@ -4,6 +4,10 @@
 
 namespace Gate {
   
+  Chip::Handle Chip::create(String name) {
+    return std::make_shared<Chip>(name);
+  }
+
   Chip::Chip(String name)
     : mName{std::move(name)}
   {}
@@ -518,7 +522,30 @@ namespace Gate::Serializer {
     return node;
   }
   bool Convert<Chip>::decode(const Node& node, Chip& chip) {
-    return false;
+    if (!node.isObject()) return false;
+    auto* nameNode = node.get("name");
+    if (!nameNode || !nameNode->isString()) return false;
+    chip.setName(*nameNode->asString());
+
+    auto* wiresNode = node.get("wires");
+    if (!wiresNode || !wiresNode->isArray()) return false;
+    auto& wiresArray = *wiresNode->asArray();
+    for (auto& wireNode : wiresArray) {
+      Wire wire;
+      Convert<Wire>::decode(wireNode, wire);
+      chip.pushWire(wire);
+    }
+
+    auto* componentsNode = node.get("components");
+    if (!componentsNode || !componentsNode->isArray()) return false;
+    auto& componentsArray = *componentsNode->asArray();
+    for (auto& componentNode : componentsArray) {
+      Component* component = Component::decode(componentNode);
+      if (!component) return false;
+      chip.pushComponent(component);
+    }
+
+    return true;
   }
 
 }

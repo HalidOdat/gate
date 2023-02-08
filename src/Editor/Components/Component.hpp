@@ -18,6 +18,7 @@ namespace Gate {
     node["position"] = Convert<Point>::encode(mPosition); \
     return node;                                          \
   }
+  
 
   class Component {
   public:
@@ -52,6 +53,7 @@ namespace Gate {
     virtual void renderConnectors(Renderer3D&, u32 id);
 
     virtual Serializer::Node encode() const = 0;
+    static Component* decode(const Serializer::Node& node);
 
   protected:
     Component(Category category, Point position)

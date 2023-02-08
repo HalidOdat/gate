@@ -48,3 +48,6 @@ profiles/
 # Assets directory (for now)
 assets/objects/
 assets/textures/
+
+# Default save file
+save.json

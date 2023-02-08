@@ -111,7 +111,18 @@ namespace Gate::Serializer {
     return node;
   }
   bool Convert<Wire>::decode(const Node& node, Wire& value) {
-    return false;
+    if (!node.isObject()) return false;
+    if (auto* from = node.get("from"); from) {
+      if (!Convert<Point>::decode(*from, value.from)) return false;
+    } else {
+      return false;
+    }
+    if (auto* to = node.get("to"); to) {
+      if (!Convert<Point>::decode(*to, value.to)) return false;
+    } else {
+      return false;
+    }
+    return true;
   }
 
 }

@@ -21,8 +21,15 @@ namespace Gate {
 
   class Chip {
   public:
+    using Handle = Ref<Chip>;
+
+  public:
+    static Chip::Handle create(String name = "Unnamed chip");
+
+  public:
     Chip(String name);
     ~Chip();
+    DISALLOW_MOVE_AND_COPY(Chip);
 
   public:
     void render(Renderer2D& renderer);
@@ -38,6 +45,7 @@ namespace Gate {
     const std::vector<Wire> getWires() const { return mWires; }
     const std::vector<Component*> getComponents() const { return mComponents; }
     const String& getName() const { return mName; }
+    void setName(String name) { mName = std::move(name); }
 
   private:
     void renderComponentBodys(Renderer2D& renderer);

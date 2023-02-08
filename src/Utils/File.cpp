@@ -9,7 +9,7 @@ namespace Gate::Utils {
    char* fileToString(const StringView& filename) {
     FILE* f = fopen(filename.data(), "r");
     if (!f) {
-      Logger::error("Couldn't open file '%s': %s", strerror(errno));
+      Logger::error("Couldn't open file '%.*s': %s", filename.size(), filename.data(), strerror(errno));
       return NULL;
     }
 

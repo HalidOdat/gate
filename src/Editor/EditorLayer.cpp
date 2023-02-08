@@ -1,10 +1,9 @@
 #include "Core/Base.hpp"
 #include "Core/Input.hpp"
 #include "Application.hpp"
+#include "Utils/File.hpp"
 
 #include "Editor/EditorLayer.hpp"
-
-#include <queue>
 
 namespace Gate {
 
@@ -36,7 +35,7 @@ namespace Gate {
 
     auto texture = Texture::load("assets/2D/textures/components.png").build();
     const auto width  = 2048.0f;
-    const auto height = 2048.0f;
+    // const auto height = 2048.0f;
     const auto grid   = 512.0f;
     const auto ratio  = grid / width;
     config.andGate = SubTexture(texture, {ratio * 0.0f, ratio * 3.0f}, { ratio * 1.0f, ratio * 4.0f});
@@ -186,6 +185,31 @@ namespace Gate {
       auto content = node.toString();
       Logger::info("Serialized: \n%s", content.c_str());
       Logger::info("");
+      FILE* file = fopen("save.json", "w+");
+      if (fwrite(content.c_str(), sizeof(char), content.size(), file) != sizeof(char) * content.size()) {
+        Logger::error("Unable to write to json file");
+      }
+      fclose(file);
+    }
+    if (event.getModifier() == (KeyModifier::Control | KeyModifier::Shift) && event.getKey() == Key::S) {
+      auto* content = Utils::fileToString("save.json");
+      if (!content) {
+        return false;
+      }
+      auto node = Serializer::Json::parse(content);
+      if (!node) {
+        Logger::error("Unable to parse json file!");
+        return false;
+      }
+      free(content);
+      Board newBoard;
+      if (!Serializer::Convert<Board>::decode(*node, newBoard)) {
+        Logger::error("Invalid board in json file");
+        return false;
+      }
+      mBoard = newBoard;
+      // mBoard.tick();
+      Logger::trace("Replacing board");
     }
 
     if (event.getKey() == Key::_3) {

@@ -23,10 +23,12 @@ namespace Gate {
     // bool click(Point position);
     // void tick();
     
+    void pushChip(Chip::Handle chip);
+
     Chip& getCurrentChip();
     
-    std::vector<Chip>& getChips() { return mChips; }
-    const std::vector<Chip>& getChips() const { return mChips; }
+    std::vector<Chip::Handle>& getChips() { return mChips; }
+    const std::vector<Chip::Handle>& getChips() const { return mChips; }
 
     void onResize(u32 width, u32 height);
 
@@ -41,7 +43,7 @@ namespace Gate {
     // };
 
     u32 mIndex = 0;
-    std::vector<Chip> mChips;
+    std::vector<Chip::Handle> mChips;
 
     // std::uordered_map<u32, Locator> mLocator;
 
