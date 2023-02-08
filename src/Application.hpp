@@ -22,6 +22,8 @@ namespace Gate {
     inline static Renderer2D& getRenderer2D() { return *sInstance->mRenderer2D; }
     static Renderer3D& getRenderer3D();
 
+    static void saveFile(const String& name, const String& content);
+
     void start();
     void quit();
   private:

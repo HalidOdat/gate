@@ -180,18 +180,14 @@ namespace Gate {
       }
     }
 
-    if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::S) {
+    if (event.getModifier() == KeyModifier::Shift && event.getKey() == Key::S) {
       auto node = Serializer::Convert<Board>::encode(mBoard);
       auto content = node.toString();
-      Logger::info("Serialized: \n%s", content.c_str());
-      Logger::info("");
-      FILE* file = fopen("save.json", "w+");
-      if (fwrite(content.c_str(), sizeof(char), content.size(), file) != sizeof(char) * content.size()) {
-        Logger::error("Unable to write to json file");
-      }
-      fclose(file);
+      // Logger::info("Serialized: \n%s", content.c_str());
+
+      Application::saveFile("save", content);
     }
-    if (event.getModifier() == (KeyModifier::Control | KeyModifier::Shift) && event.getKey() == Key::S) {
+    if (event.getModifier() == KeyModifier::Shift && event.getKey() == Key::O) {
       auto* content = Utils::fileToString("save.json");
       if (!content) {
         return false;

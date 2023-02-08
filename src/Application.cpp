@@ -4,6 +4,9 @@
 #include "Renderer/Mesh.hpp"
 #include "Renderer/Material.hpp"
 #include "Application.hpp"
+#include <cstdlib>
+#include <sstream>
+#include <iomanip>
 
 #include "Core/OpenGL.hpp"
 
@@ -16,9 +19,26 @@
 #   endif
 #endif
 
-#include <cstdlib>
-#include <sstream>
-#include <iomanip>
+static Gate::u32 canvasWidth  = 840; 
+static Gate::u32 canvasHeight = 640;
+
+#ifdef GATE_PLATFORM_WEB
+  EM_JS(int, canvas_get_width, (), {
+    return Module.canvas.width;
+  });
+
+  EM_JS(int, canvas_get_height, (), {
+    return Module.canvas.height;
+  });
+
+  EM_JS(void, Module_saveFile, (const char *name, const char *content), {
+    Module.saveFile(UTF8ToString(name), UTF8ToString(content));
+  });
+
+  EM_PORT_API(void) gate_resizeWindow(int width, int height) {
+    Gate::Application::getWindow().setSize(width, height);
+  }
+#endif
 
 namespace Gate {
 
@@ -75,6 +95,18 @@ namespace Gate {
     this->window.reset();
 
     Logger::info("Game Engine Terminated!");
+  }
+
+  void Application::saveFile(const String& name, const String& content) {
+    #ifdef GATE_PLATFORM_WEB
+      Module_saveFile(name.c_str(), content.c_str());
+    #else
+      FILE* file = fopen("save.json", "w+");
+      if (fwrite(content.c_str(), sizeof(char), content.size(), file) != sizeof(char) * content.size()) {
+        Logger::error("Unable to write to json file");
+      }
+      fclose(file);
+    #endif
   }
 
   Renderer3D& Application::getRenderer3D() {
@@ -167,23 +199,6 @@ namespace Gate {
   }
 
 } // namespace Gate
-
-static Gate::u32 canvasWidth  = 840; 
-static Gate::u32 canvasHeight = 640;
-
-#ifdef GATE_PLATFORM_WEB
-  EM_JS(int, canvas_get_width, (), {
-    return Module.canvas.width;
-  });
-
-  EM_JS(int, canvas_get_height, (), {
-    return Module.canvas.height;
-  });
-
-  EM_PORT_API(void) gate_resizeWindow(int width, int height) {
-    Gate::Application::getWindow().setSize(width, height);
-  }
-#endif
 
 int main(int argc, char* argv[]) {
   (void)argc;
