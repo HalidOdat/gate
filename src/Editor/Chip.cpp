@@ -104,7 +104,12 @@ namespace Gate {
   }
 
   bool Chip::pushComponent(Component* component) {
-    // TODO: check if it can be placed there.
+    for (auto* oldComponent : mComponents) {
+      if (oldComponent && oldComponent->getPosition() == component->getPosition()) {
+        delete component;
+        return false;
+      }
+    }
     
     u32 freeSlot = 0;
     for (; freeSlot < mComponents.size(); ++freeSlot) {

@@ -251,22 +251,26 @@ namespace Gate {
         case Mode::AddComponent: {
           // TODO: check if it intersets withs something
           auto position = Point(getGridAlignedMousePosition() / (f32)config.grid.cell.size);
+          Component* component = nullptr;
           switch (mComponentType) {
             case ComponentType::Switch: {
-              mBoard.getCurrentChip().pushComponent(new SwitchComponent(position));
+              component = new SwitchComponent(position);
             } break;
             case ComponentType::Not: {
-              mBoard.getCurrentChip().pushComponent(new NotComponent(position));
+              component = new NotComponent(position);
             } break;
             case ComponentType::And: {
-              mBoard.getCurrentChip().pushComponent(new AndComponent(position));
+              component = new AndComponent(position);
             } break;
             case ComponentType::Or: {
-              mBoard.getCurrentChip().pushComponent(new OrComponent(position));
+              component = new OrComponent(position);
             } break;
             case ComponentType::Xor: {
-              mBoard.getCurrentChip().pushComponent(new XorComponent(position));
+              component = new XorComponent(position);
             } break;
+          }
+          if (!mBoard.getCurrentChip().pushComponent(component)) {
+            Logger::trace("Component is already at position (%u, %u)", position.x, position.y); 
           }
         } break;
       }
