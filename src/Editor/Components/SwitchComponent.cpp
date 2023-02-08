@@ -25,8 +25,6 @@ namespace Gate {
   }
 
   void SwitchComponent::renderBody(Renderer3D& renderer, u32 id) {
-    f32 size = config.grid.cell.size3d;
-
     Material::Handle material = config.inactiveMaterial;
     if (mOutputPins[OUTPUT_INDEX].active) {
       material = config.activeMaterial;
@@ -34,8 +32,8 @@ namespace Gate {
 
     Mat4 model{1.0f};
     model = glm::translate(model, mPosition.toVec3() * config.grid.cell.size3d * Vec3{1.0f, -1.0f, 1.0f});
-    size = size * 1.5f;
-    model = glm::scale(model, Vec3(Vec2(size * 1.5f), size / 2.0f));
+    f32 size = config.grid.cell.size3d * 1.5f;
+    model = glm::scale(model, Vec3(Vec2(size), size / 2.0f));
 
     renderer.submit(config.pinMesh, material, model, id);
   }
