@@ -5,14 +5,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Logic Gate Simulator</title>
     <style>
-      body {
+      html, body {
         font-family: arial;
         margin: 0;
         padding: none;
       }
 
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
-      div.emscripten { text-align: center; }      
+      div.emscripten { text-align: center; }
       div.emscripten_border { border: 1px solid black; }
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       canvas.emscripten { border: 0px none; background-color: black; }
@@ -39,7 +39,6 @@
         border-radius: 100%;
         background-color: rgb(189, 215, 46);
       }
-
       @-webkit-keyframes rotation {
         from {-webkit-transform: rotate(0deg);}
         to {-webkit-transform: rotate(360deg);}
@@ -56,7 +55,6 @@
         from {transform: rotate(0deg);}
         to {transform: rotate(360deg);}
       }
-
       #status {
         display: inline-block;
         vertical-align: top;
@@ -65,7 +63,6 @@
         font-weight: bold;
         color: rgb(120, 120, 120);
       }
-
       #progress {
         height: 20px;
         width: 300px;
@@ -77,6 +74,9 @@
         transform: translate(0%, -50%);
       }
     </style>
+    <script async src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.all.min.js" integrity="sha256-Y16qmk55km4bhE/z6etpTsUnfIHqh95qR4al28kAPEU=" crossorigin="anonymous"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js" integrity="sha256-xoh0y6ov0WULfXcLMoaA6nZfszdgI8w2CEJ/3k8NBIE=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css" integrity="sha256-sWZjHQiY9fvheUAOoxrszw9Wphl3zqfVaz1kZKEvot8=" crossorigin="anonymous">    
   </head>
   <body>
     <div id="components">
@@ -98,17 +98,38 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
+      // Issue: https://github.com/emscripten-core/emscripten/issues/11221
+      // 
+      // This is a hack to fix the issue that the Emscripten GLFW imlementation
+      // does not allow backspace.
+      let preventEvents = false;
+      function stopImmediatePropagation(event) {
+        if (preventEvents) {
+          event.stopImmediatePropagation()
+        }
+      }
+      window.addEventListener('keydown', (event) => {
+        stopImmediatePropagation(event)
+        if (preventEvents) {
+          if (event.keyCode === 13) {
+            // console.log(event.key);
+            swal.clickConfirm()
+          }
+        }
+        // Prevent default browser behaviour
+        if(event.ctrlKey && (event.which == 83)) {
+          event.preventDefault();
+          return false;
+        }
+      }, true);
+      window.addEventListener('keyup', stopImmediatePropagation, true);
+
       var Module = {
         preRun: [],
         postRun: [],
         print: (function() {
           return function(text) {
             if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            // These replacements are necessary if you render to raw HTML
-            //text = text.replace(/&/g, "&amp;");
-            //text = text.replace(/</g, "&lt;");
-            //text = text.replace(/>/g, "&gt;");
-            //text = text.replace('\n', '<br>', 'g');
             console.log(text);
           };
         })(),
@@ -125,6 +146,46 @@
 
           return canvas;
         })(),
+        saveFile: async function(_, content) {
+          preventEvents = true;
+          const { value: name } = await Swal.fire({
+            title: 'Save with file name?',
+            input: 'text',
+            inputAttributes: {
+              required: true,
+              maxlength: 255,
+              autocapitalize: 'off',
+              autocorrect: 'off'
+            },
+            inputPlaceholder: 'MyAwesomeCircuit',
+            inputAutoTrim: true,
+            inputValidator: (value) => {
+              if (!value) {
+                return 'You need to write the name for the save file!'
+              }
+            },
+            allowEnterKey: false,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+          });
+
+          preventEvents = false;
+          if (name) {
+            var file = new File(
+              [content],
+              `${name}.json`,
+              { type: "text/plain;charset=utf-8"}
+            )
+            saveAs(file);
+
+            await Swal.fire({
+              title: `File ${name}.json saved!`,
+            });
+          }
+        },
+        // loadFile: function(name, content) {
+        //   window.Module._gate_loadFile();
+        // },
         setStatus: function(text) {
           if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
           if (text === Module.setStatus.last.text) return;
@@ -153,6 +214,7 @@
           Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
         }
       };
+
       Module.setStatus('Downloading...');
       window.onerror = function(event) {
         // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
@@ -163,7 +225,7 @@
         };
       };
     </script>
-    <script async type="text/javascript" src="gate.js"></script>
+    <script defer type="text/javascript" src="gate.js"></script>
   </body>
 </html>
 
