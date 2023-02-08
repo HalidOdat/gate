@@ -102,6 +102,7 @@ add_executable(${This}
   src/Editor/Config.hpp
   src/Editor/Config.cpp
   src/Editor/Point.hpp
+  src/Editor/Point.cpp
   src/Editor/Wire.hpp
   src/Editor/Wire.cpp
   src/Editor/Pin.hpp

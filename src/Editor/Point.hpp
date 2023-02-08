@@ -2,6 +2,7 @@
 
 #include "Core/Base.hpp"
 #include "Editor/Config.hpp"
+#include "Serializer/Serializer.hpp"
 
 #include <functional>
 
@@ -56,3 +57,13 @@ struct std::hash<Gate::Point> {
     return h1 ^ (h2 << 1);
   }
 };
+
+namespace Gate::Serializer {
+
+  template<>
+  struct Convert<Point> {
+    static Node encode(const Point& value);
+    static bool decode(const Node& node, Point& value);
+  };
+
+}

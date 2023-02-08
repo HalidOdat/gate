@@ -3,11 +3,21 @@
 #include "Core/Base.hpp"
 #include "Renderer/Renderer2D.hpp"
 #include "Renderer/Renderer3D.hpp"
-
 #include "Editor/Point.hpp"
 #include "Editor/Pin.hpp"
+#include "Serializer/Serializer.hpp"
 
 namespace Gate {
+
+#define GATE_COMPONENT_IMPLEMENTATION(name)               \
+  Serializer::Node name::encode() const {                 \
+    using namespace Serializer;                           \
+                                                          \
+    auto node = Node::object();                           \
+    node["type"]     = String(#name);                     \
+    node["position"] = Convert<Point>::encode(mPosition); \
+    return node;                                          \
+  }
 
   class Component {
   public:
@@ -40,6 +50,8 @@ namespace Gate {
 
     virtual void renderBody(Renderer3D&, u32 id) { (void)id; }
     virtual void renderConnectors(Renderer3D&, u32 id);
+
+    virtual Serializer::Node encode() const = 0;
 
   protected:
     Component(Category category, Point position)

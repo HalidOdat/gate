@@ -69,3 +69,19 @@ namespace Gate {
   }
 
 }
+
+namespace Gate::Serializer {
+  Node Convert<Board>::encode(Board& value) {
+    auto node = Node::object();
+    auto chips = Node::array();
+    for (auto& chip : value.getChips()) {
+      chips.push(Convert<Chip>::encode(chip));
+    }
+    node["chips"] = chips;
+    return node;
+  }
+  bool Convert<Board>::decode(const Node& node, Board& value) {
+    return false;
+  }
+
+}

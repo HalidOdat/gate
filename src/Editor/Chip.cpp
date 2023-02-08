@@ -499,3 +499,26 @@ namespace Gate {
   }
 
 }
+
+namespace Gate::Serializer {
+
+  Node Convert<Chip>::encode(Chip& chip) {
+    auto node = Node::object();
+    node["name"] = chip.getName();
+    auto wires = Node::array();
+    for (auto& wire : chip.getWires()) {
+      wires.push(Convert<Wire>::encode(wire));
+    }
+    auto components = Node::array();
+    for (const auto* component : chip.getComponents()) {
+      components.push(component->encode());
+    }
+    node["wires"] = wires;
+    node["components"] = components;
+    return node;
+  }
+  bool Convert<Chip>::decode(const Node& node, Chip& chip) {
+    return false;
+  }
+
+}

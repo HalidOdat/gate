@@ -100,3 +100,18 @@ namespace Gate {
   }
 
 }
+
+
+namespace Gate::Serializer {
+
+  Node Convert<Wire>::encode(const Wire& wire) {
+    auto node = Node::object();
+    node["from"] = Convert<Point>::encode(wire.from);
+    node["to"] = Convert<Point>::encode(wire.to);
+    return node;
+  }
+  bool Convert<Wire>::decode(const Node& node, Wire& value) {
+    return false;
+  }
+
+}

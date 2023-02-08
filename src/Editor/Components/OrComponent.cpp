@@ -43,4 +43,6 @@ namespace Gate {
     renderer.submit(config.pinMesh, material, model, id);
   }
 
+  GATE_COMPONENT_IMPLEMENTATION(OrComponent)
+
 }

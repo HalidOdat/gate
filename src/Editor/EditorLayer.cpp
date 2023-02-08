@@ -181,6 +181,13 @@ namespace Gate {
       }
     }
 
+    if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::S) {
+      auto node = Serializer::Convert<Board>::encode(mBoard);
+      auto content = node.toString();
+      Logger::info("Serialized: \n%s", content.c_str());
+      Logger::info("");
+    }
+
     if (event.getKey() == Key::_3) {
       switch (mRenderMode) {
         case RenderMode::_2D:

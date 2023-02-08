@@ -6,6 +6,7 @@
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/Renderer2D.hpp"
 #include "Renderer/Renderer3D.hpp"
+#include "Serializer/Serializer.hpp"
 
 namespace Gate {
 
@@ -23,6 +24,9 @@ namespace Gate {
     // void tick();
     
     Chip& getCurrentChip();
+    
+    std::vector<Chip>& getChips() { return mChips; }
+    const std::vector<Chip>& getChips() const { return mChips; }
 
     void onResize(u32 width, u32 height);
 
@@ -44,6 +48,16 @@ namespace Gate {
     // Grid drawing & caching
     FrameBuffer::Handle mGridFrameBuffer;
     Texture::Handle     mGridTexture;
+  };
+
+}
+
+namespace Gate::Serializer {
+
+  template<>
+  struct Convert<Board> {
+    static Node encode(Board& value);
+    static bool decode(const Node& node, Board& value);
   };
 
 }

@@ -5,9 +5,9 @@
 #include "Editor/Wire.hpp"
 #include "Editor/Components.hpp"
 #include "Editor/Connection.hpp"
-
 #include "Renderer/Renderer2D.hpp"
 #include "Renderer/Renderer3D.hpp"
+#include "Serializer/Serializer.hpp"
 
 #include <unordered_map>
 
@@ -35,6 +35,10 @@ namespace Gate {
     bool click(u32 id);
     void tick();
 
+    const std::vector<Wire> getWires() const { return mWires; }
+    const std::vector<Component*> getComponents() const { return mComponents; }
+    const String& getName() const { return mName; }
+
   private:
     void renderComponentBodys(Renderer2D& renderer);
     void renderComponentConnectors(Renderer2D& renderer);
@@ -60,3 +64,14 @@ namespace Gate {
   };
 
 }
+
+namespace Gate::Serializer {
+
+  template<>
+  struct Convert<Chip> {
+    static Node encode(Chip& value);
+    static bool decode(const Node& node, Chip& value);
+  };
+
+}
+

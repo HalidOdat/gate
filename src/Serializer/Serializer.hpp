@@ -5,6 +5,7 @@
 #include <variant>
 #include <unordered_map>
 #include <sstream>
+#include <vector>
 
 namespace Gate::Serializer {
 
@@ -161,6 +162,23 @@ namespace Gate::Serializer {
       if (node.isInteger()) {
         value = *node.asInteger();
         return true;
+      }
+      return false;
+    }
+  };
+
+  template<>
+  struct Convert<u32> {
+    static Node encode(u32 value) {
+      return Convert<Node::Integer>::encode(Node::Integer(value));
+    }
+    static bool decode(const Node& node, u32& i) {
+      if (node.isInteger()) {
+        Node::Integer value = *node.asInteger();
+        if (Node::Integer(u32(value)) == value) {
+          i = u32(value);
+          return true;
+        }
       }
       return false;
     }

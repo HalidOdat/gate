@@ -18,6 +18,8 @@ namespace Gate {
     virtual void renderBody(Renderer2D& renderer) override;
     virtual void renderBody(Renderer3D& renderer, u32 id) override;
 
+    virtual Serializer::Node encode() const override;
+
   private:
     inline void toggle() { mOutputPins[OUTPUT_INDEX].active = !mOutputPins[OUTPUT_INDEX].active; }
   };
