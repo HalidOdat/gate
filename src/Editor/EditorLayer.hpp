@@ -4,6 +4,7 @@
 #include "Events/KeyEvent.hpp"
 #include "Events/WindowEvent.hpp"
 #include "Events/MouseEvent.hpp"
+#include "Events/FileDropEvent.hpp"
 #include "Renderer/Texture.hpp"
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/CameraController.hpp"
@@ -40,6 +41,8 @@ namespace Gate {
     Vec2 gridAlginPosition(Vec2 position);
     Vec2 getGridAlignedMousePosition();
 
+    void loadFile(const String& path);
+
   private:
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
@@ -47,6 +50,7 @@ namespace Gate {
     bool onMouseMoveEvent(const MouseMoveEvent& event);
     bool onMouseButtonPressedEvent(const MouseButtonPressedEvent& event);
     bool onMouseButtonReleasedEvent(const MouseButtonReleasedEvent& event);
+    bool onFileDropEvent(const FileDropEvent& event);
 
   private:
       enum class Mode {

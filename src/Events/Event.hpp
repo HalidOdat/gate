@@ -10,6 +10,7 @@ namespace Gate {
       KeyPressed, KeyReleased,
       MouseMove, MouseScroll, MouseButtonPressed, MouseButtonReleased,
       WindowResize, WindowClose, WindowMinimized,
+      FileDropEvent,
     };
 
   public:

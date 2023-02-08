@@ -180,33 +180,21 @@ namespace Gate {
       }
     }
 
-    if (event.getModifier() == KeyModifier::Shift && event.getKey() == Key::S) {
+    if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::S) {
       auto node = Serializer::Convert<Board>::encode(mBoard);
       auto content = node.toString();
-      // Logger::info("Serialized: \n%s", content.c_str());
 
-      Application::saveFile("save", content);
+      const auto filename = "save.json";
+
+      Logger::info("Saving file %s", filename);
+      Application::saveFile(filename, content);
     }
-    if (event.getModifier() == KeyModifier::Shift && event.getKey() == Key::O) {
-      auto* content = Utils::fileToString("save.json");
-      if (!content) {
-        return false;
+
+    #ifndef GATE_PLATFORM_WEB
+      if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::O) {
+        loadFile("save.json");
       }
-      auto node = Serializer::Json::parse(content);
-      if (!node) {
-        Logger::error("Unable to parse json file!");
-        return false;
-      }
-      free(content);
-      Board newBoard;
-      if (!Serializer::Convert<Board>::decode(*node, newBoard)) {
-        Logger::error("Invalid board in json file");
-        return false;
-      }
-      mBoard = newBoard;
-      // mBoard.tick();
-      Logger::trace("Replacing board");
-    }
+    #endif
 
     if (event.getKey() == Key::_3) {
       switch (mRenderMode) {
@@ -374,6 +362,39 @@ namespace Gate {
     event.dispatch(&EditorLayer::onMouseMoveEvent, this);
     event.dispatch(&EditorLayer::onMouseButtonPressedEvent, this);
     event.dispatch(&EditorLayer::onMouseButtonReleasedEvent, this);
+    event.dispatch(&EditorLayer::onFileDropEvent, this);
+  }
+
+  void EditorLayer::loadFile(const String& path) {
+    auto* content = Utils::fileToString(path.c_str());
+    if (!content) {
+      Logger::error("Couldn't read files contents");
+      return;
+    }
+    auto node = Serializer::Json::parse(content);
+    if (!node) {
+      Logger::error("Unable to parse json file!");
+      return;
+    }
+    free(content);
+    Board newBoard;
+    if (!Serializer::Convert<Board>::decode(*node, newBoard)) {
+      Logger::error("Invalid board in json file");
+      return;
+    }
+    mBoard = newBoard;
+    // mBoard.tick();
+    Logger::trace("Replacing board");
+  }
+
+  bool EditorLayer::onFileDropEvent(const FileDropEvent& event) {
+    const auto& paths = event.getPaths();
+    if (paths.size() != 1) {
+      Logger::error("Dropping more tha one file is not allowed!");
+      return true;
+    }
+    loadFile(paths[0]);
+    return true;
   }
 
   bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {

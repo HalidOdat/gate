@@ -101,7 +101,7 @@ namespace Gate {
     #ifdef GATE_PLATFORM_WEB
       Module_saveFile(name.c_str(), content.c_str());
     #else
-      FILE* file = fopen("save.json", "w+");
+      FILE* file = fopen(name.c_str(), "w+");
       if (fwrite(content.c_str(), sizeof(char), content.size(), file) != sizeof(char) * content.size()) {
         Logger::error("Unable to write to json file");
       }

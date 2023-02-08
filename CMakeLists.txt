@@ -52,6 +52,7 @@ add_executable(${This}
   src/Events/KeyEvent.hpp
   src/Events/MouseEvent.hpp
   src/Events/WindowEvent.hpp
+  src/Events/FileDropEvent.hpp
 
   src/Renderer/Texture.hpp
   src/Renderer/Texture.cpp

@@ -5,6 +5,7 @@
 #include "Events/KeyEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Events/WindowEvent.hpp"
+#include "Events/FileDropEvent.hpp"
 #include "Window.hpp"
 
 namespace Gate {
@@ -224,6 +225,20 @@ namespace Gate {
     glfwSetCursorPosCallback(result->data.window, [](GLFWwindow* window, double x, double y) {
       auto& data = *(Data*)glfwGetWindowUserPointer(window);
       MouseMoveEvent event(static_cast<f32>(x), static_cast<f32>(y));
+      data.eventCallback(event);
+    });
+
+    glfwSetDropCallback(result->data.window, [](GLFWwindow* window, int count, const char** paths) {
+      (void) window;
+      if (count <= 0) {
+        return;
+      }
+      std::vector<String> result;
+      for (int i = 0; i < count; ++i) {
+        result.emplace_back(paths[i]);
+      }
+      auto& data = *(Data*)glfwGetWindowUserPointer(window);
+      FileDropEvent event(result);
       data.eventCallback(event);
     });
 
