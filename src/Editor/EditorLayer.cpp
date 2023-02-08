@@ -162,6 +162,25 @@ namespace Gate {
       }
     }
 
+    if (event.getKey() == Key::Minus) {
+      if (mRenderMode == RenderMode::_2D) {
+        config.grid.cell.size -= 1;
+        config.grid.cell.size = config.grid.cell.size >= 10 ? config.grid.cell.size : 10;
+        mBoard.onResize(Application::getWindow().getWidth(), Application::getWindow().getHeight());
+      } else {
+        config.grid.cell.size3d -= 0.05f;
+        config.grid.cell.size3d = config.grid.cell.size3d >= 0.05f ? config.grid.cell.size3d : 0.05f;
+      }
+    }
+    if (event.getKey() == Key::Equal) {
+      if (mRenderMode == RenderMode::_2D) {
+        config.grid.cell.size += 1;
+        mBoard.onResize(Application::getWindow().getWidth(), Application::getWindow().getHeight());
+      } else {
+        config.grid.cell.size3d += 0.05f;
+      }
+    }
+
     if (event.getKey() == Key::_3) {
       switch (mRenderMode) {
         case RenderMode::_2D:

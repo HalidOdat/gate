@@ -30,7 +30,7 @@ namespace Gate {
 
     Mat4 model{1.0f};
     model = glm::translate(model, (position.toVec3() * config.grid.cell.size3d) * Vec3{1.0f, -1.0f, 1.0f});
-    model = glm::scale(model, Vec3{0.5f});
+    model = glm::scale(model, Vec3{config.grid.cell.size3d * 0.5f});
 
     renderer.submit(config.pinMesh, material, model, id);
   }

@@ -26,8 +26,8 @@ namespace Gate {
     };
 
     struct Wire {
-      f32  width{4.5f};
-      Vec2 endsSize{ 6.0f, 6.0f };
+      f32  width{ 0.18f };
+      Vec2 endsSize{ 0.24f };
 
       Vec4 activeColor   = Color::RED;
       Vec4 inactiveColor = Color::BLACK;

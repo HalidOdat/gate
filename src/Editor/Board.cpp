@@ -41,7 +41,7 @@ namespace Gate {
       renderer.clearScreen(config.grid.background);
       for (u32 i = 0; i < width; i += config.grid.cell.size) {
         for (u32 j = 0; j < height; j += config.grid.cell.size) {
-          renderer.drawCenteredQuad({i, j}, {2.0f, 2.0f}, config.grid.color);
+          renderer.drawCenteredQuad({i, j}, Vec2{0.08f} * (f32)config.grid.cell.size, config.grid.color);
         }
       }
       renderer.flush();

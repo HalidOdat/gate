@@ -6,7 +6,7 @@
 namespace Gate {
   
   void Wire::render(Renderer2D& renderer) {
-    f32 width = config.wire.width;
+    f32 width = config.wire.width * config.grid.cell.size;
 
     Vec2 size = (to.toVec2() - from.toVec2()) * (f32)config.grid.cell.size;
     if (from.x == to.x) {
@@ -37,13 +37,13 @@ namespace Gate {
     );
     renderer.drawCenteredQuad(
       from.toVec2() * (f32)config.grid.cell.size,
-      config.wire.endsSize,
+      config.wire.endsSize * (f32)config.grid.cell.size,
       color,
       effect
     );
     renderer.drawCenteredQuad(
       to.toVec2() * (f32)config.grid.cell.size,
-      config.wire.endsSize,
+      config.wire.endsSize * (f32)config.grid.cell.size,
       color,
       effect
     );
@@ -51,8 +51,8 @@ namespace Gate {
 
 
   void Wire::render(Renderer3D& renderer) {
-    f32 wireWidth    = 0.25f;
     f32 gridCellSize = config.grid.cell.size3d;
+    f32 wireWidth    = gridCellSize * 0.25f;
 
     // TODO: move to constructor
     Vec3 scale = Vec3{wireWidth};
