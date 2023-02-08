@@ -28,9 +28,10 @@ namespace Gate {
   };
 
   struct ConnectionState {
-    bool active;
-    bool visited;
+    bool active = false;
+    bool visited = false;
 
+    ConnectionState() = default;
     ConnectionState(bool active_, bool visited_)
       : active{active_}, visited{visited_}
     {}

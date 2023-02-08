@@ -216,8 +216,11 @@ namespace Gate {
     }
     if (freeSlot >= mWires.size()) {
       mWires.push_back(wire);
-      mWires[freeSlot].free = true;
+    } else {
+      mWires[freeSlot] = wire;
     }
+
+    mWires[freeSlot].free = true;
 
     auto connectionResultFrom = pushWireConnection(mWires[freeSlot].from, freeSlot);
     if (!connectionResultFrom.successful) {
@@ -366,38 +369,39 @@ namespace Gate {
       switch (type) {
         case Type::Component: {
           component->setVisited(true);
-          for (auto& pin : component->getInputPins()) {
+          auto& pins = component->getInputPins();
+          for (u32 pinIndex = 0; pinIndex < pins.size(); ++pinIndex) {
+            auto& pin = pins[pinIndex];
             if (pin.visited) {
               continue;
             }
 
             auto& connections = mConnections[pin.connectionIndex];
-            if (connections.size() > 2) {
-              Logger::error("too many connection on imput type point(%d, %d)", pin.position.x, pin.position.y);
-              GATE_TODO("^");
-            }
-            if (connections.size() == 2) {
-              Connection result{Connection::Type::Component, UINT32_MAX, UINT32_MAX};
-              for (auto& connection : connections) {    
-                if (
-                  connection.type == Connection::Type::Component
-                  && mComponents[connection.componentIndex] == component
-                ) {
-                  continue;
-                }
-                result = connection;
-                
-              }
-              auto state = getConnectionState(result);
-              if (!(visitedOnce || state.visited)) {
-                node.visitedOnce = true;
-                component->setVisited(false);
-                queue.push(node);
+            ConnectionState state;
+            for (auto& connection : connections) {    
+              // Exclude the current pin
+              if (
+                connection.type == Connection::Type::Component
+                && mComponents[connection.componentIndex] == component
+                && connection.index == pinIndex
+              ) {
                 continue;
               }
-              pin.visited = state.visited;
-              pin.active = state.active;
+
+              auto newState = getConnectionState(connection);
+              if (newState.visited) {
+                state.visited = true;
+                state.active  = state.active || newState.active;
+              }
             }
+            if (!(visitedOnce || state.visited)) {
+              node.visitedOnce = true;
+              component->setVisited(false);
+              queue.push(node);
+              continue;
+            }
+            pin.visited = state.visited;
+            pin.active = state.active;
           }
 
           if (component->areAllInputPinsVisited()) {
