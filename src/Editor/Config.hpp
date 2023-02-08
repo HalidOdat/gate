@@ -17,12 +17,12 @@ namespace Gate {
     
     struct Component {
       struct Connector {
-        Vec2 size;
+        f32  size;
         Vec4 color;
       };
 
-      Connector input = { { 6.5f, 6.5f }, Color::GREEN };
-      Connector output = { { 6.5f, 6.5f }, Color::RED };
+      Connector input  = { 0.13f, Color::GREEN };
+      Connector output = { 0.13f, Color::RED };
     };
 
     struct Wire {
