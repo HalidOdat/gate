@@ -75,21 +75,21 @@ void main() {
 
 
   // exposure
-  color = color * exposure;
+  // color = color * exposure;
 
   // contrast & brighness
-  color = contrast * (color - 0.5f) + 0.5f + brightness;
+  // color = contrast * (color - 0.5f) + 0.5f + brightness;
 
   // saturation
-  float grayscale = dot(color, vec3(0.299f, 0.587f, 0.114f));
-  color = mix(vec3(grayscale), color, saturation);
+  // float grayscale = dot(color, vec3(0.299f, 0.587f, 0.114f));
+  // color = mix(vec3(grayscale), color, saturation);
 
   // tone-mapping
-  color = aces(color);
+  // color = aces(color);
 
   // gamma correction
-  const float gamma = 2.2;
-  color = pow(color, vec3(1.0f/gamma));
+  // const float gamma = 2.2;
+  // color = pow(color, vec3(1.0f/gamma));
 
   // submit final color
   vFragmentColor = vec4(color, 1.0f);

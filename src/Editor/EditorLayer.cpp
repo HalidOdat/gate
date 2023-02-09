@@ -21,16 +21,20 @@ namespace Gate {
     }
 
     mMaterial = Material::get("Default");
-    mMesh = Mesh::cube();
+    config.andMesh = Mesh::load("assets/3D/objects/AndGate.obj");
+    config.notMesh = Mesh::load("assets/3D/objects/NotGate.obj");
+    config.orMesh  = Mesh::load("assets/3D/objects/OrGate.obj");
+    config.xorMesh = Mesh::load("assets/3D/objects/XorGate.obj");
+    mMesh = Mesh::load("assets/3D/objects/Cube.obj");
 
     config.pinMesh = mMesh;
     config.activeMaterial = Material::get("Active");
-    config.activeMaterial->diffuseMap = Texture::color(0xFF'00'00'FF).build();
-    config.activeMaterial->specularMap = Texture::color(0x00'00'00'FF).build();
+    config.activeMaterial->diffuseMap = Texture::color(0xFF'20'20'FF).build();
+    config.activeMaterial->specularMap = Texture::color(0x20'20'20'FF).build();
     config.activeMaterial->emissionMap = Texture::color(0x00'00'00'FF).build();
     config.inactiveMaterial = Material::get("Inactive");
-    config.inactiveMaterial->diffuseMap = Texture::color(0x00'00'00'FF).build();
-    config.inactiveMaterial->specularMap = Texture::color(0x00'00'00'FF).build();
+    config.inactiveMaterial->diffuseMap = Texture::color(0x60'60'60'FF).build();
+    config.inactiveMaterial->specularMap = Texture::color(0x40'40'40'FF).build();
     config.inactiveMaterial->emissionMap = Texture::color(0x00'00'00'FF).build();
 
     auto texture = Texture::load("assets/2D/textures/components.png").build();
@@ -51,6 +55,10 @@ namespace Gate {
     config.orGate = SubTexture();
     config.xorGate = SubTexture();
     config.notGate = SubTexture();
+    config.andMesh = nullptr;
+    config.notMesh = nullptr;
+    config.orMesh  = nullptr;
+    config.xorMesh = nullptr;
   }
   void EditorLayer::onUpdate2D(Timestep ts) {
     (void)ts;

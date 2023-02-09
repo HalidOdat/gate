@@ -11,3 +11,5 @@
 *.png binary
 *.ico binary
 *.ppm binary
+*.hdr binary
+*.obj binary

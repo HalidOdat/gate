@@ -52,7 +52,7 @@ namespace Gate {
 
   void Wire::render(Renderer3D& renderer) {
     f32 gridCellSize = config.grid.cell.size3d;
-    f32 wireWidth    = gridCellSize * 0.25f;
+    f32 wireWidth    = gridCellSize * 0.2f;
 
     // TODO: move to constructor
     Vec3 scale = Vec3{wireWidth};

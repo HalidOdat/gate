@@ -27,12 +27,14 @@ in vec3 vTexCoords;
 uniform samplerCube uSkybox;
 
 void main() {
+  vec3 color;
   #ifdef COLOR
-    vFragmentColor = COLOR;
+    color = COLOR;
   #else
-    vFragmentColor = texture(uSkybox, vTexCoords);
+    color = texture(uSkybox, vTexCoords).rgb;
   #endif
 
+  vFragmentColor = vec4(color, 1.0f);
   vEntityIdOut = uvec4(0xFFu);
 }
 

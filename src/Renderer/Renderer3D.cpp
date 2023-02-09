@@ -79,14 +79,15 @@ namespace Gate {
     quadVertexArray->unbind();
     mPipeline.quadVertexArray = quadVertexArray;
 
-    mPipeline.skyboxTexture = CubeMap::load({
-      "assets/3D/textures/skybox/right.jpg",
-      "assets/3D/textures/skybox/left.jpg",
-      "assets/3D/textures/skybox/top.jpg",
-      "assets/3D/textures/skybox/bottom.jpg",
-      "assets/3D/textures/skybox/front.jpg",
-      "assets/3D/textures/skybox/back.jpg",
-    });
+    // mPipeline.skyboxTexture = CubeMap::load({
+    //   "assets/3D/textures/skybox/right.jpg",
+    //   "assets/3D/textures/skybox/left.jpg",
+    //   "assets/3D/textures/skybox/top.jpg",
+    //   "assets/3D/textures/skybox/bottom.jpg",
+    //   "assets/3D/textures/skybox/front.jpg",
+    //   "assets/3D/textures/skybox/back.jpg",
+    // });
+    mPipeline.skyboxTexture = CubeMap::load("assets/3D/textures/skybox.hdr");
 
     static const f32 skyboxVertices[] = {
         // positions

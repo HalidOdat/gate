@@ -57,6 +57,10 @@ namespace Gate {
     Text text;
 
     Mesh::Handle pinMesh;
+    Mesh::Handle andMesh;
+    Mesh::Handle notMesh;
+    Mesh::Handle orMesh;
+    Mesh::Handle xorMesh;
     Material::Handle activeMaterial;
     Material::Handle inactiveMaterial;
 
