@@ -511,10 +511,16 @@ namespace Gate::Serializer {
     node["name"] = chip.getName();
     auto wires = Node::array();
     for (auto& wire : chip.getWires()) {
+      if (wire.free) {
+        continue;
+      }
       wires.push(Convert<Wire>::encode(wire));
     }
     auto components = Node::array();
     for (const auto* component : chip.getComponents()) {
+      if (!component) {
+        continue;
+      }
       components.push(component->encode());
     }
     node["wires"] = wires;
