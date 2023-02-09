@@ -32,8 +32,8 @@ static Gate::u32 canvasHeight = 640;
     return Module['canvas'].height;
   });
 
-  EM_JS(void, Module_saveFile, (const char *name, const char *content), {
-    Module['saveFile'](UTF8ToString(name), UTF8ToString(content));
+  EM_JS(void, Module_saveFile, (const char *content), {
+    Module['saveFile'](UTF8ToString(content));
   });
 
   EM_PORT_API(void) gate_resizeWindow(int width, int height) {
@@ -100,7 +100,8 @@ namespace Gate {
 
   void Application::saveFile(const String& name, const String& content) {
     #ifdef GATE_PLATFORM_WEB
-      Module_saveFile(name.c_str(), content.c_str());
+      (void) name;
+      Module_saveFile(content.c_str());
     #else
       FILE* file = fopen(name.c_str(), "w+");
       if (fwrite(content.c_str(), sizeof(char), content.size(), file) != sizeof(char) * content.size()) {
