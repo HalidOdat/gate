@@ -142,6 +142,9 @@ namespace Gate {
           }
           break;
         case Mode::Remove: {
+          if (event.getKey() == Key::C) {
+            mMode = Mode::AddComponent;
+          }
         } break;
         case Mode::WireDraw: {
         } break;
@@ -265,7 +268,6 @@ namespace Gate {
           }
         } break;
         case Mode::AddComponent: {
-          // TODO: check if it intersets withs something
           auto position = Point(getGridAlignedMousePosition() / (f32)config.grid.cell.size);
           Component* component = nullptr;
           switch (mComponentType) {
