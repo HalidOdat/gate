@@ -6,9 +6,6 @@ out vec3 vTexCoords;
 
 uniform mat4 uProjection;
 uniform mat4 uView;
-// uniform vec4 uInvalidEntity;
-
-// flat out vec4 vInvalidEntity;
 
 void main() {
   // vInvalidEntity = uInvalidEntity;
@@ -23,14 +20,11 @@ precision mediump float;
 precision highp int;
 
 layout (location = 0) out vec4 vFragmentColor;
-layout (location = 1) out highp uint vEntityIdOut;
+layout (location = 1) out highp uvec4 vEntityIdOut;
 
 in vec3 vTexCoords;
 
 uniform samplerCube uSkybox;
-
-// flat in uint vInvalidEntity;
-// #define INVALID_ENTITY vec4(1.0f, 1.0f, 1.0f);
 
 void main() {
   #ifdef COLOR
@@ -39,6 +33,6 @@ void main() {
     vFragmentColor = texture(uSkybox, vTexCoords);
   #endif
 
-  vEntityIdOut = 0xFFFFFFFFu;
+  vEntityIdOut = uvec4(0xFFu);
 }
 
