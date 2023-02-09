@@ -39,8 +39,8 @@ jobs:
       - name: Create final directory
         run: mkdir final
 
-      - name: Copy files to final directory
-        run: cp web/index.html build/gate.* final
+      - name: Copy web files to final directory
+        run: cp -r web/* build/gate.* final
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4

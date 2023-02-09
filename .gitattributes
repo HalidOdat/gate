@@ -9,4 +9,5 @@
 *.pbm binary
 *.pgm binary
 *.png binary
+*.ico binary
 *.ppm binary
