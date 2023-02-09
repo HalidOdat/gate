@@ -50,4 +50,5 @@ assets/objects/
 assets/textures/
 
 # Default save file
-save.json
+/save.json
+
