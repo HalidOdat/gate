@@ -125,7 +125,7 @@ namespace Gate {
   bool Chip::pushComponent(Component* component) {
     for (auto* oldComponent : mComponents) {
       if (oldComponent && oldComponent->getPosition() == component->getPosition()) {
-        delete component;
+        // delete component;
         return false;
       }
     }

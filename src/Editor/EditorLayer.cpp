@@ -305,7 +305,11 @@ namespace Gate {
             } break;
           }
           if (!mBoard.pushComponent(component)) {
-            Logger::trace("Component is already at position (%u, %u)", position.x, position.y); 
+            Logger::trace("Component is already at position (%u, %u)", position.x, position.y);
+            mBoard.removeComponent(position);
+            if (!mBoard.pushComponent(component)) {
+              Logger::error("The component should have been removed!!!");
+            }
           }
         } break;
       }
