@@ -393,8 +393,10 @@ namespace Gate {
       Logger::error("Invalid board in json file");
       return;
     }
-    mBoard = newBoard;
     Logger::trace("Replacing board");
+    mBoard = newBoard;
+
+    config.grid.cell.size = mBoard.getCurrentChip().getOptimalCellSize();    
   }
 
   bool EditorLayer::onFileDropEvent(const FileDropEvent& event) {

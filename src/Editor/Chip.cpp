@@ -1,4 +1,5 @@
 #include "Editor/Chip.hpp"
+#include "Application.hpp"
 
 #include <queue>
 
@@ -10,7 +11,9 @@ namespace Gate {
 
   Chip::Chip(String name)
     : mName{std::move(name)}
-  {}
+  {
+    mOptimalCellSize = config.grid.cell.size;
+  }
   Chip::~Chip() {
     for (auto component : mComponents) {
       if (component) {
@@ -44,7 +47,19 @@ namespace Gate {
     }
     return interacted;
   }
+  void Chip::calculateOptimalCellSize(Point position) {
+    auto wWidth  = Application::getWindow().getWidth();
+    auto wHeight = Application::getWindow().getHeight();
 
+    const auto margin = 3;
+
+    if (position.x * mOptimalCellSize >= wWidth) {
+      mOptimalCellSize = wWidth / position.x - margin;
+    }
+    if (position.y * mOptimalCellSize >= wHeight) {
+      mOptimalCellSize = wHeight / position.y - margin;
+    }
+  }
   ConnectionState Chip::getConnectionState(Connection& connection) {
     switch (connection.type) {
       case Connection::Type::Component: {
@@ -71,10 +86,6 @@ namespace Gate {
     u32 connectionIndex;
     if (auto it = mConnectionsIndexByPoint.find(position); it != mConnectionsIndexByPoint.end()) {
       connectionIndex = it->second;
-      // TODO: check if its output pin, shouldn't have more than one connection.
-      if (false) {
-        return {};
-      }
       mConnections[connectionIndex].push_back(connection);
     } else {
       connectionIndex = (u32)mConnections.size();
@@ -151,6 +162,8 @@ namespace Gate {
     }
     mComponents[componentIndex] = component;
     tick();
+
+    calculateOptimalCellSize(component->getPosition());
     return true;
   }
   void Chip::removeComponent(Point position) {
@@ -245,6 +258,8 @@ namespace Gate {
     mWires[freeSlot].free = false;
 
     tick();
+    calculateOptimalCellSize(mWires[freeSlot].from);
+    calculateOptimalCellSize(mWires[freeSlot].to);
     return connected ? WirePushState::Connected : WirePushState::Valid;
   }
   void Chip::removeWire(Point position) {
@@ -292,7 +307,6 @@ namespace Gate {
     }
   }
 
-  /// TODO: Refactor and make this a bit better
   void Chip::tick() {
     enum class Type {
       Component,

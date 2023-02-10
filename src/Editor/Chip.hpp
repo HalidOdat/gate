@@ -47,6 +47,8 @@ namespace Gate {
     const String& getName() const { return mName; }
     void setName(String name) { mName = std::move(name); }
 
+    u32 getOptimalCellSize() const { return mOptimalCellSize; }
+
   private:
     void renderComponentBodys(Renderer2D& renderer);
     void renderComponentConnectors(Renderer2D& renderer);
@@ -62,13 +64,19 @@ namespace Gate {
     ConnectionResult pushWireConnection(Point position, u32 wireIndex);
     ConnectionResult pushComponentConnection(Point position, u32 componentIndex, u32 pinIndex);
 
+    void calculateOptimalCellSize(Point position);
+
   private:
     String mName;
 
+    // Component and wire states
     std::vector<Component*> mComponents;
     std::vector<Wire> mWires;
     std::vector<std::vector<Connection>> mConnections;
     std::unordered_map<Point, u32> mConnectionsIndexByPoint;
+
+    // Size
+    u32 mOptimalCellSize;
   };
 
 }
