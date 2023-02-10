@@ -66,7 +66,7 @@ namespace Gate {
       } else if (type == "AndComponent") {
         return new AndComponent(position);
       } else if (type == "OrComponent") {
-        return new AndComponent(position);
+        return new OrComponent(position);
       } else if (type == "XorComponent") {
         return new XorComponent(position);
       } else if (type == "NotComponent") {

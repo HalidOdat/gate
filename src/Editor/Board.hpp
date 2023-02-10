@@ -17,11 +17,6 @@ namespace Gate {
 
     void render(Renderer2D& renderer);
     void render(Renderer3D& renderer);
-
-    // bool pushComponent(Component* component);
-    // WirePushState pushWire(Wire wire);
-    // bool click(Point position);
-    // void tick();
     
     void pushChip(Chip::Handle chip);
 
@@ -33,23 +28,30 @@ namespace Gate {
     void onResize(u32 width, u32 height);
 
   private:
+    struct MiniMap {
+      u32 x;
+      u32 y;
+      u32 w;
+      u32 h;
+    };
     void renderGrid(Renderer2D& renderer);
+    void renderMiniMap(Renderer2D& renderer);
+    void createMiniMapFrameBuffer();
+    MiniMap calculateMiniMapLocationAndSize();
 
   private:
-    // u32 currentId = 0;
-    // struct Locator {
-    //   u32 chipIndex;
-    //   u32 componentIndex;
-    // };
-
     u32 mIndex = 0;
     std::vector<Chip::Handle> mChips;
-
-    // std::uordered_map<u32, Locator> mLocator;
 
     // Grid drawing & caching
     FrameBuffer::Handle mGridFrameBuffer;
     Texture::Handle     mGridTexture;
+
+    // Drawing minimap & caching
+    Texture::Handle mMiniMapTexture = nullptr;
+    FrameBuffer::Handle mMiniMapFrameBuffer = nullptr;
+    f32 mMiniMapSpacePercent  = 0.35f;
+    f32 mMiniMapPadding       = 0.20f;
   };
 
 }

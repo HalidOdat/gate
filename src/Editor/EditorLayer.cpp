@@ -62,7 +62,6 @@ namespace Gate {
   }
   void EditorLayer::onUpdate2D(Timestep ts) {
     (void)ts;
-    Application::getRenderer2D().begin(mEditorCameraController.getCamera());
 
     mBoard.render(Application::getRenderer2D());
 
@@ -117,6 +116,7 @@ namespace Gate {
     mBoard.render(Application::getRenderer3D());
   }
   void EditorLayer::onUpdate(Timestep ts) {
+    Application::getRenderer2D().begin(mEditorCameraController.getCamera());
     if (mRenderMode == RenderMode::_2D) {
       onUpdate2D(ts);
     } else {
@@ -394,7 +394,6 @@ namespace Gate {
       return;
     }
     mBoard = newBoard;
-    // mBoard.tick();
     Logger::trace("Replacing board");
   }
 
