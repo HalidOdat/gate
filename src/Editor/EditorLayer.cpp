@@ -173,7 +173,7 @@ namespace Gate {
     if (event.getKey() == Key::Minus) {
       if (mRenderMode == RenderMode::_2D) {
         config.grid.cell.size -= 1;
-        config.grid.cell.size = config.grid.cell.size >= 10 ? config.grid.cell.size : 10;
+        config.grid.cell.size = config.grid.cell.size >= 5 ? config.grid.cell.size : 5;
         mBoard.onResize(Application::getWindow().getWidth(), Application::getWindow().getHeight());
       } else {
         config.grid.cell.size3d -= 0.05f;
