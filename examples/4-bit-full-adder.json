@@ -44,7 +44,7 @@
         },
         {
           "position": [ 18, 15 ],
-          "type": "AndComponent"
+          "type": "OrComponent"
         },
         {
           "position": [ 2, 18 ],
@@ -72,7 +72,7 @@
         },
         {
           "position": [ 25, 24 ],
-          "type": "AndComponent"
+          "type": "OrComponent"
         },
         {
           "position": [ 2, 27 ],
@@ -100,7 +100,7 @@
         },
         {
           "position": [ 24, 33 ],
-          "type": "AndComponent"
+          "type": "OrComponent"
         }
       ],
       "wires": [
