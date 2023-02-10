@@ -236,7 +236,7 @@ namespace Gate {
           
           bool interacted;
           if (mRenderMode == RenderMode::_2D) {
-            interacted = mBoard.getCurrentChip().click(mousePosition);
+            interacted = mBoard.click(mousePosition);
             if (!interacted) {
             mMode = Mode::WireDraw;
             mWireStartPosition = gridAlginPosition(mLastMousePosition);
@@ -245,20 +245,20 @@ namespace Gate {
           } else {
             u32 value = Application::getRenderer3D().readPixel((u32)mLastMousePosition.x, (u32)mLastMousePosition.y);
             Logger::trace("Click(%u, %u): Entity ID: %u", (u32)mLastMousePosition.x, (u32)mLastMousePosition.y, value);
-            interacted = mBoard.getCurrentChip().click(value);
+            interacted = mBoard.click(value);
           }
         }  break;
         case Mode::Remove: {
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
-          mBoard.getCurrentChip().removeWire(mousePosition);
-          mBoard.getCurrentChip().removeComponent(mousePosition);
+          mBoard.removeWire(mousePosition);
+          mBoard.removeComponent(mousePosition);
         }  break;
         case Mode::WireDraw: {
           // TODO: Check if wires intersect
           Point from = Point(mWireStartPosition / (f32)config.grid.cell.size);
           Point to = Point(mWireEndPosition / (f32)config.grid.cell.size);
           bool connected = false;
-          switch (mBoard.getCurrentChip().pushWire({ from, to })) {
+          switch (mBoard.pushWire({ from, to })) {
             case WirePushState::Valid:
               break;
             case WirePushState::Invalid:
@@ -295,7 +295,7 @@ namespace Gate {
               component = new XorComponent(position);
             } break;
           }
-          if (!mBoard.getCurrentChip().pushComponent(component)) {
+          if (!mBoard.pushComponent(component)) {
             Logger::trace("Component is already at position (%u, %u)", position.x, position.y); 
           }
         } break;
@@ -320,8 +320,8 @@ namespace Gate {
         mSelectorPosition = gridPosition;
         if (mClicked) {
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
-          mBoard.getCurrentChip().removeWire(mousePosition);
-          mBoard.getCurrentChip().removeComponent(mousePosition);
+          mBoard.removeWire(mousePosition);
+          mBoard.removeComponent(mousePosition);
         }
       }  break;
       case Mode::WireDraw: {
@@ -396,7 +396,7 @@ namespace Gate {
     Logger::trace("Replacing board");
     mBoard = newBoard;
 
-    config.grid.cell.size = mBoard.getCurrentChip().getOptimalCellSize();    
+    config.grid.cell.size = mBoard.getCurrentChip().getOptimalCellSize();
   }
 
   bool EditorLayer::onFileDropEvent(const FileDropEvent& event) {

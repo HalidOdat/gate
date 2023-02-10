@@ -51,13 +51,17 @@ namespace Gate {
     auto wWidth  = Application::getWindow().getWidth();
     auto wHeight = Application::getWindow().getHeight();
 
-    const auto margin = 3;
+    const auto padding = 1;
 
     if (position.x * mOptimalCellSize >= wWidth) {
-      mOptimalCellSize = wWidth / position.x - margin;
+      mOptimalCellSize = wWidth / position.x - padding;
     }
     if (position.y * mOptimalCellSize >= wHeight) {
-      mOptimalCellSize = wHeight / position.y - margin;
+      mOptimalCellSize = wHeight / position.y - padding;
+    }
+
+    if (mOptimalCellSize < 2) {
+      mOptimalCellSize = 2;
     }
   }
   ConnectionState Chip::getConnectionState(Connection& connection) {
@@ -456,10 +460,6 @@ namespace Gate {
     renderComponentBodys(renderer);
     renderWires(renderer);
     renderComponentConnectors(renderer);
-
-    const auto size = 16;
-    String text = "Name: " + mName;
-    renderer.drawText(text, Vec2{size}, (f32)size, config.text.color);
   }
   void Chip::renderComponentBodys(Renderer2D& renderer) {
     for (auto component : mComponents) {

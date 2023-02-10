@@ -78,12 +78,12 @@ namespace Gate {
   void Board::renderMiniMap(Renderer2D& renderer) {
     auto[x, y, w, h] = calculateMiniMapLocationAndSize();
     if (!mMiniMapFrameBuffer) {
-      u32 width  = 512;
-      u32 height = 512;
+      // u32 width  = 512;
+      // u32 height = 512;
       mMiniMapFrameBuffer = FrameBuffer::builder()
-      .width(width)
-      .height(height)
-      .clearColor(1.0f, 1.0f, 1.0f, 1.0f)
+      // .width(width)
+      // .height(height)
+      .clearColor(0.9f, 0.9f, 0.9f, 1.0f)
       .clear(FrameBuffer::Clear::Color)
       .clearOnBind(true)
       .attach(
@@ -102,20 +102,26 @@ namespace Gate {
       }
       mMiniMapFrameBuffer->bind();
 
+      auto oldSize = config.grid.cell.size;
+      config.grid.cell.size = getCurrentChip().getOptimalCellSize();
       getCurrentChip().render(renderer);
+      config.grid.cell.size = oldSize;
 
       renderer.flush();
       mMiniMapFrameBuffer->unbind();
       mMiniMapTexture = mMiniMapFrameBuffer->getColorAttachment(0);
     }
 
-    // Logger::info("%u %u %u %u", x, y, w, h);
     renderer.drawQuad(Vec2{x, y}, Vec2{w, h}, mMiniMapTexture);
   }
 
   void Board::render(Renderer2D& renderer) {
     renderGrid(renderer);
     getCurrentChip().render(renderer);
+
+    const auto size = 16;
+    String text = "Name: " + getCurrentChip().getName();
+    renderer.drawText(text, Vec2{size}, (f32)size, config.text.color);
   }
 
   void Board::render(Renderer3D& renderer) {
@@ -135,6 +141,35 @@ namespace Gate {
   void Board::pushChip(Chip::Handle chip) {
     mIndex = mChips.size();
     mChips.push_back(std::move(chip));
+  }
+
+  void Board::tick() {
+    getCurrentChip().tick();
+    mMiniMapTexture = nullptr;
+  }
+  bool Board::pushComponent(Component* component) {
+    mMiniMapTexture = nullptr;
+    return getCurrentChip().pushComponent(component);
+  }
+  void Board::removeComponent(Point position) {
+    mMiniMapTexture = nullptr;
+    return getCurrentChip().removeComponent(position);
+  }
+  void Board::removeWire(Point position) {
+    mMiniMapTexture = nullptr;
+    return getCurrentChip().removeWire(position);
+  }
+  WirePushState Board::pushWire(Wire wire) {
+    mMiniMapTexture = nullptr;
+    return getCurrentChip().pushWire(wire);
+  }
+  bool Board::click(Point position) {
+    mMiniMapTexture = nullptr;
+    return getCurrentChip().click(position);
+  }
+  bool Board::click(u32 id) {
+    mMiniMapTexture = nullptr;
+    return getCurrentChip().click(id);
   }
 
 }

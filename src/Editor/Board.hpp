@@ -27,6 +27,14 @@ namespace Gate {
 
     void onResize(u32 width, u32 height);
 
+    void tick();
+    bool pushComponent(Component* component);
+    void removeComponent(Point position);
+    void removeWire(Point position);
+    WirePushState pushWire(Wire wire);
+    bool click(Point position);
+    bool click(u32 id);
+
   private:
     struct MiniMap {
       u32 x;
@@ -51,7 +59,7 @@ namespace Gate {
     Texture::Handle mMiniMapTexture = nullptr;
     FrameBuffer::Handle mMiniMapFrameBuffer = nullptr;
     f32 mMiniMapSpacePercent  = 0.35f;
-    f32 mMiniMapPadding       = 0.20f;
+    f32 mMiniMapPadding       = 0.10f;
   };
 
 }
