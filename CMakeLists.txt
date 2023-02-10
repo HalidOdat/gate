@@ -81,9 +81,6 @@ add_executable(${This}
   src/Renderer/Renderer3D.hpp
   src/Renderer/Renderer3D.cpp
 
-  src/Ui/Ui.hpp
-  src/Ui/Ui.cpp
-
   src/Themes/Settings.hpp
   src/Themes/Settings.cpp
 

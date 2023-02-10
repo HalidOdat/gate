@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Ui/Ui.hpp"
 #include "Window.hpp"
 #include "Core/KeyCode.hpp"
 #include "Events/WindowEvent.hpp"
@@ -45,7 +44,6 @@ namespace Gate {
     
     Renderer2D* mRenderer2D = nullptr;
     Renderer3D* mRenderer3D = nullptr;
-    Ui* ui = nullptr;
     EditorLayer *layer = nullptr;
     f32 lastFrameTime = 0.0f;
 

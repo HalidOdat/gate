@@ -4,10 +4,10 @@ precision highp int;
 struct Material {
   uint  diffuse;
   uint  specular;
-  uint  emission;
   uint  padding0;
   uint  padding1;
   uint  padding2;
+  uint  padding3;
   float shininess;
   float transparency;
 };

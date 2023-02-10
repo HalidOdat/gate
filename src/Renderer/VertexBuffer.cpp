@@ -94,9 +94,8 @@ namespace Gate {
     mSize = inSize;
     return *this;
   }
-  VertexBuffer::Builder& VertexBuffer::Builder::layout(BufferElement::Type type, String name, u32 attributeDivisor) {
-    (void) name;
-    mLayout.push_back({type, /* name, */ attributeDivisor});
+  VertexBuffer::Builder& VertexBuffer::Builder::layout(BufferElement::Type type, u32 attributeDivisor) {
+    mLayout.push_back({type, attributeDivisor});
     return *this;
   }
   VertexBuffer::Builder& VertexBuffer::Builder::storage(Buffer::StorageType type) {

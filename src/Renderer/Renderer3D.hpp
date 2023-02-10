@@ -65,10 +65,10 @@ namespace Gate {
     struct MaterialInternal {
       u32 diffuse;
       u32 specular;
-      u32 emission;
       u32 padding0;
       u32 padding1;
       u32 padding2;
+      u32 padding3;
       f32 shininess;
       f32 transparency;
     };
@@ -108,7 +108,6 @@ namespace Gate {
     struct Environment {
       Texture::Handle defaultDiffuseMap;
       Texture::Handle defaultSpecularMap;
-      Texture::Handle defaultEmissionMap;
     };
   private:
     static constexpr const auto INSTANCE_COUNT       = 512;

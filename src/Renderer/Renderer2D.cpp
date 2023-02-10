@@ -18,12 +18,12 @@ namespace Gate {
     mQuadVertexBuffer = VertexBuffer::builder()
       .size(QUAD_VERTEX_BUFFER_BYTE_SIZE)
       .storage(Buffer::StorageType::Dynamic)
-      .layout(BufferElement::Type::Float2, "position")
-      .layout(BufferElement::Type::Float4, "color")
-      .layout(BufferElement::Type::Float2, "texture")
-      .layout(BufferElement::Type::Uint,   "texIndex")
-      .layout(BufferElement::Type::Uint,   "aEffectMode")
-      .layout(BufferElement::Type::Float2, "aQuadSize")
+      .layout(BufferElement::Type::Float2) // position
+      .layout(BufferElement::Type::Float4) // color
+      .layout(BufferElement::Type::Float2) // texture
+      .layout(BufferElement::Type::Uint)   // texIndex
+      .layout(BufferElement::Type::Uint)   // aEffectMode
+      .layout(BufferElement::Type::Float2) // aQuadSize
       .build();
     mQuadVertexArray->addVertexBuffer(mQuadVertexBuffer);
 
@@ -70,11 +70,11 @@ namespace Gate {
       mCircleVertexBuffer = VertexBuffer::builder()
         .size(CIRCLE_VERTEX_BUFFER_BYTE_SIZE)
         .storage(Buffer::StorageType::Dynamic)
-        .layout(BufferElement::Type::Float2, "aWorldPosition")
-        .layout(BufferElement::Type::Float2, "aLocalPosition")
-        .layout(BufferElement::Type::Float4, "aColor")
-        .layout(BufferElement::Type::Float,  "aThickness")
-        .layout(BufferElement::Type::Float,  "aFade")
+        .layout(BufferElement::Type::Float2) // aWorldPosition
+        .layout(BufferElement::Type::Float2) // aLocalPosition
+        .layout(BufferElement::Type::Float4) // aColor
+        .layout(BufferElement::Type::Float)  // aThickness
+        .layout(BufferElement::Type::Float)  // aFade
         .build();
       mCircleVertexArray->addVertexBuffer(mCircleVertexBuffer);
       mCircleVertexArray->setIndexBuffer(mQuadIndexBuffer); // Use quad index buffer

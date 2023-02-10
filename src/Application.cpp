@@ -66,7 +66,6 @@ namespace Gate {
     #endif
 
     this->mRenderer2D = new Renderer2D();
-    this->ui = new Ui(width, height);
 
     this->window->setEventCallback(
       [this](const Event& event) { this->onEvent(event); }
@@ -85,7 +84,6 @@ namespace Gate {
     if (this->mRenderer3D) {
       delete mRenderer3D;
     }
-    delete this->ui;
 
     Logger::trace("Destroying all materials");
     Material::destroyAll();
@@ -139,10 +137,6 @@ namespace Gate {
     if (!self->mWindowMinimized) {
       self->layer->onUpdate(dt);
 
-      // self->ui->prepareFrame();
-      // self->layer->onUiRender(*self->ui);
-      // self->ui->endFrame();
-
       if (self->mRenderer3D) {
         self->mRenderer3D->waitAndRender();
       }
@@ -176,7 +170,6 @@ namespace Gate {
     event.dispatch(&Application::onWindowCloseEvent, this);
     event.dispatch(&Application::onWindowMinimizedEvent, this);
 
-    this->ui->onEvent(event);
     this->layer->onEvent(event);
   }
 

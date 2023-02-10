@@ -31,11 +31,9 @@ namespace Gate {
     config.activeMaterial = Material::get("Active");
     config.activeMaterial->diffuseMap = Texture::color(0xFF'20'20'FF).build();
     config.activeMaterial->specularMap = Texture::color(0x20'20'20'FF).build();
-    config.activeMaterial->emissionMap = Texture::color(0x00'00'00'FF).build();
     config.inactiveMaterial = Material::get("Inactive");
     config.inactiveMaterial->diffuseMap = Texture::color(0x60'60'60'FF).build();
     config.inactiveMaterial->specularMap = Texture::color(0x40'40'40'FF).build();
-    config.inactiveMaterial->emissionMap = Texture::color(0x00'00'00'FF).build();
 
     auto texture = Texture::load("assets/2D/textures/components.png").build();
     const auto width  = 2048.0f;
@@ -363,14 +361,6 @@ namespace Gate {
   Vec2 EditorLayer::getGridAlignedMousePosition() {
     return gridAlginPosition(mLastMousePosition);
   }
-
-
-  void EditorLayer::onUiRender(Ui& ui) {
-    (void) ui;
-    // ui.beginDock(Ui::Dock::Left, 20.0f);
-    // ui.end();
-  }
-
   void EditorLayer::onEvent(const Event& event) {
     if (mClicked) {
       mPerspectiveCameraController.onEvent(event);
@@ -386,7 +376,6 @@ namespace Gate {
     event.dispatch(&EditorLayer::onMouseButtonReleasedEvent, this);
     event.dispatch(&EditorLayer::onFileDropEvent, this);
   }
-
   void EditorLayer::loadFile(const String& path) {
     auto* content = Utils::fileToString(path.c_str());
     if (!content) {
@@ -409,7 +398,6 @@ namespace Gate {
 
     config.grid.cell.size = mBoard.getCurrentChip().getOptimalCellSize();
   }
-
   bool EditorLayer::onFileDropEvent(const FileDropEvent& event) {
     const auto& paths = event.getPaths();
     if (paths.size() != 1) {
@@ -419,7 +407,6 @@ namespace Gate {
     loadFile(paths[0]);
     return true;
   }
-
   bool EditorLayer::onWindowResizeEvent(const WindowResizeEvent& event) {
     auto[width, height] = event.getSize();
     mEditorCameraController.resize(width, height);
@@ -427,7 +414,6 @@ namespace Gate {
     mBoard.onResize(width, height);
     return false;
   }
-
   bool EditorLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
     (void)event;
     return false;

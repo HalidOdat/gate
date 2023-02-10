@@ -3,6 +3,7 @@
 #include <functional>
 
 #include "Core/Type.hpp"
+#include "Core/KeyCode.hpp"
 #include "Events/Event.hpp"
 
 // Forward declare

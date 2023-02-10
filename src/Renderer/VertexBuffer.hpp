@@ -102,7 +102,7 @@ namespace Gate {
       Builder& data(const void* inData, u32 inSize);
       Builder& data(const Slice<const void> slice);
       Builder& size(u32 inSize);
-      Builder& layout(BufferElement::Type type, String name, u32 attributeDivisor = 0);
+      Builder& layout(BufferElement::Type type, u32 attributeDivisor = 0);
       Builder& storage(Buffer::StorageType type);
       Builder& access(Buffer::AccessType type);
       VertexBuffer::Handle build();

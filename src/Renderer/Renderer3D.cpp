@@ -71,24 +71,15 @@ namespace Gate {
     auto quadVertexArray = VertexArray::create();
     auto quadVertexBuffer = VertexBuffer::builder()
       .data(quadVertices)
-      .layout(BufferElement::Type::Float2, "position")
-      .layout(BufferElement::Type::Float2, "texture")
+      .layout(BufferElement::Type::Float2) // position
+      .layout(BufferElement::Type::Float2) // texture
       .build();
 
     quadVertexArray->addVertexBuffer(quadVertexBuffer);
     quadVertexArray->unbind();
     mPipeline.quadVertexArray = quadVertexArray;
 
-    // mPipeline.skyboxTexture = CubeMap::load({
-    //   "assets/3D/textures/skybox/right.jpg",
-    //   "assets/3D/textures/skybox/left.jpg",
-    //   "assets/3D/textures/skybox/top.jpg",
-    //   "assets/3D/textures/skybox/bottom.jpg",
-    //   "assets/3D/textures/skybox/front.jpg",
-    //   "assets/3D/textures/skybox/back.jpg",
-    // });
     mPipeline.skyboxTexture = CubeMap::load("assets/3D/textures/skybox.hdr");
-
     static const f32 skyboxVertices[] = {
         // positions
         -1.0f,  1.0f, -1.0f,
@@ -136,7 +127,7 @@ namespace Gate {
     auto skyboxVertexArray = VertexArray::create();
     auto skyboxVertexBuffer = VertexBuffer::builder()
       .data(skyboxVertices)
-      .layout(BufferElement::Type::Float3, "position")
+      .layout(BufferElement::Type::Float3) // position
       .build();
     skyboxVertexArray->addVertexBuffer(skyboxVertexBuffer);
     skyboxVertexArray->unbind();
@@ -145,12 +136,6 @@ namespace Gate {
     mPipeline.skyboxShader = Shader::load("assets/3D/shaders/Skybox.glsl")
       .build();
     mPipeline.skyboxShader->bind();
-    mPipeline.skyboxShader->setVec4("uInvalidEntity", Vec4{
-      f32((UINT32_MAX >>  0) & 0xFF) / f32(0xFF),
-      f32((UINT32_MAX >>  8) & 0xFF) / f32(0xFF),
-      f32((UINT32_MAX >> 16) & 0xFF) / f32(0xFF),
-      f32((UINT32_MAX >> 24) & 0xFF) / f32(0xFF),
-    });
 
     mPipeline.shader = Shader::load("assets/3D/shaders/Geometry.glsl")
       .define("MAX_MATERIALS", std::to_string(MAX_MATERIALS))
@@ -161,14 +146,13 @@ namespace Gate {
 
     mEnvironment.defaultDiffuseMap  = Texture::color(0xFF'FF'FF'FF).build();
     mEnvironment.defaultSpecularMap = Texture::color(0x00'00'00'FF).build();
-    mEnvironment.defaultEmissionMap = Texture::color(128, 128, 128).build();
 
     mPipeline.instancedBuffer = VertexBuffer::builder()
       .storage(Buffer::StorageType::Dynamic)
       .size(INSTANCE_BUFFER_SIZE)
-      .layout(BufferElement::Type::Mat4, "aModelMatrix", 1)
-      .layout(BufferElement::Type::Mat3, "aNormalMatrix", 1)
-      .layout(BufferElement::Type::Uint4, "aEntityId", 1)
+      .layout(BufferElement::Type::Mat4, 1) //  aModelMatrix
+      .layout(BufferElement::Type::Mat3, 1) //  aNormalMatrix
+      .layout(BufferElement::Type::Uint4, 1) // aEntityId
       .build();
 
     mPipeline.instancedBasePtr = new Pipeline::Instance[INSTANCE_COUNT];
@@ -221,11 +205,6 @@ namespace Gate {
       mesh->mData.hasInstanced = true;
     }
 
-    // Don't render fully transparent objects
-    if (material->transparency == 0.0f) {
-      return;
-    }
-
     u32 index = (u32)mPipeline.units.size();
     RenderUnit unit {
       transform,
@@ -238,20 +217,11 @@ namespace Gate {
       ),
     };
 
-    // TODO: don't change material
     if (!material->diffuseMap)  material->diffuseMap  = mEnvironment.defaultDiffuseMap;
     if (!material->specularMap) material->specularMap = mEnvironment.defaultSpecularMap;
-    if (!material->emissionMap) material->emissionMap = mEnvironment.defaultEmissionMap;
 
     mPipeline.units.push_back(unit);
-    if (material->transparency >= 1.0f) {
-      mPipeline.opaqueUnits[material][mesh].push_back(index);
-    } else {
-      // Vec3 position = {transform[3][0], transform[3][1], transform[3][2]};
-      // f32 distance = glm::length(position - Vec3(mPipeline.camera.position));
-      // mPipeline.transparentUnitIndices.push_back(std::pair(distance, index));
-      GATE_TODO("Support transparent objects");
-    }
+    mPipeline.opaqueUnits[material][mesh].push_back(index);
   }
 
   void Renderer3D::renderAllUnits() {
@@ -273,9 +243,8 @@ namespace Gate {
     for (auto&[material, meshes] : mPipeline.opaqueUnits) {
       material->diffuseMap->bind(0);
       material->specularMap->bind(1);
-      material->emissionMap->bind(2);
 
-      *mPipeline.materialsBasePtr = {0, 1, 2, 0, 0, 0, material->shininess, material->transparency};
+      *mPipeline.materialsBasePtr = {0, 1, 0, 0, 0, 0, material->shininess, 1.0f};
       mPipeline.materialsUniformBuffer->bind();
       mPipeline.materialsUniformBuffer->set({mPipeline.materialsBasePtr, 1});
 
@@ -309,9 +278,7 @@ namespace Gate {
         drawCalls++;
       }
     }
-
-    // Logger::trace("Draw calls: %d", drawCalls);
-
+  
     mPipeline.units.clear();
     mPipeline.opaqueUnits.clear();
   }
@@ -332,7 +299,6 @@ namespace Gate {
     // First Pass
     mPipeline.frameBuffer->bind();
 
-
     GLenum drawable[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
     glDrawBuffers(1, drawable);
 
@@ -340,7 +306,6 @@ namespace Gate {
 
     glDrawBuffers(2, drawable);
 
-    // 
     glDisable(GL_BLEND);
     Renderer3D::enableDepthTest(true);
     renderAllUnits();
@@ -350,7 +315,6 @@ namespace Gate {
 
     mPipeline.frameBuffer->unbind();
 
-    // glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mPipeline.quadVertexArray->bind();
@@ -359,7 +323,6 @@ namespace Gate {
 
     mPipeline.postProcesingShader->bind();
     mPipeline.postProcesingShader->setInt("uScreenTexture", 0);
-    // mPipeline.postProcesingShader->setInt("uDepthMap", 1);
     mPipeline.quadVertexArray->drawArrays(6);
   }
 

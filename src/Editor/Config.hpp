@@ -57,8 +57,9 @@ namespace Gate {
         BottomLeft,
         TopLeft,
         Center,
+        None,
 
-        Count = Center,
+        Count = None,
       };
 
       Position position = Position::TopRight;

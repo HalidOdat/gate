@@ -35,7 +35,6 @@ namespace Gate {
     void onUpdate(Timestep ts);
     void onUpdate2D(Timestep ts);
     void onUpdate3D(Timestep ts);
-    void onUiRender(Ui& ui);
     void onEvent(const Event& event);
   
     Vec2 gridAlginPosition(Vec2 position);

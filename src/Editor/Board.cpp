@@ -90,6 +90,7 @@ namespace Gate {
         x = wWidth  / 2  - (w - padding) / 2;
         y = wHeight / 2  - (h - padding) / 2;
       } break;
+      case Config::MiniMap::Position::None: break;
     }
     w -= padding;
     h -= padding;
@@ -144,7 +145,9 @@ namespace Gate {
 
   void Board::render(Renderer3D& renderer) {
     getCurrentChip().render(renderer);
-    renderMiniMap(Application::getRenderer2D());
+    if (config.minimap.position != Config::MiniMap::Position::None) {
+      renderMiniMap(Application::getRenderer2D());
+    }
   }
   
   Chip& Board::getCurrentChip() {

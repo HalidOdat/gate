@@ -99,9 +99,9 @@ namespace Gate {
     auto vao = VertexArray::create();
     auto vbo = VertexBuffer::builder()
       .data({vertices.data(), vertices.size()})
-      .layout(BufferElement::Type::Float3, "position")
-      .layout(BufferElement::Type::Float2, "texcoords")
-      .layout(BufferElement::Type::Float3, "normals")
+      .layout(BufferElement::Type::Float3) // position
+      .layout(BufferElement::Type::Float2) // texcoords
+      .layout(BufferElement::Type::Float3) // normals
       .build();
     vao->addVertexBuffer(vbo);
     auto ibo = IndexBuffer::create({indices.data(), indices.size()});
@@ -122,9 +122,9 @@ namespace Gate {
     auto vao = VertexArray::create();
     auto vbo = VertexBuffer::builder()
       .data(vertices)
-      .layout(BufferElement::Type::Float3, "position")
-      .layout(BufferElement::Type::Float2, "texcoords")
-      .layout(BufferElement::Type::Float3, "normals")
+      .layout(BufferElement::Type::Float3) // position
+      .layout(BufferElement::Type::Float2) // texcoords
+      .layout(BufferElement::Type::Float3) // normals
       .build();
     vao->addVertexBuffer(vbo);
     auto ibo = IndexBuffer::create(indices);

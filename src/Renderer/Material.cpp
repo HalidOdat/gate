@@ -89,27 +89,6 @@ namespace Gate {
         material->specularMap = Texture::load(*path->asString())
           .build();
       }
-      if (const auto& texture = node.get("emissionMap"); texture) {
-        if (!texture->isObject()) {
-          return false;
-        }
-        const auto& path = texture->get("path");
-        if (!path || !path->isString()) {
-          return false;
-        }
-        // TODO: decode Texture2D specification
-        material->emissionMap = Texture::load(*path->asString())
-          .build();
-      }
-      if (const auto& transparency = node.get("transparency"); transparency) {
-        if (transparency->isFloat()) {
-          material->transparency = (f32)*transparency->asFloat();
-        } else if (transparency->isInteger()) {
-          material->transparency = (f32)*transparency->asInteger();
-        } else {
-          return false;
-        }
-      }
       if (const auto& shininess = node.get("shininess"); shininess) {
         if (shininess->isFloat()) {
           material->shininess = (f32) *shininess->asFloat();

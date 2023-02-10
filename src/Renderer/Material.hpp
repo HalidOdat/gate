@@ -11,10 +11,6 @@ namespace Gate {
   public:
     using Handle = std::shared_ptr<Material>;
 
-    enum class AlphaMode : u8 {
-      Opaque,
-    };
-
   public:
     static Material::Handle get(const String& name);
     static Material::Handle create(const String& name);
@@ -25,10 +21,7 @@ namespace Gate {
     const String name;
     Texture::Handle diffuseMap;
     Texture::Handle specularMap;
-    Texture::Handle emissionMap;
-    AlphaMode       alphaMode    = AlphaMode::Opaque;
-    f32             shininess    = 32.0f;
-    f32             transparency = 1.0f;
+    f32             shininess = 32.0f;
 
   private:
     static bool initialize();

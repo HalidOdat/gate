@@ -4,12 +4,10 @@
   },
   {
     "name": "Active",
-    "shininess": 32.000000,
-    "transparancy": 1.000000
+    "shininess": 32.000000
   },
   {
     "name": "Inactive",
-    "shininess": 16.000000,
-    "transparancy": 1.000000
+    "shininess": 16.000000
   }
 ]
