@@ -35,6 +35,8 @@ namespace Gate {
     bool click(Point position);
     bool click(u32 id);
 
+    void cycleMiniMapPositions();
+
   private:
     struct MiniMap {
       u32 x;
@@ -58,8 +60,6 @@ namespace Gate {
     // Drawing minimap & caching
     Texture::Handle mMiniMapTexture = nullptr;
     FrameBuffer::Handle mMiniMapFrameBuffer = nullptr;
-    f32 mMiniMapSpacePercent  = 0.40f;
-    f32 mMiniMapPadding       = 0.10f;
   };
 
 }

@@ -58,17 +58,39 @@ namespace Gate {
     auto wWidth  = Application::getWindow().getWidth();
     auto wHeight = Application::getWindow().getHeight();
 
-    u32 w = u32(mMiniMapSpacePercent * wWidth);
-    u32 h = u32(mMiniMapSpacePercent * wHeight);
+    u32 w = u32(config.minimap.spacePercent * wWidth);
+    u32 h = u32(config.minimap.spacePercent * wHeight);
 
     w = w < h ? w : h;
     h = w;
 
-    u32 padding = u32(mMiniMapPadding * w);
+    u32 padding = u32(config.minimap.padding * w);
 
-    u32 x = wWidth - w; //  + padding;
-    u32 y = padding;
+    u32 x;
+    u32 y;
 
+    switch (config.minimap.position) {
+      case Config::MiniMap::Position::TopRight: {
+        x = wWidth - w;
+        y = padding;
+      } break;
+      case Config::MiniMap::Position::BottomRight: {
+        x = wWidth - w;
+        y = wHeight - h;
+      } break;
+      case Config::MiniMap::Position::BottomLeft: {
+        x = padding;
+        y = wHeight - h;
+      } break;
+      case Config::MiniMap::Position::TopLeft: {
+        x = padding;
+        y = padding;
+      } break;
+      case Config::MiniMap::Position::Center: {
+        x = wWidth  / 2  - (w - padding) / 2;
+        y = wHeight / 2  - (h - padding) / 2;
+      } break;
+    }
     w -= padding;
     h -= padding;
 

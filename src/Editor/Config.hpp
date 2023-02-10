@@ -50,11 +50,36 @@ namespace Gate {
       Vec4 color;
     };
 
+    struct MiniMap {
+      enum class Position {
+        TopRight = 0,
+        BottomRight,
+        BottomLeft,
+        TopLeft,
+        Center,
+
+        Count = Center,
+      };
+
+      Position position = Position::TopRight;
+      f32 spacePercent  = 0.40f;
+      f32 padding       = 0.10f;
+
+      inline void cyclePosition() {
+        auto index = u32(position) + 1;
+        if (index > u32(Position::Count)) {
+          index = 0;
+        }
+        position = (Position)index;
+      }
+    };
+
     Selector selector;
     Component component;
     Wire wire;
     Grid grid;
     Text text;
+    MiniMap minimap;
 
     Mesh::Handle pinMesh;
     Mesh::Handle andMesh;

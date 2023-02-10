@@ -218,6 +218,17 @@ namespace Gate {
       }
     }
 
+    if (mRenderMode == RenderMode::_3D) {
+      if (event.getKey() == Key::M) {
+        config.minimap.cyclePosition();
+      } else if (event.getKey() == Key::Comma) {
+        config.minimap.spacePercent -= 0.05f;
+      } else if (event.getKey() == Key::Period) {
+        config.minimap.spacePercent += 0.05f;
+      }
+      config.minimap.spacePercent = glm::clamp(config.minimap.spacePercent, 0.5f, 0.95f);
+    }
+
     #ifndef GATE_PLATFORM_WEB
       if (event.getKey() == Key::Q) {
         Application::get().quit();
