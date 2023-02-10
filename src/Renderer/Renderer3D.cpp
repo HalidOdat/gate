@@ -228,16 +228,6 @@ namespace Gate {
     u32 drawCalls = 0;
 
     mPipeline.shader->bind();
-    mPipeline.shader->setVec3("uLight.position", mPipeline.camera.position);
-    mPipeline.shader->setVec3("uLight.direction", mPipeline.camera.front);
-    mPipeline.shader->setFloat("uLight.cutOff", glm::cos(glm::radians(12.5f)));
-    mPipeline.shader->setFloat("uLight.outerCutOff", glm::cos(glm::radians(17.5f)));
-    mPipeline.shader->setVec3("uLight.ambient",  Vec3(0.3f, 0.3f, 0.3f));
-    mPipeline.shader->setVec3("uLight.diffuse",  Vec3(1.0f, 1.0f, 1.0f));
-    mPipeline.shader->setVec3("uLight.specular", Vec3(1.0f, 1.0f, 1.0f));
-    mPipeline.shader->setFloat("uLight.constant",  1.0f);
-    mPipeline.shader->setFloat("uLight.linear",    0.09f);
-    mPipeline.shader->setFloat("uLight.quadratic", 0.032f);
 
     // Sorted by material
     for (auto&[material, meshes] : mPipeline.opaqueUnits) {

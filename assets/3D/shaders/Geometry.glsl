@@ -12,20 +12,6 @@ struct Material {
   float transparency;
 };
 
-struct Light {
-  vec3  position;
-  vec3  direction;
-  float cutOff;
-  float outerCutOff;
-
-  vec3 ambient;
-  vec3 diffuse;
-  vec3 specular;
-
-  float linear;
-  float quadratic;
-};
-
 @type vertex
 
 layout (location =  0) in vec3 aPosition;
@@ -48,14 +34,11 @@ layout (std140) uniform Materials {
   Material uMaterials[MAX_MATERIALS];
 };
 
-uniform Light uLight;
-
 out vec2 vTexCoords;
 out vec3 vNormal;
 out vec3 vFragmentPosition;
 flat out vec3 vViewPosition;
 flat out Material vMaterial;
-flat out Light vLight;
 
 flat out highp uvec4 vEntityId;
 
@@ -65,7 +48,6 @@ void main() {
   vFragmentPosition = vec3(aModelMatrix * vec4(aPosition, 1.0));
   vViewPosition     = vec3(uCamera.position);
   vMaterial         = uMaterials[0];
-  vLight            = uLight;
   vEntityId         = aEntityId;
 
   gl_Position       = uCamera.projectionViewMatrix * vec4(vFragmentPosition, 1.0);
@@ -82,8 +64,6 @@ in vec3 vNormal;
 in vec3 vFragmentPosition;
 flat in vec3 vViewPosition;
 flat in Material vMaterial;
-flat in Light vLight;
-
 flat in highp uvec4 vEntityId;
 
 uniform sampler2D uTextures[16];
@@ -127,7 +107,6 @@ void main() {
   vec3 viewDir = normalize(vViewPosition - vFragmentPosition);
   vec3 lightDir = normalize(-light_direction);
   vec3 halfwayDir = normalize(lightDir + viewDir);
-
 
   // diffuse shading
   float diff = max(dot(vNormal, lightDir), 0.0f);
