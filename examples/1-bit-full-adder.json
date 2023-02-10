@@ -1,0 +1,135 @@
+{
+  "chips": [
+    {
+      "components": [
+        {
+          "position": [ 3, 3 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 3, 5 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 3, 12 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 4 ],
+          "type": "XorComponent"
+        },
+        {
+          "position": [ 17, 5 ],
+          "type": "XorComponent"
+        },
+        {
+          "position": [ 18, 9 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 23, 10 ],
+          "type": "OrComponent"
+        },
+        {
+          "position": [ 9, 8 ],
+          "type": "AndComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 6, 3 ],
+          "from": [ 4, 3 ]
+        },
+        {
+          "to": [ 8, 3 ],
+          "from": [ 6, 3 ]
+        },
+        {
+          "to": [ 7, 5 ],
+          "from": [ 4, 5 ]
+        },
+        {
+          "to": [ 8, 5 ],
+          "from": [ 7, 5 ]
+        },
+        {
+          "to": [ 14, 4 ],
+          "from": [ 10, 4 ]
+        },
+        {
+          "to": [ 16, 4 ],
+          "from": [ 14, 4 ]
+        },
+        {
+          "to": [ 16, 6 ],
+          "from": [ 15, 6 ]
+        },
+        {
+          "to": [ 7, 7 ],
+          "from": [ 7, 5 ]
+        },
+        {
+          "to": [ 8, 7 ],
+          "from": [ 7, 7 ]
+        },
+        {
+          "to": [ 6, 9 ],
+          "from": [ 6, 3 ]
+        },
+        {
+          "to": [ 8, 9 ],
+          "from": [ 6, 9 ]
+        },
+        {
+          "to": [ 17, 10 ],
+          "from": [ 15, 10 ]
+        },
+        {
+          "to": [ 17, 8 ],
+          "from": [ 14, 8 ]
+        },
+        {
+          "to": [ 14, 8 ],
+          "from": [ 14, 4 ]
+        },
+        {
+          "to": [ 15, 10 ],
+          "from": [ 15, 6 ]
+        },
+        {
+          "to": [ 15, 12 ],
+          "from": [ 15, 10 ]
+        },
+        {
+          "to": [ 15, 12 ],
+          "from": [ 4, 12 ]
+        },
+        {
+          "to": [ 12, 8 ],
+          "from": [ 10, 8 ]
+        },
+        {
+          "to": [ 12, 11 ],
+          "from": [ 12, 8 ]
+        },
+        {
+          "to": [ 22, 11 ],
+          "from": [ 12, 11 ]
+        },
+        {
+          "to": [ 22, 9 ],
+          "from": [ 19, 9 ]
+        },
+        {
+          "to": [ 28, 10 ],
+          "from": [ 24, 10 ]
+        },
+        {
+          "to": [ 28, 5 ],
+          "from": [ 18, 5 ]
+        }
+      ],
+      "name": "chip 0"
+    }
+  ]
+}
