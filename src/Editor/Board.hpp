@@ -58,7 +58,7 @@ namespace Gate {
     // Drawing minimap & caching
     Texture::Handle mMiniMapTexture = nullptr;
     FrameBuffer::Handle mMiniMapFrameBuffer = nullptr;
-    f32 mMiniMapSpacePercent  = 0.35f;
+    f32 mMiniMapSpacePercent  = 0.40f;
     f32 mMiniMapPadding       = 0.10f;
   };
 

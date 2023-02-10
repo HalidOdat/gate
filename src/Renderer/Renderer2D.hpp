@@ -15,6 +15,7 @@ namespace Gate {
       None    = 0,
       Striped = 1,
       Static  = 2,
+      Rounded = 3,
     };
 
   public:
@@ -70,6 +71,7 @@ namespace Gate {
       Vec2 texCoord;
       u32  texIndex;
       u32  mode;
+      Vec2 quadSize;
     };
 
     struct CircleVertex {

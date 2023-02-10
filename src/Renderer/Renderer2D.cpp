@@ -21,8 +21,9 @@ namespace Gate {
       .layout(BufferElement::Type::Float2, "position")
       .layout(BufferElement::Type::Float4, "color")
       .layout(BufferElement::Type::Float2, "texture")
-      .layout(BufferElement::Type::Uint, "texIndex")
-      .layout(BufferElement::Type::Uint, "aMode")
+      .layout(BufferElement::Type::Uint,   "texIndex")
+      .layout(BufferElement::Type::Uint,   "aEffectMode")
+      .layout(BufferElement::Type::Float2, "aQuadSize")
       .build();
     mQuadVertexArray->addVertexBuffer(mQuadVertexBuffer);
 
@@ -160,10 +161,10 @@ namespace Gate {
     }
 
     Vec4 tc = mFontCoords[(usize)(c - ' ')];
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {tc.z, tc.w}, index, effect.toIndex() }; // top-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {tc.z, tc.y}, index, effect.toIndex() }; // bottom-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {tc.x, tc.y}, index, effect.toIndex() }; // bottom-left
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {tc.x, tc.w}, index, effect.toIndex() }; // top-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {tc.z, tc.w}, index, effect.toIndex(), size}; // top-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {tc.z, tc.y}, index, effect.toIndex(), size}; // bottom-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {tc.x, tc.y}, index, effect.toIndex(), size}; // bottom-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {tc.x, tc.w}, index, effect.toIndex(), size}; // top-left
 
     mQuadCount++;
   }
@@ -229,10 +230,10 @@ namespace Gate {
     const auto from = texture.getFrom();
     const auto to = texture.getTo();
 
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {to.x,     to.y}, index, effect.toIndex() }; // top-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {to.x,   from.y}, index, effect.toIndex() }; // bottom-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {from.x, from.y}, index, effect.toIndex() }; // bottom-left
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {from.x,   to.y}, index, effect.toIndex() }; // top-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {to.x,     to.y}, index, effect.toIndex(), size}; // top-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {to.x,   from.y}, index, effect.toIndex(), size}; // bottom-right
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {from.x, from.y}, index, effect.toIndex(), size}; // bottom-left
+    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {from.x,   to.y}, index, effect.toIndex(), size}; // top-left
 
     mQuadCount++;
   }

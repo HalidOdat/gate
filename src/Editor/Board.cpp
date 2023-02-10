@@ -78,11 +78,7 @@ namespace Gate {
   void Board::renderMiniMap(Renderer2D& renderer) {
     auto[x, y, w, h] = calculateMiniMapLocationAndSize();
     if (!mMiniMapFrameBuffer) {
-      // u32 width  = 512;
-      // u32 height = 512;
       mMiniMapFrameBuffer = FrameBuffer::builder()
-      // .width(width)
-      // .height(height)
       .clearColor(0.9f, 0.9f, 0.9f, 1.0f)
       .clear(FrameBuffer::Clear::Color)
       .clearOnBind(true)
@@ -112,7 +108,7 @@ namespace Gate {
       mMiniMapTexture = mMiniMapFrameBuffer->getColorAttachment(0);
     }
 
-    renderer.drawQuad(Vec2{x, y}, Vec2{w, h}, mMiniMapTexture);
+    renderer.drawQuad(Vec2{x, y}, Vec2{w, h}, mMiniMapTexture, Color::WHITE, Effect::Type::Rounded);
   }
 
   void Board::render(Renderer2D& renderer) {

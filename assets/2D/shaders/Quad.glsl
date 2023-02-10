@@ -4,18 +4,21 @@ layout (location = 0) in vec2 aPosition;
 layout (location = 1) in vec4 aColor;
 layout (location = 2) in vec2 aTexCoord;
 layout (location = 3) in uint aTexIndex;
-layout (location = 4) in uint aMode;
+layout (location = 4) in uint aEffectMode;
+layout (location = 5) in vec2 aQuadSize;
 
 out vec4 vColor;
 out vec2 vTexCoord;
 flat out uint vTexIndex;
-flat out uint vMode;
+flat out uint vEffectMode;
+flat out vec2 vQuadSize;
 
 void main() {
    vColor      = aColor;
    vTexCoord   = aTexCoord;
    vTexIndex   = aTexIndex;
-   vMode       = aMode;
+   vEffectMode = aEffectMode;
+   vQuadSize   = aQuadSize;
    gl_Position = vec4(aPosition, 0.0f, 1.0f);
 }
 
@@ -28,12 +31,38 @@ out vec4 vFragColor;
 in vec4 vColor;
 in vec2 vTexCoord;
 flat in uint vTexIndex;
-flat in uint vMode;
+flat in uint vEffectMode;
+flat in vec2 vQuadSize;
 
 uniform sampler2D uTextures[16];
 
 uniform float uTime;
 uniform vec2  uResolution;
+
+vec4 getTextureColor() {
+  // Reason for the switch cases: 
+  // https://stackoverflow.com/questions/72648980/opengl-sampler2d-array
+  vec4 color;
+  switch (vTexIndex) {
+    case  0u: color = texture(uTextures[ 0], vTexCoord); break;
+    case  1u: color = texture(uTextures[ 1], vTexCoord); break;
+    case  2u: color = texture(uTextures[ 2], vTexCoord); break;
+    case  3u: color = texture(uTextures[ 3], vTexCoord); break;
+    case  4u: color = texture(uTextures[ 4], vTexCoord); break;
+    case  5u: color = texture(uTextures[ 5], vTexCoord); break;
+    case  6u: color = texture(uTextures[ 6], vTexCoord); break;
+    case  7u: color = texture(uTextures[ 7], vTexCoord); break;
+    case  8u: color = texture(uTextures[ 8], vTexCoord); break;
+    case  9u: color = texture(uTextures[ 9], vTexCoord); break;
+    case 10u: color = texture(uTextures[10], vTexCoord); break;
+    case 11u: color = texture(uTextures[11], vTexCoord); break;
+    case 12u: color = texture(uTextures[12], vTexCoord); break;
+    case 13u: color = texture(uTextures[13], vTexCoord); break;
+    case 14u: color = texture(uTextures[14], vTexCoord); break;
+    case 15u: color = texture(uTextures[15], vTexCoord); break;
+  }
+  return color;
+}
 
 void effect_striped(out vec4 fragColor) {
   vec2 frag_uv = gl_FragCoord.xy / uResolution;
@@ -54,8 +83,8 @@ void effect_striped(out vec4 fragColor) {
 }
 
 
-float Noise21 (vec2 p, float ta, float tb) {
-    return fract(sin(p.x*ta+p.y*tb)*5678.);
+float Noise21(vec2 p, float ta, float tb) {
+   return fract(sin(p.x * ta + p.y * tb) * 5678.0f);
 }
 
 void effect_staticNoise(out vec4 fragColor) {
@@ -71,39 +100,41 @@ void effect_staticNoise(out vec4 fragColor) {
   fragColor = vec4(color, 1.0f);
 }
 
-void main() {
-   // Reason for the switch cases: 
-   // https://stackoverflow.com/questions/72648980/opengl-sampler2d-array
-   vec4 color;
-   switch (vTexIndex) {
-      case  0u: color = texture(uTextures[ 0], vTexCoord); break;
-      case  1u: color = texture(uTextures[ 1], vTexCoord); break;
-      case  2u: color = texture(uTextures[ 2], vTexCoord); break;
-      case  3u: color = texture(uTextures[ 3], vTexCoord); break;
-      case  4u: color = texture(uTextures[ 4], vTexCoord); break;
-      case  5u: color = texture(uTextures[ 5], vTexCoord); break;
-      case  6u: color = texture(uTextures[ 6], vTexCoord); break;
-      case  7u: color = texture(uTextures[ 7], vTexCoord); break;
-      case  8u: color = texture(uTextures[ 8], vTexCoord); break;
-      case  9u: color = texture(uTextures[ 9], vTexCoord); break;
-      case 10u: color = texture(uTextures[10], vTexCoord); break;
-      case 11u: color = texture(uTextures[11], vTexCoord); break;
-      case 12u: color = texture(uTextures[12], vTexCoord); break;
-      case 13u: color = texture(uTextures[13], vTexCoord); break;
-      case 14u: color = texture(uTextures[14], vTexCoord); break;
-      case 15u: color = texture(uTextures[15], vTexCoord); break;
-   }
 
+float RectSDF(vec2 p, vec2 b, float r) {
+   vec2 d = abs(p) - b + vec2(r);
+   return min(max(d.x, d.y), 0.0f) + length(max(d, 0.0f)) - r;
+}
+
+void effect_roundedCorners(out vec4 fragColor) {
+   const float borderThickness = 3.0f;
+   const vec4  borderColor = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+   const float radius = 12.0f;
+
+   vec2 pos = vQuadSize * vTexCoord;
+        
+   float dist = RectSDF(pos - vQuadSize / 2.0f, vQuadSize / 2.0f - borderThickness / 2.0f - 1.0f, radius);
+   float blendAmount = smoothstep(-1.0f, 1.0f, abs(dist) - borderThickness / 2.0f);
+
+   vec4 fromColor = borderColor;
+   vec4 toColor = (dist < 0.0f) ? getTextureColor() : vec4(0.0f);
+   fragColor = mix(fromColor, toColor, blendAmount);
+}
+
+void main() {
    vFragColor = vec4(1.0f, 0.0f, 1.0f, 1.0f);
-   switch (vMode) {
+   switch (vEffectMode) {
       case 0u: {
-         vFragColor = color * vColor;
+         vFragColor = vColor * getTextureColor();
       } break;
       case 1u: {
          effect_striped(vFragColor);
       } break;
       case 2u: {
         effect_staticNoise(vFragColor);
+      } break;
+      case 3u: {
+        effect_roundedCorners(vFragColor);
       } break;
    }
 }
