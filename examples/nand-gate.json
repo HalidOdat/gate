@@ -1,0 +1,1 @@
+{"chips":[{"components":[{"position":[3,3],"type":"SwitchComponent"},{"position":[3,5],"type":"SwitchComponent"},{"position":[7,4],"type":"AndComponent"},{"position":[10,4],"type":"NotComponent"}],"wires":[{"to":[6,3],"from":[4,3]},{"to":[6,5],"from":[4,5]},{"to":[9,4],"from":[8,4]},{"to":[15,4],"from":[11,4]}],"name":"chip 0"}]}
