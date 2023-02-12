@@ -3,13 +3,46 @@
 This project uses [`cmake`](https://cmake.org/download/) for project building
 so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
 
-## Quick start
+## Web Demo
 
-```console
-$ cmake . -B build
-$ cmake --build build
-$ ./build/gate
+The latest deployed wasm builds are awailable on: <https://halidodat.github.io/gate/>
+
+## Compiling to native build
+
+Cloning the repository must be done recursively to get the dependecies.
+
+```bash
+git clone --recursive https://www.github.com/HalidOdat/gate.git
 ```
+
+### Building though the terminal
+
+Building the project, In the terminal type to configure `CMake`
+```bash
+cmake . -DCMAKE_BUILD_TYPE=Release -B build
+```
+
+To build you can either open the solution file with visual studio if you are on Windows,
+Or use the command line to build it on windows and linux with:
+```bash
+cmake --build build --config Release
+```
+
+**NOTE**: Executing the program must be done in the same place that the assets directory is located.
+
+On Linux:
+```bash
+./build/gate
+```
+
+On Windows:
+```bash
+./build/gate.exe
+```
+
+### Building though an IDE
+
+Open directory where the root `CMakeLists.txt` is located with _Visual Studio_ (with the cpp development package installed) on Windows or _Visual Studio Code_ (with the cmake extensions) and build the project.
 
 ## Compiling to Wasm
 
