@@ -4,7 +4,6 @@
 
 namespace Gate {
 
-  // TODO: Support indices of different types, like unsigned short
   class IndexBuffer {
   public:
     using Handle = std::shared_ptr<IndexBuffer>;

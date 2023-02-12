@@ -28,9 +28,18 @@ out vec4 vFragmentColor;
 in vec2 vTexCoords;
 uniform sampler2D uScreenTexture;
 
-void main() {
-  vec3 color = vec3(texture(uScreenTexture, vTexCoords));
+vec3 texture2DAA(sampler2D tex, vec2 uv) {
+  vec2 texsize = vec2(textureSize(tex, 0));
+  vec2 uv_texspace = uv * texsize;
+  vec2 seam = floor(uv_texspace + 0.5f);
+  uv_texspace = (uv_texspace - seam) / fwidth(uv_texspace) + seam;
+  uv_texspace = clamp(uv_texspace, seam - 0.5f, seam + 0.5f);
+  return vec3(texture(tex, uv_texspace / texsize));
+}
 
+void main() {
+  vec3 color = texture2DAA(uScreenTexture, vTexCoords);
+  
   // submit final color
   vFragmentColor = vec4(color, 1.0f);
 }

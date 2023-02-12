@@ -205,7 +205,7 @@ namespace Gate {
       }
     #endif
 
-    if (event.getKey() == Key::_3) {
+    if (event.getKey() == Key::R) {
       switch (mRenderMode) {
         case RenderMode::_2D:
           mRenderMode = RenderMode::_3D;

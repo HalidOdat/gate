@@ -34,7 +34,7 @@ namespace Gate {
 
     private:
       StringView mFilePath;
-      #if 1
+      #ifdef GATE_PLATFORM_WEB
         Version mVersion = Version::Es300;
       #else
         Version mVersion = Version::Core330;
