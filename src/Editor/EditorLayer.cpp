@@ -366,11 +366,14 @@ namespace Gate {
     return gridAlginPosition(mLastMousePosition);
   }
   void EditorLayer::onEvent(const Event& event) {
-    if (mClicked) {
-      mPerspectiveCameraController.onEvent(event);
-    } else {
-      mPerspectiveCameraController.resetLastPosition();
+    if (mRenderMode == RenderMode::_3D) {
+      if (mClicked) {
+        mPerspectiveCameraController.onEvent(event);
+      } else {
+        mPerspectiveCameraController.resetLastPosition();
+      }
     }
+    
 
     event.dispatch(&EditorLayer::onWindowResizeEvent, this);
     event.dispatch(&EditorLayer::onKeyPressedEvent, this);

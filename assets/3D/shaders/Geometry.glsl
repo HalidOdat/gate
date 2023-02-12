@@ -55,10 +55,6 @@ void main() {
 
 @type fragment
 
-#if !GL_ES
-  layout(early_fragment_tests) in;
-#endif
-
 in vec2 vTexCoords;
 in vec3 vNormal;
 in vec3 vFragmentPosition;

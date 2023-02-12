@@ -132,9 +132,6 @@ else()
       -Wall -Wextra -pedantic               # Enable very useful warnings
       -fno-exceptions                       # Disable exceptions
       -fno-rtti                             # Disable runtime type information (dynamic_cast)
-      $<$<CONFIG:Debug>:-fsanitize=address>
-      $<$<CONFIG:Debug>:-fsanitize=undefined>
-      $<$<CONFIG:Debug>:-fsanitize=null>
       # $<$<AND:$<CONFIG:Debug>,$<WEB:>>:-Og>
       $<$<CONFIG:Release>:-Os>
       $<$<CONFIG:MinSizeRel>:-Oz>
@@ -143,13 +140,24 @@ else()
     PRIVATE
       -fno-exceptions
       -fno-rtti
-      $<$<CONFIG:Debug>:-fsanitize=address>
-      $<$<CONFIG:Debug>:-fsanitize=undefined>
-      $<$<CONFIG:Debug>:-fsanitize=null>
       # $<$<CONFIG:Debug>:-Og>
       $<$<CONFIG:Release>:-Os>
       $<$<CONFIG:MinSizeRel>:-Oz>
   )
+  if (GATE_SANITIZER)
+    target_compile_options(${This}
+      PRIVATE
+        -fsanitize=address
+        -fsanitize=undefined
+        -fsanitize=null
+    )
+    target_link_options(${This}
+      PRIVATE
+        -fsanitize=address
+        -fsanitize=undefined
+        -fsanitize=null
+    )
+  endif()
 endif()
 
 if (DEFINED WEB)
