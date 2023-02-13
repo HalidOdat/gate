@@ -5,6 +5,10 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
 
 ## Web Demo
 
+4-bit Full Adder demo:
+
+![4-bit full adder demo](./screenshots/4-bit-adder-demo.gif)
+
 The latest deployed wasm builds are awailable on: <https://halidodat.github.io/gate/>
 
 ## Compiling to native build
