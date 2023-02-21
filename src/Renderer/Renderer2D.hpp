@@ -132,12 +132,7 @@ namespace Gate {
     u32 mCircleCount = 0;
 
     // Font rendering
-    Texture::Handle mFontTexture;
-    u32 mFontTextureWidth;
-    u32 mFontTextureHeight;
-    u32 mFontCharacterWidth;
-    u32 mFontCharacterHeight;
-    std::array<Vec4, 96> mFontCoords;
+    TextureAtlas mFontAtlas;
   };
 
 } // namespace Gate

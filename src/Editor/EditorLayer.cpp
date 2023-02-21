@@ -36,14 +36,11 @@ namespace Gate {
     config.inactiveMaterial->specularMap = Texture::color(0x40'40'40'FF).build();
 
     auto texture = Texture::load("assets/2D/textures/components.png").build();
-    const auto width  = 2048.0f;
-    // const auto height = 2048.0f;
-    const auto grid   = 512.0f;
-    const auto ratio  = grid / width;
-    config.andGate = SubTexture(texture, {ratio * 0.0f, ratio * 3.0f}, { ratio * 1.0f, ratio * 4.0f});
-    config.orGate  = SubTexture(texture, {ratio * 1.0f, ratio * 3.0f}, { ratio * 2.0f, ratio * 4.0f});
-    config.xorGate = SubTexture(texture, {ratio * 2.0f, ratio * 3.0f}, { ratio * 3.0f, ratio * 4.0f});
-    config.notGate = SubTexture(texture, {ratio * 3.0f, ratio * 3.0f}, { ratio * 4.0f, ratio * 4.0f});
+    auto atlas = TextureAtlas(texture, 512);
+    config.andGate = atlas.get(0);
+    config.orGate  = atlas.get(1);
+    config.xorGate = atlas.get(2);
+    config.notGate = atlas.get(3);
   }
   EditorLayer::~EditorLayer() {
     config.pinMesh = nullptr;

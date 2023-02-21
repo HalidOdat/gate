@@ -203,6 +203,23 @@ namespace Gate {
     Texture::Handle mTexture;
   };
 
+  class TextureAtlas {
+  public:
+    TextureAtlas() = default;
+    TextureAtlas(const Texture::Handle& texture, u32 cellSize);
+    TextureAtlas(const Texture::Handle& texture, u32 cellWidth, u32 cellHeight);
+
+    SubTexture get(u32 index);
+
+  private:
+    Texture::Handle mTexture = nullptr;
+    u32 mCellWidth{};
+    u32 mCellHeight{};
+
+    u32 mRowCellCount{};
+    u32 mColumnCellCount{};
+  };
+
   class CubeMap {
     friend class Application;
   public:
