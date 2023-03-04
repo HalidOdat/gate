@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Gate {
-  
+
   void Wire::render(Renderer2D& renderer) {
     f32 width = config.wire.width * config.grid.cell.size;
 

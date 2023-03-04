@@ -5,6 +5,8 @@
 
 #include "Core/OpenGL.hpp"
 
+#include "Editor/Wire.hpp"
+
 namespace Gate {
 
   Board::Board() {
@@ -28,6 +30,25 @@ namespace Gate {
     mMiniMapFrameBuffer = nullptr;
   }
 
+  void renderGridCenteredQuad(Renderer2D& renderer, Point from, Point to, Vec4 color = Color::BLACK) {
+    f32 width = 8;
+
+    Vec2 size = (to.toVec2() - from.toVec2()) * (f32)config.grid.cell.size;
+    if (from.x == to.x) {
+      size.x  = width;
+      size.y += width;
+    } else {
+      size.x += width;
+      size.y  = width;
+    }
+
+    renderer.drawQuad(
+      from.toVec2() * (f32)config.grid.cell.size - Vec2(width / 2.0f),
+      size,
+      color
+    );
+  }
+
   void Board::renderGrid(Renderer2D& renderer) {
     auto width  = Application::getWindow().getWidth();
     auto height = Application::getWindow().getHeight();
@@ -41,11 +62,22 @@ namespace Gate {
       }
       mGridFrameBuffer->bind();
       renderer.clearScreen(config.grid.background);
-      for (u32 i = 0; i < width; i += config.grid.cell.size) {
-        for (u32 j = 0; j < height; j += config.grid.cell.size) {
+
+      // Draw dotted grid
+      for (u32 i = config.grid.cell.size; i < width - config.grid.cell.size; i += config.grid.cell.size) {
+        for (u32 j = config.grid.cell.size * 2; j < height - config.grid.cell.size; j += config.grid.cell.size) {
           renderer.drawCenteredQuad({i, j}, Vec2{0.08f} * (f32)config.grid.cell.size, config.grid.color);
         }
       }
+
+      // Draw boarders
+      const auto xUnits = width / config.grid.cell.size;
+      const auto yUnits = height / config.grid.cell.size;
+      renderGridCenteredQuad(renderer, {1, 2}, {xUnits - 1, 2});
+      renderGridCenteredQuad(renderer, {1, 2}, {1, yUnits - 1});
+      renderGridCenteredQuad(renderer, {xUnits - 1, 2}, {xUnits - 1, yUnits - 1});
+      renderGridCenteredQuad(renderer, {1, yUnits - 1}, {xUnits - 1, yUnits - 1});
+
       renderer.flush();
       mGridFrameBuffer->unbind();
       mGridTexture = mGridFrameBuffer->getColorAttachment(0);
