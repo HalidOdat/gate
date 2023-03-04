@@ -225,6 +225,14 @@ namespace Gate {
     return getCurrentChip().click(id);
   }
 
+  bool Board::isValidPosition(Point point) {
+    const auto wWidth  = Application::getWindow().getWidth();
+    const auto wHeight = Application::getWindow().getHeight();
+    const auto xUnits = wWidth  / config.grid.cell.size;
+    const auto yUnits = wHeight / config.grid.cell.size;
+    return point.x >= 1 && point.x <= (xUnits - 1) && point.y >= 2 && point.y <= (yUnits - 1);
+  }
+
 }
 
 namespace Gate::Serializer {

@@ -324,10 +324,10 @@ namespace Gate {
 
     switch (mMode) {
       case Mode::Select:
-        mSelectorPosition = gridPosition;
+        setSelectorPosition(gridPosition);
         break;
       case Mode::Remove: {
-        mSelectorPosition = gridPosition;
+        setSelectorPosition(gridPosition);
         if (mClicked) {
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
           mBoard.removeWire(mousePosition);
@@ -345,7 +345,7 @@ namespace Gate {
         }
       }  break;
       case Mode::AddComponent:
-        mSelectorPosition = gridPosition;
+        setSelectorPosition(gridPosition);
         break;
     }
     mLastMousePosition = event.toVec2();
@@ -361,6 +361,11 @@ namespace Gate {
   }
   Vec2 EditorLayer::getGridAlignedMousePosition() {
     return gridAlginPosition(mLastMousePosition);
+  }
+  void EditorLayer::setSelectorPosition(Vec2 position) {
+    if (mBoard.isValidPosition(Point(position / (f32)config.grid.cell.size))) {
+      mSelectorPosition = position;
+    }
   }
   void EditorLayer::onEvent(const Event& event) {
     if (mRenderMode == RenderMode::_3D) {

@@ -37,6 +37,8 @@ namespace Gate {
 
     void cycleMiniMapPositions();
 
+    bool isValidPosition(Point point);
+
   private:
     struct MiniMap {
       u32 x;

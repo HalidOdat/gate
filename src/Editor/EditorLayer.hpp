@@ -43,6 +43,8 @@ namespace Gate {
     void loadFile(const String& path);
 
   private:
+    void setSelectorPosition(Vec2 position);
+
     bool onWindowResizeEvent(const WindowResizeEvent& event);
     bool onKeyPressedEvent(const KeyPressedEvent& event);
     bool onMouseScrollEvent(const MouseScrollEvent& event);
