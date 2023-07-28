@@ -5,7 +5,7 @@
 namespace Gate {
 
   AndComponent::AndComponent(Point position)
-    : Component(Component::Category::Gate, position)
+    : Component(Component::Category::Gate, Type::AndGate, position)
   {
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y - 1}});
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y + 1}});

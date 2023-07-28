@@ -5,7 +5,7 @@
 namespace Gate {
 
   XorComponent::XorComponent(Point position)
-    : Component(Component::Category::Gate, position)
+    : Component(Component::Category::Gate, Type::XorGate, position)
   {
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y - 1}});
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y + 1}});

@@ -7,6 +7,8 @@
 #include "Editor/Pin.hpp"
 #include "Serializer/Serializer.hpp"
 
+class Component;
+
 namespace Gate {
 
 #define GATE_COMPONENT_IMPLEMENTATION(name)               \
@@ -18,13 +20,26 @@ namespace Gate {
     node["position"] = Convert<Point>::encode(mPosition); \
     return node;                                          \
   }
-  
+
+  struct ComponentBehaviour {
+    typedef void (*ClickFn)(Component&);
+  };
+
 
   class Component {
   public:
     enum class Category {
       Input,
       Gate,
+    };
+
+    enum class Type {
+      Switch,
+
+      AndGate,
+      OrGate,
+      XorGate,
+      NotGate,
     };
 
   public:
@@ -56,12 +71,14 @@ namespace Gate {
     static Component* decode(const Serializer::Node& node);
 
   protected:
-    Component(Category category, Point position)
-      : mCategory{category}, mPosition{position}
+    Component(Category category, Type type, Point position)
+      : mCategory{category}, mType{type}, mPosition{position}
     {}
 
   protected:
     Category mCategory;
+    Type mType;
+
     Point mPosition;
     std::vector<Pin> mInputPins;
     std::vector<Pin> mOutputPins;

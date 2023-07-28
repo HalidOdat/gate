@@ -5,7 +5,7 @@
 namespace Gate {
 
   NotComponent::NotComponent(Point position)
-    : Component(Component::Category::Gate, position)
+    : Component(Component::Category::Gate, Type::NotGate, position)
   {
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y}});
     this->mOutputPins.push_back(Pin{Point{position.x + 1, position.y}});
