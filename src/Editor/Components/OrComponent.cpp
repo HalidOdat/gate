@@ -5,7 +5,7 @@
 namespace Gate {
 
   OrComponent::OrComponent(Point position)
-    : Component(Component::Category::Gate, Type::OrGate, position)
+     : Component(Component::Category::Gate, Type::OrGate, position)
   {
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y - 1}});
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y + 1}});

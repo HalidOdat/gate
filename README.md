@@ -54,9 +54,9 @@ Before being able to compile to you must have the [Emscripten SDK][emscripten] i
 and sourced (as described in the link).
 
 ```console
-$ emcmake cmake . -B build_web
-$ cmake --build build_web
-$ cp web/index.html build_web
+$ emcmake cmake . -B build-web
+$ cmake --build build-web
+$ cp web/index.html build-web
 ```
 
 ### Start a server
@@ -65,7 +65,7 @@ To be able to use the web version you need to start a server.
 You can use `python`'s web server module.
 
 ```bash
-python -m http.server -d build_web
+python -m http.server -d build-web
 ```
 
 Or upload it to a server.
