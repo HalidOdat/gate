@@ -142,6 +142,8 @@ namespace Gate {
             mMode = Mode::AddComponent;
           } else if (event.getKey() == Key::D) {
             mMode = Mode::Remove;
+          } else if (event.getKey() == Key::N) {
+            mBoard.pushChip(Chip::create());
           }
           break;
         case Mode::Remove: {
@@ -424,7 +426,12 @@ namespace Gate {
     return false;
   }
   bool EditorLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
-    (void)event;
+    const auto x = event.getYOffset();
+    if (x < 0) {
+      mBoard.moveCurrentChipDown();
+    } else {
+      mBoard.moveCurrentChipUp();
+    }
     return false;
   }
 

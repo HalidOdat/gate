@@ -181,6 +181,25 @@ namespace Gate {
       renderMiniMap(Application::getRenderer2D());
     }
   }
+
+  void Board::moveCurrentChipDown() {
+    const auto last_element = mChips.size() - 1;
+    if (mIndex == 0) {
+      mIndex = last_element;
+      return;
+    }
+
+    mIndex--;
+  }
+  void Board::moveCurrentChipUp() {
+    const auto last_element = mChips.size() - 1;
+    if (mIndex == last_element) {
+      mIndex = 0;
+      return;
+    }
+
+    mIndex++;
+  }
   
   Chip& Board::getCurrentChip() {
     if (mChips.size() == 0) {

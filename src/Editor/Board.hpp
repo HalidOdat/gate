@@ -20,6 +20,9 @@ namespace Gate {
     
     void pushChip(Chip::Handle chip);
 
+    void moveCurrentChipDown();
+    void moveCurrentChipUp();
+
     Chip& getCurrentChip();
     
     std::vector<Chip::Handle>& getChips() { return mChips; }
