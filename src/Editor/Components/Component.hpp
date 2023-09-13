@@ -21,11 +21,6 @@ namespace Gate {
     return node;                                          \
   }
 
-  struct ComponentBehaviour {
-    typedef void (*ClickFn)(Component&);
-  };
-
-
   class Component {
   public:
     enum class Category {
@@ -55,6 +50,8 @@ namespace Gate {
     void resetVisited();
 
     inline Category getCategory() const { return mCategory; }
+
+    Mat4 computeModel(f32 size) const;
 
   public:
     virtual ~Component();

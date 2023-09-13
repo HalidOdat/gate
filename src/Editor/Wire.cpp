@@ -56,7 +56,7 @@ namespace Gate {
 
     // TODO: move to constructor
     Vec3 scale = Vec3{wireWidth};
-    Vec3 offset = Vec3{0, 0, 0};
+    Vec3 offset = Vec3{0, 0, config._3dZOffset};
     i32 cellDistance = 1;
     if (from.x == to.x && from.y == to.y) {
       if (from.z > to.z) {

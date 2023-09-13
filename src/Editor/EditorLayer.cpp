@@ -426,10 +426,15 @@ namespace Gate {
     return false;
   }
   bool EditorLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
+    if (mRenderMode == RenderMode::_3D) {
+      mBoard.invalidateMiniMap(Application::getRenderer2D());
+    }
     const auto x = event.getYOffset();
     if (x < 0) {
+      config._3dZOffset += 0.5f;
       mBoard.moveCurrentChipDown();
     } else {
+      config._3dZOffset -= 0.5f;
       mBoard.moveCurrentChipUp();
     }
     return false;

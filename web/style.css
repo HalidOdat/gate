@@ -1,8 +1,7 @@
-html,
-body {
+html, body {
     font-family: arial;
     margin: 0;
-    padding: none;
+    padding: 0;
 }
 
 .emscripten {

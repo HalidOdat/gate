@@ -39,6 +39,7 @@ namespace Gate {
     bool click(u32 id);
 
     void cycleMiniMapPositions();
+    void invalidateMiniMap(Renderer2D& renderer);
 
     bool isValidPosition(Point point);
 

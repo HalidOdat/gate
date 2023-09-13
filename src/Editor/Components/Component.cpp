@@ -10,6 +10,15 @@ namespace Gate {
 
   Component::~Component() {}
 
+  Mat4 Component::computeModel(f32 size) const {
+    Vec3 position = mPosition.toVec3() * config.grid.cell.size3d * Vec3{1.0f, -1.0f, 0.0f} + Vec3{0.0f, 0.0f, config._3dZOffset};
+    Mat4 model = glm::translate(Mat4{1.0f}, position);
+
+    size = config.grid.cell.size3d * size;
+    model = glm::scale(model, Vec3(size));
+    return model;
+  }
+
   void Component::renderConnectors(Renderer2D& renderer) {
     // TODO: Show when outputs and inputs are active
     for (auto& pin : mInputPins) {

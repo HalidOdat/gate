@@ -130,6 +130,15 @@ namespace Gate {
     return {x, y, w, h};
   }
 
+  void Board::invalidateMiniMap(Renderer2D& renderer) {
+    if (config.minimap.position == Config::MiniMap::Position::None) {
+      return;
+    }
+    mMiniMapFrameBuffer = nullptr;
+    mMiniMapTexture = nullptr;
+    renderMiniMap(renderer);
+  }
+
   void Board::renderMiniMap(Renderer2D& renderer) {
     auto[x, y, w, h] = calculateMiniMapLocationAndSize();
     if (!mMiniMapFrameBuffer) {
@@ -176,7 +185,18 @@ namespace Gate {
   }
 
   void Board::render(Renderer3D& renderer) {
-    getCurrentChip().render(renderer);
+    for (usize i = 0; i < mChips.size(); ++i) {
+      if (mIndex == i) {
+        continue;
+      }
+
+      config._3dZOffset = f32(i + 1) * config.grid.cell.size3d * 10.0f;
+      mChips[i]->render(renderer);
+    }
+
+    config._3dZOffset = 0.0f;
+    mChips[mIndex]->render(renderer);
+
     if (config.minimap.position != Config::MiniMap::Position::None) {
       renderMiniMap(Application::getRenderer2D());
     }

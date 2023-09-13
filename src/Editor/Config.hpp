@@ -36,9 +36,9 @@ namespace Gate {
 
     struct Grid {
       struct Cell {
-        u32 size = 25;
+        u32 size = 24;
 
-        f32 size3d = 1.0f;
+        f32 size3d = 0.8f;
       };
 
       Cell cell;
@@ -63,7 +63,7 @@ namespace Gate {
       };
 
       Position position = Position::TopRight;
-      f32 spacePercent  = 0.40f;
+      f32 spacePercent  = 0.30f;
       f32 padding       = 0.10f;
 
       inline void cyclePosition() {
@@ -94,6 +94,8 @@ namespace Gate {
     SubTexture orGate;
     SubTexture xorGate;
     SubTexture notGate;
+
+    f32 _3dZOffset = 1.0f;
 
     void apply(Theme::Settings settins);
   };
