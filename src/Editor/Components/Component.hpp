@@ -30,6 +30,7 @@ namespace Gate {
 
     enum class Type {
       Switch,
+      Output,
 
       AndGate,
       OrGate,

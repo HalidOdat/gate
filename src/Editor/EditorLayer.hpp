@@ -62,6 +62,7 @@ namespace Gate {
       };
       enum class ComponentType {
         Switch,
+        Output,
         Not,
         And,
         Or,
@@ -70,6 +71,7 @@ namespace Gate {
       static StringView componentTypeToString(ComponentType type) {
         switch (type) {
           case ComponentType::Switch: return "Switch";
+          case ComponentType::Output: return "Output";
           case ComponentType::Not:    return "NOT Gate";
           case ComponentType::And:    return "AND Gate";
           case ComponentType::Or:     return "OR Gate";

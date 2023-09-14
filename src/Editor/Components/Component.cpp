@@ -72,6 +72,8 @@ namespace Gate {
       auto& type = *typeNode->asString();
       if (type == "SwitchComponent") {
         return new SwitchComponent(position);
+      } else if (type == "OutputComponent") {
+        return new OutputComponent(position);
       } else if (type == "AndComponent") {
         return new AndComponent(position);
       } else if (type == "OrComponent") {

@@ -7,4 +7,3 @@
 #include "Core/Color.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
-

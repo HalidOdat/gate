@@ -88,6 +88,8 @@ add_executable(${This}
   src/Editor/Components/Component.cpp
   src/Editor/Components/SwitchComponent.hpp
   src/Editor/Components/SwitchComponent.cpp
+  src/Editor/Components/OutputComponent.hpp
+  src/Editor/Components/OutputComponent.cpp
   src/Editor/Components/NotComponent.hpp
   src/Editor/Components/NotComponent.cpp
   src/Editor/Components/AndComponent.hpp

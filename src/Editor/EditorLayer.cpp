@@ -156,6 +156,8 @@ namespace Gate {
         case Mode::AddComponent: {
           if (event.getKey() == Key::S) {
             mComponentType = ComponentType::Switch;
+          } else if (event.getKey() == Key::F) {
+            mComponentType = ComponentType::Output;
           } else if (event.getKey() == Key::N) {
             mComponentType = ComponentType::Not;
           } else if (event.getKey() == Key::A) {
@@ -289,6 +291,9 @@ namespace Gate {
           switch (mComponentType) {
             case ComponentType::Switch: {
               component = new SwitchComponent(position);
+            } break;
+            case ComponentType::Output: {
+              component = new OutputComponent(position);
             } break;
             case ComponentType::Not: {
               component = new NotComponent(position);
