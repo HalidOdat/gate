@@ -5,14 +5,15 @@
 
 namespace Gate {
   
-  Chip::Handle Chip::create(String name) {
-    return std::make_shared<Chip>(name);
+  Chip::Handle Chip::create(u32 index) {
+    return std::make_shared<Chip>(index);
   }
 
-  Chip::Chip(String name)
-    : mName{std::move(name)}
+  Chip::Chip(u32 index)
+    : mName{String("chip ") + std::to_string(index)}
   {
     mOptimalCellSize = config.grid.cell.size;
+    mIndex = index;
   }
   Chip::~Chip() {
     for (auto component : mComponents) {
@@ -516,6 +517,21 @@ namespace Gate {
     }
   }
 
+  std::pair<std::vector<SwitchComponent*>, std::vector<OutputComponent*>> Chip::getPinComponents() const {
+    std::vector<SwitchComponent*> inputs;
+    std::vector<OutputComponent*> outputs;
+
+    for (auto component : mComponents) {
+      if (component->getType() == Component::Type::Switch) {
+        inputs.push_back((SwitchComponent*)component);
+      } if (component->getType() == Component::Type::Output) {
+        outputs.push_back((OutputComponent*)component);
+      }
+    }
+
+    return {inputs, outputs};
+  }
+
 }
 
 namespace Gate::Serializer {
@@ -541,7 +557,7 @@ namespace Gate::Serializer {
     node["components"] = components;
     return node;
   }
-  bool Convert<Chip>::decode(const Node& node, Chip& chip) {
+  bool Convert<Chip>::decode(const Node& node, Chip& chip, Board& board) {
     if (!node.isObject()) return false;
     auto* nameNode = node.get("name");
     if (!nameNode || !nameNode->isString()) return false;
@@ -560,7 +576,7 @@ namespace Gate::Serializer {
     if (!componentsNode || !componentsNode->isArray()) return false;
     auto& componentsArray = *componentsNode->asArray();
     for (auto& componentNode : componentsArray) {
-      Component* component = Component::decode(componentNode);
+      Component* component = Component::decode(componentNode, board);
       if (!component) return false;
       chip.pushComponent(component);
     }

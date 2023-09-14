@@ -36,14 +36,11 @@ namespace Gate {
     config.inactiveMaterial->specularMap = Texture::color(0x40'40'40'FF).build();
 
     auto texture = Texture::load("assets/2D/textures/components.png").build();
-    const auto width  = 2048.0f;
-    // const auto height = 2048.0f;
-    const auto grid   = 512.0f;
-    const auto ratio  = grid / width;
-    config.andGate = SubTexture(texture, {ratio * 0.0f, ratio * 3.0f}, { ratio * 1.0f, ratio * 4.0f});
-    config.orGate  = SubTexture(texture, {ratio * 1.0f, ratio * 3.0f}, { ratio * 2.0f, ratio * 4.0f});
-    config.xorGate = SubTexture(texture, {ratio * 2.0f, ratio * 3.0f}, { ratio * 3.0f, ratio * 4.0f});
-    config.notGate = SubTexture(texture, {ratio * 3.0f, ratio * 3.0f}, { ratio * 4.0f, ratio * 4.0f});
+    auto atlas = TextureAtlas(texture, 512);
+    config.andGate = atlas.get(0);
+    config.orGate  = atlas.get(1);
+    config.xorGate = atlas.get(2);
+    config.notGate = atlas.get(3);
   }
   EditorLayer::~EditorLayer() {
     config.pinMesh = nullptr;
@@ -145,6 +142,13 @@ namespace Gate {
             mMode = Mode::AddComponent;
           } else if (event.getKey() == Key::D) {
             mMode = Mode::Remove;
+          } else if (event.getKey() == Key::N) {
+            mBoard.pushNewChip();
+          } else if (event.getKey() == Key::M) {
+            auto oldChip = mBoard.getCurrentChipPtr();
+            auto newChip = Chip::create(mBoard.getChipsCount());
+            newChip->pushComponent(new ChipComponent({20, 20}, oldChip));
+            mBoard.pushChip(newChip);
           }
           break;
         case Mode::Remove: {
@@ -157,6 +161,8 @@ namespace Gate {
         case Mode::AddComponent: {
           if (event.getKey() == Key::S) {
             mComponentType = ComponentType::Switch;
+          } else if (event.getKey() == Key::F) {
+            mComponentType = ComponentType::Output;
           } else if (event.getKey() == Key::N) {
             mComponentType = ComponentType::Not;
           } else if (event.getKey() == Key::A) {
@@ -165,6 +171,8 @@ namespace Gate {
             mComponentType = ComponentType::Or;
           } else if (event.getKey() == Key::X) {
             mComponentType = ComponentType::Xor;
+          } else if (event.getKey() == Key::C) {
+             mComponentType = ComponentType::Chip;
           }
         }  break;
       }
@@ -245,12 +253,13 @@ namespace Gate {
           
           bool interacted;
           if (mRenderMode == RenderMode::_2D) {
+            Logger::warn("x: %u, y: %u", mousePosition.x, mousePosition.y);
             interacted = mBoard.click(mousePosition);
             if (!interacted) {
-            mMode = Mode::WireDraw;
-            mWireStartPosition = gridAlginPosition(mLastMousePosition);
-            mWireEndPosition = mWireStartPosition;
-          }
+              mMode = Mode::WireDraw;
+              mWireStartPosition = gridAlginPosition(mLastMousePosition);
+              mWireEndPosition = mWireStartPosition;
+            }
           } else {
             u32 value = Application::getRenderer3D().readPixel((u32)mLastMousePosition.x, (u32)mLastMousePosition.y);
             Logger::trace("Click(%u, %u): Entity ID: %u", (u32)mLastMousePosition.x, (u32)mLastMousePosition.y, value);
@@ -291,6 +300,9 @@ namespace Gate {
             case ComponentType::Switch: {
               component = new SwitchComponent(position);
             } break;
+            case ComponentType::Output: {
+              component = new OutputComponent(position);
+            } break;
             case ComponentType::Not: {
               component = new NotComponent(position);
             } break;
@@ -302,6 +314,9 @@ namespace Gate {
             } break;
             case ComponentType::Xor: {
               component = new XorComponent(position);
+            } break;
+            case ComponentType::Chip: {
+              component = new ChipComponent(position, mBoard.getChips()[mChipIndex]);
             } break;
           }
           if (!mBoard.pushComponent(component)) {
@@ -327,10 +342,10 @@ namespace Gate {
 
     switch (mMode) {
       case Mode::Select:
-        mSelectorPosition = gridPosition;
+        setSelectorPosition(gridPosition);
         break;
       case Mode::Remove: {
-        mSelectorPosition = gridPosition;
+        setSelectorPosition(gridPosition);
         if (mClicked) {
           Point mousePosition = Point(gridAlginPosition(mLastMousePosition) / (f32)config.grid.cell.size);
           mBoard.removeWire(mousePosition);
@@ -348,7 +363,7 @@ namespace Gate {
         }
       }  break;
       case Mode::AddComponent:
-        mSelectorPosition = gridPosition;
+        setSelectorPosition(gridPosition);
         break;
     }
     mLastMousePosition = event.toVec2();
@@ -364,6 +379,11 @@ namespace Gate {
   }
   Vec2 EditorLayer::getGridAlignedMousePosition() {
     return gridAlginPosition(mLastMousePosition);
+  }
+  void EditorLayer::setSelectorPosition(Vec2 position) {
+    if (mBoard.isValidPosition(Point(position / (f32)config.grid.cell.size))) {
+      mSelectorPosition = position;
+    }
   }
   void EditorLayer::onEvent(const Event& event) {
     if (mRenderMode == RenderMode::_3D) {
@@ -422,7 +442,33 @@ namespace Gate {
     return false;
   }
   bool EditorLayer::onMouseScrollEvent(const MouseScrollEvent& event) {
-    (void)event;
+    if (mRenderMode == RenderMode::_3D) {
+      mBoard.invalidateMiniMap(Application::getRenderer2D());
+    }
+    
+    const auto x = event.getYOffset();
+    if (mComponentType == ComponentType::Chip) {
+      auto count = mBoard.getChipsCount();
+      if (x < 0) {
+        if (mChipIndex + 1 == count) {
+          mChipIndex = 0;
+        } else {
+          mChipIndex++;
+        }
+      } else {
+        if (mChipIndex == 0) {
+          mChipIndex = count - 1;
+        } else {
+          mChipIndex--;
+        }
+      }
+    } else {
+      if (x < 0) {
+        mBoard.moveCurrentChipDown();
+      } else {
+        mBoard.moveCurrentChipUp();
+      }
+    }
     return false;
   }
 

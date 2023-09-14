@@ -85,33 +85,20 @@ namespace Gate {
       mCircleShader = Shader::load("assets/2D/shaders/Circle.glsl").build();
     }
 
-    // TOOD: Take in more defined font
-    mFontTexture = Texture::load("assets/2D/textures/PixelFont_7x9_112x54.png")
+    auto fontTexture = Texture::load("assets/2D/textures/PixelFont_7x9_112x54.png")
       .filtering(Texture::FilteringMode::Nearest)
       .mipmap(Texture::MipmapMode::None)
       .build();
 
-    mFontTextureWidth  = mFontTexture->getWidth();
-    mFontTextureHeight = mFontTexture->getHeight();
-    mFontCharacterWidth  = 7;
-    mFontCharacterHeight = 9;
+    const auto fontTextureWidth  = fontTexture->getWidth();
+    const auto fontTextureHeight = fontTexture->getHeight();
+    const auto fontCharacterWidth  = 7;
+    const auto fontCharacterHeight = 9;
 
-    GATE_DEBUG_ASSERT(mFontTextureWidth % mFontCharacterWidth == 0);
-    GATE_DEBUG_ASSERT(mFontTextureHeight % mFontCharacterHeight == 0);
+    GATE_DEBUG_ASSERT(fontTextureWidth % fontCharacterWidth == 0);
+    GATE_DEBUG_ASSERT(fontTextureHeight % fontCharacterHeight == 0);
 
-    u32 count = 0;
-    for (u32 height = 0; height != mFontTextureHeight; height += mFontCharacterHeight) {
-      for (u32 width = 0; width != mFontTextureWidth; width += mFontCharacterWidth) {
-        const f32 x     = (f32)width  / mFontTextureWidth;
-        const f32 y     = (f32)height / mFontTextureHeight;
-        const f32 xSize = (f32)mFontCharacterWidth / mFontTextureWidth;
-        const f32 ySize = (f32)mFontCharacterHeight / mFontTextureHeight;
-        mFontCoords[count++] = Vec4{
-          Vec2{ x,         1 - y - ySize },
-          Vec2{ x + xSize, 1 - y - ySize / mFontCharacterHeight },
-        };
-      }
-    }
+    mFontAtlas = TextureAtlas(fontTexture, fontCharacterWidth, fontCharacterHeight);
   }
 
   Renderer2D::~Renderer2D() {
@@ -129,44 +116,12 @@ namespace Gate {
   }
 
   void Renderer2D::drawChar(char c, const Vec2& position, const Vec2& size, const Vec4& color, Effect effect) {
-    Mat4 transform = Mat4(1.0f);
-    transform      = glm::translate(transform, Vec3(position, 0.0f));
-    transform      = glm::scale(transform, Vec3(size, 1.0f));
-
-    auto texture = mFontTexture;
-
-    // TODO: refactor this.
-    if (mQuadCount == QUAD_MAX) {
-      flushQuad();
-    }
-
-    u32 index = 0;
-    for (; index < mQuadTextures.size(); ++index) {
-      if (mQuadTextures[index] == texture) {
-        break;
-      }
-    }
-
-    if (index == mQuadTextures.size()) {
-      if (mQuadTextures.size() >= MAX_TEXTURES) {
-        flush();
-      }
-
-      index = (u32)mQuadTextures.size();
-      mQuadTextures.push_back(texture);
-    }
-
     if (!std::isprint(c)) {
       c = (usize)('~' + 1);
     }
 
-    Vec4 tc = mFontCoords[(usize)(c - ' ')];
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[0]), color, {tc.z, tc.w}, index, effect.toIndex(), size}; // top-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[1]), color, {tc.z, tc.y}, index, effect.toIndex(), size}; // bottom-right
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[2]), color, {tc.x, tc.y}, index, effect.toIndex(), size}; // bottom-left
-    *(mQuadCurrentPtr++) = { Vec2(mProjectionViewMatrix * transform * QUAD_POSITIONS[3]), color, {tc.x, tc.w}, index, effect.toIndex(), size}; // top-left
-
-    mQuadCount++;
+    auto texture = mFontAtlas.get(u32(c - ' '));
+    drawQuad(position, size, texture, color, effect);
   }
 
   void Renderer2D::drawText(const StringView& text, const Vec2& position, const float _size, const Vec4& color, Effect effect) {

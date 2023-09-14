@@ -5,7 +5,7 @@
 namespace Gate {
 
   XorComponent::XorComponent(Point position)
-    : Component(Component::Category::Gate, position)
+    : Component(Component::Category::Gate, Type::XorGate, position)
   {
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y - 1}});
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y + 1}});
@@ -33,12 +33,7 @@ namespace Gate {
       material = config.activeMaterial;
     }
 
-    Mat4 model{1.0f};
-    model = glm::translate(model, mPosition.toVec3() * config.grid.cell.size3d * Vec3{1.0f, -1.0f, 1.0f});
-    
-    f32 size = config.grid.cell.size3d * 2.8f;
-    model = glm::scale(model, Vec3(size));
-
+    const auto model = Component::computeModel(2.8f);
 
     renderer.submit(config.xorMesh, material, model, id);
   }

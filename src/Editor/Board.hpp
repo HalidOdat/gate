@@ -19,11 +19,17 @@ namespace Gate {
     void render(Renderer3D& renderer);
     
     void pushChip(Chip::Handle chip);
+    void pushNewChip();
+
+    void moveCurrentChipDown();
+    void moveCurrentChipUp();
 
     Chip& getCurrentChip();
+    Chip::Handle getCurrentChipPtr() { return mChips[mIndex]; }
     
     std::vector<Chip::Handle>& getChips() { return mChips; }
     const std::vector<Chip::Handle>& getChips() const { return mChips; }
+    u32 getChipsCount() const { return mChips.size(); }
 
     void onResize(u32 width, u32 height);
 
@@ -36,6 +42,9 @@ namespace Gate {
     bool click(u32 id);
 
     void cycleMiniMapPositions();
+    void invalidateMiniMap(Renderer2D& renderer);
+
+    bool isValidPosition(Point point);
 
   private:
     struct MiniMap {

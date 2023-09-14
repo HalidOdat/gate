@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Gate {
-  
+
   void Wire::render(Renderer2D& renderer) {
     f32 width = config.wire.width * config.grid.cell.size;
 
@@ -56,7 +56,7 @@ namespace Gate {
 
     // TODO: move to constructor
     Vec3 scale = Vec3{wireWidth};
-    Vec3 offset = Vec3{0, 0, 0};
+    Vec3 offset = Vec3{0, 0, config._3dZOffset};
     i32 cellDistance = 1;
     if (from.x == to.x && from.y == to.y) {
       if (from.z > to.z) {

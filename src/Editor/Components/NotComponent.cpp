@@ -5,7 +5,7 @@
 namespace Gate {
 
   NotComponent::NotComponent(Point position)
-    : Component(Component::Category::Gate, position)
+    : Component(Component::Category::Gate, Type::NotGate, position)
   {
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y}});
     this->mOutputPins.push_back(Pin{Point{position.x + 1, position.y}});
@@ -29,12 +29,7 @@ namespace Gate {
       material = config.activeMaterial;
     }
 
-    Mat4 model{1.0f};
-    model = glm::translate(model, mPosition.toVec3() * config.grid.cell.size3d * Vec3{1.0f, -1.0f, 1.0f});
-    
-    f32 size = config.grid.cell.size3d * 1.85f;
-    model = glm::scale(model, Vec3(size));
-
+    const auto model = Component::computeModel(1.85f);
 
     renderer.submit(config.notMesh, material, model, id);
   }

@@ -7,7 +7,11 @@
 #include "Editor/Pin.hpp"
 #include "Serializer/Serializer.hpp"
 
+class Component;
+
 namespace Gate {
+
+  class Board;
 
 #define GATE_COMPONENT_IMPLEMENTATION(name)               \
   Serializer::Node name::encode() const {                 \
@@ -18,13 +22,24 @@ namespace Gate {
     node["position"] = Convert<Point>::encode(mPosition); \
     return node;                                          \
   }
-  
 
   class Component {
   public:
     enum class Category {
       Input,
       Gate,
+    };
+
+    enum class Type {
+      Switch,
+      Output,
+
+      AndGate,
+      OrGate,
+      XorGate,
+      NotGate,
+
+      Chip,
     };
 
   public:
@@ -40,6 +55,9 @@ namespace Gate {
     void resetVisited();
 
     inline Category getCategory() const { return mCategory; }
+    inline Type getType() const { return mType; }
+
+    Mat4 computeModel(f32 size) const;
 
   public:
     virtual ~Component();
@@ -53,15 +71,17 @@ namespace Gate {
     virtual void renderConnectors(Renderer3D&, u32 id);
 
     virtual Serializer::Node encode() const = 0;
-    static Component* decode(const Serializer::Node& node);
+    static Component* decode(const Serializer::Node& node, Board& value);
 
   protected:
-    Component(Category category, Point position)
-      : mCategory{category}, mPosition{position}
+    Component(Category category, Type type, Point position)
+      : mCategory{category}, mType{type}, mPosition{position}
     {}
 
   protected:
     Category mCategory;
+    Type mType;
+
     Point mPosition;
     std::vector<Pin> mInputPins;
     std::vector<Pin> mOutputPins;

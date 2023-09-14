@@ -460,7 +460,50 @@ namespace Gate {
     return mData.height;
   }
 
+  TextureAtlas::TextureAtlas(const Texture::Handle& texture, u32 cellSize)
+    : mTexture{texture}, mCellWidth{cellSize}, mCellHeight{cellSize}
+  {
+    const auto textureWidth = texture->getWidth();
+    const auto textureHeight = texture->getHeight();
 
+    mRowCellCount    = textureWidth  / mCellWidth;
+    mColumnCellCount = textureHeight / mCellHeight;
+  }
+
+  TextureAtlas::TextureAtlas(const Texture::Handle& texture, u32 cellWidth, u32 cellHeight)
+    : mTexture{texture}, mCellWidth{cellWidth}, mCellHeight{cellHeight}
+  {
+    const auto textureWidth = texture->getWidth();
+    const auto textureHeight = texture->getHeight();
+    mRowCellCount    = textureWidth  / mCellWidth;
+    mColumnCellCount = textureHeight / mCellHeight;
+  }
+
+  SubTexture TextureAtlas::get(u32 _index) {
+    u32 level = _index / mRowCellCount;
+    u32 index = _index % mRowCellCount;
+
+    GATE_ASSERT(index < mRowCellCount);
+    GATE_ASSERT(level < mColumnCellCount);
+
+    const auto textureWidth  = mTexture->getWidth();
+    const auto textureHeight = mTexture->getHeight();
+
+    const auto widthRatio  = f32(mCellWidth) / textureWidth;
+    const auto heightRatio = f32(mCellHeight) / textureHeight;
+
+    return SubTexture(
+      mTexture,
+      { // from
+        widthRatio * index,
+        heightRatio * (mColumnCellCount - level - 1)
+      },
+      { // to
+        widthRatio * (index + 1),
+        heightRatio * (mColumnCellCount - level)
+      }
+    );
+  }
 
   CubeMap::Handle CubeMap::load(std::array<String, 6> paths) {
     GATE_ASSERT(paths.size() == 6);

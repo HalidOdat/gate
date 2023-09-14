@@ -88,6 +88,8 @@ add_executable(${This}
   src/Editor/Components/Component.cpp
   src/Editor/Components/SwitchComponent.hpp
   src/Editor/Components/SwitchComponent.cpp
+  src/Editor/Components/OutputComponent.hpp
+  src/Editor/Components/OutputComponent.cpp
   src/Editor/Components/NotComponent.hpp
   src/Editor/Components/NotComponent.cpp
   src/Editor/Components/AndComponent.hpp
@@ -96,6 +98,8 @@ add_executable(${This}
   src/Editor/Components/OrComponent.cpp
   src/Editor/Components/XorComponent.hpp
   src/Editor/Components/XorComponent.cpp
+  src/Editor/Components/ChipComponent.hpp
+  src/Editor/Components/ChipComponent.cpp
   src/Editor/Components.hpp
   src/Editor/Config.hpp
   src/Editor/Config.cpp

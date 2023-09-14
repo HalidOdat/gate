@@ -5,6 +5,8 @@
 
 #include "Core/OpenGL.hpp"
 
+#include "Editor/Wire.hpp"
+
 namespace Gate {
 
   Board::Board() {
@@ -28,6 +30,25 @@ namespace Gate {
     mMiniMapFrameBuffer = nullptr;
   }
 
+  void renderGridCenteredQuad(Renderer2D& renderer, Point from, Point to, Vec4 color = Color::BLACK) {
+    f32 width = 8;
+
+    Vec2 size = (to.toVec2() - from.toVec2()) * (f32)config.grid.cell.size;
+    if (from.x == to.x) {
+      size.x  = width;
+      size.y += width;
+    } else {
+      size.x += width;
+      size.y  = width;
+    }
+
+    renderer.drawQuad(
+      from.toVec2() * (f32)config.grid.cell.size - Vec2(width / 2.0f),
+      size,
+      color
+    );
+  }
+
   void Board::renderGrid(Renderer2D& renderer) {
     auto width  = Application::getWindow().getWidth();
     auto height = Application::getWindow().getHeight();
@@ -41,11 +62,22 @@ namespace Gate {
       }
       mGridFrameBuffer->bind();
       renderer.clearScreen(config.grid.background);
-      for (u32 i = 0; i < width; i += config.grid.cell.size) {
-        for (u32 j = 0; j < height; j += config.grid.cell.size) {
+
+      // Draw dotted grid
+      for (u32 i = config.grid.cell.size; i < width - config.grid.cell.size; i += config.grid.cell.size) {
+        for (u32 j = config.grid.cell.size * 2; j < height - config.grid.cell.size; j += config.grid.cell.size) {
           renderer.drawCenteredQuad({i, j}, Vec2{0.08f} * (f32)config.grid.cell.size, config.grid.color);
         }
       }
+
+      // Draw boarders
+      const auto xUnits = width / config.grid.cell.size;
+      const auto yUnits = height / config.grid.cell.size;
+      renderGridCenteredQuad(renderer, {1, 2}, {xUnits - 1, 2});
+      renderGridCenteredQuad(renderer, {1, 2}, {1, yUnits - 1});
+      renderGridCenteredQuad(renderer, {xUnits - 1, 2}, {xUnits - 1, yUnits - 1});
+      renderGridCenteredQuad(renderer, {1, yUnits - 1}, {xUnits - 1, yUnits - 1});
+
       renderer.flush();
       mGridFrameBuffer->unbind();
       mGridTexture = mGridFrameBuffer->getColorAttachment(0);
@@ -98,6 +130,15 @@ namespace Gate {
     return {x, y, w, h};
   }
 
+  void Board::invalidateMiniMap(Renderer2D& renderer) {
+    if (config.minimap.position == Config::MiniMap::Position::None) {
+      return;
+    }
+    mMiniMapFrameBuffer = nullptr;
+    mMiniMapTexture = nullptr;
+    renderMiniMap(renderer);
+  }
+
   void Board::renderMiniMap(Renderer2D& renderer) {
     auto[x, y, w, h] = calculateMiniMapLocationAndSize();
     if (!mMiniMapFrameBuffer) {
@@ -144,16 +185,46 @@ namespace Gate {
   }
 
   void Board::render(Renderer3D& renderer) {
-    getCurrentChip().render(renderer);
+    for (usize i = 0; i < mChips.size(); ++i) {
+      if (mIndex == i) {
+        continue;
+      }
+
+      config._3dZOffset = f32(i + 1) * config.grid.cell.size3d * 10.0f;
+      mChips[i]->render(renderer);
+    }
+
+    config._3dZOffset = 0.0f;
+    mChips[mIndex]->render(renderer);
+
     if (config.minimap.position != Config::MiniMap::Position::None) {
       renderMiniMap(Application::getRenderer2D());
     }
+  }
+
+  void Board::moveCurrentChipDown() {
+    const auto last_element = mChips.size() - 1;
+    if (mIndex == 0) {
+      mIndex = last_element;
+      return;
+    }
+
+    mIndex--;
+  }
+  void Board::moveCurrentChipUp() {
+    const auto last_element = mChips.size() - 1;
+    if (mIndex == last_element) {
+      mIndex = 0;
+      return;
+    }
+
+    mIndex++;
   }
   
   Chip& Board::getCurrentChip() {
     if (mChips.size() == 0) {
       mChips.emplace_back(
-        Chip::create(String("chip ") + std::to_string(mChips.size()))
+        Chip::create(0)
       );
     }
     return *mChips[mIndex];
@@ -162,6 +233,10 @@ namespace Gate {
   void Board::pushChip(Chip::Handle chip) {
     mIndex = mChips.size();
     mChips.push_back(std::move(chip));
+  }
+  void Board::pushNewChip() {
+    mIndex = mChips.size();
+    mChips.push_back(Chip::create(mIndex));
   }
 
   void Board::tick() {
@@ -193,6 +268,14 @@ namespace Gate {
     return getCurrentChip().click(id);
   }
 
+  bool Board::isValidPosition(Point point) {
+    const auto wWidth  = Application::getWindow().getWidth();
+    const auto wHeight = Application::getWindow().getHeight();
+    const auto xUnits = wWidth  / config.grid.cell.size;
+    const auto yUnits = wHeight / config.grid.cell.size;
+    return point.x >= 1 && point.x <= (xUnits - 1) && point.y >= 2 && point.y <= (yUnits - 1);
+  }
+
 }
 
 namespace Gate::Serializer {
@@ -213,10 +296,13 @@ namespace Gate::Serializer {
     if (!chipsNode || !chipsNode->isArray()) return false;
     
     auto& chipsArray = *chipsNode->asArray();
+    u32 count = 0;
     for (auto& chip : chipsArray) {
-      Chip::Handle chipValue = Chip::create();
-      if (!Convert<Chip>::decode(chip, *chipValue)) return false;
+      Chip::Handle chipValue = Chip::create(count);
+      if (!Convert<Chip>::decode(chip, *chipValue, value)) return false;
       value.pushChip(std::move(chipValue));
+
+      count++;
     }
     
     return true;
