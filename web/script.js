@@ -29,18 +29,6 @@ window.addEventListener('keydown', (event) => {
     event.preventDefault();
     return false;
   }
-
-  // Prevent default browser behaviour
-  if(event.ctrlKey && (event.which == 78)) {
-    event.preventDefault();
-    return false;
-  }
-
-  if(event.shiftKey && (event.which == 78)) {
-    Module.renameChip();
-    event.preventDefault();
-    return false;
-  }
 }, true);
 window.addEventListener('keyup', stopImmediatePropagation, true);
 

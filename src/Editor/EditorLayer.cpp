@@ -78,21 +78,21 @@ namespace Gate {
       case Mode::Select: {
         // Selector cursor
         Application::getRenderer2D().drawCenteredQuad(mSelectorPosition, config.selector.size, config.selector.color);
-        const StringView text = " Click on the board to draw a line,\n or press \"c\" to insert a component!";
-        const auto size = 16;
-        Application::getRenderer2D().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
+        const StringView text = " Click on the board to draw a line, or press \"c\" to insert a component!";
+        const auto size = 23;
+        Application::getRenderer2D().drawText(text, Vec2{size / 2.0f, height - 1.5f * size}, size, Color::BLACK);
       }  break;
       case Mode::Remove: {
         // Selector cursor
         Application::getRenderer2D().drawCenteredQuad(mSelectorPosition, config.selector.size, Color::RED);
         const StringView text = " Click on a component or wire to delete it!";
-        const auto size = 16;
-        Application::getRenderer2D().drawText(text, Vec2{size, height - 3.0f * size}, size, Color::BLACK);
+        const auto size = 23;
+        Application::getRenderer2D().drawText(text, Vec2{size / 2.0f, height - 1.5f * size}, size, Color::BLACK);
       }  break;
       case Mode::WireDraw: {
         const StringView text = " Press <ESCAPE> to cancel wire drawing";
-        const auto size = 16;
-        Application::getRenderer2D().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
+        const auto size = 23;
+        Application::getRenderer2D().drawText(text, Vec2{size / 2.0f, height - 1.5f * size}, size, Color::BLACK);
       }  break;
       case Mode::AddComponent: {
         Application::getRenderer2D().drawCenteredQuad(mSelectorPosition, config.selector.size, Color::ORANGE);
@@ -100,8 +100,8 @@ namespace Gate {
         String text = " Click on board to add ";
         text += componentTypeToString(mComponentType);
         text += " component";
-        const auto size = 16;
-        Application::getRenderer2D().drawText(text, Vec2{size, height - 2 * size}, size, Color::BLACK);
+        const auto size = 23;
+        Application::getRenderer2D().drawText(text, Vec2{size / 2.0f, height - 1.5f * size}, size, Color::BLACK);
       }  break;
     }
   }
@@ -202,9 +202,9 @@ namespace Gate {
       Application::saveFile(filename, content);
     }
 
-    // if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::J) {
-    //   Application::renameChip();
-    // }
+    if (event.getModifier() != KeyModifier::Shift && event.getKey() == Key::N) {
+      Application::renameChip();
+    }
 
     #ifndef GATE_PLATFORM_WEB
       if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::O) {

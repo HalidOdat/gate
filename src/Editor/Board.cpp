@@ -65,7 +65,7 @@ namespace Gate {
 
       // Draw dotted grid
       for (u32 i = config.grid.cell.size; i < width - config.grid.cell.size; i += config.grid.cell.size) {
-        for (u32 j = config.grid.cell.size * 2; j < height - config.grid.cell.size; j += config.grid.cell.size) {
+        for (u32 j = config.grid.cell.size * 2; j < height - config.grid.cell.size * 2; j += config.grid.cell.size) {
           renderer.drawCenteredQuad({i, j}, Vec2{0.08f} * (f32)config.grid.cell.size, config.grid.color);
         }
       }
@@ -74,9 +74,9 @@ namespace Gate {
       const auto xUnits = width / config.grid.cell.size;
       const auto yUnits = height / config.grid.cell.size;
       renderGridCenteredQuad(renderer, {1, 2}, {xUnits - 1, 2});
-      renderGridCenteredQuad(renderer, {1, 2}, {1, yUnits - 1});
-      renderGridCenteredQuad(renderer, {xUnits - 1, 2}, {xUnits - 1, yUnits - 1});
-      renderGridCenteredQuad(renderer, {1, yUnits - 1}, {xUnits - 1, yUnits - 1});
+      renderGridCenteredQuad(renderer, {1, 2}, {1, yUnits - 2});
+      renderGridCenteredQuad(renderer, {xUnits - 1, 2}, {xUnits - 1, yUnits - 2});
+      renderGridCenteredQuad(renderer, {1, yUnits - 2}, {xUnits - 1, yUnits - 2});
 
       renderer.flush();
       mGridFrameBuffer->unbind();
@@ -179,7 +179,7 @@ namespace Gate {
     renderGrid(renderer);
     getCurrentChip().render(renderer);
 
-    const auto size = 16;
+    const auto size = 20;
     String text = "Name: " + getCurrentChip().getName();
     renderer.drawText(text, Vec2{size}, (f32)size, config.text.color);
   }
