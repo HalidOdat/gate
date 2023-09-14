@@ -442,7 +442,7 @@ namespace Gate {
     }
     
     const auto x = event.getYOffset();
-    if (mComponentType == ComponentType::Chip) {
+    if (mMode == Mode::AddComponent) {
       auto count = mBoard.getChipsCount();
       if (x < 0) {
         if (mChipIndex + 1 == count) {
