@@ -29,7 +29,7 @@ namespace Gate {
     //   color = Color::RED;
     // }
     auto width = std::max(this->mChipInputs.size(), this->mChipOutputs.size());
-    renderer.drawCenteredQuad(mPosition.toVec2() * (f32)config.grid.cell.size - Vec2{1.0f, f32(width)} / 2.0f, size * 1.8f * Vec2{1.0f, f32(width)}, color);
+    renderer.drawCenteredQuad((mPosition.toVec2() + Vec2{0.0f, f32(width) / 2.0f - 0.5f}) * (f32)config.grid.cell.size, size * 1.8f * Vec2{1.0f, f32(width) / 2.0f + 0.5f}, color);
   }
   bool ChipComponent::update() {
     for (usize i = 0; i < mChipInputs.size(); ++i) {

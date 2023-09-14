@@ -171,6 +171,8 @@ namespace Gate {
             mComponentType = ComponentType::Or;
           } else if (event.getKey() == Key::X) {
             mComponentType = ComponentType::Xor;
+          } else if (event.getKey() == Key::C) {
+             mComponentType = ComponentType::Chip;
           }
         }  break;
       }
@@ -313,6 +315,9 @@ namespace Gate {
             case ComponentType::Xor: {
               component = new XorComponent(position);
             } break;
+            case ComponentType::Chip: {
+              component = new ChipComponent(position, mBoard.getChips()[mChipIndex]);
+            } break;
           }
           if (!mBoard.pushComponent(component)) {
             Logger::trace("Component is already at position (%u, %u)", position.x, position.y);
@@ -440,13 +445,29 @@ namespace Gate {
     if (mRenderMode == RenderMode::_3D) {
       mBoard.invalidateMiniMap(Application::getRenderer2D());
     }
+    
     const auto x = event.getYOffset();
-    if (x < 0) {
-      config._3dZOffset += 0.5f;
-      mBoard.moveCurrentChipDown();
+    if (mComponentType == ComponentType::Chip) {
+      auto count = mBoard.getChipsCount();
+      if (x < 0) {
+        if (mChipIndex + 1 == count) {
+          mChipIndex = 0;
+        } else {
+          mChipIndex++;
+        }
+      } else {
+        if (mChipIndex == 0) {
+          mChipIndex = count - 1;
+        } else {
+          mChipIndex--;
+        }
+      }
     } else {
-      config._3dZOffset -= 0.5f;
-      mBoard.moveCurrentChipUp();
+      if (x < 0) {
+        mBoard.moveCurrentChipDown();
+      } else {
+        mBoard.moveCurrentChipUp();
+      }
     }
     return false;
   }

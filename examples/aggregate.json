@@ -1,0 +1,1943 @@
+{
+  "chips": [
+    {
+      "components": [
+        {
+          "position": [ 20, 17 ],
+          "type": "XorComponent"
+        },
+        {
+          "position": [ 20, 23 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 28, 17 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 28, 23 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 10, 16 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 10, 18 ],
+          "type": "SwitchComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 27, 23 ],
+          "from": [ 21, 23 ]
+        },
+        {
+          "to": [ 27, 17 ],
+          "from": [ 21, 17 ]
+        },
+        {
+          "to": [ 19, 16 ],
+          "from": [ 17, 16 ]
+        },
+        {
+          "to": [ 17, 22 ],
+          "from": [ 17, 16 ]
+        },
+        {
+          "to": [ 19, 22 ],
+          "from": [ 17, 22 ]
+        },
+        {
+          "to": [ 19, 18 ],
+          "from": [ 15, 18 ]
+        },
+        {
+          "to": [ 15, 24 ],
+          "from": [ 15, 18 ]
+        },
+        {
+          "to": [ 19, 24 ],
+          "from": [ 15, 24 ]
+        },
+        {
+          "to": [ 15, 18 ],
+          "from": [ 11, 18 ]
+        },
+        {
+          "to": [ 17, 16 ],
+          "from": [ 11, 16 ]
+        }
+      ],
+      "name": "1-bit Half adder"
+    },
+    {
+      "components": [
+        {
+          "position": [ 12, 12 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 12, 17 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 12, 25 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "chip": 0,
+          "position": [ 27, 14 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 0,
+          "position": [ 39, 14 ],
+          "type": "ChipComponent"
+        },
+        {
+          "position": [ 53, 14 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 49, 23 ],
+          "type": "OrComponent"
+        },
+        {
+          "position": [ 53, 23 ],
+          "type": "OutputComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 21, 12 ],
+          "from": [ 13, 12 ]
+        },
+        {
+          "to": [ 21, 14 ],
+          "from": [ 21, 12 ]
+        },
+        {
+          "to": [ 26, 14 ],
+          "from": [ 21, 14 ]
+        },
+        {
+          "to": [ 26, 15 ],
+          "from": [ 21, 15 ]
+        },
+        {
+          "to": [ 21, 17 ],
+          "from": [ 21, 15 ]
+        },
+        {
+          "to": [ 21, 17 ],
+          "from": [ 13, 17 ]
+        },
+        {
+          "to": [ 52, 14 ],
+          "from": [ 40, 14 ]
+        },
+        {
+          "to": [ 44, 15 ],
+          "from": [ 40, 15 ]
+        },
+        {
+          "to": [ 44, 22 ],
+          "from": [ 44, 15 ]
+        },
+        {
+          "to": [ 48, 22 ],
+          "from": [ 44, 22 ]
+        },
+        {
+          "to": [ 52, 23 ],
+          "from": [ 50, 23 ]
+        },
+        {
+          "to": [ 48, 24 ],
+          "from": [ 32, 24 ]
+        },
+        {
+          "to": [ 32, 24 ],
+          "from": [ 32, 15 ]
+        },
+        {
+          "to": [ 32, 15 ],
+          "from": [ 28, 15 ]
+        },
+        {
+          "to": [ 25, 25 ],
+          "from": [ 13, 25 ]
+        },
+        {
+          "to": [ 25, 25 ],
+          "from": [ 25, 20 ]
+        },
+        {
+          "to": [ 38, 15 ],
+          "from": [ 34, 15 ]
+        },
+        {
+          "to": [ 38, 14 ],
+          "from": [ 28, 14 ]
+        },
+        {
+          "to": [ 34, 20 ],
+          "from": [ 25, 20 ]
+        },
+        {
+          "to": [ 34, 20 ],
+          "from": [ 34, 15 ]
+        }
+      ],
+      "name": "1-bit Full Addr"
+    },
+    {
+      "components": [
+        {
+          "position": [ 18, 13 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 18, 15 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 18, 21 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 18, 23 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 18, 32 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 41, 12 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 41, 22 ],
+          "type": "ChipComponent"
+        },
+        {
+          "position": [ 55, 12 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 55, 15 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 55, 23 ],
+          "type": "OutputComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 21, 32 ],
+          "from": [ 19, 32 ]
+        },
+        {
+          "to": [ 21, 32 ],
+          "from": [ 21, 12 ]
+        },
+        {
+          "to": [ 40, 12 ],
+          "from": [ 21, 12 ]
+        },
+        {
+          "to": [ 40, 13 ],
+          "from": [ 19, 13 ]
+        },
+        {
+          "to": [ 22, 21 ],
+          "from": [ 19, 21 ]
+        },
+        {
+          "to": [ 22, 21 ],
+          "from": [ 22, 14 ]
+        },
+        {
+          "to": [ 40, 14 ],
+          "from": [ 22, 14 ]
+        },
+        {
+          "to": [ 44, 13 ],
+          "from": [ 42, 13 ]
+        },
+        {
+          "to": [ 44, 18 ],
+          "from": [ 44, 13 ]
+        },
+        {
+          "to": [ 44, 18 ],
+          "from": [ 36, 18 ]
+        },
+        {
+          "to": [ 36, 24 ],
+          "from": [ 36, 18 ]
+        },
+        {
+          "to": [ 40, 24 ],
+          "from": [ 36, 24 ]
+        },
+        {
+          "to": [ 54, 23 ],
+          "from": [ 42, 23 ]
+        },
+        {
+          "to": [ 50, 22 ],
+          "from": [ 42, 22 ]
+        },
+        {
+          "to": [ 50, 22 ],
+          "from": [ 50, 15 ]
+        },
+        {
+          "to": [ 54, 15 ],
+          "from": [ 50, 15 ]
+        },
+        {
+          "to": [ 54, 12 ],
+          "from": [ 42, 12 ]
+        },
+        {
+          "to": [ 24, 15 ],
+          "from": [ 19, 15 ]
+        },
+        {
+          "to": [ 24, 22 ],
+          "from": [ 24, 15 ]
+        },
+        {
+          "to": [ 40, 22 ],
+          "from": [ 24, 22 ]
+        },
+        {
+          "to": [ 40, 23 ],
+          "from": [ 19, 23 ]
+        }
+      ],
+      "name": "2-bit Full Addr"
+    },
+    {
+      "components": [
+        {
+          "chip": 2,
+          "position": [ 39, 15 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 2,
+          "position": [ 39, 34 ],
+          "type": "ChipComponent"
+        },
+        {
+          "position": [ 11, 13 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 15 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 17 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 19 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 25 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 27 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 29 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 31 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 11, 43 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 60, 15 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 60, 17 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 60, 19 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 60, 21 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 60, 36 ],
+          "type": "OutputComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 42, 17 ],
+          "from": [ 40, 17 ]
+        },
+        {
+          "to": [ 42, 25 ],
+          "from": [ 42, 17 ]
+        },
+        {
+          "to": [ 42, 25 ],
+          "from": [ 34, 25 ]
+        },
+        {
+          "to": [ 34, 38 ],
+          "from": [ 34, 25 ]
+        },
+        {
+          "to": [ 38, 38 ],
+          "from": [ 34, 38 ]
+        },
+        {
+          "to": [ 59, 15 ],
+          "from": [ 40, 15 ]
+        },
+        {
+          "to": [ 54, 16 ],
+          "from": [ 40, 16 ]
+        },
+        {
+          "to": [ 54, 17 ],
+          "from": [ 54, 16 ]
+        },
+        {
+          "to": [ 59, 17 ],
+          "from": [ 54, 17 ]
+        },
+        {
+          "to": [ 48, 34 ],
+          "from": [ 40, 34 ]
+        },
+        {
+          "to": [ 48, 34 ],
+          "from": [ 48, 19 ]
+        },
+        {
+          "to": [ 59, 19 ],
+          "from": [ 48, 19 ]
+        },
+        {
+          "to": [ 49, 35 ],
+          "from": [ 40, 35 ]
+        },
+        {
+          "to": [ 49, 35 ],
+          "from": [ 49, 21 ]
+        },
+        {
+          "to": [ 59, 21 ],
+          "from": [ 49, 21 ]
+        },
+        {
+          "to": [ 59, 36 ],
+          "from": [ 40, 36 ]
+        },
+        {
+          "to": [ 27, 13 ],
+          "from": [ 12, 13 ]
+        },
+        {
+          "to": [ 27, 15 ],
+          "from": [ 27, 13 ]
+        },
+        {
+          "to": [ 38, 15 ],
+          "from": [ 27, 15 ]
+        },
+        {
+          "to": [ 29, 25 ],
+          "from": [ 12, 25 ]
+        },
+        {
+          "to": [ 26, 16 ],
+          "from": [ 26, 15 ]
+        },
+        {
+          "to": [ 38, 16 ],
+          "from": [ 26, 16 ]
+        },
+        {
+          "to": [ 32, 43 ],
+          "from": [ 12, 43 ]
+        },
+        {
+          "to": [ 32, 43 ],
+          "from": [ 32, 19 ]
+        },
+        {
+          "to": [ 38, 19 ],
+          "from": [ 32, 19 ]
+        },
+        {
+          "to": [ 26, 15 ],
+          "from": [ 12, 15 ]
+        },
+        {
+          "to": [ 29, 25 ],
+          "from": [ 29, 17 ]
+        },
+        {
+          "to": [ 38, 17 ],
+          "from": [ 29, 17 ]
+        },
+        {
+          "to": [ 30, 27 ],
+          "from": [ 12, 27 ]
+        },
+        {
+          "to": [ 30, 27 ],
+          "from": [ 30, 18 ]
+        },
+        {
+          "to": [ 38, 18 ],
+          "from": [ 30, 18 ]
+        },
+        {
+          "to": [ 23, 17 ],
+          "from": [ 12, 17 ]
+        },
+        {
+          "to": [ 23, 34 ],
+          "from": [ 23, 17 ]
+        },
+        {
+          "to": [ 38, 34 ],
+          "from": [ 23, 34 ]
+        },
+        {
+          "to": [ 22, 19 ],
+          "from": [ 12, 19 ]
+        },
+        {
+          "to": [ 22, 35 ],
+          "from": [ 22, 19 ]
+        },
+        {
+          "to": [ 38, 35 ],
+          "from": [ 22, 35 ]
+        },
+        {
+          "to": [ 21, 29 ],
+          "from": [ 12, 29 ]
+        },
+        {
+          "to": [ 21, 36 ],
+          "from": [ 21, 29 ]
+        },
+        {
+          "to": [ 38, 36 ],
+          "from": [ 21, 36 ]
+        },
+        {
+          "to": [ 38, 37 ],
+          "from": [ 20, 37 ]
+        },
+        {
+          "to": [ 20, 37 ],
+          "from": [ 20, 31 ]
+        },
+        {
+          "to": [ 20, 31 ],
+          "from": [ 12, 31 ]
+        }
+      ],
+      "name": "4-bit Full Addr"
+    },
+    {
+      "components": [
+        {
+          "position": [ 9, 12 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 14 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 16 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 18 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 20 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 22 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 24 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 26 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 34 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 36 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 38 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 40 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 42 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 44 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 46 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 48 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 9, 56 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "chip": 3,
+          "position": [ 34, 15 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 3,
+          "position": [ 34, 41 ],
+          "type": "ChipComponent"
+        },
+        {
+          "position": [ 61, 18 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 20 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 22 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 24 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 26 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 28 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 30 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 32 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 61, 45 ],
+          "type": "OutputComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 33, 48 ],
+          "from": [ 10, 48 ]
+        },
+        {
+          "to": [ 15, 46 ],
+          "from": [ 10, 46 ]
+        },
+        {
+          "to": [ 15, 47 ],
+          "from": [ 15, 46 ]
+        },
+        {
+          "to": [ 33, 47 ],
+          "from": [ 15, 47 ]
+        },
+        {
+          "to": [ 16, 44 ],
+          "from": [ 10, 44 ]
+        },
+        {
+          "to": [ 16, 46 ],
+          "from": [ 16, 44 ]
+        },
+        {
+          "to": [ 54, 15 ],
+          "from": [ 35, 15 ]
+        },
+        {
+          "to": [ 54, 18 ],
+          "from": [ 54, 15 ]
+        },
+        {
+          "to": [ 60, 18 ],
+          "from": [ 54, 18 ]
+        },
+        {
+          "to": [ 53, 16 ],
+          "from": [ 35, 16 ]
+        },
+        {
+          "to": [ 53, 20 ],
+          "from": [ 53, 16 ]
+        },
+        {
+          "to": [ 60, 20 ],
+          "from": [ 53, 20 ]
+        },
+        {
+          "to": [ 52, 17 ],
+          "from": [ 35, 17 ]
+        },
+        {
+          "to": [ 52, 22 ],
+          "from": [ 52, 17 ]
+        },
+        {
+          "to": [ 60, 22 ],
+          "from": [ 52, 22 ]
+        },
+        {
+          "to": [ 51, 18 ],
+          "from": [ 35, 18 ]
+        },
+        {
+          "to": [ 51, 24 ],
+          "from": [ 51, 18 ]
+        },
+        {
+          "to": [ 60, 24 ],
+          "from": [ 51, 24 ]
+        },
+        {
+          "to": [ 33, 46 ],
+          "from": [ 16, 46 ]
+        },
+        {
+          "to": [ 51, 41 ],
+          "from": [ 35, 41 ]
+        },
+        {
+          "to": [ 60, 26 ],
+          "from": [ 51, 26 ]
+        },
+        {
+          "to": [ 17, 42 ],
+          "from": [ 10, 42 ]
+        },
+        {
+          "to": [ 51, 41 ],
+          "from": [ 51, 26 ]
+        },
+        {
+          "to": [ 60, 28 ],
+          "from": [ 52, 28 ]
+        },
+        {
+          "to": [ 17, 45 ],
+          "from": [ 17, 42 ]
+        },
+        {
+          "to": [ 52, 42 ],
+          "from": [ 52, 28 ]
+        },
+        {
+          "to": [ 60, 30 ],
+          "from": [ 53, 30 ]
+        },
+        {
+          "to": [ 33, 45 ],
+          "from": [ 17, 45 ]
+        },
+        {
+          "to": [ 52, 42 ],
+          "from": [ 35, 42 ]
+        },
+        {
+          "to": [ 60, 32 ],
+          "from": [ 54, 32 ]
+        },
+        {
+          "to": [ 26, 12 ],
+          "from": [ 10, 12 ]
+        },
+        {
+          "to": [ 26, 15 ],
+          "from": [ 26, 12 ]
+        },
+        {
+          "to": [ 33, 15 ],
+          "from": [ 26, 15 ]
+        },
+        {
+          "to": [ 25, 14 ],
+          "from": [ 10, 14 ]
+        },
+        {
+          "to": [ 25, 16 ],
+          "from": [ 25, 14 ]
+        },
+        {
+          "to": [ 33, 16 ],
+          "from": [ 25, 16 ]
+        },
+        {
+          "to": [ 24, 16 ],
+          "from": [ 10, 16 ]
+        },
+        {
+          "to": [ 24, 17 ],
+          "from": [ 24, 16 ]
+        },
+        {
+          "to": [ 33, 17 ],
+          "from": [ 24, 17 ]
+        },
+        {
+          "to": [ 33, 18 ],
+          "from": [ 10, 18 ]
+        },
+        {
+          "to": [ 18, 20 ],
+          "from": [ 10, 20 ]
+        },
+        {
+          "to": [ 18, 41 ],
+          "from": [ 18, 20 ]
+        },
+        {
+          "to": [ 33, 41 ],
+          "from": [ 18, 41 ]
+        },
+        {
+          "to": [ 33, 23 ],
+          "from": [ 13, 23 ]
+        },
+        {
+          "to": [ 13, 56 ],
+          "from": [ 13, 23 ]
+        },
+        {
+          "to": [ 13, 56 ],
+          "from": [ 10, 56 ]
+        },
+        {
+          "to": [ 19, 22 ],
+          "from": [ 10, 22 ]
+        },
+        {
+          "to": [ 19, 42 ],
+          "from": [ 19, 22 ]
+        },
+        {
+          "to": [ 33, 42 ],
+          "from": [ 19, 42 ]
+        },
+        {
+          "to": [ 20, 24 ],
+          "from": [ 10, 24 ]
+        },
+        {
+          "to": [ 20, 43 ],
+          "from": [ 20, 24 ]
+        },
+        {
+          "to": [ 33, 43 ],
+          "from": [ 20, 43 ]
+        },
+        {
+          "to": [ 21, 26 ],
+          "from": [ 10, 26 ]
+        },
+        {
+          "to": [ 21, 44 ],
+          "from": [ 21, 26 ]
+        },
+        {
+          "to": [ 33, 44 ],
+          "from": [ 21, 44 ]
+        },
+        {
+          "to": [ 33, 49 ],
+          "from": [ 29, 49 ]
+        },
+        {
+          "to": [ 29, 49 ],
+          "from": [ 29, 29 ]
+        },
+        {
+          "to": [ 38, 29 ],
+          "from": [ 29, 29 ]
+        },
+        {
+          "to": [ 38, 29 ],
+          "from": [ 38, 19 ]
+        },
+        {
+          "to": [ 38, 19 ],
+          "from": [ 35, 19 ]
+        },
+        {
+          "to": [ 53, 43 ],
+          "from": [ 35, 43 ]
+        },
+        {
+          "to": [ 53, 43 ],
+          "from": [ 53, 30 ]
+        },
+        {
+          "to": [ 54, 44 ],
+          "from": [ 54, 32 ]
+        },
+        {
+          "to": [ 54, 44 ],
+          "from": [ 35, 44 ]
+        },
+        {
+          "to": [ 60, 45 ],
+          "from": [ 35, 45 ]
+        },
+        {
+          "to": [ 22, 34 ],
+          "from": [ 10, 34 ]
+        },
+        {
+          "to": [ 22, 34 ],
+          "from": [ 22, 19 ]
+        },
+        {
+          "to": [ 33, 19 ],
+          "from": [ 22, 19 ]
+        },
+        {
+          "to": [ 23, 36 ],
+          "from": [ 10, 36 ]
+        },
+        {
+          "to": [ 23, 36 ],
+          "from": [ 23, 20 ]
+        },
+        {
+          "to": [ 33, 20 ],
+          "from": [ 23, 20 ]
+        },
+        {
+          "to": [ 24, 38 ],
+          "from": [ 10, 38 ]
+        },
+        {
+          "to": [ 24, 38 ],
+          "from": [ 24, 21 ]
+        },
+        {
+          "to": [ 33, 21 ],
+          "from": [ 24, 21 ]
+        },
+        {
+          "to": [ 25, 40 ],
+          "from": [ 10, 40 ]
+        },
+        {
+          "to": [ 25, 40 ],
+          "from": [ 25, 22 ]
+        },
+        {
+          "to": [ 33, 22 ],
+          "from": [ 25, 22 ]
+        }
+      ],
+      "name": "8-bit Full Addr"
+    },
+    {
+      "components": [
+        {
+          "position": [ 7, 9 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 11 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 13 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 15 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 21 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 23 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 25 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 27 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 7, 37 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 21, 21 ],
+          "type": "XorComponent"
+        },
+        {
+          "position": [ 21, 24 ],
+          "type": "XorComponent"
+        },
+        {
+          "position": [ 21, 27 ],
+          "type": "XorComponent"
+        },
+        {
+          "position": [ 21, 30 ],
+          "type": "XorComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 38, 9 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 38, 15 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 38, 21 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 38, 27 ],
+          "type": "ChipComponent"
+        },
+        {
+          "position": [ 62, 9 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 62, 11 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 62, 13 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 62, 15 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 62, 28 ],
+          "type": "OutputComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 15, 37 ],
+          "from": [ 8, 37 ]
+        },
+        {
+          "to": [ 15, 37 ],
+          "from": [ 15, 31 ]
+        },
+        {
+          "to": [ 15, 31 ],
+          "from": [ 15, 28 ]
+        },
+        {
+          "to": [ 15, 28 ],
+          "from": [ 15, 25 ]
+        },
+        {
+          "to": [ 15, 25 ],
+          "from": [ 15, 22 ]
+        },
+        {
+          "to": [ 20, 22 ],
+          "from": [ 15, 22 ]
+        },
+        {
+          "to": [ 20, 25 ],
+          "from": [ 15, 25 ]
+        },
+        {
+          "to": [ 20, 28 ],
+          "from": [ 15, 28 ]
+        },
+        {
+          "to": [ 20, 31 ],
+          "from": [ 15, 31 ]
+        },
+        {
+          "to": [ 12, 21 ],
+          "from": [ 8, 21 ]
+        },
+        {
+          "to": [ 12, 21 ],
+          "from": [ 12, 20 ]
+        },
+        {
+          "to": [ 20, 20 ],
+          "from": [ 12, 20 ]
+        },
+        {
+          "to": [ 20, 23 ],
+          "from": [ 8, 23 ]
+        },
+        {
+          "to": [ 13, 25 ],
+          "from": [ 8, 25 ]
+        },
+        {
+          "to": [ 13, 26 ],
+          "from": [ 13, 25 ]
+        },
+        {
+          "to": [ 20, 26 ],
+          "from": [ 13, 26 ]
+        },
+        {
+          "to": [ 12, 27 ],
+          "from": [ 8, 27 ]
+        },
+        {
+          "to": [ 12, 29 ],
+          "from": [ 12, 27 ]
+        },
+        {
+          "to": [ 20, 29 ],
+          "from": [ 12, 29 ]
+        },
+        {
+          "to": [ 41, 16 ],
+          "from": [ 39, 16 ]
+        },
+        {
+          "to": [ 41, 19 ],
+          "from": [ 41, 16 ]
+        },
+        {
+          "to": [ 41, 19 ],
+          "from": [ 33, 19 ]
+        },
+        {
+          "to": [ 33, 23 ],
+          "from": [ 33, 19 ]
+        },
+        {
+          "to": [ 37, 23 ],
+          "from": [ 33, 23 ]
+        },
+        {
+          "to": [ 41, 10 ],
+          "from": [ 39, 10 ]
+        },
+        {
+          "to": [ 41, 13 ],
+          "from": [ 41, 10 ]
+        },
+        {
+          "to": [ 41, 13 ],
+          "from": [ 33, 13 ]
+        },
+        {
+          "to": [ 33, 17 ],
+          "from": [ 33, 13 ]
+        },
+        {
+          "to": [ 37, 17 ],
+          "from": [ 33, 17 ]
+        },
+        {
+          "to": [ 41, 22 ],
+          "from": [ 39, 22 ]
+        },
+        {
+          "to": [ 41, 25 ],
+          "from": [ 41, 22 ]
+        },
+        {
+          "to": [ 41, 25 ],
+          "from": [ 33, 25 ]
+        },
+        {
+          "to": [ 33, 29 ],
+          "from": [ 33, 25 ]
+        },
+        {
+          "to": [ 37, 29 ],
+          "from": [ 33, 29 ]
+        },
+        {
+          "to": [ 61, 28 ],
+          "from": [ 39, 28 ]
+        },
+        {
+          "to": [ 61, 9 ],
+          "from": [ 39, 9 ]
+        },
+        {
+          "to": [ 37, 9 ],
+          "from": [ 8, 9 ]
+        },
+        {
+          "to": [ 31, 21 ],
+          "from": [ 22, 21 ]
+        },
+        {
+          "to": [ 31, 21 ],
+          "from": [ 31, 10 ]
+        },
+        {
+          "to": [ 37, 10 ],
+          "from": [ 31, 10 ]
+        },
+        {
+          "to": [ 23, 37 ],
+          "from": [ 15, 37 ]
+        },
+        {
+          "to": [ 23, 37 ],
+          "from": [ 23, 11 ]
+        },
+        {
+          "to": [ 37, 11 ],
+          "from": [ 23, 11 ]
+        },
+        {
+          "to": [ 20, 11 ],
+          "from": [ 8, 11 ]
+        },
+        {
+          "to": [ 20, 15 ],
+          "from": [ 20, 11 ]
+        },
+        {
+          "to": [ 37, 15 ],
+          "from": [ 20, 15 ]
+        },
+        {
+          "to": [ 24, 24 ],
+          "from": [ 22, 24 ]
+        },
+        {
+          "to": [ 24, 24 ],
+          "from": [ 24, 16 ]
+        },
+        {
+          "to": [ 37, 16 ],
+          "from": [ 24, 16 ]
+        },
+        {
+          "to": [ 19, 13 ],
+          "from": [ 8, 13 ]
+        },
+        {
+          "to": [ 19, 17 ],
+          "from": [ 19, 13 ]
+        },
+        {
+          "to": [ 32, 17 ],
+          "from": [ 19, 17 ]
+        },
+        {
+          "to": [ 32, 21 ],
+          "from": [ 32, 17 ]
+        },
+        {
+          "to": [ 37, 21 ],
+          "from": [ 32, 21 ]
+        },
+        {
+          "to": [ 25, 27 ],
+          "from": [ 22, 27 ]
+        },
+        {
+          "to": [ 25, 27 ],
+          "from": [ 25, 22 ]
+        },
+        {
+          "to": [ 37, 22 ],
+          "from": [ 25, 22 ]
+        },
+        {
+          "to": [ 18, 15 ],
+          "from": [ 8, 15 ]
+        },
+        {
+          "to": [ 18, 18 ],
+          "from": [ 18, 15 ]
+        },
+        {
+          "to": [ 30, 18 ],
+          "from": [ 18, 18 ]
+        },
+        {
+          "to": [ 30, 27 ],
+          "from": [ 30, 18 ]
+        },
+        {
+          "to": [ 37, 27 ],
+          "from": [ 30, 27 ]
+        },
+        {
+          "to": [ 30, 30 ],
+          "from": [ 22, 30 ]
+        },
+        {
+          "to": [ 30, 30 ],
+          "from": [ 30, 28 ]
+        },
+        {
+          "to": [ 37, 28 ],
+          "from": [ 30, 28 ]
+        },
+        {
+          "to": [ 50, 15 ],
+          "from": [ 39, 15 ]
+        },
+        {
+          "to": [ 50, 15 ],
+          "from": [ 50, 11 ]
+        },
+        {
+          "to": [ 61, 11 ],
+          "from": [ 50, 11 ]
+        },
+        {
+          "to": [ 52, 21 ],
+          "from": [ 39, 21 ]
+        },
+        {
+          "to": [ 52, 21 ],
+          "from": [ 52, 13 ]
+        },
+        {
+          "to": [ 61, 13 ],
+          "from": [ 52, 13 ]
+        },
+        {
+          "to": [ 44, 27 ],
+          "from": [ 39, 27 ]
+        },
+        {
+          "to": [ 44, 27 ],
+          "from": [ 44, 23 ]
+        },
+        {
+          "to": [ 54, 23 ],
+          "from": [ 44, 23 ]
+        },
+        {
+          "to": [ 54, 23 ],
+          "from": [ 54, 15 ]
+        },
+        {
+          "to": [ 61, 15 ],
+          "from": [ 54, 15 ]
+        }
+      ],
+      "name": "4-bit Adder and Subtractor"
+    },
+    {
+      "components": [
+        {
+          "position": [ 5, 11 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 5, 14 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 5, 17 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 5, 34 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 5, 37 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "position": [ 20, 22 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 19, 12 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 19, 15 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 19, 18 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 20, 25 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 20, 28 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 22, 33 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 22, 36 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 22, 39 ],
+          "type": "AndComponent"
+        },
+        {
+          "position": [ 5, 40 ],
+          "type": "SwitchComponent"
+        },
+        {
+          "chip": 0,
+          "position": [ 25, 15 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 29, 21 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 0,
+          "position": [ 37, 24 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 0,
+          "position": [ 46, 31 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 46, 36 ],
+          "type": "ChipComponent"
+        },
+        {
+          "chip": 1,
+          "position": [ 46, 42 ],
+          "type": "ChipComponent"
+        },
+        {
+          "position": [ 57, 12 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 57, 14 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 57, 16 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 57, 18 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 57, 20 ],
+          "type": "OutputComponent"
+        },
+        {
+          "position": [ 57, 22 ],
+          "type": "OutputComponent"
+        }
+      ],
+      "wires": [
+        {
+          "to": [ 13, 11 ],
+          "from": [ 6, 11 ]
+        },
+        {
+          "to": [ 56, 12 ],
+          "from": [ 20, 12 ]
+        },
+        {
+          "to": [ 16, 34 ],
+          "from": [ 6, 34 ]
+        },
+        {
+          "to": [ 12, 14 ],
+          "from": [ 6, 14 ]
+        },
+        {
+          "to": [ 11, 17 ],
+          "from": [ 6, 17 ]
+        },
+        {
+          "to": [ 16, 34 ],
+          "from": [ 16, 19 ]
+        },
+        {
+          "to": [ 18, 19 ],
+          "from": [ 16, 19 ]
+        },
+        {
+          "to": [ 16, 19 ],
+          "from": [ 16, 16 ]
+        },
+        {
+          "to": [ 18, 16 ],
+          "from": [ 16, 16 ]
+        },
+        {
+          "to": [ 16, 16 ],
+          "from": [ 16, 13 ]
+        },
+        {
+          "to": [ 18, 13 ],
+          "from": [ 16, 13 ]
+        },
+        {
+          "to": [ 13, 21 ],
+          "from": [ 13, 11 ]
+        },
+        {
+          "to": [ 19, 21 ],
+          "from": [ 13, 21 ]
+        },
+        {
+          "to": [ 18, 11 ],
+          "from": [ 13, 11 ]
+        },
+        {
+          "to": [ 12, 24 ],
+          "from": [ 12, 14 ]
+        },
+        {
+          "to": [ 19, 24 ],
+          "from": [ 12, 24 ]
+        },
+        {
+          "to": [ 18, 14 ],
+          "from": [ 12, 14 ]
+        },
+        {
+          "to": [ 11, 27 ],
+          "from": [ 11, 17 ]
+        },
+        {
+          "to": [ 19, 27 ],
+          "from": [ 11, 27 ]
+        },
+        {
+          "to": [ 18, 17 ],
+          "from": [ 11, 17 ]
+        },
+        {
+          "to": [ 13, 37 ],
+          "from": [ 6, 37 ]
+        },
+        {
+          "to": [ 13, 37 ],
+          "from": [ 13, 29 ]
+        },
+        {
+          "to": [ 13, 29 ],
+          "from": [ 13, 26 ]
+        },
+        {
+          "to": [ 13, 26 ],
+          "from": [ 13, 23 ]
+        },
+        {
+          "to": [ 19, 23 ],
+          "from": [ 13, 23 ]
+        },
+        {
+          "to": [ 19, 26 ],
+          "from": [ 13, 26 ]
+        },
+        {
+          "to": [ 19, 29 ],
+          "from": [ 13, 29 ]
+        },
+        {
+          "to": [ 9, 11 ],
+          "from": [ 6, 11 ]
+        },
+        {
+          "to": [ 9, 30 ],
+          "from": [ 9, 11 ]
+        },
+        {
+          "to": [ 19, 30 ],
+          "from": [ 9, 30 ]
+        },
+        {
+          "to": [ 19, 32 ],
+          "from": [ 19, 30 ]
+        },
+        {
+          "to": [ 21, 32 ],
+          "from": [ 19, 32 ]
+        },
+        {
+          "to": [ 8, 14 ],
+          "from": [ 6, 14 ]
+        },
+        {
+          "to": [ 8, 35 ],
+          "from": [ 8, 14 ]
+        },
+        {
+          "to": [ 21, 35 ],
+          "from": [ 8, 35 ]
+        },
+        {
+          "to": [ 7, 17 ],
+          "from": [ 6, 17 ]
+        },
+        {
+          "to": [ 7, 38 ],
+          "from": [ 7, 17 ]
+        },
+        {
+          "to": [ 21, 38 ],
+          "from": [ 7, 38 ]
+        },
+        {
+          "to": [ 17, 40 ],
+          "from": [ 6, 40 ]
+        },
+        {
+          "to": [ 17, 40 ],
+          "from": [ 17, 37 ]
+        },
+        {
+          "to": [ 17, 37 ],
+          "from": [ 17, 34 ]
+        },
+        {
+          "to": [ 21, 34 ],
+          "from": [ 17, 34 ]
+        },
+        {
+          "to": [ 21, 37 ],
+          "from": [ 17, 37 ]
+        },
+        {
+          "to": [ 21, 40 ],
+          "from": [ 17, 40 ]
+        },
+        {
+          "to": [ 32, 15 ],
+          "from": [ 26, 15 ]
+        },
+        {
+          "to": [ 32, 15 ],
+          "from": [ 32, 14 ]
+        },
+        {
+          "to": [ 56, 14 ],
+          "from": [ 32, 14 ]
+        },
+        {
+          "to": [ 27, 16 ],
+          "from": [ 26, 16 ]
+        },
+        {
+          "to": [ 27, 23 ],
+          "from": [ 27, 16 ]
+        },
+        {
+          "to": [ 28, 23 ],
+          "from": [ 27, 23 ]
+        },
+        {
+          "to": [ 24, 15 ],
+          "from": [ 20, 15 ]
+        },
+        {
+          "to": [ 23, 22 ],
+          "from": [ 21, 22 ]
+        },
+        {
+          "to": [ 23, 22 ],
+          "from": [ 23, 16 ]
+        },
+        {
+          "to": [ 24, 16 ],
+          "from": [ 23, 16 ]
+        },
+        {
+          "to": [ 25, 18 ],
+          "from": [ 20, 18 ]
+        },
+        {
+          "to": [ 25, 21 ],
+          "from": [ 25, 18 ]
+        },
+        {
+          "to": [ 28, 21 ],
+          "from": [ 25, 21 ]
+        },
+        {
+          "to": [ 24, 25 ],
+          "from": [ 21, 25 ]
+        },
+        {
+          "to": [ 24, 25 ],
+          "from": [ 24, 22 ]
+        },
+        {
+          "to": [ 28, 22 ],
+          "from": [ 24, 22 ]
+        },
+        {
+          "to": [ 33, 22 ],
+          "from": [ 30, 22 ]
+        },
+        {
+          "to": [ 33, 24 ],
+          "from": [ 33, 22 ]
+        },
+        {
+          "to": [ 36, 24 ],
+          "from": [ 33, 24 ]
+        },
+        {
+          "to": [ 33, 28 ],
+          "from": [ 21, 28 ]
+        },
+        {
+          "to": [ 33, 28 ],
+          "from": [ 33, 25 ]
+        },
+        {
+          "to": [ 36, 25 ],
+          "from": [ 33, 25 ]
+        },
+        {
+          "to": [ 50, 31 ],
+          "from": [ 47, 31 ]
+        },
+        {
+          "to": [ 50, 31 ],
+          "from": [ 50, 16 ]
+        },
+        {
+          "to": [ 56, 16 ],
+          "from": [ 50, 16 ]
+        },
+        {
+          "to": [ 52, 36 ],
+          "from": [ 47, 36 ]
+        },
+        {
+          "to": [ 52, 36 ],
+          "from": [ 52, 18 ]
+        },
+        {
+          "to": [ 56, 18 ],
+          "from": [ 52, 18 ]
+        },
+        {
+          "to": [ 54, 42 ],
+          "from": [ 47, 42 ]
+        },
+        {
+          "to": [ 54, 42 ],
+          "from": [ 54, 20 ]
+        },
+        {
+          "to": [ 56, 20 ],
+          "from": [ 54, 20 ]
+        },
+        {
+          "to": [ 55, 43 ],
+          "from": [ 47, 43 ]
+        },
+        {
+          "to": [ 55, 43 ],
+          "from": [ 55, 22 ]
+        },
+        {
+          "to": [ 56, 22 ],
+          "from": [ 55, 22 ]
+        },
+        {
+          "to": [ 48, 37 ],
+          "from": [ 47, 37 ]
+        },
+        {
+          "to": [ 48, 40 ],
+          "from": [ 48, 37 ]
+        },
+        {
+          "to": [ 48, 40 ],
+          "from": [ 42, 40 ]
+        },
+        {
+          "to": [ 42, 44 ],
+          "from": [ 42, 40 ]
+        },
+        {
+          "to": [ 45, 44 ],
+          "from": [ 42, 44 ]
+        },
+        {
+          "to": [ 49, 32 ],
+          "from": [ 47, 32 ]
+        },
+        {
+          "to": [ 49, 34 ],
+          "from": [ 49, 32 ]
+        },
+        {
+          "to": [ 49, 34 ],
+          "from": [ 42, 34 ]
+        },
+        {
+          "to": [ 42, 38 ],
+          "from": [ 42, 34 ]
+        },
+        {
+          "to": [ 45, 38 ],
+          "from": [ 42, 38 ]
+        },
+        {
+          "to": [ 43, 21 ],
+          "from": [ 30, 21 ]
+        },
+        {
+          "to": [ 43, 32 ],
+          "from": [ 43, 21 ]
+        },
+        {
+          "to": [ 45, 32 ],
+          "from": [ 43, 32 ]
+        },
+        {
+          "to": [ 45, 31 ],
+          "from": [ 33, 31 ]
+        },
+        {
+          "to": [ 33, 33 ],
+          "from": [ 33, 31 ]
+        },
+        {
+          "to": [ 33, 33 ],
+          "from": [ 23, 33 ]
+        },
+        {
+          "to": [ 45, 36 ],
+          "from": [ 23, 36 ]
+        },
+        {
+          "to": [ 45, 37 ],
+          "from": [ 40, 37 ]
+        },
+        {
+          "to": [ 40, 37 ],
+          "from": [ 40, 24 ]
+        },
+        {
+          "to": [ 40, 24 ],
+          "from": [ 38, 24 ]
+        },
+        {
+          "to": [ 39, 25 ],
+          "from": [ 38, 25 ]
+        },
+        {
+          "to": [ 39, 43 ],
+          "from": [ 39, 25 ]
+        },
+        {
+          "to": [ 45, 43 ],
+          "from": [ 39, 43 ]
+        },
+        {
+          "to": [ 45, 42 ],
+          "from": [ 36, 42 ]
+        },
+        {
+          "to": [ 36, 42 ],
+          "from": [ 36, 39 ]
+        },
+        {
+          "to": [ 36, 39 ],
+          "from": [ 23, 39 ]
+        }
+      ],
+      "name": "3-bit Multiplier"
+    }
+  ]
+}

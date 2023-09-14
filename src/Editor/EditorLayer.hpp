@@ -67,8 +67,9 @@ namespace Gate {
         And,
         Or,
         Xor,
+        Chip,
       };
-      static StringView componentTypeToString(ComponentType type) {
+      String componentTypeToString(ComponentType type) {
         switch (type) {
           case ComponentType::Switch: return "Switch";
           case ComponentType::Output: return "Output";
@@ -76,6 +77,7 @@ namespace Gate {
           case ComponentType::And:    return "AND Gate";
           case ComponentType::Or:     return "OR Gate";
           case ComponentType::Xor:    return "XOR Gate";
+          case ComponentType::Chip:   return mBoard.getChips()[mChipIndex]->getName();
         }
         GATE_UNREACHABLE("invalid component type");
       }
@@ -90,6 +92,7 @@ namespace Gate {
     Vec2 mLastMousePosition{0.0f};
     Mode mMode = Mode::Select;
     ComponentType mComponentType = ComponentType::Switch;
+    u32 mChipIndex = 0;
 
     // Selector
     Vec2 mSelectorPosition{ 0.0f, 0.0f };

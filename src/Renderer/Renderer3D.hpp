@@ -110,7 +110,7 @@ namespace Gate {
       Texture::Handle defaultSpecularMap;
     };
   private:
-    static constexpr const auto INSTANCE_COUNT       = 512;
+    static constexpr const auto INSTANCE_COUNT       = 1024;
     static constexpr const auto INSTANCE_BUFFER_SIZE = sizeof(Pipeline::Instance) * INSTANCE_COUNT;
 
     static constexpr const auto MAX_MATERIALS = 32;
