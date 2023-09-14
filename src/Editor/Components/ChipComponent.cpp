@@ -27,9 +27,6 @@ namespace Gate {
   void ChipComponent::renderBody(Renderer2D& renderer) {
     Vec2 size = Vec2{(f32)config.grid.cell.size};
     Vec4 color = Color::BLACK;
-    // if (mOutputPins[OUTPUT_INDEX].active) {
-    //   color = Color::RED;
-    // }
     auto width = std::max(this->mChipInputs.size(), this->mChipOutputs.size());
     renderer.drawCenteredQuad((mPosition.toVec2() + Vec2{0.0f, f32(width) / 2.0f - 0.5f}) * (f32)config.grid.cell.size, size * 1.8f * Vec2{1.0f, f32(width) / 2.0f + 0.5f}, color);
   }
@@ -49,10 +46,6 @@ namespace Gate {
 
   void ChipComponent::renderBody(Renderer3D& renderer, u32 id) {
     Material::Handle material = config.inactiveMaterial;
-    // if (mOutputPins[OUTPUT_INDEX].active) {
-    //   material = config.activeMaterial;
-    // }
-
     auto width = std::max(this->mChipInputs.size(), this->mChipOutputs.size());
     
     f32 size = 1.5f;

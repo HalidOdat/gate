@@ -202,6 +202,10 @@ namespace Gate {
       Application::saveFile(filename, content);
     }
 
+    // if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::J) {
+    //   Application::renameChip();
+    // }
+
     #ifndef GATE_PLATFORM_WEB
       if (event.getModifier() == KeyModifier::Control && event.getKey() == Key::O) {
         loadFile("save.json");

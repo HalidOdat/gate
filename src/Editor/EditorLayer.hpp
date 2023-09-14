@@ -42,6 +42,8 @@ namespace Gate {
 
     void loadFile(const String& path);
 
+    Board& getBoard() { return mBoard; }
+
   private:
     void setSelectorPosition(Vec2 position);
 

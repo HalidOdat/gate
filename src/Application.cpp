@@ -36,8 +36,16 @@ static Gate::u32 canvasHeight = 640;
     Module['saveFile'](UTF8ToString(content));
   });
 
+  EM_JS(void, Module_renameChip, (), {
+    Module['renameChip']();
+  });
+
   EM_PORT_API(void) gate_resizeWindow(int width, int height) {
     Gate::Application::getWindow().setSize(width, height);
+  }
+
+  EM_PORT_API(void) gate_renameChip(char* name) {
+    Gate::Application::renameChip(name);
   }
 #endif
 
@@ -107,6 +115,18 @@ namespace Gate {
       }
       fclose(file);
     #endif
+  }
+
+  void Application::renameChip() {
+    #ifdef GATE_PLATFORM_WEB
+      Module_renameChip();
+    #else
+      GATE_TODO("not implemented");
+    #endif
+  }
+
+  void Application::renameChip(const String& name) {
+    Application::get().layer->getBoard().getCurrentChip().setName(name);
   }
 
   Renderer3D& Application::getRenderer3D() {

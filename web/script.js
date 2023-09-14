@@ -29,6 +29,18 @@ window.addEventListener('keydown', (event) => {
     event.preventDefault();
     return false;
   }
+
+  // Prevent default browser behaviour
+  if(event.ctrlKey && (event.which == 78)) {
+    event.preventDefault();
+    return false;
+  }
+
+  if(event.shiftKey && (event.which == 78)) {
+    Module.renameChip();
+    event.preventDefault();
+    return false;
+  }
 }, true);
 window.addEventListener('keyup', stopImmediatePropagation, true);
 
@@ -91,9 +103,39 @@ var Module = {
       });
     }
   },
-  // loadFile: function(name, content) {
-  //   window.Module._gate_loadFile();
-  // },
+  renameChip: async function(content) {
+    preventEvents = true;
+    const { value: name } = await Swal.fire({
+      title: 'Set Current Chip name?',
+      input: 'text',
+      inputAttributes: {
+        required: true,
+        maxlength: 255,
+        autocapitalize: 'off',
+        autocorrect: 'off'
+      },
+      inputPlaceholder: 'MyAwesomeChip',
+      inputAutoTrim: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write the name for the chip!'
+        }
+      },
+      allowEnterKey: false,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+    });
+
+    preventEvents = false;
+
+    console.log(name)
+    if (name) {
+      const buffer = _malloc(name.length * 4 + 1)
+      stringToUTF8(name, buffer, name.length * 4 + 1)
+      window.Module._gate_renameChip(buffer)
+      _free(buffer)
+    }
+  },
   setStatus: function(text) {
     if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
     if (text === Module.setStatus.last.text) return;

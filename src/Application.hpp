@@ -22,6 +22,9 @@ namespace Gate {
     static Renderer3D& getRenderer3D();
 
     static void saveFile(const String& name, const String& content);
+    static void renameChip();
+
+    static void renameChip(const String& name);
 
     void start();
     void quit();
