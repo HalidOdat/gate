@@ -246,12 +246,13 @@ namespace Gate {
           
           bool interacted;
           if (mRenderMode == RenderMode::_2D) {
+            Logger::warn("x: %u, y: %u", mousePosition.x, mousePosition.y);
             interacted = mBoard.click(mousePosition);
             if (!interacted) {
-            mMode = Mode::WireDraw;
-            mWireStartPosition = gridAlginPosition(mLastMousePosition);
-            mWireEndPosition = mWireStartPosition;
-          }
+              mMode = Mode::WireDraw;
+              mWireStartPosition = gridAlginPosition(mLastMousePosition);
+              mWireEndPosition = mWireStartPosition;
+            }
           } else {
             u32 value = Application::getRenderer3D().readPixel((u32)mLastMousePosition.x, (u32)mLastMousePosition.y);
             Logger::trace("Click(%u, %u): Entity ID: %u", (u32)mLastMousePosition.x, (u32)mLastMousePosition.y, value);

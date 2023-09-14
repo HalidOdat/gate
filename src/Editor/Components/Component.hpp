@@ -51,6 +51,7 @@ namespace Gate {
     void resetVisited();
 
     inline Category getCategory() const { return mCategory; }
+    inline Type getType() const { return mType; }
 
     Mat4 computeModel(f32 size) const;
 

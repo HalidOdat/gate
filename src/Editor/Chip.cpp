@@ -23,6 +23,14 @@ namespace Gate {
   }
 
   bool Chip::click(Point position) {
+    // auto[inputs, outputs] = getPins();
+    // for (auto input : inputs) {
+    //   Logger::trace("Input:: x: %u, y: %u", input.position.x, input.position.y);
+    // }
+    // for (auto output : outputs) {
+    //   Logger::trace("Output:: x: %u, y: %u", output.position.x, output.position.y);
+    // }
+
     bool interacted = false;
     for (auto* component : mComponents) {
       if (!component) {
@@ -514,6 +522,21 @@ namespace Gate {
       }
       wire.render(renderer);
     }
+  }
+
+  std::pair<std::vector<Pin>, std::vector<Pin>> Chip::getPins() {
+    std::vector<Pin> inputs;
+    std::vector<Pin> outputs;
+
+    for (auto component : mComponents) {
+      if (component->getType() == Component::Type::Switch) {
+        inputs.push_back(component->getOutputPins()[SwitchComponent::OUTPUT_INDEX]);
+      } if (component->getType() == Component::Type::Output) {
+        outputs.push_back(component->getInputPins()[OutputComponent::INPUT_INDEX]);
+      }
+    }
+
+    return {inputs, outputs};
   }
 
 }

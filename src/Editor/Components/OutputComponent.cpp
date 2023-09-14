@@ -5,7 +5,7 @@
 namespace Gate {
 
   OutputComponent::OutputComponent(Point position)
-    : Component(Component::Category::Input, Type::Switch, position)
+    : Component(Component::Category::Gate, Type::Output, position)
   {
     this->mInputPins.push_back(Pin{Point{position.x - 1, position.y}});
   }

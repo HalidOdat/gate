@@ -49,6 +49,8 @@ namespace Gate {
 
     u32 getOptimalCellSize() const { return mOptimalCellSize; }
 
+    std::pair<std::vector<Pin>, std::vector<Pin>> getPins();
+
   private:
     void renderComponentBodys(Renderer2D& renderer);
     void renderComponentConnectors(Renderer2D& renderer);
