@@ -8,6 +8,8 @@
 #include "Editor/Components/OrComponent.hpp"
 #include "Editor/Components/XorComponent.hpp"
 
+#include "Editor/Components/ChipComponent.hpp"
+
 namespace Gate {
 
 }

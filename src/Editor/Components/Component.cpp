@@ -55,7 +55,7 @@ namespace Gate {
     }
   }
 
-  Component* Component::decode(const Serializer::Node& node) {
+  Component* Component::decode(const Serializer::Node& node, Board& board) {
     using namespace Serializer;
     if (!node.isObject()) return nullptr;
 
@@ -82,6 +82,15 @@ namespace Gate {
         return new XorComponent(position);
       } else if (type == "NotComponent") {
         return new NotComponent(position);
+      } else if (type == "ChipComponent") {
+        auto* chipIndex = node.get("chip");
+        if (!chipIndex) {
+          return nullptr; 
+        }
+        Node::Integer index;
+        if (!Convert<Node::Integer>::decode(*chipIndex, index)) return nullptr;
+        // Logger::info("-------------------------------- %u", index);
+        return new ChipComponent(position, board.getChips()[index]);
       } else {
         Logger::error("Json: invalid component type: %s", type.c_str());
         return nullptr;

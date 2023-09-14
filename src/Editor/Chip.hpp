@@ -13,6 +13,8 @@
 
 namespace Gate {
 
+  class Board;
+
   enum class WirePushState {
     Valid,
     Connected,
@@ -24,10 +26,10 @@ namespace Gate {
     using Handle = Ref<Chip>;
 
   public:
-    static Chip::Handle create(String name = "Unnamed chip");
+  static Chip::Handle create(u32 index);
 
   public:
-    Chip(String name);
+    Chip(u32 index);
     ~Chip();
     DISALLOW_MOVE_AND_COPY(Chip);
 
@@ -48,8 +50,9 @@ namespace Gate {
     void setName(String name) { mName = std::move(name); }
 
     u32 getOptimalCellSize() const { return mOptimalCellSize; }
+    u32 getIndex() const { return mIndex; }
 
-    std::pair<std::vector<Pin>, std::vector<Pin>> getPins();
+    std::pair<std::vector<SwitchComponent*>, std::vector<OutputComponent*>> getPinComponents() const;
 
   private:
     void renderComponentBodys(Renderer2D& renderer);
@@ -79,6 +82,8 @@ namespace Gate {
 
     // Size
     u32 mOptimalCellSize;
+
+    u32 mIndex = 0;
   };
 
 }
@@ -88,7 +93,7 @@ namespace Gate::Serializer {
   template<>
   struct Convert<Chip> {
     static Node encode(Chip& value);
-    static bool decode(const Node& node, Chip& value);
+    static bool decode(const Node& node, Chip& value, Board& board);
   };
 
 }

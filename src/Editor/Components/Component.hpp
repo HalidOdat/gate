@@ -11,6 +11,8 @@ class Component;
 
 namespace Gate {
 
+  class Board;
+
 #define GATE_COMPONENT_IMPLEMENTATION(name)               \
   Serializer::Node name::encode() const {                 \
     using namespace Serializer;                           \
@@ -36,6 +38,8 @@ namespace Gate {
       OrGate,
       XorGate,
       NotGate,
+
+      Chip,
     };
 
   public:
@@ -67,7 +71,7 @@ namespace Gate {
     virtual void renderConnectors(Renderer3D&, u32 id);
 
     virtual Serializer::Node encode() const = 0;
-    static Component* decode(const Serializer::Node& node);
+    static Component* decode(const Serializer::Node& node, Board& value);
 
   protected:
     Component(Category category, Type type, Point position)

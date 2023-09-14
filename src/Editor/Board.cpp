@@ -224,7 +224,7 @@ namespace Gate {
   Chip& Board::getCurrentChip() {
     if (mChips.size() == 0) {
       mChips.emplace_back(
-        Chip::create(String("chip ") + std::to_string(mChips.size()))
+        Chip::create(0)
       );
     }
     return *mChips[mIndex];
@@ -233,6 +233,10 @@ namespace Gate {
   void Board::pushChip(Chip::Handle chip) {
     mIndex = mChips.size();
     mChips.push_back(std::move(chip));
+  }
+  void Board::pushNewChip() {
+    mIndex = mChips.size();
+    mChips.push_back(Chip::create(mIndex));
   }
 
   void Board::tick() {
@@ -292,10 +296,13 @@ namespace Gate::Serializer {
     if (!chipsNode || !chipsNode->isArray()) return false;
     
     auto& chipsArray = *chipsNode->asArray();
+    u32 count = 0;
     for (auto& chip : chipsArray) {
-      Chip::Handle chipValue = Chip::create();
-      if (!Convert<Chip>::decode(chip, *chipValue)) return false;
+      Chip::Handle chipValue = Chip::create(count);
+      if (!Convert<Chip>::decode(chip, *chipValue, value)) return false;
       value.pushChip(std::move(chipValue));
+
+      count++;
     }
     
     return true;

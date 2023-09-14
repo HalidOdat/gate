@@ -143,7 +143,12 @@ namespace Gate {
           } else if (event.getKey() == Key::D) {
             mMode = Mode::Remove;
           } else if (event.getKey() == Key::N) {
-            mBoard.pushChip(Chip::create());
+            mBoard.pushNewChip();
+          } else if (event.getKey() == Key::M) {
+            auto oldChip = mBoard.getCurrentChipPtr();
+            auto newChip = Chip::create(mBoard.getChipsCount());
+            newChip->pushComponent(new ChipComponent({20, 20}, oldChip));
+            mBoard.pushChip(newChip);
           }
           break;
         case Mode::Remove: {
