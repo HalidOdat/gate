@@ -11,7 +11,7 @@ so it must be installed as well a `c++17` (or greater) compliant `C++` compiler.
 
 The latest deployed wasm builds are awailable on: <https://halidodat.github.io/gate/>
 
-## Compiling to native build
+## Local build
 
 Cloning the repository must be done recursively to get the dependecies.
 
@@ -50,13 +50,21 @@ Open directory where the root `CMakeLists.txt` is located with _Visual Studio_ (
 
 ## Compiling to Wasm
 
+Use the `scripts/build_web.sh` script, which automatically installs emscripten sdk and builds the project:
+
+```bash
+./scripts/build_web.sh
+```
+
+### Manually Install emsdk
+
 Before being able to compile to you must have the [Emscripten SDK][emscripten] installed
 and sourced (as described in the link).
 
-```console
-$ emcmake cmake . -B build-web
-$ cmake --build build-web
-$ cp web/index.html build-web
+```bash
+emcmake cmake . -B build-web -DCMAKE_BUILD_TYPE=Release
+cmake --build build-web --config Release
+cp -r web/* build-web
 ```
 
 ### Start a server
@@ -71,3 +79,9 @@ python -m http.server -d build-web
 Or upload it to a server.
 
 [emscripten]: https://emscripten.org/docs/getting_started/downloads.html
+
+### Creator
+
+| Name   | Surname  | Index   |
+|--------|----------|---------|
+| Haled  | Odat     | 201516  |

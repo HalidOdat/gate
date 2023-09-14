@@ -178,7 +178,7 @@ if (DEFINED WEB)
       -sMAX_WEBGL_VERSION=2
       -sALLOW_MEMORY_GROWTH=1
       -sDISABLE_EXCEPTION_CATCHING=1
-      $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:--closure=1>
+      # $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:--closure=1>
       $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:-sLZ4>
       $<$<CONFIG:MinSizeRel>:-flto=full>
       --preload-file "${ASSETS_DIRECTOY}@assets"
