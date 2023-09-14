@@ -63,6 +63,8 @@ namespace Gate {
     virtual ~Component();
     virtual void click() {}
     virtual bool update() = 0;
+    virtual bool deletable() { return true; };
+    virtual void setDeletable(bool value) { (void)value; }
 
     virtual void renderBody(Renderer2D& renderer) = 0;
     virtual void renderConnectors(Renderer2D&);

@@ -15,6 +15,8 @@ namespace Gate {
     SwitchComponent(Point position);
     virtual bool update() override;
     virtual void click() override;
+    virtual bool deletable() override;
+    virtual void setDeletable(bool value) override;
     virtual void renderBody(Renderer2D& renderer) override;
     virtual void renderBody(Renderer3D& renderer, u32 id) override;
 
@@ -22,6 +24,9 @@ namespace Gate {
 
   private:
     inline void toggle() { mOutputPins[OUTPUT_INDEX].active = !mOutputPins[OUTPUT_INDEX].active; }
+
+  private:
+    bool mDeletable = true;
   };
 
 }

@@ -14,10 +14,15 @@ namespace Gate {
   public:
     OutputComponent(Point position);
     virtual bool update() override;
+    virtual bool deletable() override;
+    virtual void setDeletable(bool value) override;
     virtual void renderBody(Renderer2D& renderer) override;
     virtual void renderBody(Renderer3D& renderer, u32 id) override;
 
     virtual Serializer::Node encode() const override;
+  
+  private:
+    bool mDeletable = true;
   };
 
 }

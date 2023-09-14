@@ -142,7 +142,7 @@ namespace Gate {
             mMode = Mode::AddComponent;
           } else if (event.getKey() == Key::D) {
             mMode = Mode::Remove;
-          } else if (event.getKey() == Key::N) {
+          } else if (event.getModifier() == KeyModifier::Shift && event.getKey() == Key::N) {
             mBoard.pushNewChip();
           }
           break;

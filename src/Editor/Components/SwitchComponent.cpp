@@ -9,6 +9,14 @@ namespace Gate {
   {
     this->mOutputPins.push_back(Pin{Point{position.x + 1, position.y}});
   }
+
+  bool SwitchComponent::deletable() {
+    return mDeletable;
+  }
+  void SwitchComponent::setDeletable(bool value) {
+    mDeletable = value;
+  }
+
   void SwitchComponent::renderBody(Renderer2D& renderer) {
     Vec2 size = Vec2{(f32)config.grid.cell.size};
     Vec4 color = Color::BLACK;

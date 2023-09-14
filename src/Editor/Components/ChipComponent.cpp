@@ -15,10 +15,12 @@ namespace Gate {
     this->mChipOutputs = outputs;
 
     for (u32 i = 0; i < mChipInputs.size(); ++i) {
+      mChipInputs[i]->setDeletable(false);
       this->mInputPins.push_back(Pin{Point{position.x - 1, position.y + i}});
     }
 
     for (u32 i = 0; i < mChipOutputs.size(); ++i) {
+      mChipOutputs[i]->setDeletable(false);
       this->mOutputPins.push_back(Pin{Point{position.x + 1, position.y + i}});
     }
   }

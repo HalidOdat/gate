@@ -178,6 +178,9 @@ namespace Gate {
         continue;
       }
       if (component->getPosition() == position) {
+        if (!component->deletable()) {
+          return;
+        }
         for (auto& pin : component->getOutputPins()) {
           std::vector<Connection>& connections = mConnections[pin.connectionIndex];
           std::vector<Connection> result;
