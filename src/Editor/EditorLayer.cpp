@@ -202,7 +202,7 @@ namespace Gate {
       Application::saveFile(filename, content);
     }
 
-    if (event.getModifier() != KeyModifier::Shift && event.getKey() == Key::N) {
+    if (mMode == Mode::Select && event.getModifier() != KeyModifier::Shift && event.getKey() == Key::N) {
       Application::renameChip();
     }
 
